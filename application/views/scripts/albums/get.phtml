@@ -1,0 +1,18 @@
+<dl class="album">
+<?php
+	foreach($this->resource as $k => $v){
+		if(empty($v)){
+			continue;
+		}
+		if($k == 'media') {
+			echo 'media<br/><ul>';
+			foreach($v as $mediaKey => $mediaValue){
+				echo '	<li>'.$this->translate($mediaKey).': '.$this->escape($mediaValue).'</li>'.PHP_EOL;
+			}
+			echo '</ul>';
+			continue;
+		}
+		echo '	<dt>'.$this->translate($k).'</dt><dd>'.$this->escape($v).'</dd>'.PHP_EOL;
+	}
+?>
+</dl>

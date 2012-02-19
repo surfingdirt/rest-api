@@ -1,0 +1,17 @@
+<root>
+    <routes>
+        <defaults>
+			<defaults controller="index" action="index" />
+        </defaults>
+
+        <sessions>
+            <route>sessions/</route>
+            <defaults controller="sessions" />
+        </sessions>
+        
+        <freezetime>
+            <route>test/freeze-time/</route>
+            <defaults controller="test" action="freeze-time" />
+        </freezetime>
+    </routes>
+</root>

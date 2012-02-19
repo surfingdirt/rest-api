@@ -1,0 +1,1 @@
+{"requestUrl":"http://test.redesign-zend.fr/media/","requestMethod":"POST","requestBody":"title=test&description=test&mediaType=video&media=<iframe width=\"360\" height=\"240\" src=\"http://www.youtube.com/embed/N8SS-rUEZPg\"></iframe>&albumId=1","headers":["Content-Length","28","Content-Type","application/x-www-form-urlencoded","Accept","application/json"]}

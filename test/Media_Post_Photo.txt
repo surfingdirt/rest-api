@@ -1,0 +1,1 @@
+{"requestUrl":"http://test.redesign-zend.fr/media/","requestMethod":"POST","requestBody":"title=testPhoto&description=testPhoto&mediaType=photo&media=TODO&albumId=1","headers":["Accept","application/json","Content-Type","application/x-www-form-urlencoded","Content-Length","28"]}

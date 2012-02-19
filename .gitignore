@@ -1,0 +1,5 @@
+application/configs/application.ini
+.DS_Store
+.buildpath
+.settings
+.project
