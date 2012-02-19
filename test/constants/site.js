@@ -1,5 +1,5 @@
 module.exports = {
 	port: 80,
-	host: 'test.redesign-zend.fr',
+	host: 'test.api.ridedb.dev',
 	cacheDir: './data/cache/test/',
 };

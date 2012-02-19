@@ -1,6 +1,6 @@
 /*
 SQLyog Enterprise - MySQL GUI v8.12 
-MySQL - 5.1.37-1ubuntu5 : Database - mountainboard_fr
+MySQL - 5.1.37-1ubuntu5 : Database - ridedb_prod
 *********************************************************************
 */
 
@@ -10,8 +10,6 @@ MySQL - 5.1.37-1ubuntu5 : Database - mountainboard_fr
 /*!40101 SET SQL_MODE=''*/;
 
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-
-USE `mountainboardfr_production`;
 
 /*Table structure for table `blog_links` */
 
@@ -94,6 +92,24 @@ CREATE TABLE `comments` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3969 DEFAULT CHARSET=utf8;
 
+/*Table structure for table `countries` */
+
+DROP TABLE IF EXISTS `countries`;
+
+CREATE TABLE  `countries` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(32) NOT NULL,
+  `lang` varchar(10) NOT NULL,
+  `simpleTitle` varchar(32) NOT NULL,
+  `status` enum('valid','invalid') NOT NULL,
+  `date` datetime NOT NULL,
+  `submitter` int(11) NOT NULL,
+  `bounds` varchar(64) DEFAULT NULL,
+  `lastEditor` int(11) DEFAULT NULL,
+  `lastEditionDate` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
 /*Table structure for table `dossiers` */
 
 DROP TABLE IF EXISTS `dossiers`;
@@ -114,13 +130,20 @@ CREATE TABLE `dossiers` (
 
 DROP TABLE IF EXISTS `dpt`;
 
-CREATE TABLE `dpt` (
-  `id` int(11) NOT NULL,
+CREATE TABLE  `dpt` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(128) NOT NULL,
   `prefix` varchar(10) NOT NULL,
   `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
   `location` int(10) unsigned DEFAULT NULL,
   `simpleTitle` varchar(128) NOT NULL,
+  `code` varchar(8) NOT NULL,
+  `country` int(11) NOT NULL,
+  `date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `submitter` int(11) NOT NULL DEFAULT '1',
+  `bounds` varchar(128) DEFAULT NULL,
+  `lastEditor` int(11) NOT NULL DEFAULT '1',
+  `lastEditionDate` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -246,16 +269,22 @@ CREATE TABLE `items` (
 
 DROP TABLE IF EXISTS `locations`;
 
-CREATE TABLE `locations` (
+CREATE TABLE  `locations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `longitude` decimal(10,8) NOT NULL,
-  `latitude` decimal(10,8) NOT NULL,
+  `longitude` decimal(11,8) NOT NULL,
+  `latitude` decimal(11,8) NOT NULL,
   `zoom` int(10) unsigned NOT NULL DEFAULT '13',
   `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
   `mapType` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `yaw` decimal(11,8) NOT NULL,
   `pitch` decimal(11,8) NOT NULL,
-  PRIMARY KEY (`id`)
+  `itemId` int(11) DEFAULT NULL,
+  `itemType` varchar(32) NOT NULL,
+  `dpt` int(11) NOT NULL,
+  `country` int(11) NOT NULL,
+  `city` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lon` (`longitude`,`latitude`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /*Table structure for table `media_album_aggregations` */

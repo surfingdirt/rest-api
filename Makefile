@@ -12,6 +12,13 @@ cleancache:
 	rm -f public/media/*.jpg
 	rm -f public/media/thumbnails/*.jpg
 
+installdb:
+	mysql ridedb_prod -uroot < data/sql/structure.sql
+	mysql ridedb_prod -uroot < data/sql/cleanup_and_inserts.sql
+
+installtestdb:
+	mysql ridedb_test -uroot < data/sql/structure.sql
+
 full-backup: files-backup sql-backup
 
 files-backup:
@@ -23,7 +30,7 @@ sql-backup:
 reset-test-fixtures:
 	mysql ridedb_test -uroot < data/sql/test_fixtures.sql
 	
-test:
+tests:
 	rm -f public/media/*.*
 	rm -f public/media/thumbnails/*.*
 	for name in checkins ; do \

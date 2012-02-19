@@ -9,7 +9,6 @@ MySQL - 5.1.36-community : Database - ridedb_prod
 /*!40101 SET SQL_MODE=''*/;
 
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-use ridedb_prod;
 
 TRUNCATE blog_links;
 TRUNCATE blog_posts;
