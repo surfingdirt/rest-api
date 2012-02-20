@@ -37,6 +37,7 @@
                 RewriteRule ^.*$ index.php [L,QSA]
         </Directory>
 
+	Header set Access-Control-Allow-Origin *
         ErrorLog /Users/mgramont/Dev/ridedb/api/current/data/logs/test/error.log
         LogLevel warn
 

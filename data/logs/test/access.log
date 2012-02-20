@@ -9483,3 +9483,5 @@
 127.0.0.1 - - [19/Feb/2012:17:46:14 -0800] "GET /notifications/?from=2011-10-01%2000%3A00%3A00 HTTP/1.1" 200 1541 "-" "-"
 127.0.0.1 - - [19/Feb/2012:18:02:49 -0800] "GET /riders/ HTTP/1.1" 200 1377 "http://worldmountainboardday.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
 127.0.0.1 - - [19/Feb/2012:18:03:09 -0800] "GET /riders/ HTTP/1.1" 200 1377 "http://worldmountainboardday.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
+127.0.0.1 - - [19/Feb/2012:18:40:09 -0800] "GET /spots/ HTTP/1.1" 200 1785 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
+127.0.0.1 - - [19/Feb/2012:18:41:16 -0800] "GET /riders/ HTTP/1.1" 200 1377 "http://worldmountainboardday.dev/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
