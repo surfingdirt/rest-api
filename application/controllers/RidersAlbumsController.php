@@ -25,8 +25,8 @@ class RidersAlbumsController extends Api_Controller_Action
     {
     	$id = $this->_request->getParam('id');
     	
-    	// TODO: find all albums that belong to the user with id $id
     	$where = $this->_getWhereClause($this->_user);
+    	
     	$results = $this->_getAllObjects($where);
     	
     	if(empty($results)){

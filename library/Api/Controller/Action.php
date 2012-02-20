@@ -196,7 +196,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 		unset($data['action']);
 		unset($data['id']);
 
-		error_log('PUT '.var_export($data, TRUE));
+		//error_log('PUT '.var_export($data, TRUE));
 
 		return $data;
     }
@@ -313,7 +313,12 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 	 */
 	protected function _getAllObjects($where, $sort = null, $dir = null, $count = null, $start = null)
 	{
-		$results = $this->_table->fetchAll($where, $sort.' '.$dir, $count, $start);
+		if(!$sort && !$dir) {
+			$order = null;
+		} else {
+			$order = $sort.' '.$dir;
+		}
+		$results = $this->_table->fetchAll($where, $order, $count, $start);
 		return $results;
 	}
 	

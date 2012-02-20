@@ -23,12 +23,12 @@
 
 <VirtualHost *:80>
         ServerName test.api.ridedb.dev
-        DocumentRoot /Users/mgramont/Dev/ridedb/api/current
+        DocumentRoot /Users/mgramont/Dev/ridedb/api/current/public
         SetEnv APPLICATION_ENV test
 
         HostNameLookups Off
 
-        <Directory /Users/mgramont/Dev/ridedb/api/current>
+        <Directory /Users/mgramont/Dev/ridedb/api/current/public>
               Options -Indexes FollowSymLinks -MultiViews
               AllowOverride None
               Order allow,deny

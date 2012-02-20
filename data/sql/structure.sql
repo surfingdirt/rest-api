@@ -540,6 +540,7 @@ CREATE TABLE `users` (
   `activationKey` varchar(32) DEFAULT NULL,
   `newPassword` varchar(32) DEFAULT NULL,
   `avatar` varchar(512) DEFAULT NULL,
+  `dpt` int(11) DEFAULT NULL,  
   PRIMARY KEY (`userId`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2110 DEFAULT CHARSET=utf8;
 

@@ -64,7 +64,6 @@ class Lib_Form extends Zend_Form
                 $formattedData[$name] = $element->getFormattedValueForDatabase($value);
             }
         }
-error_log('$formattedData '.var_export($formattedData, true));
         return $formattedData;
     }
 

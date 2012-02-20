@@ -132,7 +132,7 @@ exports.postCheckins = {
 			});
 		});		
 	},
-		
+	/*	
 	asPlainUserWithCheckinDate: function(test) {
 		restClient.reset();
 		restClient.login("plainuser", "123456789", test, function(sessionId){
@@ -166,10 +166,10 @@ exports.postCheckins = {
 				restClient.get(8, test, fixtures.postCheckins.withDuration, 'json');
 			});
 		});		
-	},
+	},*/
 		
 };
-
+/*
 exports.testSetDate4 = function(test) {
 	restClient.setDate(test, '2012-02-28 14:00:00');
 };
@@ -250,4 +250,4 @@ exports.deleteCheckins = {
 			});
 		});
 	},
-};
+};*/

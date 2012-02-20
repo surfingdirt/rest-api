@@ -4,7 +4,11 @@
 		if(empty($v)){
 			continue;
 		}
-		echo '	<dt>'.$this->translate($k).'</dt><dd>'.$this->escape($v).'</dd>'.PHP_EOL;
+		echo '	<dt>'.$this->translate($k).'</dt><dd>';
+		if(!is_array($v)){
+			echo $this->escape($v);
+		}
+		echo '</dd>'.PHP_EOL;
 	}
 ?>
 </dl>

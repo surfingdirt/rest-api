@@ -10,8 +10,6 @@ class ErrorController extends Zend_Controller_Action
         $logMessage .= "Code: ".$e->getCode().PHP_EOL;
         $logMessage .= "Message: ".$e->getMessage().PHP_EOL.$e->getTraceAsString();
 
-		error_log($logMessage);
-
 		$this->getResponse()->clearBody();
 		$viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
 		$viewRenderer->setNoRender();
@@ -34,6 +32,7 @@ class ErrorController extends Zend_Controller_Action
 			            $this->_notFound();
 			            return;
 					default:
+						error_log($logMessage);
            				$this->_error();
            				return;
             	}

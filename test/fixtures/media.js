@@ -232,7 +232,7 @@ module.exports = {
 	},
 
 
-	validPhotoFile: {paramName: 'media', filename: '640x480.jpg', mimeType: 'image/jpeg', path: './apitest/fixtures/files/640x480.jpg'},
+	validPhotoFile: {paramName: 'media', filename: '640x480.jpg', mimeType: 'image/jpeg', path: './test/fixtures/files/640x480.jpg'},
 	
 	validPhotoPostForDelete: {
 		"id": '9',
@@ -321,8 +321,8 @@ module.exports = {
 		"externalKey": null			
 	},
 	
-	invalidPhotoFile: {paramName: 'media', filename: 'invalid.jpg', mimeType: 'image/jpeg', path: './apitest/fixtures/files/invalid.jpg'},
-	differentPhotoFile: {paramName: 'media', filename: '800x600.jpg', mimeType: 'image/jpeg', path: './apitest/fixtures/files/800x600.jpg'},
+	invalidPhotoFile: {paramName: 'media', filename: 'invalid.jpg', mimeType: 'image/jpeg', path: './test/fixtures/files/invalid.jpg'},
+	differentPhotoFile: {paramName: 'media', filename: '800x600.jpg', mimeType: 'image/jpeg', path: './test/fixtures/files/800x600.jpg'},
 	
 	updatedVideo: {
 		"id": '7',

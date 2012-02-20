@@ -602,17 +602,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
      */
     public function getEditLink()
     {
-        if(empty($this->id)){
-            return $this->getCreateLink();
-        }
-
-        $params = array(
-            'name' => Utils::cleanStringForUrl($this->getTitle()),
-            'dataType' => $this->_routeDataType,
-            'id' => $this->id,
-        );
-        $link = Globals::getRouter()->assemble($params, $this->_editRoute, true);
-        return $link;
+        return '';
     }
 
     /**
@@ -622,8 +612,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
      */
     public function getCreateLink()
     {
-        $link = Globals::getRouter()->assemble(array('dataType' => $this->_routeDataType), $this->_createRoute, true);
-        return $link;
+        return '';
     }
 
     /**
@@ -633,13 +622,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
      */
     public function getDeleteLink()
     {
-        $params = array(
-            'name' => Utils::cleanStringForUrl($this->getTitle()),
-            'dataType' => $this->_routeDataType,
-            'id' => $this->id,
-        );
-        $link = Globals::getRouter()->assemble($params, $this->_deleteRoute, true);
-        return $link;
+    	return '';
     }
 
     /**

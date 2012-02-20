@@ -3,3 +3,6 @@ application/configs/application.ini
 .buildpath
 .settings
 .project
+*.log
+data/cache/*
+public/media/*.jpg

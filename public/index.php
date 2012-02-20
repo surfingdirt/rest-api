@@ -63,7 +63,10 @@ $frontController = Zend_Controller_Front::getInstance();
 $frontController->setRequest('Lib_Controller_Request');
 $frontController->setControllerDirectory(array('default' => APPLICATION_PATH.'/controllers'));
 
+$dummyRoute = new Zend_Controller_Router_Route('/dummy/');
 $router = $frontController->getRouter();
+Globals::setRouter($router);
+
 $router->addRoutes(array(
 	'default' => new Zend_Rest_Route($frontController),
 	'test' => new Zend_Controller_Router_Route('test/:action', array('controller' => 'test', 'action' => 'freeze-timer')),
@@ -87,6 +90,19 @@ $router->addRoutes(array(
 	'checkinsByRiderCurrent' => new Zend_Controller_Router_Route('/checkins/riders/:riderId/current/', array('controller' => 'checkins', 'action' => 'list', 'onlyCurrent' => true)),
 	'checkinsAroundSpot' => new Zend_Controller_Router_Route('/checkins/spots/:spotId/around/', array('controller' => 'checkins', 'action' => 'list', 'fetchAround' => true)),
 	'checkinsAroundLocation' => new Zend_Controller_Router_Route('/checkins/around/', array('controller' => 'checkins', 'action' => 'list', 'fetchAround' => true)),
+
+	'createdata' => $dummyRoute,
+	'editdata' => $dummyRoute,
+	'deletedata' => $dummyRoute,
+	'userregister' => $dummyRoute,
+	'uploadvideo' => $dummyRoute,
+	'postcomment' => $dummyRoute,
+	'userupdate' => $dummyRoute,
+	'createalbum' => $dummyRoute,
+	'editalbum' => $dummyRoute,
+	'editcomment' => $dummyRoute,
+	'uploadphotomain' => $dummyRoute,
+	'editvideo' => $dummyRoute,
 ));
 
 $frontController->registerPlugin(new Zend_Controller_Plugin_PutHandler())
@@ -107,4 +123,4 @@ $frontController->dispatch();
 
 $t2 = microtime(true); 
 $time = ($t2 - $t1) *1000;
-error_log("Request took $time milliseconds");
+//error_log("Request took $time milliseconds");

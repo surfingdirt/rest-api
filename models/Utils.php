@@ -287,26 +287,26 @@ class Utils
 
 			if($format == "Y-m-d H:i:s"){
 				if($date = $cache->load('datetime')){
-					error_log('cached '.$date);
+					//error_log('cached '.$date);
 					return $date;
 				}
 			}
 			if($format == "Y-m-d"){
 				if($date = $cache->load('date')){
-					error_log('cached '.$date);
+					//error_log('cached '.$date);
 					return $date;
 				}
 			}
 			if($format == "timestamp"){
 				if($date = $cache->load('timestamp')){
-					error_log('cached '.$date);
+					//error_log('cached '.$date);
 					return $date;
 				}
 			}
 		}
 
 		$date = date($format);
-		error_log('direct '.$date);
+		//error_log('direct '.$date);
 		return $date;
 	}
 }

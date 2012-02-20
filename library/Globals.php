@@ -135,6 +135,11 @@ class Globals
         return $content;
 	}
 
+	public static function setRouter($router)
+	{
+		self::$_router = $router;
+	}
+	
 	/**
 	 * Return the router object for the current module
 	 *
@@ -144,28 +149,6 @@ class Globals
   	 */
 	public static function getRouter($app = null)
 	{
-        if(empty(self::$_router)){
-        	$cacheId = 'routes_'.ROUTES_CONF_FORMAT;
-        	if($app){
-        		$cacheId .= '_'.$app;
-        	}
-
- 	    	$cache = self::getAppCache();
-        	if(!ALLOW_CACHE){
-				$router = new Zend_Controller_Router_Rewrite();
-				$routes = self::getRouteConfig('../application/configs/routes.'.ROUTES_CONF_FORMAT, ROUTES_CONF_FORMAT);
-				$router->addConfig($routes, 'routes');
-        	} else {
-	        	if(!$router = $cache->load($cacheId)){
-					$router = new Zend_Controller_Router_Rewrite();
-					$routes = self::getRouteConfig('../application/configs/routes.'.ROUTES_CONF_FORMAT, ROUTES_CONF_FORMAT);
-					$router->addConfig($routes, 'routes');
-					$cache->save($router, $cacheId);
-	        	}
-            }
-
-			self::$_router = $router;
-		}
         return self::$_router;
 	}
 

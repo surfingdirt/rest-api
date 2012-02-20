@@ -171,4 +171,9 @@ class Media_Item_Photo_Row extends Media_Item_Row
         $form->setAction($action);
         return $form;
     }
+
+	public function getLink()
+	{
+		return '/photo/'.$this->getCleanTitle().'_'.$this->getId().'/';
+	}
 }
