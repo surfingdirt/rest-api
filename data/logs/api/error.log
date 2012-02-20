@@ -11,3 +11,4 @@
 [Sat Feb 18 19:45:53 2012] [error] [client 127.0.0.1] Request took 300.03905296326 milliseconds
 [Sat Feb 18 19:46:10 2012] [error] [client 127.0.0.1] Request took 61.01393699646 milliseconds
 [Sat Feb 18 19:47:17 2012] [error] [client 127.0.0.1] Request took 48.252105712891 milliseconds
+[Sun Feb 19 17:54:07 2012] [error] [client 127.0.0.1] PHP Warning:  include(): GC cache entry '/Users/mgramont/Dev/ridedb/api/current/library/Zend/View/Abstract.php' (dev=234881026 ino=10297965) was on gc-list for 3662 seconds in /Users/mgramont/Dev/ridedb/api/current/library/Zend/Loader.php on line 83

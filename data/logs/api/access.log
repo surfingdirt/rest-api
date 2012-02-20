@@ -9,3 +9,7 @@
 127.0.0.1 - - [18/Feb/2012:19:45:52 -0800] "GET /spots/1/ HTTP/1.1" 500 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
 127.0.0.1 - - [18/Feb/2012:19:46:10 -0800] "GET /spots/1/ HTTP/1.1" 200 715 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
 127.0.0.1 - - [18/Feb/2012:19:47:17 -0800] "GET /spots/1/ HTTP/1.1" 200 715 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
+127.0.0.1 - - [19/Feb/2012:17:52:01 -0800] "GET /spots/1/ HTTP/1.1" 200 715 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
+127.0.0.1 - - [19/Feb/2012:17:52:24 -0800] "GET /spots/ HTTP/1.1" 200 9898 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
+127.0.0.1 - - [19/Feb/2012:17:54:07 -0800] "GET /spots/ HTTP/1.1" 200 9898 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
+127.0.0.1 - - [19/Feb/2012:17:54:44 -0800] "GET /spots/ HTTP/1.1" 200 2 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:10.0.1) Gecko/20100101 Firefox/10.0.1"
