@@ -10,8 +10,10 @@ Install
 Create a ridedb_prod (and ridedb_test if you're going to run the functional tests) MySQL databases on localhost
 Run make installdb from the application main directory
 Also run make installtestdb if you're going to run the functional tests
-Copy application/configs/application.ini.template to application/configs/application.ini and edit it:
- - find the database section and update the constants there to reflect your MySQL setup.
+For these last two steps, the Makefile assumes you're going to do it with the root MySQL user, without a password (BAD practice!). Edit if needed.
+
+Copy application/configs/application.ini.template to application/configs/application.ini and edit it: 
+- find the database section and update the constants there to reflect your MySQL setup.
  - change constants.AUTHCHECK to a secret password. This is used for triggering cache clearing remotely.
  - update the email and contact section
  - update the domain name constants to match your desired domain name
