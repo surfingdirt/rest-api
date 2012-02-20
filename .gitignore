@@ -6,3 +6,4 @@ application/configs/application.ini
 *.log
 data/cache/*
 public/media/*.jpg
+public/media/thumbnails/*.jpg
