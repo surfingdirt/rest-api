@@ -39,24 +39,4 @@ module.exports = {
 			'admin': {"userId":"3","username":"banneduser","date": "2002-02-18 14:00:00","email":"banned@mountainboard.fr","birthDate":"0000-00-00","lang":"fr","country":{id: null, title: null},"city":"","zip":"0","gender":"1","level":"2","gear":"","otherSports":"","rideType":"","avatar":null,"lastLogin":"2010-01-11 09:04:37","latitude":null,"longitude":null,"status":"banned","firstName":"", "lastName":"", "site":"", "occupation":""},
 			'editor': {"userId":"3","username":"banneduser","date": "2002-02-18 14:00:00","email":"banned@mountainboard.fr","birthDate":"0000-00-00","lang":"fr","country":{id: null, title: null},"city":"","zip":"0","gender":"1","level":"2","gear":"","otherSports":"","rideType":"","avatar":null,"lastLogin":"2010-01-11 09:04:37","latitude":null,"longitude":null,"status":"banned","firstName":"", "lastName":"", "site":"", "occupation":""},
 		},
-		'plainuserHtml': {
-			'guest':
-'<dl class="rider">\n\
-	<dt>userId</dt><dd>1</dd>\n\
-	<dt>username</dt><dd>plainuser</dd>\n\
-	<dt>date</dt><dd>2011-01-01 21:23:00</dd>\n\
-	<dt>lang</dt><dd>fr</dd>\n\
-	<dt>country</dt><dd></dd>\n\
-	<dt>city</dt><dd>toulouse</dd>\n\
-	<dt>zip code</dt><dd>31000</dd>\n\
-	<dt>gender</dt><dd>1</dd>\n\
-	<dt>riding level</dt><dd>2</dd>\n\
-	<dt>gear</dt><dd>pro95</dd>\n\
-	<dt>other sports</dt><dd>snowboard</dd>\n\
-	<dt>ride type</dt><dd>110</dd>\n\
-	<dt>avatar</dt><dd>/media/avatars/1.jpg</dd>\n\
-	<dt>latitude</dt><dd>48.77591276</dd>\n\
-	<dt>longitude</dt><dd>2.30787549</dd>\n\
-</dl>'
-	},
 };

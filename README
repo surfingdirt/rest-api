@@ -11,6 +11,7 @@ Create a ridedb_prod (and ridedb_test if you're going to run the functional test
 Run make installdb from the application main directory
 Also run make installtestdb if you're going to run the functional tests
 For these last two steps, the Makefile assumes you're going to do it with the root MySQL user, without a password (BAD practice!). Edit if needed.
+Run the script in ./bin/setup.sh to set write permissions on some folders
 
 Copy application/configs/application.ini.template to application/configs/application.ini and edit it: 
 - find the database section and update the constants there to reflect your MySQL setup.

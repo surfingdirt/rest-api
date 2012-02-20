@@ -4,6 +4,7 @@ application/configs/application.ini
 .settings
 .project
 data/logs/api/*
+data/logs/test/*
 *.log
 data/cache/*
 public/media/*.jpg

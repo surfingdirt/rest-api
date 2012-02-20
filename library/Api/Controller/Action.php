@@ -55,16 +55,8 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 	protected function _setupViewPath($accept, $headers)
 	{
 		$viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-		//$this->view->headers = var_export($headers, true);
-		$html = (isset($headers['Accept']) && strpos($headers['Accept'], 'text/html') !== false);
-		if($html){
-			$this->view->addHelperPath('../library/Lib/View/Helper/', 'Lib_View_Helper');
-        	$this->view->baseUrl = $baseUrl = $this->_request->getBaseUrl();
-        	$this->getResponse()->setRawHeader('Content-Type: text/html; charset=UTF-8');
-		} else {
-			$viewRenderer->setViewScriptPathSpec(':action.json');
-			$this->getResponse()->setRawHeader('Content-Type: application/json; charset=UTF-8');
-		}
+		$viewRenderer->setViewScriptPathSpec(':action.json');
+		$this->getResponse()->setRawHeader('Content-Type: application/json; charset=UTF-8');
 	} 
 
 	//-----------------------------------------------------------------------------------------------------------------

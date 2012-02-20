@@ -226,13 +226,6 @@ exports.testPlainUserJsonAsGuest = function(test){
 	restClient.get(1, test, fixtures.plainuser.guest, 'json');
 };
 
-// It should retrieve the user with given id in html format
-exports.testPlainUserHtmlAsGuest = function(test){
-	restClient.reset();
-	restClient.setProperties(Object.keys(fixtures.plainuser.guest));
-	restClient.get(1, test, fixtures.plainuserHtml.guest, 'html');
-};
-
 // It should fail to create a user because only guest is allowed to do so
 exports.testCreateUserAsPlainUserFail = function(test){
 	restClient.reset();

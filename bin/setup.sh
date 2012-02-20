@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 mkdir ../data/backups
 chmod 777 ../data/backups
@@ -7,6 +7,12 @@ mkdir ../data/cache
 
 mkdir ../data/cache/api
 chmod 777 ../data/cache/api
+
+mkdir ../data/cache/api/app
+chmod 777 ../data/cache/api/app
+
+mkdir ../data/cache/HTMLPurifier
+chmod 777 ../data/cache/HTMLPurifier
 
 mkdir ../data/cache/test
 chmod 777 ../data/cache/test
