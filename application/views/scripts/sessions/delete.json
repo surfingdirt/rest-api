@@ -2,5 +2,5 @@
 if($this->errorId) {
 	echo $this->json(array('errorId' => $this->errorId));
 } else {
-	echo $this->json(array('sessionId' => $this->sessionId, 'userId' => $this->resourceId));
+	echo $this->json(array('sessionId' => $this->sessionId, 'rider' => $this->rider));
 }

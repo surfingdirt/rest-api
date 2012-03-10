@@ -1,6 +1,10 @@
 <?php
 class SessionsController extends Zend_Rest_Controller
 {
+	const MISSING_VALUE = 'missingValue';
+	const FAILED_TO_LOGIN = 'failedToLogin';
+	const LOGIN_SYSTEM_ERROR = 'loginSystemError';
+	
 	public function init()
 	{
 		parent::init();
@@ -20,13 +24,13 @@ class SessionsController extends Zend_Rest_Controller
     	$password = $this->getRequest()->getPost(User::INPUT_PASSWORD);
 
     	if (empty($username) || empty($password)) {
-        	$this->_forbidden(0);
+        	$this->_forbidden(self::MISSING_VALUE);
         	return;
         }
         $authAdapter = new Lib_Auth_Adapter($db, $username, $password);
         $result = $authAdapter->authenticate();
         if (!$result->isValid()) {
-        	$this->_forbidden(1);
+        	$this->_forbidden(self::FAILED_TO_LOGIN);
         	return;
         }
 
@@ -34,12 +38,12 @@ class SessionsController extends Zend_Rest_Controller
         $userTable = new Api_User();
         $results = $userTable->find($userRow->{User::COLUMN_USERID});
         if(!$results){
-        	$this->_forbidden(2);
+        	$this->_forbidden(self::LOGIN_SYSTEM_ERROR);
         	return;
         }
         $user = $results->current();
         if(!$user){
-        	$this->_forbidden(3);
+        	$this->_forbidden(self::LOGIN_SYSTEM_ERROR);
         	return;
         }
 
@@ -52,6 +56,11 @@ class SessionsController extends Zend_Rest_Controller
 
         session_regenerate_id();
 		$_SESSION[User::COLUMN_USERID] = $this->view->resourceId = $userRow->{User::COLUMN_USERID};
+		
+		Globals::setUser($user);
+		$accessor = new Api_User_Accessor($user, Globals::getAcl());
+		$this->view->rider = $accessor->getObjectData($user);
+		
 		$this->view->sessionId = session_id();
 		$this->view->lastLogin = $lastLogin;
     }
@@ -74,6 +83,16 @@ class SessionsController extends Zend_Rest_Controller
 
 		$this->_clearSession();
     	$this->view->sessionId = session_id();
+    	
+    	$table = new Api_User();
+    	$results = $table->find(0);
+    	$guest = $results->current();
+    	
+    	$rider = new stdClass();
+    	$rider->userId = $guest->getId();
+    	$rider->username = $guest->getTitle();
+    	
+    	$this->view->rider = $rider;
     }
 
     protected function _clearSession()
@@ -113,4 +132,9 @@ class SessionsController extends Zend_Rest_Controller
     	$this->view->resourceId = 0;
     	$this->view->errorId = $errorId;
     }
+
+	public function optionsAction()
+	{
+		$this->getResponse()->setHeader('Access-Control-Allow-Methods', 'OPTIONS, INDEX, GET, POST, PUT, DELETE');
+	}
 }

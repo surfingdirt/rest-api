@@ -239,7 +239,15 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     	
     }
 
+    //-----------------------------------------------------------------------------------------------------------------
+    // OPTIONS
 	//-----------------------------------------------------------------------------------------------------------------
+    public function optionsAction()
+	{
+		$this->getResponse()->setHeader('Access-Control-Allow-Methods', 'OPTIONS, INDEX, GET, POST, PUT, DELETE');
+	}
+    
+    //-----------------------------------------------------------------------------------------------------------------
     // MISC FUNCTIONS
 	//-----------------------------------------------------------------------------------------------------------------
 	/**
@@ -324,5 +332,4 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 
 		return $return;
     }
-
 }

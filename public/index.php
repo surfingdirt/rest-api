@@ -50,12 +50,18 @@ ini_set('upload_tmp_dir', GLOBAL_UPLOAD_TMPDIR);
 date_default_timezone_set('UTC');
 
 //Flash session ids:
+$sessionId = null;
 if (isset($_POST['PHPSESSID']) && !empty($_POST['PHPSESSID'])) {
 	Zend_Session::setId($_POST['PHPSESSID']);
-}
-if (isset($_GET['PHPSESSID']) && !empty($_GET['PHPSESSID'])){
+	$sessionId = $_POST['PHPSESSID'];
+} elseif (isset($_GET['PHPSESSID']) && !empty($_GET['PHPSESSID'])){
 	Zend_Session::setId($_GET['PHPSESSID']);
+	$sessionId = $_GET['PHPSESSID'];
 }
+if($sessionId) {
+	setcookie('PHPSESSID', $sessionId);
+}
+
 Zend_Session::start(array('cookie_domain' => COOKIE_DOMAIN));
 
 
@@ -123,4 +129,4 @@ $frontController->dispatch();
 
 $t2 = microtime(true); 
 $time = ($t2 - $t1) *1000;
-//error_log("Request took $time milliseconds");
+error_log("Request took $time milliseconds");

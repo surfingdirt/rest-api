@@ -257,9 +257,7 @@ class Utils
 
 	public static function getHost($ip)
 	{
-		if(APPLICATION_ENV != 'production') {
-		 	return $ip;
-		}
+	 	return $ip;
 		
 		$testar = explode('.',$ip);
 		if (count($testar)!=4) {

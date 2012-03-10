@@ -3,9 +3,8 @@ application/configs/application.ini
 .buildpath
 .settings
 .project
-data/logs/api/*
-data/logs/test/*
 *.log
 data/cache/*
 public/media/*.jpg
 public/media/thumbnails/*.jpg
+todo.txt

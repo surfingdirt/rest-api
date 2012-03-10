@@ -1,6 +1,6 @@
 <?php
 if($this->resourceId) {
-	echo $this->json(array('sessionId' => $this->sessionId, 'userId' => $this->resourceId, 'lastLogin' => $this->lastLogin));
+	echo $this->json(array('sessionId' => $this->sessionId, 'rider' => $this->rider));
 } else {
 	echo $this->json(array('errorId' => $this->errorId));
 }
