@@ -126,7 +126,7 @@ console.log('initialSessionId', initialSessionId);
 				}
 				responseOutput = JSON.parse(responseData);
 				
-				test.equal(responseOutput.userId, 1, "Bad user id");
+				test.equal(responseOutput.rider.userId, 1, "Bad user id");
 				
 				test.ok(typeof response.headers['set-cookie'] == 'object', 'Missing cookie header');
 				test.ok(typeof response.headers['set-cookie'][response.headers['set-cookie'].length - 1] == 'string', 'Empty cookie header');
@@ -196,7 +196,7 @@ console.log('initialSessionId', initialSessionId);
 				
 				responseOutput = JSON.parse(responseData);
 				
-				test.equal(responseOutput.userId, 0, "Bad user id");
+				test.equal(responseOutput.rider.userId, 0, "Bad user id");
 				
 				test.ok(typeof response.headers['set-cookie'] == 'object', 'Missing cookie header');
 				test.ok(typeof response.headers['set-cookie'][0] == 'string', 'Empty cookie header');
