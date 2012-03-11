@@ -4,6 +4,7 @@ class SessionsController extends Zend_Rest_Controller
 	const MISSING_VALUE = 'missingValue';
 	const FAILED_TO_LOGIN = 'failedToLogin';
 	const LOGIN_SYSTEM_ERROR = 'loginSystemError';
+	const LOGOUT_SYSTEM_ERROR = 'logoutSystemError';
 	
 	public function init()
 	{
@@ -69,13 +70,15 @@ class SessionsController extends Zend_Rest_Controller
     {
 		/**
 		 * We need to destroy the session with a given id
-		 * However, session ids are passed in a cookie, so
+		 * However, session ids are passed in a cookie,
+		 * or in a GET parameter, so
 		 * we don't need this id parameter. Let's just
-		 * make sure parameter and cookie match.
+		 * make sure parameter and param match.
 		 */
-
+    	
+    	//$this->_forbidden(self::LOGOUT_SYSTEM_ERROR);return;
     	if($this->_request->getParam('id') != session_id()){
-    		$this->_forbidden(0);
+    		$this->_forbidden(self::LOGOUT_SYSTEM_ERROR);
 
     		$this->view->sessionId = session_id();
     		return;
@@ -127,7 +130,6 @@ class SessionsController extends Zend_Rest_Controller
 
     protected function _forbidden($errorId)
     {
-    	//die($errorId);
     	$this->getResponse()->setRawHeader('HTTP/1.1 403 Forbidden');
     	$this->view->resourceId = 0;
     	$this->view->errorId = $errorId;
