@@ -124,7 +124,7 @@ module.exports = {
 			cookies = [];
 		
 		if(sessionId){
-			cookies.push('PHPSESSID=' + sessionId);
+			cookies.push('sId=' + sessionId);
 		}
 		if(profile){
 			cookies.push('start_profile=1; use_remote=1; debug_start_session=1; debug_session_id=' + debugSessionId + '; ZendDebuggerCookie=192.168.1.7%2C127.0.0.1%3A10137%3A0||08C|77742D65|19800050;');
@@ -182,7 +182,7 @@ module.exports = {
 		
 			
 		if(sessionId){
-			cookies.push('PHPSESSID=' + sessionId);
+			cookies.push('sId=' + sessionId);
 		}
 		if(debug){
 			cookies.push('use_remote=1; debug_session_id=' + debugSessionId + '; debug_start_session=1; ZendDebuggerCookie=192.168.1.7%2C127.0.0.1%3A10137%3A0||08C|77742D65|104593673; debug_host=192.168.1.7,127.0.0.1; debug_fastfile=1; debug_port=10137; start_debug=1; send_debug_header=1; send_sess_end=1; debug_jit=1; debug_stop=1');
@@ -253,7 +253,7 @@ module.exports = {
 			responseOutput;
 		
 		if(sessionId){
-			cookies.push('PHPSESSID=' + sessionId);
+			cookies.push('sId=' + sessionId);
 		}
 		if(debug){
 			cookies.push('use_remote=1; debug_session_id=' + debugSessionId + '; debug_start_session=1; ZendDebuggerCookie=192.168.1.7%2C127.0.0.1%3A10137%3A0||08C|77742D65|104593673; debug_host=192.168.1.7,127.0.0.1; debug_fastfile=1; debug_port=10137; start_debug=1; send_debug_header=1; send_sess_end=1; debug_jit=1; debug_stop=1');
@@ -314,7 +314,7 @@ module.exports = {
 			responseOutput;
 		
 		if(sessionId){
-			cookies.push('PHPSESSID=' + sessionId);
+			cookies.push('sId=' + sessionId);
 		}
 		if(debug){
 			cookies.push('use_remote=1; debug_session_id=' + debugSessionId + '; debug_start_session=1; ZendDebuggerCookie=192.168.1.7%2C127.0.0.1%3A10137%3A0||08C|77742D65|104593673; debug_host=192.168.1.7,127.0.0.1; debug_fastfile=1; debug_port=10137; start_debug=1; send_debug_header=1; send_sess_end=1; debug_jit=1; debug_stop=1');
@@ -378,7 +378,7 @@ module.exports = {
 			responseOutput;
 		
 		if(sessionId){
-			cookies.push('PHPSESSID=' + sessionId);
+			cookies.push('sId=' + sessionId);
 		}
 		if(debug){
 			cookies.push('use_remote=1; debug_session_id=' + debugSessionId + '; debug_start_session=1; ZendDebuggerCookie=192.168.1.7%2C127.0.0.1%3A10137%3A0||08C|77742D65|104593673; debug_host=192.168.1.7,127.0.0.1; debug_fastfile=1; debug_port=10137; start_debug=1; send_debug_header=1; send_sess_end=1; debug_jit=1; debug_stop=1');
@@ -455,10 +455,10 @@ module.exports = {
 					
 				responseOutput = JSON.parse(responseData);
 				
-				if(!(/PHPSESSID=[0-9a-z]{26,32};/.test(response.headers['set-cookie'][response.headers['set-cookie'].length - 1]))){
+				if(!(/sId=[0-9a-z]{26,32};/.test(response.headers['set-cookie'][response.headers['set-cookie'].length - 1]))){
 					throw new Error('Missing session cookie header');
 				}				
-				sessionId = response.headers['set-cookie'][response.headers['set-cookie'].length - 1].match(/PHPSESSID=([0-9a-z]{26,32});/)[1];
+				sessionId = response.headers['set-cookie'][response.headers['set-cookie'].length - 1].match(/sId=([0-9a-z]{26,32});/)[1];
 				//console.log('Calling callback with sessionId', sessionId, responseOutput, response.headers);
 				callback(sessionId);
 			});
@@ -547,7 +547,7 @@ module.exports = {
 	        params['Content-Length'] = postLength;
 			
 			if(sessionId){
-				cookies.push('PHPSESSID=' + sessionId);
+				cookies.push('sId=' + sessionId);
 			}
 			if(debug){
 				cookies.push('use_remote=1; debug_session_id=' + debugSessionId + '; debug_start_session=1; ZendDebuggerCookie=192.168.1.7%2C127.0.0.1%3A10137%3A0||08C|77742D65|104593673; debug_host=192.168.1.7,127.0.0.1; debug_fastfile=1; debug_port=10137; start_debug=1; send_debug_header=1; send_sess_end=1; debug_jit=1; debug_stop=1');
@@ -660,7 +660,7 @@ module.exports = {
 	        params['Content-Length'] = putLength;
 			
 			if(sessionId){
-				cookies.push('PHPSESSID=' + sessionId);
+				cookies.push('sId=' + sessionId);
 			}
 			if(true){
 				cookies.push('use_remote=1; debug_session_id=' + debugSessionId + '; debug_start_session=1; ZendDebuggerCookie=192.168.1.7%2C127.0.0.1%3A10137%3A0||08C|77742D65|104593673; debug_host=192.168.1.7,127.0.0.1; debug_fastfile=1; debug_port=10137; start_debug=1; send_debug_header=1; send_sess_end=1; debug_jit=1; debug_stop=1');

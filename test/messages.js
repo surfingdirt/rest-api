@@ -70,7 +70,7 @@ exports.testCreateMessage = function(test){
 	restClient.login("plainuser", "123456789", test, function(sessionId){
 		restClient.post({
 			"content": "createdMessage1To7Content",
-			"toUser": 7,
+			"toUser": 7
 		}, test, {
 			"resourceId": "6",
 			"errors": []
@@ -103,7 +103,7 @@ exports.testFailToDelete = function(test){
 				'Host': site.host,
 				'Accept': 'application/json; q=1.0',
 				'Connection': 'keep-alive',
-				'Cookie': 'PHPSESSID=' + sessionId
+				'Cookie': 'sId=' + sessionId
 			});
 			
 		request.on('response', function (response) {

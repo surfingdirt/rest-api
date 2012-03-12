@@ -7,7 +7,7 @@ class Lib_View_Helper_Chat extends Zend_View_Helper_Abstract
 			//return;
 		}
 
-		$cookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
+		$cookie = isset($_COOKIE[session_name()]) ? $_COOKIE[session_name()] : null;
 		if(empty($cookie)){
 			Globals::getLogger()->chat("No php session cookie found, aborting chat");
 			return;

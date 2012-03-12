@@ -77,6 +77,7 @@ class SessionsController extends Zend_Rest_Controller
 		 */
     	
     	//$this->_forbidden(self::LOGOUT_SYSTEM_ERROR);return;
+    	error_log('session_id '.session_id() . ' id '.$this->_request->getParam('id'));
     	if($this->_request->getParam('id') != session_id()){
     		$this->_forbidden(self::LOGOUT_SYSTEM_ERROR);
 

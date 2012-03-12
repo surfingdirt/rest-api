@@ -31,6 +31,7 @@ class Lib_Form_Decorator_Uploadify extends Zend_Form_Decorator_Form
 		 * 		onOpen: function(){alert('onOpen');},
 		 * 		onProgress: function(){alert('onProgress');},
 		 */
+        $sessionName = session_name();
 		$js = <<<JS
 
 $("#{$options['elementId']}").uploadify({
@@ -46,7 +47,7 @@ $("#{$options['elementId']}").uploadify({
 	'multi'     	: {$options['multi']},
 	'fileDesc'     	: '{$options['fileDesc']}',
 	'fileExt'     	: '{$options['fileExt']}',
-	'scriptData'	: {'PHPSESSID': '{$sessionId}'},
+	'scriptData'	: {'{$sessionName}': '{$sessionId}'},
 	'displayData'	: 'speed',
 
 	onComplete: function (evt, queueID, fileObj, response, data) {

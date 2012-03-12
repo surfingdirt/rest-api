@@ -324,7 +324,7 @@ exports.testUpdateCreatedUserAsPlainuser = function(test){
 			'Host': site.host,
 			'Accept': 'application/json; q=1.0',
 			'Connection': 'keep-alive',
-			'Cookie': 'PHPSESSID=' + sessionId
+			'Cookie': 'sId=' + sessionId
 		}),
 		responseData;
 		
@@ -508,7 +508,7 @@ exports.deletePlainUserAsAdmin = function(test){
 			'Host': site.host,
 			'Accept': 'application/json; q=1.0',
 			'Connection': 'keep-alive',
-			'Cookie': 'PHPSESSID=' + sessionId
+			'Cookie': 'sId=' + sessionId
 		}),
 		responseData = '';
 		

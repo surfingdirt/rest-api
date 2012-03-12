@@ -49,17 +49,19 @@ ini_set('upload_tmp_dir', GLOBAL_UPLOAD_TMPDIR);
 
 date_default_timezone_set('UTC');
 
+ini_set('session.name', 'sId');
+
 //Flash session ids:
 $sessionId = null;
-if (isset($_POST['PHPSESSID']) && !empty($_POST['PHPSESSID'])) {
-	Zend_Session::setId($_POST['PHPSESSID']);
-	$sessionId = $_POST['PHPSESSID'];
-} elseif (isset($_GET['PHPSESSID']) && !empty($_GET['PHPSESSID'])){
-	Zend_Session::setId($_GET['PHPSESSID']);
-	$sessionId = $_GET['PHPSESSID'];
+if (isset($_POST[session_name()]) && !empty($_POST[session_name()])) {
+	Zend_Session::setId($_POST[session_name()]);
+	$sessionId = $_POST[session_name()];
+} elseif (isset($_GET[session_name()]) && !empty($_GET[session_name()])){
+	Zend_Session::setId($_GET[session_name()]);
+	$sessionId = $_GET[session_name()];
 }
 if($sessionId) {
-	setcookie('PHPSESSID', $sessionId);
+	setcookie(session_name(), $sessionId);
 }
 
 Zend_Session::start(array('cookie_domain' => COOKIE_DOMAIN));
