@@ -27,6 +27,9 @@ class MediaController extends Api_Controller_Action
    		if($id){
    			$this->_postObjectCreation($object, $data);
    		}
+   		if($this->view->errors) {
+   			$this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
+   		}
 
     	$this->view->resourceId = $object->getId();
     }
@@ -50,6 +53,8 @@ class MediaController extends Api_Controller_Action
    		$errors = $this->_accessor->updateObjectWithData($object, $data);
 		if(empty($errors)) {
 			$this->_postObjectUpdate($object, $data);
+		} else {
+   			$this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
 		}
 		$this->view->errors = $errors;
     	$this->view->resourceId = $id;

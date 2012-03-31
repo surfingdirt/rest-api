@@ -125,7 +125,7 @@ exports.postMedia = {
 			restClient.post({
 				"title": "invalidMediaPost",
 				"mediaType": "video",
-			}, test, {"resourceId": null, "errors": {"media":["isEmpty","videoCodeNotValid"], "description":["isEmpty"]}}, "stringify");
+			}, test, {"resourceId": null, "errors": {"media":["isEmpty","videoCodeNotValid"], "description":["isEmpty"]}}, "string", "stringify", undefined, true);
 		});		
 	},
 	validVideodAsPlainUserSuccess: function(test) {
@@ -209,7 +209,7 @@ exports.putVideo = {
 			restClient.put(7,
 				{"status": "bla"},
 				test,
-				{"resourceId":"7", "errors": {"status": ["notInArray"]}}
+				{"resourceId":"7", "errors": {"status": ["notInArray"]}}, undefined, undefined, true
 			);
 		});			
 	},
@@ -275,7 +275,7 @@ exports.putPhoto = {
 			restClient.put(8,
 				{"status": "bla"},
 				test,
-				{"resourceId":"8", "errors": {"status": ["notInArray"]}}
+				{"resourceId":"8", "errors": {"status": ["notInArray"]}}, undefined, undefined, true
 			);
 		});			
 	},
