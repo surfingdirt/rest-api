@@ -105,7 +105,7 @@ class Api_User_Accessor extends Api_Data_Accessor
 			}
 			//error_log($log);
 
-			$object->status = User::STATUS_PENDING;
+			$object->status = User::STATUS_MEMBER;
 			$object->date = Utils::date('Y-m-d H:i:s');
         	$object->lang = Globals::getTranslate()->getLocale();
         	$object->activationKey = Utils::getRandomKey(32);

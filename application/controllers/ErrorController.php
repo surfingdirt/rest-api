@@ -51,7 +51,7 @@ class ErrorController extends Zend_Controller_Action
 
     protected function _badRequest($errorId = 0)
     {
-    	$this->getResponse()->setRawHeader('HTTP/1.1 400 Internal Server Error');
+    	$this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
     }
 
     protected function _error($errorId = 0)

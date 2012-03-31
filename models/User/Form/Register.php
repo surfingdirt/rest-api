@@ -35,7 +35,7 @@ class User_Form_Register extends Lib_Form
             $passwordConfirm,
             //$identity,
             $email,
-            $trickQuestion,
+            //$trickQuestion,
             $submit
         ));
     }

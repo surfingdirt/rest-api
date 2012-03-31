@@ -20,12 +20,12 @@ class User extends Cache_Object
 
     // COOKIES
     const COOKIE_MD5 = 'userI';
-    const COOKIE_USERNAME = 'userN';
+    const COOKIE_USERNAME = 'username';
     const COOKIE_REMEMBER = 'userR';
 
     // POST INPUT NAMES
     const INPUT_USERID = 'userId';
-    const INPUT_USERNAME = 'userN';
+    const INPUT_USERNAME = 'username';
     const INPUT_PASSWORD = 'userP';
     const INPUT_PASSWORD_CONFIRM = 'userPC';
     const INPUT_PASSWORD_OLD = 'userPO';

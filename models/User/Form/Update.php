@@ -69,7 +69,7 @@ class User_Form_Update extends Lib_Form
             } elseif($this->_openIdIsEditable){
                 $identity = new Lib_Form_Element_OpenId(false, true);
             }
-            $email = new Lib_Form_Element_Email(true, false);
+            $email = new Lib_Form_Element_Email(false, false);
         }
 
         $firstName = new Zend_Form_Element_Text('firstName');

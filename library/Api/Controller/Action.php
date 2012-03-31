@@ -132,6 +132,9 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
    		if($id){
    			$this->_postObjectCreation($object, $data);
    		}
+   		if($this->view->errors) {
+   			$this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
+   		}
 
     	$this->view->resourceId = $object->getId();
     }
@@ -175,7 +178,11 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
    		$errors = $this->_accessor->updateObjectWithData($object, $data);
 		if(empty($errors)) {
 			$this->_postObjectUpdate($object, $data);
-		}
+		} else {
+			error_log(var_export($errors, true));
+   			$this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
+   		}
+		
 		$this->view->errors = $errors;
     	$this->view->resourceId = $id;
     }

@@ -8,12 +8,12 @@ var http = require('http'),
 		host: '',
 		port: 80,
 		resource: '', // url of the rest resource. Must start and end with a '/'
-		properties: [], // list of properties that each resource instance must expose
+		properties: [] // list of properties that each resource instance must expose
 	},
 	datetime = null,
 	expectedTestsOffset = 1,
 	profile = 0,
-	debugSessionId = '37677371',
+	debugSessionId = '111630029',
 	debug = 0;	
 	
 module.exports = {
@@ -236,7 +236,7 @@ module.exports = {
 	/**
      * Tests the resource creation via a POST request
 	 */
-	post: function(jsonData, test, expectedOutput, rawFormat, compareMethod, callback){
+	post: function(jsonData, test, expectedOutput, rawFormat, compareMethod, callback, expect400) {
 		var data = querystring.stringify(jsonData),
 			accept = (typeof(rawFormat) == 'string' && rawFormat == 'html') ? 'text/html; q=1.0' : 'application/json; q=1.0',
 			format = (typeof(rawFormat) == 'string' && rawFormat == 'html') ? 'html' : 'json',
@@ -273,6 +273,9 @@ module.exports = {
 				if(typeof test == 'function'){
 					test(responseData, response);
 				} else {
+					var expectedCode = expect400 ? 400 : 200;
+					test.equals(expectedCode, response.statusCode, 'Bad status code: ' + response.statusCode, 'Response:', responseOutput);
+					
 					if(format == 'json') {
 						try {
 							test.deepEqual(JSON.parse(responseData), expectedOutput, 'Response not identical to expected object');
@@ -297,7 +300,7 @@ module.exports = {
 		request.end();
 		
 	},
-	put: function(id, jsonData, test, expectedOutput, rawFormat, callback){
+	put: function(id, jsonData, test, expectedOutput, rawFormat, callback, expect400) {
 		var data = querystring.stringify(jsonData),
 			accept = (typeof(rawFormat) == 'string' && rawFormat == 'html') ? 'text/html; q=1.0' : 'application/json; q=1.0',
 			format = (typeof(rawFormat) == 'string' && rawFormat == 'html') ? 'html' : 'json',
@@ -338,8 +341,9 @@ module.exports = {
 				
 				if(typeof test == 'function'){
 					test(responseData, response);
-				} else {					
-					test.equals(200, response.statusCode, 'Bad status code: ' + response.statusCode, 'Response:', responseOutput);
+				} else {
+					var expectedCode = expect400 ? 400 : 200;
+					test.equals(expectedCode, response.statusCode, 'Bad status code: ' + response.statusCode, 'Response:', responseOutput);
 
 					if(format == 'json') {
 						try {
@@ -428,7 +432,7 @@ module.exports = {
 		expectedTestsOffset++;
 		
 		var loginData = querystring.stringify({
-				"userN": username,
+				"username": username,
 				"userP": password
 			}),
 			

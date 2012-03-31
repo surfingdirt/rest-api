@@ -14,7 +14,7 @@ cache.clear();
 restClient.init({
 	host: site.host,
 	port: site.port,
-	resource: '/riders/',
+	resource: '/riders/'
 });
 
 // It should freeze the date on the server
@@ -254,13 +254,9 @@ exports.testCreateUserAsGuestFail = function(test){
 			"resourceId": null,
 			"errors": {
 				"userPC": ["notSame"],
-				"email": ["isEmpty"],
-				"trickQuestion": [
-					"isEmpty",
-					"wrongAnswer"
-				],
+				"email": ["isEmpty"]
 			}
-		}, 'json', "stringify"
+		}, 'json', "stringify", undefined, true
 	);	
 };
 
@@ -402,7 +398,7 @@ exports.testFailUpdateCreatedUserPassword = function(test){
 		restClient.put(10, {
 			"userP": "aaaaaa",
 			"userPC": "bbbbbb",
-		}, test, {"resourceId":"10", "errors": {"userPC": ["notSame"]}});	
+		}, test, {"resourceId":"10", "errors": {"userPC": ["notSame"]}}, undefined, undefined, true);	
 	});
 }
 
@@ -422,7 +418,7 @@ exports.testFailToLoginCreatedUserWithOldPassword = function(test){
 	restClient.reset();	
 
 	var loginData = querystring.stringify({
-			"userN": "createduser",
+			"username": "createduser",
 			"userP": "123456789"
 		}),
 			

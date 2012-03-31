@@ -10,7 +10,7 @@ var constants = require('./constants'),
 // It should send a new password by email when the user POSTS data to /lost-password/
 exports.testLostPassword = function(test){
 	var data = querystring.stringify({
-			"userN": "plainuser",
+			"username": "plainuser",
 		}),
 			
 		request = client.request('POST', '/lost-password/', {

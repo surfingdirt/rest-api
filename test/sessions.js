@@ -95,7 +95,7 @@ console.log('initialSessionId', initialSessionId);
 	
 	loginRequest = function(){
 		var loginData = querystring.stringify({
-				"userN": "plainuser",
+				"username": "plainuser",
 				"userP": "123456789"
 			}),
 			
