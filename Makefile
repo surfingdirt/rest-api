@@ -33,7 +33,7 @@ reset-test-fixtures:
 tests:
 	rm -f public/media/*.*
 	rm -f public/media/thumbnails/*.*
-	for name in media ; do \
+	for name in albums ; do \
 		make reset-test-fixtures ; \
 		nodeunit test/$$name.js ; \
 	done
