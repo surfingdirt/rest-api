@@ -33,7 +33,7 @@ reset-test-fixtures:
 tests:
 	rm -f public/media/*.*
 	rm -f public/media/thumbnails/*.*
-	for name in albums ; do \
+	for name in sessions riders media albums comments spots tricks locations countries regions messages checkins notifications ; do \
 		make reset-test-fixtures ; \
 		nodeunit test/$$name.js ; \
 	done

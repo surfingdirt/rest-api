@@ -110,7 +110,11 @@ exports.testPost = {
 			restClient.post(
 				{"itemId": 1, "itemType": "video",},
 				test,
-				{"resourceId": null, "errors": {"content":["isEmpty"]}}
+				{"resourceId": null, "errors": {"content":["isEmpty"]}},
+				undefined,
+				undefined,
+				undefined,
+				true
 			);
 		});		
 	},

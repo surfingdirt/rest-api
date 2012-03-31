@@ -140,7 +140,7 @@ exports.postTrick = {
 		restClient.login("plainuser", "123456789", test, function(sessionId){
 			restClient.post({
 				"title": "invalidPost",
-			}, test, {"resourceId": null, "errors": {"description":["isEmpty"]}}, "stringify");
+			}, test, {"resourceId": null, "errors": {"description":["isEmpty"]}}, "string", "stringify", undefined, true);
 		});		
 	},
 	validAsPlainUserSuccess: function(test) {
@@ -175,7 +175,10 @@ exports.putMedia = {
 			restClient.put(5,
 				{"status": "bla"},
 				test,
-				{"resourceId":"5", "errors": {"status": ["notInArray"]}}
+				{"resourceId":"5", "errors": {"status": ["notInArray"]}},
+				undefined,
+				undefined,
+				true
 			);
 		});			
 	},	

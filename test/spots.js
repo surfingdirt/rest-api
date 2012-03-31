@@ -131,7 +131,7 @@ exports.post = {
 		restClient.login("plainuser", "123456789", test, function(sessionId){
 			restClient.post({
 				"title": "invalidPost",
-			}, test, {"resourceId": null, "errors": {"description":["isEmpty"], "longitude":["isEmpty"], "latitude":["isEmpty"]}}, "stringify");
+			}, test, {"resourceId": null, "errors": {"description":["isEmpty"], "longitude":["isEmpty"], "latitude":["isEmpty"]}}, "string", "stringify", undefined, true);
 		});		
 	},
 	validAsPlainUserSuccess: function(test) {
@@ -166,7 +166,10 @@ exports.put = {
 			restClient.put(6,
 				{"status": "bla"},
 				test,
-				{"resourceId":"6", "errors": {"status": ["notInArray"]}}
+				{"resourceId":"6", "errors": {"status": ["notInArray"]}},
+				undefined,
+				undefined,
+				true
 			);
 		});			
 	},	
