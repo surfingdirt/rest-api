@@ -10,8 +10,21 @@ class CustomController extends Zend_Controller_Action
 		$this->getResponse()->setRawHeader('Content-Type: application/json');
 	}
 
+	/**
+	 * This action updates a user's status to member
+	 * from pending. The only way a user can trigger this
+	 * is by clicking a link in the signup enail they received.
+	 * Deprecated because users are members by default.
+	 * 
+	 * @deprecated
+	 * @throws Api_Exception_BadRequest
+	 * @throws Api_Exception_NotFound
+	 * @throws Api_Exception
+	 */
 	public function riderConfirmationAction()
 	{
+		return;
+		
 		$id = $this->_request->getParam('id');
 		$data = $this->_getPut();
 		if(!isset($data[self::ACTIVATION_KEY_PARAMNAME])){

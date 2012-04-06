@@ -19,6 +19,9 @@ class RidersController extends Api_Controller_Action
 		return $where;
     }
 
+    /**
+     * This method sends the registration confirmation email
+     */
     protected function _postObjectCreation($object, $data)
     {
     	if(APPLICATION_ENV == 'production') {

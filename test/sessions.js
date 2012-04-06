@@ -58,7 +58,6 @@ exports.testSessionStory = function(test){
 				test.ok(!!response.headers['set-cookie'][0], 'Empty cookie header');
 				test.ok(/sId=[0-9a-z]{26,32};/.test(response.headers['set-cookie'][0]), 'Missing session cookie header');
 				initialSessionId = response.headers['set-cookie'][0].match(/sId=([0-9a-z]{26,32});/)[1];
-console.log('initialSessionId', initialSessionId);
 				unauthorisedRequest();
 			});
 		});		
@@ -212,6 +211,60 @@ console.log('initialSessionId', initialSessionId);
 		request.end();
 	};
 	
-	initialRequest();
-	
+	initialRequest();	
 };
+
+
+var verifyLoginErrors = function(postData, expectedErrors, test) {
+	var loginData = querystring.stringify(postData),
+	
+	request = client.request('POST', '/sessions/', {
+		'Host': site.host,
+		'Accept': accept,
+		'Connection': 'keep-alive',
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Content-Length': loginData.length
+	}),
+
+	responseData = '',
+	responseOutput;
+	
+	request.on('response', function (response) {
+		response.setEncoding('utf8');
+		response.on('data', function (chunk) {
+			responseData += chunk;
+		});
+	
+		response.on('end', function(){
+			//console.log('responseData', responseData);
+			test.equal(200, response.statusCode, 'Bad status code');
+			if(200 != response.statusCode){
+				test.done();
+				return;
+			}
+			if(responseData.length > 0){
+				responseOutput = JSON.parse(responseData);
+			}
+			
+			test.equal(responseOutput.errors, expectedErrors, "Actual errors different than expected");
+		});
+	});		
+	request.write(loginData, 'utf8');
+	request.end();
+};
+
+exports.testErrorReporting = {
+	allEmpty: function(test) {
+		var postData = {},
+			expectedErrors = {
+				'username': ['isEmpty'],
+				'email': ['isEmpty'],
+				'userP': ['isEmpty'],
+				'userPC': ['isEmpty']
+			};
+		
+		verifyLoginErrors(postData, expectedErrors, test);
+	}
+
+};
+

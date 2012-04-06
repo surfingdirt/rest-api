@@ -32,19 +32,14 @@ class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstra
 
         switch($type){
             case self::LOST_PASSWORD_EMAIL:
-                $fileName = 'user/email/lostPassword.phtml';
-                $fileNameTxt = 'user/email/lostPasswordTxt.phtml';
+                $fileName = 'riders/email/lostPassword.phtml';
+                $fileNameTxt = 'riders/email/lostPasswordTxt.phtml';
                 $subject = ucfirst(Globals::getTranslate()->_('lostPasswordEmailTitle'));
                 break;
             case self::REGISTRATION_EMAIL:
-                $fileName = 'user/email/creationConfirmation.phtml';
-                $fileNameTxt = 'user/email/creationConfirmationTxt.phtml';
+                $fileName = 'riders/email/creationConfirmation.phtml';
+                $fileNameTxt = 'riders/email/creationConfirmationTxt.phtml';
                 $subject = ucfirst(Globals::getTranslate()->_('subscriptionEmailTitle'));
-                break;
-            case self::CONTACT_EMAIL:
-                $fileName = 'index/email/contact.phtml';
-                $fileNameTxt = 'index/email/contactTxt.phtml';
-                $subject = CONTACT_EMAIL_TITLE;
                 break;
             default:
             	throw new Lib_Exception('Unknown email type - "'.$type.'"');
