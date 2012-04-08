@@ -56,10 +56,6 @@ class Lib_Form_Element_Username extends Lib_Form_Element_Data
             throw new Lib_Exception("Element data cannot be required to both exist and not exist");
         }
 
-        if($name === null){
-            $name = $this->_defaultName;
-        }
-
         parent::__construct($name, $options);
 
         $toLowerFilter = new Zend_Filter_StringToLower();

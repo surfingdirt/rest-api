@@ -21,7 +21,7 @@ restClient.init({
 exports.testSetDate = function(test) {
 	restClient.setDate(test, '2011-08-01 15:55:55');
 };
-
+/*
 // It should return a 404 because user does not exist
 exports.testNotFound = function(test){
 	var request = client.request('GET', '/riders/2500', {
@@ -121,7 +121,7 @@ exports.testPlainuserData = {
 			test.ok(false, e.message);
 			test.done();
 		}
-	},
+	}
 };
 
 // It should retrieve the list of all valid users in the DB
@@ -140,16 +140,7 @@ exports.testAllUsersListAsAdmin = function(test){
 		restClient.list(test, [fixtures.plainuser.admin2, fixtures.banneduser.admin, fixtures.adminuser.admin, fixtures.editoruser.admin2, fixtures.writeruser.admin2, fixtures.otheruser.admin2, fixtures.pendinguser.admin]);
 	});
 };
-/*
-// It should retrieve the list of all users in the DB
-exports.testAllUsersListAsEditor = function(test){
-	restClient.reset();
-	restClient.setProperties(Object.keys(fixtures.plainuser.guest));
-	restClient.login("editoruser", "123456789", test, function(sessionId){
-		restClient.list(test, [fixtures.plainuser.editor, fixtures.banneduser.editor, fixtures.adminuser.editor, fixtures.editoruser.editor, fixtures.writeruser.editor, fixtures.otheruser.editor, fixtures.pendinguser.editor]);
-	});
-};
-*/
+
 // It should return a 403 error
 exports.testBannedUserAsGuest = function(test){
 	var request = client.request('GET', '/riders/3', {
@@ -549,3 +540,95 @@ exports.plainUserIsNotFound = function(test){
 	});		
 	request.end();
 };
+
+*/
+var verifyRegistrationErrors = function(postData, expectedErrors, test) {
+	var loginData = querystring.stringify(postData),
+	
+	request = client.request('POST', '/riders/', {
+		'Host': site.host,
+		'Accept': 'application/json; q=1.0',
+		'Connection': 'keep-alive',
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Content-Length': loginData.length
+	}),
+
+	responseData = '',
+	responseOutput;
+	
+	request.on('response', function (response) {
+		response.setEncoding('utf8');
+		response.on('data', function (chunk) {
+			responseData += chunk;
+		});
+	
+		response.on('end', function(){
+			//console.log('responseData', responseData);
+			test.equal(400, response.statusCode, 'Bad status code');
+			if(400 != response.statusCode){
+				test.done();
+				return;
+			}
+			
+			if(responseData.length > 0){
+				responseOutput = JSON.parse(responseData);
+			}
+			
+			test.deepEqual(responseOutput.errors, expectedErrors, "Actual errors different than expected");
+			test.done();
+		});
+	});		
+	request.write(loginData, 'utf8');
+	request.end();
+};
+
+exports.testErrorReporting = {
+	allEmpty: function(test) {
+		var postData = {
+			 'username': '',
+			 'email': '',
+			 'userP': '',
+			 'userPC': ''
+			},
+			expectedErrors = {
+				'username': ['isEmpty'],
+				'email': ['isEmpty'],
+				'userP': ['isEmpty'],
+				'userPC': ['isEmpty']
+			};
+		
+		verifyRegistrationErrors(postData, expectedErrors, test);
+	},
+
+	userPEmpty: function(test) {
+		var postData = {
+			 'username': 'me',
+			 'email': 'me@example.com',
+			 'userP': '',
+			 'userPC': '123456789'
+			},
+			expectedErrors = {
+				'userP': ['isEmpty'],
+				'userPC': ['notSame']
+			};
+		
+		verifyRegistrationErrors(postData, expectedErrors, test);
+	},
+
+	userPCEmpty: function(test) {
+		var postData = {
+			 'username': 'me',
+			 'email': 'me@example.com',
+			 'userP': '123456789',
+			 'userPC': ''
+			},
+			expectedErrors = {
+				'userPC': ['notSame']
+			};
+		
+		verifyRegistrationErrors(postData, expectedErrors, test);
+	},
+
+};
+
+

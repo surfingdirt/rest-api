@@ -13,6 +13,7 @@ class User_Form_Register extends Lib_Form
 
         $username = new Lib_Form_Element_Username(null, false, false, true);
         $username->setHint('pickYourUserNameHint');
+        $username->setRequired()->addValidator('NotEmpty',true);
 
         //$authMethod = new Lib_Form_Element_AuthMethod();
 
