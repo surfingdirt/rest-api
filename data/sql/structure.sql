@@ -139,7 +139,7 @@ CREATE TABLE  `dpt` (
   `simpleTitle` varchar(128) NOT NULL,
   `code` varchar(8) NOT NULL,
   `country` int(11) NOT NULL,
-  `date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `date` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
   `submitter` int(11) NOT NULL DEFAULT '1',
   `bounds` varchar(128) DEFAULT NULL,
   `lastEditor` int(11) NOT NULL DEFAULT '1',
