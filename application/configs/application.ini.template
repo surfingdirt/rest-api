@@ -211,6 +211,8 @@ constants.LOCATION_DIST_MAX_MILES = 200
 
 constants.DEFAULT_CHECKIN_DURATION = 14400
 
+[development : production]
+
 [test : production]
 
 phpSettings.display_startup_errors = 1
