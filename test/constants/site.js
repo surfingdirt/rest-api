@@ -1,5 +1,6 @@
 module.exports = {
 	port: 80,
-	host: 'test.api.ridedb.dev',
+	host: 'test.api.mountainboardco.dev',
+	baseUrl: '/',
 	cacheDir: './data/cache/test/',
 };
