@@ -29,12 +29,16 @@ class Lib_View_Helper_RenderAdditionalContentItems extends Zend_View_Helper_Abst
 	{
 		$return = '';
 		if(!$user->isLoggedIn()){
+		    $return .= '<div class="card">'.PHP_EOL;
 			$return .= '<p class="homePageLoginTitle">'.ucfirst($this->view->translate('homePageLogin')).'</p>'.PHP_EOL;
 			$return .= $this->view->getHelper('actionLink')->loginRegistrationMarkup($user, false, true, $this->view->url(array(), 'newstuff'), true);
+		    $return .= '</div>'.PHP_EOL;
 		}
 
 		if(isset($additionalContent['nextEvents']) && !empty($additionalContent['nextEvents'])){
-			$return .= $this->_renderNextEvents($additionalContent['nextEvents'], $user);
+		    $return .= '<div class="card">'.PHP_EOL;
+		    $return .= $this->_renderNextEvents($additionalContent['nextEvents'], $user);
+		    $return .= '</div>'.PHP_EOL;
 		}
 
 		if(isset($additionalContent['items']) && !empty($additionalContent['items'])){
@@ -98,7 +102,7 @@ class Lib_View_Helper_RenderAdditionalContentItems extends Zend_View_Helper_Abst
 					$row .= $this->view->itemLink($item);
 					break;
 			}
-			$content .= "<div class=\"additionalContent $dataType\">".PHP_EOL;
+			$content .= "<div class=\"card additionalContent $dataType\">".PHP_EOL;
 			$content .= $row;
 			$content .= '</div>'.PHP_EOL;
     	}

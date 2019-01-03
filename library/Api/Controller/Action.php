@@ -31,7 +31,6 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 		$accept = $this->getRequest()->getHeader('accept');
 		$headers = apache_request_headers();
 		$this->_setupViewPath($accept, $headers);
-
 		$userTable = new Api_User();
 		$userId = isset($_SESSION[User::COLUMN_USERID]) ? $_SESSION[User::COLUMN_USERID] : 0;
 		//$userId = 1;
@@ -68,25 +67,25 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
      */
     public function listAction()
     {
-    	$count = $this->getRequest()->getParam('count', $this->listCount);
+      $count = $this->getRequest()->getParam('count', $this->listCount);
     	$start = $this->getRequest()->getParam('start', $this->listStart);
 
     	$dir = $this->getRequest()->getParam('dir', $this->listDir);
     	$dir = ($dir == 'desc') ? 'DESC':'ASC';
 
     	$sort = $this->getRequest()->getParam('sort', $this->listKey);
-		$sort = in_array($sort, array('userId', 'username')) ? $sort:$this->listKey;
+		  $sort = in_array($sort, array('userId', 'username')) ? $sort : $this->listKey;
 
     	$where = $this->_getWhereClause($this->_user);
 
-		$results = $this->_getAllObjects($where, $sort, $dir, $count, $start);
+      $results = $this->_getAllObjects($where, $sort, $dir, $count, $start);
 
-		$resources = array();
-		foreach($results as $object){
-			$resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName());
-		}
+      $resources = array();
+      foreach($results as $object){
+        $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName());
+      }
 
-		$this->view->resources = $resources;
+      $this->view->resources = $resources;
     }
 
    	//-----------------------------------------------------------------------------------------------------------------

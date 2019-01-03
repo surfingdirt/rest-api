@@ -94,7 +94,7 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
      * @param Zend_Controller_Request_Http $request Request used to match against this routing ruleset
      * @return array An array of assigned values or a false on a mismatch
      */  
-    public function match($request) 
+    public function match($request, $partial = false)
     {  
         $this->_setRequestKeys(); 
  
@@ -201,7 +201,7 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
      * @param bool $encode Weither to return urlencoded string
      * @return string Route path with user submitted parameters
      */  
-    public function assemble($data = array(), $reset = false, $encode = true)  
+    public function assemble($data = array(), $reset = false, $encode = true, $partial = false)
     {  
         if (!$this->_keysSet) {  
             $this->_setRequestKeys();  

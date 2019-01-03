@@ -130,10 +130,10 @@ class Zend_Cache_Core
      */
     public function __construct(array $options = array())
     {
-        while (list($name, $value) = each($options)) {
-            $this->setOption($name, $value);
-        }
-        $this->_loggerSanity();
+      foreach($options as $name => $value) {
+        $this->setOption($name, $value);
+      }
+      $this->_loggerSanity();
     }
 
     /**

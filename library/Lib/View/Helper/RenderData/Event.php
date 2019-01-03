@@ -123,8 +123,7 @@ class Lib_View_Helper_RenderData_Event extends Zend_View_Helper_Abstract
 			 * Different months
 			 * Loop on dates, join day and month individually, use one year
 			 */
-
-			$joined = 'tbd';
+			$joined = implode(' - ', array(Lib_Date::getFormattedDate($dates[0], false), Lib_Date::getFormattedDate($dates[1], false)));
 		}
 
 		return $joined;

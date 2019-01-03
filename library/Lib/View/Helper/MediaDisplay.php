@@ -44,7 +44,6 @@ class Lib_View_Helper_MediaDisplay extends Zend_View_Helper_Abstract
         		 */
         		$src = $media->getURI();
         		$src = $this->view->cdnHelper->url($src);
-		        $content = "<div class=\"media photo\"><h1><img src = \"$src\" width=\"$width\" height=\"$height\" alt=\"$alt\" title=\"$title\" /></h1></div>".PHP_EOL;
 		        break;
 
 		    case Media_Item_Photo::SUBTYPE_FLICKR:
@@ -60,15 +59,14 @@ class Lib_View_Helper_MediaDisplay extends Zend_View_Helper_Abstract
 		    	$src = $this->view->cdnHelper->url($src);
 				$width = $this->_flickrPhoto[FLICKR_PHOTOS_SIZE]->width;
 				$height = $this->_flickrPhoto[FLICKR_PHOTOS_SIZE]->height;
-
-				$content = "<img src = \"$src\" width=\"$width\" height=\"$height\" alt=\"$alt\" title=\"$title\" />".PHP_EOL;
 		        break;
 
 		    default:
 		        throw new Lib_Exception("Unknown photo subtype: '{$media->mediaSubType}'");
 		        break;
 		}
-
+		$content = "<a target=\"_blank\" class=\"media-wrapper photo-wrapper\" href=\"$src\"><img src = \"$src\" alt=\"$alt\" title=\"$title\" /></a>".PHP_EOL;
+		
 		return $content;
 	}
 
@@ -88,12 +86,21 @@ class Lib_View_Helper_MediaDisplay extends Zend_View_Helper_Abstract
 		$title = strip_tags($media->getTitle());
 
 		$id = $media->getCleanTitle().'_'.$media->id;
-		$movie = $media->getURI();
+		$uri = $media->getURI();
 
-		$video = $this->view->SWFObject($id, $movie, $targetWidth, $targetHeight, '<h1>'.$title.'</h1>');
+		switch($media->mediaSubType){
+			case Media_Item_Video::SUBTYPE_YOUTUBE:
+			case Media_Item_Video::SUBTYPE_VIMEO:
+			case Media_Item_Video::SUBTYPE_DAILYMOTION:
+				$video = '<div class="media-wrapper video-wrapper">'.$media->getProviderCode().'</div>';
+				break;
+			default:
+				throw new Lib_Exception_Media("Unsupported mediaSubType '$this->mediaSubType' for video '$this->id'");
+				break;
+		}
 		return $video;
 	}
-
+	
 	public function alternateLink(Media_Item_Row $media)
 	{
 		$return = "";

@@ -3,7 +3,8 @@ class Lib_View_Helper_TinyMce extends Zend_View_Helper_FormTextarea
 {
 	public function TinyMce($id, $value = null, array $params = array(), $attribs = array())
     {
-        $scriptUrl = $this->view->baseUrl . '/'.SCRIPTS_PATH.'tinymce/tiny_mce.js';
+        $scriptUrl = $this->view->asset()->script('tinymce/tinymce.min.js');
+        $baseUrl = $this->view->cdnHelper->jsUrl('/'.SCRIPTS_PATH.'tinymce/');
         $lang = Zend_Registry::get('Zend_Locale');
 
         $fileBrowserUrl = Globals::getRouter()->assemble(array(
@@ -21,22 +22,21 @@ class Lib_View_Helper_TinyMce extends Zend_View_Helper_FormTextarea
         // The label is currently associated to an element that is going to be replaced, let's fix that:
         $newFor = $id.'_ifr';
 
-    	$js = <<<JS
 
+    	$js = <<<JS
+tinyMCE.baseURL = '$baseUrl';
 tinyMCE.init({
 	mode:'textareas',
 	editor_deselector : "mceNoEditor",
 	script_url : '$scriptUrl',
 	language: '$lang',
 	body_class: 'richTextContent',
-	theme : "advanced",
-	theme_advanced_buttons1 : "{$code}cut,copy,paste,pasteword,|,bullist,numlist,|,undo,redo,|,link,unlink,image,cleanup,|,forecolor,backcolor,bold,italic,formatselect,fontselect,fontsizeselect,emotions",
-	theme_advanced_buttons2 : "",
-	theme_advanced_buttons3 : "",
-	theme_advanced_toolbar_location : "top",
-	theme_advanced_toolbar_align : "left",
-	plugins: "emotions",
+	theme : "modern",
+	plugins: "placeholder,emoticons,link,image",
 	content_css: '$css',
+	menubar: false,
+	statusbar: false,
+	toolbar: "cut copy paste | link unlink image | bold italic | bullist | emoticons",
 	file_browser_callback : function myFileBrowser (field_name, url, type, win) {
 		var cmsUrl = '$fileBrowserUrl';
 		cmsUrl = cmsUrl.replace("placeholder", type);

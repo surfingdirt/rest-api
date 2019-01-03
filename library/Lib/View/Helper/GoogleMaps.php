@@ -20,6 +20,7 @@ class Lib_View_Helper_GoogleMaps extends Zend_View_Helper_Abstract
     	foreach($neededOptions as $key){
     		$options[$key] = $params[$key];
     	}
+    	$options = array_merge($options, $this->_getMarkerIconUrls());
     	$optionsJson = Zend_Json_Encoder::encode($options);
 
     	$this->_addJs();
@@ -27,6 +28,25 @@ class Lib_View_Helper_GoogleMaps extends Zend_View_Helper_Abstract
     	//$this->view->JQuery()->addJavascriptFile($this->view->asset()->script('jquery.tablesorter.pager.js'));
     	$js = "	Lib.Maps.displayRegion.init($optionsJson, Lib.Maps.displayRegion.loadMarkers);".PHP_EOL;
     	$this->view->getHelper('jQuery')->addOnLoad($js);
+    }
+    
+    protected function _getMarkerIconUrls()
+    {
+    	$icons = array(
+			'album' =>'markerAlbum.png',
+			'news' => 'markerNews.png',
+			'photo' => 'markerPhoto.png',
+			'spot' => 'markerSpot.png',
+			'user' => 'markerUser.png',
+			'video' => 'markerVideo.png',
+			'shadow' => 'marker-shadow.png'
+    	);
+    	$urls = array();
+    	foreach($icons as $type => $url) {
+    		// appeler le versioning et cdn
+    		$urls[$type] = $this->view->asset()->image($url);
+    	}
+    	return array('icons' => $urls);
     }
 
     /**
@@ -92,7 +112,8 @@ class Lib_View_Helper_GoogleMaps extends Zend_View_Helper_Abstract
 
     protected function _addJs()
     {
-    	$this->view->JQuery()->addJavascriptFile(GOOGLEMAPS_URL_NEW);
+        $mapsUrl = GOOGLEMAPS_URL_NEW . '?key=' . GOOGLE_APIS_KEY;
+    	$this->view->JQuery()->addJavascriptFile($mapsUrl);
     	$this->view->JQuery()->addJavascriptFile($this->view->asset()->script('libMaps.js'));
     	$this->view->JQuery()->addJavascriptFile($this->view->asset()->script('jquery.tablesorter.js'));
     }

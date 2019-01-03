@@ -4,18 +4,13 @@ class Lib_View_Helper_MediaThumbnail extends Zend_View_Helper_Abstract
 	protected $_showText = false;
 	protected $_showCommentsLink = false;
 
-	public function mediaThumbnail($rawMedia, $showText = false, $showCommentsLink = false)
+	public function mediaThumbnail($rawMedia, $showText = false, 
+		$showCommentsLink = false, $renderAsBackground = false)
 	{
 		$this->_showText = $showText;
 		$this->_showCommentsLink = $showCommentsLink;
-
-		if($rawMedia instanceof Media_Item_Row){
-			$media = $rawMedia;
-		} elseif(isset($rawMedia['id']) || isset($rawMedia['mediaType'])) {
-			$media = Media_Item_Factory::buildItem($rawMedia['id'], $rawMedia['mediaType']);
-		} else {
-			throw new Lib_Exception('No id or type defined for media thumbnail display');
-		}
+		$this->_renderAsBackground = $renderAsBackground;
+		$media = $this->_getMediaMaybeFromRawObject($rawMedia);
 
 		$type = $media->getMediaType();
 		switch($type){
@@ -29,32 +24,42 @@ class Lib_View_Helper_MediaThumbnail extends Zend_View_Helper_Abstract
 				throw new Lib_Exception("Unknow media type: '$type'");
 				break;
 		}
-
+		$title = ucfirst(strip_tags($media->getTitle()));
+		if ($this->view->user) {
+			$commentsCount = $this->_getMediaCommentsCount($media);
+		} else {
+			$commentsCount = '';
+		}
+		if ($this->_renderAsBackground) {
+    		$content .= $this->_renderOverlay($title, $media->getMediaType(),
+    			$commentsCount);
+		}
 		return $content;
 	}
+	
+	protected function _backgroundUrl($rawMedia)
+	{
+		return 'someUrl';
+	}
 
+	protected function _getMediaMaybeFromRawObject($rawMedia)
+	{
+		if($rawMedia instanceof Media_Item_Row){
+			$media = $rawMedia;
+		} elseif(isset($rawMedia['id']) || isset($rawMedia['mediaType'])) {
+			$media = Media_Item_Factory::buildItem($rawMedia['id'], $rawMedia['mediaType']);
+		} else {
+			throw new Lib_Exception('No id or type defined for media thumbnail display');
+		}
+		return $media;
+	}
+	
 	protected function _photoThumbnail(Media_Item_Photo_Row $media)
 	{
-		$src = '/'.$this->view->baseUrl . $media->getThumbnailURI(false);
 		$width = $media->getThumbnailWidth();
 		$height = $media->getThumbnailHeight();
 		$description = $this->view->escape(strip_tags($media->getDescription()));
 		$title = ucfirst(strip_tags($media->getTitle()));
-
-		/*
-		$views = $media->getViews();
-		$viewsText = '';
-		if($views == 1){
-			$viewsText = '('.$this->view->translate('shownOnce').')';
-		} elseif($views > 1){
-			$viewsText = '('.sprintf($this->view->translate('shownNTimes'), $views).')';
-		}*/
-		$viewsText = '';
-
-		/**
-         * @todo: ne mettre que les attributs que l'on connait
-    	 * echapper les " dans les title et alt
-         */
 
 		switch($media->thumbnailSubType){
 		    case Media_Item_Photo::SUBTYPE_JPG:
@@ -77,43 +82,57 @@ class Lib_View_Helper_MediaThumbnail extends Zend_View_Helper_Abstract
 		        break;
 		}
 
-		$alt = '';
-		$src = $this->view->cdnHelper->url($src);
-		$img = "<img class=\"media photo\" src = \"$src\" width=\"$width\" height=\"$height\" alt=\"$alt\" title=\"$title $viewsText\" />";
+		$size = $this->_renderAsBackground ? Media_Item_Row::SIZE_MEDIUM : null;
+		$src = $this->view->baseUrl .'/'. $media->getThumbnailURI(false, $size);
+		$content = $this->_renderThumbnail('photo', $src, $media, $title, $width, $height);
+		return $content;
+	}
+	
+	protected function _renderThumbnail($class, $src, $media, $title, $width,
+		$height)
+	{
+		$src = $this->view->cdnHelper->imgUrl($src);
 		$link = $media->getLink();
-		$content  = $this->_mediaLink($link, $img);
-
-		if($this->_showText){
-			$content .= "<a class=\"mediaThumbnailTitle dataLink photo\" href=\"$link\">$title</a>".PHP_EOL;
-		}
-
-		if($this->_showCommentsLink){
-			$content .= $this->_mediaComments($media);
+		if ($this->_renderAsBackground) {
+			$content = "<a class=\"mediaLinkThumbnail\" href=\"$link\" style=\"background-image: url($src)\" aria-label=\"$title\"></a>".PHP_EOL;
+		} else {
+			$alt = '';
+			$img = "<img class=\"media photo\" src = \"$src\" width=\"$width\" height=\"$height\" alt=\"$alt\" title=\"$title\" />";
+			$content  = $this->_mediaLink($link, $img);
+		
+			if($this->_showText){
+				$content .= "<a class=\"mediaThumbnailTitle dataLink $class\" href=\"$link\">$title</a>".PHP_EOL;
+			}
 		}
 		return $content;
 	}
 
+	protected function _renderOverlay($title, $type, $commentsCount)
+	{
+		$ret = "<div class=\"mediaOverlay\">".PHP_EOL;
+		$ret .= "	<a class=\"mediaOverlayIcon dataLink $type\"></a>".PHP_EOL;
+		$ret .= "	<span class=\"mediaOverlayTitle\">$title</span>".PHP_EOL;
+		if ($commentsCount && $commentsCount > 0) {
+			$ret .= "	<span class=\"dataLink mediaOverlayComments\">$commentsCount</span>".PHP_EOL;
+		}
+		$ret .= "</div>".PHP_EOL;
+		return $ret;
+	}
+	
 	protected function _videoThumbnail(Media_Item_Video_Row $media)
 	{
-		$src = $media->getThumbnailURI(false);
 		$width = $media->getThumbnailWidth();
 		$height = $media->getThumbnailHeight();
 		$description = $this->view->escape($media->getDescription());
 		$title = ucfirst($media->getTitle());
 
-		/*
-		$views = $media->getViews();
 		$viewsText = '';
-		if($views == 1){
-			$viewsText = '('.$this->view->translate('shownOnce').')';
-		} elseif($views > 1){
-			$viewsText = '('.sprintf($this->view->translate('shownNTimes'), $views).')';
-		}*/
-		$viewsText = '';
-
+		$size = $this->_renderAsBackground ? Media_Item_Row::SIZE_MEDIUM : null;
+		
 		switch($media->thumbnailSubType){
 		    case Media_Item_Photo::SUBTYPE_JPG:
-		    	$src = '/'.$media->thumbnailUri;
+				$src = $this->view->baseUrl .'/'. $media->getThumbnailURI(
+					false, $size);
 		        break;
 
 		    case Media_Item_Photo::SUBTYPE_VIMEO_THUMBNAIL:
@@ -129,27 +148,18 @@ class Lib_View_Helper_MediaThumbnail extends Zend_View_Helper_Abstract
 		        break;
 
 			case NULL:
+				$src = $media->getThumbnailURI(false);
 		    	break;
 
 		    default:
-		        throw new Lib_Exception("Unknown media thumbnail subtype: '{$media->thumbnailSubType}'");
+		        throw new Lib_Exception(
+		        	"Unknown media thumbnail subtype: '".
+		        	"{$media->thumbnailSubType}'"
+		        );
 		        break;
 		}
-
-		$alt = "";
-		$src = $this->view->cdnHelper->url($src);
-		$img = "<img src = \"$src\" width=\"$width\" height=\"$height\" alt=\"$alt\" title=\"$title $viewsText\" class=\"media video\"/>";
-		$link = $media->getLink();
-		$content = $this->_mediaLink($link, $img);
-
-		if($this->_showText){
-			$content .= "<a class=\"mediaThumbnailTitle dataLink video\" href=\"$link\">$title</a>".PHP_EOL;
-		}
-
-		if($this->_showCommentsLink){
-			$content .= $this->_mediaComments($media);
-		}
-
+		$content = $this->_renderThumbnail('video', $src, $media, $title,
+			$width, $height);
 		return $content;
 	}
 
@@ -159,17 +169,9 @@ class Lib_View_Helper_MediaThumbnail extends Zend_View_Helper_Abstract
 		return $content;
 	}
 
-	protected function _mediaComments(Media_Item_Row $media)
+	protected function _getMediaCommentsCount(Media_Item_Row $media)
 	{
-		$content = '';
 		$comments = $media->getComments($this->view->user, $this->view->acl);
-		if($nbComments = count($comments)){
-			$firstComment = $comments->rewind()->current();
-			$commentLink = $firstComment->getLink();
-			$nbCommentsString = $nbComments . ' '.$this->view->translate($nbComments > 1 ? 'itemPlur_'.Constants_DataTypes::COMMENT : 'itemSing_'.Constants_DataTypes::COMMENT);
-			$content = '<a class="mediaThumbnailComments" href="'.$commentLink.'">'.$nbCommentsString.' </a>'.PHP_EOL;
-		}
-		return $content;
-
+		return count($comments);
 	}
 }

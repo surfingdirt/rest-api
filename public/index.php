@@ -1,6 +1,5 @@
 <?php
 $t1 = microtime(true);
-
 define('BASE_PATH', realpath(dirname(__FILE__) . '/../'));
 define('APPLICATION_PATH', BASE_PATH . '/application');
 

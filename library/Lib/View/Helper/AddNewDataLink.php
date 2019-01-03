@@ -1,7 +1,7 @@
 <?php
 class Lib_View_Helper_AddNewDataLink extends Zend_View_Helper_Abstract
 {
-    public function addNewDataLink($dataType, $parentId = null)
+    public function addNewDataLink($dataType, $parentId = null, $renderAsHeaderAction = false)
     {
         $logger = Globals::getLogger();
 
@@ -32,20 +32,17 @@ class Lib_View_Helper_AddNewDataLink extends Zend_View_Helper_Abstract
         		$destinationUrl = $topic->getLastPost()->getLink();
 				$prependClass = ' forum_post';
         		break;
-        	case 'Spot':
-        		$prependClass = ' spot';
         	default:
 				$destinationUrl = $data->getCreateLink();
         		break;
         }
-
+        
         if($user->isLoggedIn() && !$data->isCreatableBy($user, $this->view->acl)){
 			return '';
 		}
 
 		$prepend = "<div id=\"register\" class=\"actionLinkContainer$prependClass\">";
 		$append = "</div>".PHP_EOL;
-
 
 		$return = $this->view->actionLink(
 			$prepend,
@@ -55,7 +52,9 @@ class Lib_View_Helper_AddNewDataLink extends Zend_View_Helper_Abstract
 				'url' => $destinationUrl,
 				'title' => $title,
 			),
-			$class
+			$class,
+		    null,
+		    $renderAsHeaderAction    
 		);
 		return $return;
     }

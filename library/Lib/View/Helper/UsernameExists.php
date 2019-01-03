@@ -69,7 +69,7 @@ class Lib_View_Helper_UsernameExists extends Zend_View_Helper_FormText
         //if(typeof($.checkUsername.cache[toBeChecked]) === "undefined"){
 
         if(!$.checkUsername.wasChecked(toBeChecked)){
-            $.get("%s", {username: toBeChecked}, function(data, status){
+            $.get("%s", {userN: toBeChecked}, function(data, status){
                     $.checkUsername.updateCache(data, status);
                     $.checkUsername.updateDisplay();},
                 'json');
