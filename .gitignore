@@ -8,3 +8,6 @@ data/cache/*
 public/media/*.jpg
 public/media/thumbnails/*.jpg
 todo.txt
+package-lock.json
+_tmp
+logs
