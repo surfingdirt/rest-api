@@ -22,7 +22,7 @@ installtestdb:
 full-backup: files-backup sql-backup
 
 files-backup:
-	tar czvf ./data/backups/files.tgz application bin library models public test tools Makefile
+	tar czvf ./data/backups/files.tgz application bin library models public _oldtests tools Makefile
 
 sql-backup:
 	mysqldump --user=ridedb -p --database ridedb_prod > ./data/backups/ridedb_dump.sql
@@ -35,5 +35,5 @@ tests:
 	rm -f public/media/thumbnails/*.*
 	for name in sessions #riders media albums comments spots tricks locations countries regions messages checkins notifications ; do \
 		make reset-test-fixtures ; \
-		nodeunit test/$$name.js ; \
+		nodeunit _oldtests/$$name.js ; \
 	done
