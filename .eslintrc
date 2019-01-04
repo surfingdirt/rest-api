@@ -1,0 +1,26 @@
+{
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "extends": ["airbnb", "prettier", "plugin:react/recommended"],
+  "parser": "babel-eslint",
+  "plugins": ["prettier", "react"],
+  "rules": {
+    "prettier/prettier": ["error"]
+  },
+  "settings": {
+    "react": {
+      "version": "16.4.2"
+    }
+  },
+  "globals": {
+    "expect": true,
+    "it": true,
+    "describe": true,
+    "shallow": true,
+    "render": true,
+    "mount": true,
+    "sinon": true
+  }
+}
