@@ -36,6 +36,7 @@ constants.MAINTENANCE = false
 constants.DEBUG = false
 constants.PROFILE = false
 constants.CHAT_ENABLED = false;
+constants.JWT_SECRET = 'something';
 
 ; Database
 constants.GLOBAL_DB_HOST = 'localhost'
