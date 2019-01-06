@@ -1,0 +1,6 @@
+<?php
+if(isset($this->errorId)) {
+	echo $this->json(array('errorId' => $this->errorId));
+} else {
+	echo $this->json(array('sessionId' => $this->sessionId, 'rider' => $this->rider));
+}

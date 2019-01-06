@@ -18,7 +18,7 @@ Copy application/configs/application.ini.template to application/configs/applica
  - change constants.AUTHCHECK to a secret password. This is used for triggering cache clearing remotely.
  - update the email and contact section
  - update the domain name constants to match your desired domain name
- Edit test/constants/site.js to match the testing domain you chose
+ Edit test/constants/constants.js to match the testing domain you chose
  Apache must serve the following header (see httpd.conf.template):
  	Access-Control-Allow-Origin: *
  

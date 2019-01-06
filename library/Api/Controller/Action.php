@@ -1,340 +1,356 @@
 <?php
+use Lcobucci\JWT\Builder;
+
+
 abstract class Api_Controller_Action extends Zend_Controller_Action
 {
-    /**
-     * Name of the resource
-     * @var string
+  /**
+   * Name of the resource
+   * @var string
+   */
+  protected $_resourceName = null;
+
+  /**
+   * @var Api_Data_Accessor
+   */
+  protected $_accessor = null;
+
+  public $listStart = 0;
+
+  public $listCount = 12;
+
+  public $listDir = 'ASC';
+
+  /**
+   * The default sorting key
+   * @var string
+   */
+  public $listKey = 'id';
+
+  public function init()
+  {
+    parent::init();
+
+    $this->_setupViewPath();
+
+    $userTable = new Api_User();
+
+    /*
+     * TODO: get JWT from authorization header
+     * TODO: pull out user id, expiration date from JWT
      */
-	protected $_resourceName = null;
 
-	/**
-	 * @var Api_Data_Accessor
-	 */
-	protected $_accessor = null;
 
-	public $listStart = 0;
 
-	public $listCount = 12;
 
-	public $listDir = 'ASC';
+    $userId = isset($_SESSION[User::COLUMN_USERID]) ? $_SESSION[User::COLUMN_USERID] : 0;
+    $results = $userTable->find($userId);
+    if ($results && $user = $results->current()) {
+      Globals::setUser($user);
+    } else {
+      throw new Exception("Could not find user '$userId'");
+    }
+    $_SESSION[User::COLUMN_USERID] = $user->{User::COLUMN_USERID};
+    $this->_user = $user;
 
-	/**
-	 * The default sorting key
-	 * @var string
-	 */
-	public $listKey = 'id';
+    Zend_Registry::set('Zend_Translate', Globals::getTranslate());
 
-	public function init()
-	{
-		parent::init();
+    $this->_acl = Globals::getAcl();
+    list($this->_table, $this->_accessor) = $this->_mapResource($this->_request->getControllerName());
+  }
 
-		$accept = $this->getRequest()->getHeader('accept');
-		$headers = apache_request_headers();
-		$this->_setupViewPath($accept, $headers);
-		$userTable = new Api_User();
-		$userId = isset($_SESSION[User::COLUMN_USERID]) ? $_SESSION[User::COLUMN_USERID] : 0;
-		//$userId = 1;
-       	$results = $userTable->find($userId);
-	    if($results && $user = $results->current()){
-       		Globals::setUser($user);
-		} else {
-			throw new Exception("Could not find user '$userId'");
-		}
+  protected function _setupViewPath()
+  {
+    $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
+    $viewRenderer->setViewScriptPathSpec(':action.json');
+    $this->getResponse()->setRawHeader('Content-Type: application/json; charset=UTF-8');
+  }
 
-		$this->_user = $user;
-		
-		Zend_Registry::set('Zend_Translate', Globals::getTranslate());
-		
-		$this->_acl = Globals::getAcl();
-		list($this->_table, $this->_accessor) = $this->_mapResource($this->_request->getControllerName());
+  //-----------------------------------------------------------------------------------------------------------------
+  // LIST
+  //-----------------------------------------------------------------------------------------------------------------
+  /**
+   * The index action handles index/list requests; it should respond with a
+   * list of the requested resources.
+   */
+  public function listAction()
+  {
+    $count = $this->getRequest()->getParam('count', $this->listCount);
+    $start = $this->getRequest()->getParam('start', $this->listStart);
 
-		$_SESSION[User::COLUMN_USERID] = $user->{User::COLUMN_USERID};
-	}
-	
-	protected function _setupViewPath($accept, $headers)
-	{
-		$viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-		$viewRenderer->setViewScriptPathSpec(':action.json');
-		$this->getResponse()->setRawHeader('Content-Type: application/json; charset=UTF-8');
-	} 
+    $dir = $this->getRequest()->getParam('dir', $this->listDir);
+    $dir = ($dir == 'desc') ? 'DESC' : 'ASC';
 
-	//-----------------------------------------------------------------------------------------------------------------
-    // LIST
-	//-----------------------------------------------------------------------------------------------------------------
-    /**
-     * The index action handles index/list requests; it should respond with a
-     * list of the requested resources.
-     */
-    public function listAction()
-    {
-      $count = $this->getRequest()->getParam('count', $this->listCount);
-    	$start = $this->getRequest()->getParam('start', $this->listStart);
+    $sort = $this->getRequest()->getParam('sort', $this->listKey);
+    $sort = in_array($sort, array('userId', 'username')) ? $sort : $this->listKey;
 
-    	$dir = $this->getRequest()->getParam('dir', $this->listDir);
-    	$dir = ($dir == 'desc') ? 'DESC':'ASC';
+    $where = $this->_getWhereClause($this->_user);
 
-    	$sort = $this->getRequest()->getParam('sort', $this->listKey);
-		  $sort = in_array($sort, array('userId', 'username')) ? $sort : $this->listKey;
+    $results = $this->_getAllObjects($where, $sort, $dir, $count, $start);
 
-    	$where = $this->_getWhereClause($this->_user);
-
-      $results = $this->_getAllObjects($where, $sort, $dir, $count, $start);
-
-      $resources = array();
-      foreach($results as $object){
-        $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName());
-      }
-
-      $this->view->resources = $resources;
+    $resources = array();
+    foreach ($results as $object) {
+      $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName());
     }
 
-   	//-----------------------------------------------------------------------------------------------------------------
-    // GET
-	//-----------------------------------------------------------------------------------------------------------------
-    /**
-     * The get action handles GET requests and receives an 'id' parameter; it
-     * should respond with the server resource state of the resource identified
-     * by the 'id' value.
-     */
-    public function getAction()
-    {
-    	$id = $this->_request->getParam('id');
-    	$result = $this->_table->find($id);
-    	if(empty($result) || !$object = $result->current()){
-			throw new Api_Exception_NotFound();
-    	}
+    $this->view->resources = $resources;
+  }
 
-   		$this->view->resource = $this->_accessor->getObjectData($object, $this->_request->getActionName(), $this->_request->getParams());
+  //-----------------------------------------------------------------------------------------------------------------
+  // GET
+  //-----------------------------------------------------------------------------------------------------------------
+  /**
+   * The get action handles GET requests and receives an 'id' parameter; it
+   * should respond with the server resource state of the resource identified
+   * by the 'id' value.
+   */
+  public function getAction()
+  {
+    $id = $this->_request->getParam('id');
+    $result = $this->_table->find($id);
+    if (empty($result) || !$object = $result->current()) {
+      throw new Api_Exception_NotFound();
     }
 
-	//-----------------------------------------------------------------------------------------------------------------
-    // POST
-	//-----------------------------------------------------------------------------------------------------------------
-	/**
-     * The post action handles POST requests; it should accept and digest a
-     * POSTed resource representation and persist the resource state.
-     */
-    public function postAction()
-    {
-    	$object = $this->_table->fetchNew();
-    	if(!$object->isCreatableBy($this->_user, $this->_acl)){
-    		throw new Api_Exception_Unauthorised();
-    	}
+    $this->view->resource = $this->_accessor->getObjectData(
+      $object,
+      $this->_request->getActionName(),
+      $this->_request->getParams()
+    );
+  }
 
-    	$data = $this->_request->getPost();
-
-    	$this->view->resourceId = null;
-    	$this->view->errors = array();
-
-   		$this->_preObjectCreation($object, $data);
-   		list($id, $object, $this->view->errors) = $this->_accessor->createObjectWithData($object, $data);
-   		if($id){
-   			$this->_postObjectCreation($object, $data);
-   		}
-   		if($this->view->errors) {
-   			$this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
-   		}
-
-    	$this->view->resourceId = $object->getId();
+  //-----------------------------------------------------------------------------------------------------------------
+  // POST
+  //-----------------------------------------------------------------------------------------------------------------
+  /**
+   * The post action handles POST requests; it should accept and digest a
+   * POSTed resource representation and persist the resource state.
+   */
+  public function postAction()
+  {
+    $object = $this->_table->fetchNew();
+    if (!$object->isCreatableBy($this->_user, $this->_acl)) {
+      throw new Api_Exception_Unauthorised();
     }
 
-    protected function _preObjectCreation($object, $data)
-    {
-    	// Do nothing by default
+    $data = $this->_request->getPost();
+
+    $this->view->resourceId = null;
+    $this->view->errors = array();
+
+    $this->_preObjectCreation($object, $data);
+    list($id, $object, $this->view->errors) = $this->_accessor->createObjectWithData($object, $data);
+    if ($id) {
+      $this->_postObjectCreation($object, $data);
+    }
+    if ($this->view->errors) {
+      $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
     }
 
-    protected function _cleanUpAfterCreationFailure($object, $data)
-    {
+    $this->view->resourceId = $object->getId();
+  }
+
+  protected function _preObjectCreation($object, $data)
+  {
+    // Do nothing by default
+  }
+
+  protected function _cleanUpAfterCreationFailure($object, $data)
+  {
+  }
+
+  protected function _postObjectCreation($object, $data)
+  {
+    // Do nothing by default
+  }
+
+  //-----------------------------------------------------------------------------------------------------------------
+  // PUT
+  //-----------------------------------------------------------------------------------------------------------------
+  /**
+   * The put action handles PUT requests and receives an 'id' parameter; it
+   * should update the server resource state of the resource identified by
+   * the 'id' value.
+   */
+  public function putAction()
+  {
+    $id = $this->_request->getParam('id');
+    $data = $this->_getPut();
+
+    $result = $this->_table->find($id);
+    if (empty($result) || !$object = $result->current()) {
+      throw new Api_Exception_NotFound();
+    }
+    if (!$object->isEditableBy($this->_user, $this->_acl)) {
+      throw new Api_Exception_Unauthorised();
     }
 
-    protected function _postObjectCreation($object, $data)
-    {
-    	// Do nothing by default
+    $this->_preObjectUpdate($object, $data);
+    $errors = $this->_accessor->updateObjectWithData($object, $data);
+    if (empty($errors)) {
+      $this->_postObjectUpdate($object, $data);
+    } else {
+      $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
     }
 
-	//-----------------------------------------------------------------------------------------------------------------
-    // PUT
-	//-----------------------------------------------------------------------------------------------------------------
-    /**
-     * The put action handles PUT requests and receives an 'id' parameter; it
-     * should update the server resource state of the resource identified by
-     * the 'id' value.
-     */
-    public function putAction()
-    {
-    	$id = $this->_request->getParam('id');
-		$data = $this->_getPut();
+    $this->view->errors = $errors;
+    $this->view->resourceId = $id;
+  }
 
-    	$result = $this->_table->find($id);
-        if(empty($result) || !$object = $result->current()){
-			throw new Api_Exception_NotFound();
-    	}
-    	if(!$object->isEditableBy($this->_user, $this->_acl)){
-    		throw new Api_Exception_Unauthorised();
-    	}
+  protected function _getPut()
+  {
+    $data = $this->_request->getParams();
+    unset($data['module']);
+    unset($data['controller']);
+    unset($data['action']);
+    unset($data['id']);
 
-   		$this->_preObjectUpdate($object, $data);
-   		$errors = $this->_accessor->updateObjectWithData($object, $data);
-		if(empty($errors)) {
-			$this->_postObjectUpdate($object, $data);
-		} else {
-   			$this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
-   		}
-		
-		$this->view->errors = $errors;
-    	$this->view->resourceId = $id;
+    //error_log('PUT '.var_export($data, TRUE));
+
+    return $data;
+  }
+
+  protected function _preObjectUpdate($object, $data)
+  {
+  }
+
+  protected function _postObjectUpdate($object, $data)
+  {
+  }
+
+  //-----------------------------------------------------------------------------------------------------------------
+  // DELETE
+  //-----------------------------------------------------------------------------------------------------------------
+  /**
+   * The delete action handles DELETE requests and receives an 'id'
+   * parameter; it should update the server resource state of the resource
+   * identified by the 'id' value.
+   */
+  public function deleteAction()
+  {
+    $id = $this->_request->getParam('id');
+
+    $result = $this->_table->find($id);
+    if (empty($result) || !$object = $result->current()) {
+      throw new Api_Exception_NotFound();
+    }
+    if (!$object->isDeletableBy($this->_user, $this->_acl)) {
+      throw new Api_Exception_Unauthorised();
     }
 
-    protected function _getPut()
-    {
-    	$data = $this->_request->getParams();
-		unset($data['module']);
-		unset($data['controller']);
-		unset($data['action']);
-		unset($data['id']);
+    $this->_preObjectDelete($object);
+    if ($status = $this->_accessor->deleteObject($object)) {
+      $this->_postObjectDelete($object);
+    }
+    $this->view->status = $status;
+    $this->view->resourceId = $id;
+  }
 
-		//error_log('PUT '.var_export($data, TRUE));
+  protected function _preObjectDelete($object)
+  {
+    $object->clearCache();
+  }
 
-		return $data;
+  protected function _postObjectDelete($object)
+  {
+
+  }
+
+  //-----------------------------------------------------------------------------------------------------------------
+  // OPTIONS
+  //-----------------------------------------------------------------------------------------------------------------
+  public function optionsAction()
+  {
+    $this->getResponse()->setHeader(
+      'Access-Control-Allow-Methods',
+      'OPTIONS, INDEX, GET, POST, PUT, DELETE'
+    );
+  }
+
+  //-----------------------------------------------------------------------------------------------------------------
+  // MISC FUNCTIONS
+  //-----------------------------------------------------------------------------------------------------------------
+  /**
+   * Returns the name of the table that corresponds to the resource in the url
+   * @param string $key
+   * @return array
+   * @throws Exception
+   */
+  protected function _mapResource($key)
+  {
+    $resources = array(
+      'albums' => 'Album',
+      'riders-albums' => 'Album',
+      'mediaalbum' => 'Album',
+
+      'checkins' => 'Checkin',
+
+      'comments' => 'Comment',
+
+      'countries' => 'Country',
+
+      'regions' => 'Dpt',
+
+      'notifications' => 'Item',
+      'locations' => 'Item',
+
+      'media' => 'Media',
+      'photo' => 'Media',
+      'video' => 'Media',
+
+      'messages' => 'PrivateMessage',
+      'privatemessage' => 'PrivateMessage',
+
+      'spots' => 'Spot',
+      'spot' => 'Spot',
+
+      'tricks' => 'Trick',
+      'trick' => 'Trick',
+
+      'riders' => 'User',
+      'user' => 'User',
+    );
+
+    if (!isset($resources[$key])) {
+      throw new Exception('Unknown resource');
     }
 
-    protected function _preObjectUpdate($object, $data)
-    {
+    $resourceName = 'Api_' . $resources[$key];
+    $accessorName = $resourceName . '_Accessor';
+
+    $table = new $resourceName();
+    $accessor = new $accessorName($this->_user, $this->_acl);
+
+    return array($table, $accessor);
+  }
+
+  /**
+   * Builds an array of object matching the criteria
+   * @param conditions $where
+   * @param sort criteria $sort
+   * @param sort direction $dir
+   * @param number of objects to return $count
+   * @param index of the first object to return $start
+   */
+  protected function _getAllObjects($where, $sort = null, $dir = null, $count = null, $start = null)
+  {
+    if (!$sort && !$dir) {
+      $order = null;
+    } else {
+      $order = $sort . ' ' . $dir;
+    }
+    $results = $this->_table->fetchAll($where, $order, $count, $start);
+    return $results;
+  }
+
+  protected function _getWhereClause(User_Row $user)
+  {
+    if (in_array($user->status, array(User::STATUS_EDITOR, User::STATUS_ADMIN))) {
+      $return = '1';
+    } else {
+      $return = $this->_table->getAdapter()->quoteInto('status = ?', Data::VALID);
     }
 
-    protected function _postObjectUpdate($object, $data)
-    {
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------
-    // DELETE
-	//-----------------------------------------------------------------------------------------------------------------
-    /**
-     * The delete action handles DELETE requests and receives an 'id'
-     * parameter; it should update the server resource state of the resource
-     * identified by the 'id' value.
-     */
-    public function deleteAction()
-    {
-    	$id = $this->_request->getParam('id');
-
-    	$result = $this->_table->find($id);
-        if(empty($result) || !$object = $result->current()){
-			throw new Api_Exception_NotFound();
-    	}
-    	if(!$object->isDeletableBy($this->_user, $this->_acl)){
-    		throw new Api_Exception_Unauthorised();
-    	}
-
-   		$this->_preObjectDelete($object);
-		if($status = $this->_accessor->deleteObject($object)) {
-			$this->_postObjectDelete($object);
-		}
-		$this->view->status = $status;
-    	$this->view->resourceId = $id;
-    }
-
-    protected function _preObjectDelete($object)
-    {
-    	$object->clearCache();
-    }
-
-    protected function _postObjectDelete($object)
-    {
-    	
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------
-    // OPTIONS
-	//-----------------------------------------------------------------------------------------------------------------
-    public function optionsAction()
-	{
-		$this->getResponse()->setHeader('Access-Control-Allow-Methods', 'OPTIONS, INDEX, GET, POST, PUT, DELETE');
-	}
-    
-    //-----------------------------------------------------------------------------------------------------------------
-    // MISC FUNCTIONS
-	//-----------------------------------------------------------------------------------------------------------------
-	/**
-	 * Returns the name of the table that corresponds to the resource in the url
-	 * @param string $controllerName
-	 */
-	protected function _mapResource($key)
-	{
-		$resources = array(
-			'albums' => 'Album',
-			'riders-albums' => 'Album',
-			'mediaalbum' => 'Album',
-		
-			'checkins' => 'Checkin',
-			
-			'comments' => 'Comment',
-		
-			'countries' => 'Country',
-		
-			'regions' => 'Dpt',
-		
-			'notifications' => 'Item',
-			'locations' => 'Item',
-
-			'media' => 'Media',
-			'photo' => 'Media',
-			'video' => 'Media',
-		
-			'messages' => 'PrivateMessage',
-			'privatemessage' => 'PrivateMessage', 
-			
-			'spots' => 'Spot',
-			'spot' => 'Spot',
-		
-			'tricks' => 'Trick',
-			'trick' => 'Trick',
-			
-			'riders' => 'User',
-			'user' => 'User',
-		);
-
-		if(!isset($resources[$key])){
-			throw new Exception('Unknown resource');
-		}
-
-		$resourceName = 'Api_'.$resources[$key];
-		$accessorName = $resourceName.'_Accessor';
-
-		$table = new $resourceName();
-		$accessor = new $accessorName($this->_user, $this->_acl);
-
-		return array($table, $accessor);
-	}
-
-	/**
-	 * 
-	 * Builds an array of object matching the criteria
-	 * @param conditions $where
-	 * @param sort criteria $sort
-	 * @param sort direction $dir
-	 * @param number of objects to return $count
-	 * @param index of the first object to return $start
-	 */
-	protected function _getAllObjects($where, $sort = null, $dir = null, $count = null, $start = null)
-	{
-		if(!$sort && !$dir) {
-			$order = null;
-		} else {
-			$order = $sort.' '.$dir;
-		}
-		$results = $this->_table->fetchAll($where, $order, $count, $start);
-		return $results;
-	}
-	
-    protected function _getWhereClause(User_Row $user)
-    {
-		if(in_array($user->status, array(User::STATUS_EDITOR, User::STATUS_ADMIN))){
-			$return = '1';
-		} else {
-			$return = $this->_table->getAdapter()->quoteInto('status = ?', Data::VALID);
-		}
-
-		return $return;
-    }
+    return $return;
+  }
 }

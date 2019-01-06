@@ -13,3 +13,4 @@ _tmp
 logs
 node_modules
 .idea
+library/vendor
