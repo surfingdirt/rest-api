@@ -42,7 +42,6 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 
 
 
-
     $userId = isset($_SESSION[User::COLUMN_USERID]) ? $_SESSION[User::COLUMN_USERID] : 0;
     $results = $userTable->find($userId);
     if ($results && $user = $results->current()) {

@@ -50,8 +50,6 @@ ini_set('upload_tmp_dir', GLOBAL_UPLOAD_TMPDIR);
 
 date_default_timezone_set('UTC');
 
-
-
 $frontController = Zend_Controller_Front::getInstance();
 $frontController->setRequest('Lib_Controller_Request');
 $frontController->setControllerDirectory(array('default' => APPLICATION_PATH.'/controllers'));
