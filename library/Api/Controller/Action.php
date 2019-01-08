@@ -35,22 +35,20 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 
     $userTable = new Api_User();
 
-    /*
-     * TODO: get JWT from authorization header
-     * TODO: pull out user id, expiration date from JWT
-     */
+    try {
+      $userId = Lib_JWT::setup($this->getRequest(), JWT_SECRET);
+    } catch (Lib_JWT_Exception $e) {
+      // TODO: forward to error handler
+      //throw $e;
+    }
 
-
-
-    $userId = isset($_SESSION[User::COLUMN_USERID]) ? $_SESSION[User::COLUMN_USERID] : 0;
     $results = $userTable->find($userId);
     if ($results && $user = $results->current()) {
       Globals::setUser($user);
+      $this->_user = $user;
     } else {
       throw new Exception("Could not find user '$userId'");
     }
-    $_SESSION[User::COLUMN_USERID] = $user->{User::COLUMN_USERID};
-    $this->_user = $user;
 
     Zend_Registry::set('Zend_Translate', Globals::getTranslate());
 

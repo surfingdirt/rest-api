@@ -1,7 +1,5 @@
 <?php
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
-
+use Lcobucci\JWT\ValidationData;
 class TokensController extends Zend_Rest_Controller
 {
   const MISSING_VALUE = 'missingValue';
@@ -24,7 +22,7 @@ class TokensController extends Zend_Rest_Controller
    */
   public function postAction()
   {
-    $token = Globals::setJWT();
+    $token = Globals::getJWT();
     if ($token) {
       return $this->_forbidden(self::EXISTING_TOKEN);
     }
@@ -57,12 +55,7 @@ class TokensController extends Zend_Rest_Controller
     Globals::setUser($user);
 
     // JWT
-    $signer = new Sha256();
-    $token = (new Builder())
-      ->setExpiration(time() + 3600 * 24)
-      ->set('userId', $user->getId())
-      ->sign($signer, JWT_SECRET)
-      ->getToken()->__toString();
+    $token = Lib_JWT::create(JWT_SECRET, Utils::date("timestamp"), $user->getId());
     Globals::setJWT($token);
 
     $this->view->assign(array(
