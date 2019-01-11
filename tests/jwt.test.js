@@ -1,4 +1,4 @@
-import { default as RestClient, getResourcePath } from './RestClient';
+import { default as StatelessClient, getResourcePath } from './RestClient/StatelessClient';
 import { clearCache } from './RestClient/cache';
 import { hostUrl, JWT_TTL } from './RestClient/constants';
 import { RIDERS, TOKENS } from './RestClient/resources';
@@ -14,7 +14,7 @@ const rider1publicInfo =
 
 const invalidToken = 'nowaythisisgonnawork';
 
-const client = new RestClient(hostUrl);
+const client = new StatelessClient(hostUrl);
 
 beforeAll(() => {
   // Synchronous operation.
@@ -72,25 +72,24 @@ test('token management is working properly', async () => {
   await client.setDate(getDateForBackend(JWT_TTL + 2));
 
   // Request user 1 with user1Token while server thinks it's the future
-  const futureResponse = await client.get({ path: rider1Path, token: user1Token, });
+  const futureResponse = await client.get({ path: rider1Path, token: user1Token });
   expect(futureResponse.statusCode).toBe(403);
 
   // Sets time back
   await client.setDate();
 
   // Request user 1 with user1Token while server thinks it's the present again
-  const loginNowResponse = await client.get({ path: rider1Path, token: user1Token,  });
+  const loginNowResponse = await client.get({ path: rider1Path, token: user1Token });
   expect(loginNowResponse.statusCode).toBe(200);
 
   // Delete token as self (ie, logout)
   const deleteResponse = await client.delete({
     path: getResourcePath(TOKENS),
     token: user1Token,
-    debugBackend: true,
   });
   expect(deleteResponse.statusCode).toBe(200);
 
   // Request user 1 with blacklisted user1Token
-  const loginAgainResponse = await client.get({ path: rider1Path, token: user1Token, debugBackend: true });
+  const loginAgainResponse = await client.get({ path: rider1Path, token: user1Token });
   expect(loginAgainResponse.statusCode).toBe(403);
 });

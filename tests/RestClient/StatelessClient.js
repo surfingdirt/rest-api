@@ -34,6 +34,9 @@ export default class RestClient {
     return headers;
   }
 
+  /*
+   * State-less methods: token must be passed-in when necessary.
+   */
   async get({ path, token = null, debugBackend = false }) {
     const options = {
       uri: this.getFullUri(path, debugBackend),
@@ -80,10 +83,22 @@ export default class RestClient {
     return await rp(options);
   }
 
+  async put() {
+    // TODO
+  }
   async setDate(date = null) {
     const usp = new URLSearchParams();
     usp.append(dateSetter.arg, date || 'NOW');
 
     return await this.get({ path: `${dateSetter.path}?${usp.toString()}` });
   }
+
+  /*
+   * Stateful methods
+   */
+  setResource(resourceName) {}
+
+  login() {}
+
+  logout() {}
 }
