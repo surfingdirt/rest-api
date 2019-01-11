@@ -37,6 +37,7 @@ constants.DEBUG = false
 constants.PROFILE = false
 constants.CHAT_ENABLED = false;
 constants.JWT_SECRET = 'something';
+constants.JWT_TTL = 84600;
 
 ; Database
 constants.GLOBAL_DB_HOST = 'localhost'

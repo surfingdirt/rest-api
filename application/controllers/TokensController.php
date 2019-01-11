@@ -68,13 +68,16 @@ class TokensController extends Zend_Rest_Controller
    */
   public function deleteAction()
   {
+    $matches = Lib_JWT::getHeaderMatches($this->getRequest());
+    $token = $matches[1];
+
+    // Add the token to the blacklist if it's still valid, otherwise clean up the list.
+    if (Lib_JWT::isBlacklistable($token, JWT_SECRET)) {
+      Lib_JWT_Blacklist::addToken($token);
+    } else {
+      Lib_JWT_Blacklist::cleanupInvalidAndExpiredTokens(JWT_SECRET);
+    }
     Globals::clearJWT();
-
-    // TODO: add blacklist entry (if expiration date is in the future)
-
-    $this->view->assign(array(
-      'token' => null,
-    ));
   }
 
   /**

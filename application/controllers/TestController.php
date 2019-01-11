@@ -14,6 +14,9 @@ class TestController extends Zend_Controller_Action
 		}
 
 		$datetime = $this->_request->getParam('datetime');
+		if ($datetime === 'NOW') {
+      $datetime = date("Y-m-d H:i:s");
+    }
 
 		if(!preg_match("/^\d{4}-\d{2}-\d{2} [0-2][0-3]:[0-5][0-9]:[0-5][0-9]$/", $datetime, $matches)){
 			$this->view->status = false;

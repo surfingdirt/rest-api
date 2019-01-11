@@ -85,7 +85,6 @@ class Globals
    * @var HTMLPurifier
    */
   private static $_htmlPurifier;
-
   /**
    * List of allowed file extensions for upload
    *
@@ -94,6 +93,8 @@ class Globals
   private static $_filesExtensionUploadWhiteList = array(
     'jpg', 'jpeg', 'gif', 'png', 'swf', 'pdf', 'ppt', 'doc', 'xls', 'txt'
   );
+
+  private static $_JWTBlacklist;
 
   /**
    * Returns a database connection
@@ -311,6 +312,12 @@ class Globals
    */
   public static function clearJWT() {
     self::$_JWT = null;
+  }
+
+  public static function getJWTBlacklist()
+  {
+    $cache = self::getGlobalCache();
+
   }
 
   /**

@@ -9,6 +9,14 @@ class Lib_JWT
 {
   const USER_ID = 'uid';
 
+  static public function getHeaderMatches($request) {
+    preg_match(
+      '/Bearer ([a-z0-9\.\-_]*)/i',
+      $request->getHeader('Authorization', ''),
+      $matches);
+    return $matches;
+  }
+
   /**
    * Parses and accepts or rejects the JWT from the request header.
    * @param $request Zend_Controller_Request_Abstract
@@ -16,11 +24,7 @@ class Lib_JWT
    */
   static public function setup(Zend_Controller_Request_Abstract $request, $secret)
   {
-    preg_match(
-      '/Bearer ([a-z0-9\.\-_]*)/i',
-      $request->getHeader('Authorization', ''),
-      $matches);
-
+    $matches = self::getHeaderMatches($request);
     switch(sizeof($matches)) {
       case 0:
         Globals::clearJWT();
@@ -28,17 +32,9 @@ class Lib_JWT
         return 0;
         break;
       case 2:
-        try {
-          $token = self::getParsedToken($matches[1]);
-        } catch (Exception $e) {
-          throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_CANNOT_PARSE_TOKEN);
-        }
-        if ($token->isExpired()) {
-          throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_TOKEN_EXPIRED);
-        }
-        $signer = new Sha256();
-        if (!$token->verify($signer, $secret)) {
-          throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_TOKEN_INVALID);
+        $token = self::getParsedToken($matches[1], $secret);
+        if (Lib_JWT_Blacklist::isBlacklisted($token->__toString())) {
+          throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_TOKEN_BLACKLISTED);
         }
         Globals::setJWT($token->__toString());
         return $token->getClaim(self::USER_ID);
@@ -47,22 +43,49 @@ class Lib_JWT
         throw new Exception(Lib_JWT_Exception::ERROR_CANNOT_PARSE_HEADER);
         break;
     }
+  }
 
+  static public function getParsedToken($tokenAsString, $secret) {
+    try {
+      $token = (new Parser())->parse((string) $tokenAsString);
+    } catch (Exception $e) {
+      throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_CANNOT_PARSE_TOKEN);
+    }
+    $now = new DateTime();
+    $now->setTimestamp(Utils::date('timestamp'));
+    if ($token->isExpired($now)) {
+      throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_TOKEN_EXPIRED);
+    }
+    $signer = new Sha256();
+    if (!$token->verify($signer, $secret)) {
+      throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_TOKEN_INVALID);
+    }
+    return $token;
   }
 
   static public function create($secret, $time, $userId)
   {
     $signer = new Sha256();
     $token = (new Builder())
-      ->setExpiration($time + 3600 * 24)
+      ->setExpiration($time + JWT_TTL)
       ->set(self::USER_ID, $userId)
       ->sign($signer, $secret)
-      ->getToken()->__toString();
-    return $token;
+      ->getToken();
+    return $token->__toString();
   }
 
-  static public function getParsedToken($tokenString)
-  {
-    return (new Parser())->parse((string)$tokenString);
+  /**
+   * Whether the token is valid and not expired yet.
+   * @return boolean
+   */
+  static public function isBlacklistable($tokenAsString, $secret) {
+    try {
+      self::getParsedToken($tokenAsString, $secret);
+      return true;
+    } catch (Lib_JWT_Exception $e) {
+      return false;
+    } catch (Exception $e) {
+      return true;
+    }
   }
 }

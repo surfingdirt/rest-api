@@ -1,5 +1,7 @@
 import rp from 'request-promise';
 
+import { dateSetter } from './constants';
+
 const DEBUG_QUERY_PARAMS = 'XDEBUG_SESSION_START=PHP_STORM';
 // Only network errors throw exceptions (not application exceptions)
 const SIMPLE_REQUESTS = false;
@@ -20,7 +22,7 @@ export default class RestClient {
     this.hostUrl = hostUrl;
   }
 
-  getUri(path, debugBackend) {
+  getFullUri(path, debugBackend) {
     return `${this.hostUrl}${path}${debugBackend ? `?${DEBUG_QUERY_PARAMS}` : ''}`;
   }
 
@@ -30,11 +32,11 @@ export default class RestClient {
       headers['Authorization'] = `Bearer ${token}`;
     }
     return headers;
-  };
+  }
 
   async get({ path, token = null, debugBackend = false }) {
     const options = {
-      uri: this.getUri(path, debugBackend),
+      uri: this.getFullUri(path, debugBackend),
       headers: this.getHeaders(token),
       json: true,
       simple: SIMPLE_REQUESTS,
@@ -47,7 +49,7 @@ export default class RestClient {
   async post({ path, data, type = TYPE_FORM_DATA, token = null, debugBackend = false }) {
     const options = {
       method: 'POST',
-      uri: this.getUri(path, debugBackend),
+      uri: this.getFullUri(path, debugBackend),
       headers: this.getHeaders(token),
       simple: SIMPLE_REQUESTS,
       resolveWithFullResponse: true,
@@ -65,5 +67,23 @@ export default class RestClient {
     }
 
     return await rp(options);
+  }
+
+  async delete({ path, token = null, debugBackend = false }) {
+    const options = {
+      method: 'DELETE',
+      uri: this.getFullUri(path, debugBackend),
+      headers: this.getHeaders(token),
+      simple: SIMPLE_REQUESTS,
+      resolveWithFullResponse: true,
+    };
+    return await rp(options);
+  }
+
+  async setDate(date = null) {
+    const usp = new URLSearchParams();
+    usp.append(dateSetter.arg, date || 'NOW');
+
+    return await this.get({ path: `${dateSetter.path}?${usp.toString()}` });
   }
 }

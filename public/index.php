@@ -47,6 +47,8 @@ defined("CURRENT_DIR") || define("CURRENT_DIR", getcwd());
 
 ini_set('upload_max_filesize', GLOBAL_UPLOAD_MAXSIZE);
 ini_set('upload_tmp_dir', GLOBAL_UPLOAD_TMPDIR);
+ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
 
 date_default_timezone_set('UTC');
 
