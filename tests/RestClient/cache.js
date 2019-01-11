@@ -1,8 +1,7 @@
 import fs from 'fs';
-import constants from './constants';
+import { cacheDir } from './constants';
 
 export const clearCache = () => {
-  const { cacheDir } = constants;
   const files = fs.readdirSync(cacheDir);
 
   for (let i = 0; i < files.length; i++) {
