@@ -1,4 +1,4 @@
-import { default as RestClient, getResourcePath, TYPE_FORM_DATA } from './RestClient';
+import { default as RestClient, getResourcePath } from './RestClient';
 import { clearCache } from './RestClient/cache';
 import { hostUrl, JWT_TTL } from './RestClient/constants';
 import { RIDERS, TOKENS } from './RestClient/resources';
@@ -20,19 +20,6 @@ beforeAll(() => {
   // Synchronous operation.
   clearCache();
 });
-
-/*
- Scenario:
- x logged-out request to user 1 => fine
-
- x request to user 1 with invalid token => error
-
- x login request as user 1 => fine
- x logged-in request to user 1 in the future so token has expired => error (expired)
- x logged-in request to user 1 now: => fine
- - log-out request => fine
- - request with deleted token to user 1 => error
- */
 
 test('banned user cannot login', async () => {
   const { username, password } = bannedUser;
@@ -59,6 +46,13 @@ test('request to user 1 with invalid token', async () => {
   expect(response.statusCode).toBe(403);
 });
 
+/*
+ - login request as user 1 => fine
+ - logged-in request to user 1 in the future so token has expired => error (expired)
+ - logged-in request to user 1 now: => fine
+ - log-out request => fine
+ - request with deleted token to user 1 => error
+*/
 test('token management is working properly', async () => {
   let user1Token;
 
@@ -96,26 +90,7 @@ test('token management is working properly', async () => {
   });
   expect(deleteResponse.statusCode).toBe(200);
 
-  // Request user 1 with deleted user1Token
+  // Request user 1 with blacklisted user1Token
   const loginAgainResponse = await client.get({ path: rider1Path, token: user1Token, debugBackend: true });
   expect(loginAgainResponse.statusCode).toBe(403);
-});
-
-test.skip('user permissions work ok on token', async () => {
-  let user1Token;
-  let deleterToken;
-
-  const rider1TokenPath = getResourcePath(TOKENS, 1);
-
-  // Guest: impossible to delete a user1Token
-  const anonymousDeleteResponse = await client.delete({ path: rider1TokenPath });
-  expect(anonymousDeleteResponse.statusCode).toBe(403);
-
-  // user2Token: impossible to delete a user1Token
-  // user5Token (editor): not ok to delete a user1Token
-  // user6Token (writer) : not ok to delete a user1Token
-  // user7Token (other): not ok to delete a user1Token
-  // user8Token (pending): not ok to delete a user1Token
-
-  // user4Token (admin) : ok to delete a user1Token
 });
