@@ -114,4 +114,4 @@ $frontController->dispatch();
 
 $t2 = microtime(true); 
 $time = ($t2 - $t1) *1000;
-error_log("Request took $time milliseconds");
+//error_log("Request took $time milliseconds");

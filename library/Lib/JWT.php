@@ -17,7 +17,7 @@ class Lib_JWT
   static public function setup(Zend_Controller_Request_Abstract $request, $secret)
   {
     preg_match(
-      '/Bearer ([a-z0-9\.\-]*)/i',
+      '/Bearer ([a-z0-9\.\-_]*)/i',
       $request->getHeader('Authorization', ''),
       $matches);
 
@@ -31,7 +31,7 @@ class Lib_JWT
         try {
           $token = self::getParsedToken($matches[1]);
         } catch (Exception $e) {
-          throw new Exception(Lib_JWT_Exception::ERROR_CANNOT_PARSE_TOKEN);
+          throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_CANNOT_PARSE_TOKEN);
         }
         if ($token->isExpired()) {
           throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_TOKEN_EXPIRED);

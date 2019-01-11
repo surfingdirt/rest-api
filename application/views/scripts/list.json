@@ -1,3 +1,2 @@
 <?php
-echo $this->json($this->resources);
-?>
+echo $this->json($this);

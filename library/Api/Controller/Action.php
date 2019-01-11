@@ -1,6 +1,4 @@
 <?php
-use Lcobucci\JWT\Builder;
-
 
 abstract class Api_Controller_Action extends Zend_Controller_Action
 {
@@ -38,8 +36,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     try {
       $userId = Lib_JWT::setup($this->getRequest(), JWT_SECRET);
     } catch (Lib_JWT_Exception $e) {
-      // TODO: forward to error handler
-      //throw $e;
+      throw $e;
     }
 
     $results = $userTable->find($userId);
