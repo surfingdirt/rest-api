@@ -4,7 +4,6 @@ class ErrorController extends Zend_Controller_Action
 {
   public function exceptionAction()
   {
-    $view = 'exception';
     $errors = $this->_getParam('error_handler');
     $e = $errors->exception;
     $logMessage = "Type: " . $errors->type . ' - ' . get_class($e) . PHP_EOL;
@@ -24,35 +23,43 @@ class ErrorController extends Zend_Controller_Action
         switch ($class) {
           case 'Api_Exception_BadRequest':
             return $this->_badRequest();
+          case 'Lib_JWT_Exception':
           case 'Api_Exception_Unauthorised':
             return $this->_forbidden();
           case 'Api_Exception_NotFound':
             return $this->_notFound();
           default:
             error_log($logMessage);
-            return $this->_error($e->getMessage());
+            return $this->_genericError($e->getMessage());
         }
     }
   }
 
   protected function _notFound()
   {
-    $this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found');
+    $this->_error('HTTP/1.1 404 Not Found');
   }
 
-  protected function _forbidden($errorId = 0)
+  protected function _forbidden()
   {
-    $this->getResponse()->setRawHeader('HTTP/1.1 403 Forbidden');
+    $this->_error('HTTP/1.1 403 Forbidden');
   }
 
-  protected function _badRequest($errorId = 0)
+  protected function _badRequest()
   {
-    $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
+    $this->_error('HTTP/1.1 400 Bad Request');
   }
 
-  protected function _error($errorId = 0)
+  protected function _genericError($message)
   {
-    $this->getResponse()->setRawHeader('HTTP/1.1 500 Internal Server Error')
-    ->setHeader('x-mika', $errorId);
+    $this->_error('HTTP/1.1 500 Internal Server Error');
+    if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
+      $this->getResponse()->setHeader('x-error-message', $message);
+    }
+  }
+
+  protected function _error($rawHeader)
+  {
+    $this->getResponse()->setRawHeader($rawHeader);
   }
 }
