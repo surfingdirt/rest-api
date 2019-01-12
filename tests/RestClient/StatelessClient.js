@@ -3,19 +3,36 @@ import rp from 'request-promise';
 import { dateSetter } from './constants';
 import {TOKEN} from "./resources";
 
-const DEBUG_QUERY_PARAMS = 'XDEBUG_SESSION_START=PHP_STORM';
 // Only network errors throw exceptions (not application exceptions)
 const SIMPLE_REQUESTS = false;
 
 export const TYPE_JSON = 'json';
 export const TYPE_FORM_DATA = 'formData';
 
-export const getResourcePath = (type, id) => {
+export const getResourcePath = (type, id = null, queryArgs = {}, debugBackend = false) => {
+  let path;
   if (id) {
-    return `/${type}/${id}`;
+    path = `/${type}/${id}`;
   } else {
-    return `/${type}`;
+    path = `/${type}`;
   }
+
+  const usp = new URLSearchParams();
+  if (queryArgs) {
+    for (let arg in queryArgs) {
+      usp.append(arg, queryArgs[arg]);
+    }
+  }
+  if (debugBackend) {
+    usp.append('XDEBUG_SESSION_START', 'PHP_STORM');
+  }
+
+  const argString = usp.toString();
+  if (argString) {
+    path = `${path}?${argString}`;
+  }
+
+  return path;
 };
 
 export default class RestClient {
@@ -23,8 +40,8 @@ export default class RestClient {
     this.hostUrl = hostUrl;
   }
 
-  getFullUri(path, debugBackend) {
-    return `${this.hostUrl}${path}${debugBackend ? `?${DEBUG_QUERY_PARAMS}` : ''}`;
+  getFullUri(path) {
+    return `${this.hostUrl}${path}`;
   }
 
   getHeaders(token) {

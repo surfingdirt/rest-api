@@ -9,11 +9,14 @@ export default class ResourceClient {
     this.debugBackend = debugBackend;
   }
 
-  async list() {}
+  async list(queryArgs = null) {
+    const path = getResourcePath(this.resource, null, queryArgs);
+    return await this.client.get({ path, token: this.token, debugBackend: this.debugBackend });
+  }
 
   async get(id) {
     const path = getResourcePath(this.resource, id);
-    return await this.client.get({path, token: this.token, debugBackend: this.debugBackend});
+    return await this.client.get({ path, token: this.token, debugBackend: this.debugBackend });
   }
 
   async post(id, data, files) {}
