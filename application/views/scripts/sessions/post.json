@@ -1,6 +1,0 @@
-<?php
-if($this->resourceId) {
-	echo $this->json(array('sessionId' => $this->sessionId, 'rider' => $this->rider));
-} else {
-	echo $this->json(array('errorId' => $this->errorId));
-}

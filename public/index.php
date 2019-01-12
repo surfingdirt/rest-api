@@ -86,13 +86,19 @@ if (ALLOW_CACHE) {
   Zend_Db_Table::setDefaultMetadataCache(Globals::getGlobalCache());
 }
 
+if (APPLICATION_ENV === TEST) {
+  Globals::getLogger()->test("\n");
+}
+
 /*
  * HANDLE THE REQUEST
  */
+if (APPLICATION_ENV === TEST) {
+  // Log auth header
+}
+
 $frontController->dispatch();
 
-if (APPLICATION_ENV !== PRODUCTION) {
-  $t2 = microtime(true);
-  $time = ($t2 - $t1) * 1000;
-  Globals::getLogger()->performance("Request took $time milliseconds");
-}
+//$t2 = microtime(true);
+//$time = ($t2 - $t1) * 1000;
+//Globals::getLogger()->performance("Request took $time milliseconds");

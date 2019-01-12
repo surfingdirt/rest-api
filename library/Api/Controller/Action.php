@@ -56,7 +56,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   protected function _setupViewPath()
   {
     $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-    $viewRenderer->setViewScriptPathSpec(':action.json');
+    $viewRenderer->setViewScriptPathSpec('view.phtml');
     $this->getResponse()->setRawHeader('Content-Type: application/json; charset=UTF-8');
   }
 
@@ -87,7 +87,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName());
     }
 
-    $this->view->resources = $resources;
+    $this->view->output = $resources;
   }
 
   //-----------------------------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       throw new Api_Exception_NotFound();
     }
 
-    $this->view->resource = $this->_accessor->getObjectData(
+    $this->view->output = $this->_accessor->getObjectData(
       $object,
       $this->_request->getActionName(),
       $this->_request->getParams()
@@ -141,7 +141,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
     }
 
-    $this->view->resourceId = $object->getId();
+    $this->view->output = array('id' => $object->getId());
   }
 
   protected function _preObjectCreation($object, $data)
@@ -183,12 +183,11 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     $errors = $this->_accessor->updateObjectWithData($object, $data);
     if (empty($errors)) {
       $this->_postObjectUpdate($object, $data);
+      $this->view->output = $id;
     } else {
       $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
+      $this->view->output = array('errors' => $errors );
     }
-
-    $this->view->errors = $errors;
-    $this->view->resourceId = $id;
   }
 
   protected function _getPut()
@@ -236,8 +235,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     if ($status = $this->_accessor->deleteObject($object)) {
       $this->_postObjectDelete($object);
     }
-    $this->view->status = $status;
-    $this->view->resourceId = $id;
+    $this->view->output = array('status' => $status);
   }
 
   protected function _preObjectDelete($object)

@@ -1,6 +1,0 @@
-<?php echo $this->json(array(
-	'status' => $this->status,
-	'datetime' => $this->datetime,
-	'date' => $this->date,
-	'timestamp' => $this->timestamp
-));

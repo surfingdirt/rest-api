@@ -1,5 +1,0 @@
-<?php
-echo $this->json(array(
-	'status' => $this->status,
-	'alreadyDone' => $this->alreadyDone
-));

@@ -23,25 +23,17 @@ class Api_User_Row extends User_Row
 		'date',
 		'lang',
 		'country',
-		'city',
-		'zip',
-		'gender',
-		'level',
-		'gear',
-		'otherSports',
-		'rideType',
+    'firstName',
+    'lastName',
+    'site',
 		'avatar',
 	);
 	public $memberReadAttributes = array(
 		'lastLogin',
-		'firstName',
-		'lastName',
-		'site',
 		'occupation',
 	);
 	public $ownReadAttributes = array(
 		'email',
-		'birthDate',
 	);
 	public $adminReadAttributes = array(
 		'status'

@@ -14,7 +14,8 @@ class TokenController extends Zend_Rest_Controller
 
     // This controller only has a JSON output
     $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-    $viewRenderer->setViewScriptPathSpec('tokens/:action.json');
+    $viewRenderer->setViewScriptPathSpec('view.phtml');
+    $this->getResponse()->setRawHeader('Content-Type: application/json; charset=UTF-8');
   }
 
   /**
@@ -58,9 +59,9 @@ class TokenController extends Zend_Rest_Controller
     $token = Lib_JWT::create(JWT_SECRET, Utils::date("timestamp"), $user->getId());
     Globals::setJWT($token);
 
-    $this->view->assign(array(
+    $this->view->output = array(
       'token' => $token,
-    ));
+    );
   }
 
   /**
@@ -106,7 +107,7 @@ class TokenController extends Zend_Rest_Controller
   protected function _forbidden($errorId)
   {
     $this->getResponse()->setRawHeader('HTTP/1.1 403 Forbidden');
-    $this->view->errorId = $errorId;
+    $this->view->output = array('error' => $errorId);
   }
 
   public function optionsAction()

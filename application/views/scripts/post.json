@@ -1,2 +1,0 @@
-<?php
-echo $this->json(array('resourceId' => $this->resourceId, 'errors' => $this->errors));

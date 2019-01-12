@@ -21,7 +21,7 @@ restClient.init({
 exports.testSetDate = function(test) {
 	restClient.setDate(test, '2011-08-01 15:55:55');
 };
-/*
+
 // It should return a 404 because user does not exist
 exports.testNotFound = function(test){
 	var request = client.request('GET', '/riders/2500', {
@@ -541,7 +541,7 @@ exports.plainUserIsNotFound = function(test){
 	request.end();
 };
 
-*/
+
 var verifyRegistrationErrors = function(postData, expectedErrors, test) {
 	var loginData = querystring.stringify(postData),
 	

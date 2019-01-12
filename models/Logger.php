@@ -16,17 +16,20 @@ class Logger extends Zend_Log
 
     $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'local';
 
+    $headers = apache_request_headers();
+    $authorization = array_key_exists('Authorization', $headers) ? $headers['Authorization'] : '';
+
     $this->setEventItem('timestamp', date('Y-m-d H:i:s'));
     $this->setEventItem(User::COLUMN_USERID, $this->_userId);
     $this->setEventItem('url', Utils::getCompleteUrl());
     $this->setEventItem('method', $_SERVER['REQUEST_METHOD']);
-    $this->setEventItem('jwt', Globals::getJWT());
+    $this->setEventItem('authorization', $authorization);
     $this->setEventItem('referer', array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER'] : '');
     $this->setEventItem('ip', $ip);
     $this->setEventItem('hostname', Utils::getHost($ip));
 
     $this->_formatter = new Zend_Log_Formatter_Simple(
-      '%timestamp% [%priorityName% (%priority%)] / ' . User::COLUMN_USERID . ': \'%' . User::COLUMN_USERID . '%\' / IP: %ip% / HOSTNAME: %hostname%' . PHP_EOL . "\tURL: %url%" . PHP_EOL . "\tMETHOD: %method%" . PHP_EOL . "\tREFERER: %referer%" . PHP_EOL . "\tJWT: %jwt%" . PHP_EOL . "\t%message%" . PHP_EOL . PHP_EOL . PHP_EOL
+      '%timestamp% [%priorityName% (%priority%)] / ' . User::COLUMN_USERID . ': \'%' . User::COLUMN_USERID . '%\' / IP: %ip% / HOSTNAME: %hostname%' . PHP_EOL . "\tURL: %url%" . PHP_EOL . "\tMETHOD: %method%" . PHP_EOL . "\tREFERER: %referer%" . PHP_EOL . "\tAuthorization: %authorization%" . PHP_EOL . "\t%message%" . PHP_EOL . PHP_EOL . PHP_EOL
     );
 
     $writer = new Zend_Log_Writer_Stream($this->_getCommonLogFile());
