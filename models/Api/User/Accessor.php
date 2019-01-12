@@ -2,35 +2,28 @@
 class Api_User_Accessor extends Api_Data_Accessor
 {
 	public $publicReadAttributes = array(
+    'avatar',
+    'city',
+    'country',
+    'date',
+    'firstName',
+    'lang',
+    'lastName',
+    'latitude',
+    'longitude',
+    'site',
 		'userId',
 		'username',
-		'date',
-		'lang',
-		'country',
-		'city',
-		'zip',
-		'gender',
-		'level',
-		'gear',
-		'otherSports',
-		'rideType',
-		'avatar',
-		'latitude',
-		'longitude'
+    'zip',
 	);
 	public $memberReadAttributes = array(
-		'lastLogin',
-		'firstName',
-		'lastName',
-		'site',
-		'occupation',
 	);
 	public $ownReadAttributes = array(
 		'email',
-		'birthDate',
 	);
 	public $adminReadAttributes = array(
-		'status'
+    'lastLogin',
+		'status',
 	);
 
 	public $publicCreateAttributes = array(
@@ -44,27 +37,19 @@ class Api_User_Accessor extends Api_Data_Accessor
 	public $publicWriteAttributes = array();
 	public $memberWriteAttributes = array();
 	public $ownWriteAttributes = array(
-		'lang' => 'lang',
+    'avatar' => 'avatar',
+    'city' => 'city',
 		'country' => 'country',
-		'city' => 'city',
-		'zip' => 'zip',
-		'gender' => 'gender',
-		'level' => 'level',
-		'gear' => 'gear',
-		'otherSports' => 'otherSports',
-		'rideType' => 'rideType',
-		'avatar' => 'avatar',
-		'firstName' => 'firstName',
+    'email' => 'email',
+    'firstName' => 'firstName',
+    'lang' => 'lang',
 		'lastName' => 'lastName',
+    'latitude' => 'latitude',
+    'longitude' => 'longitude',
 		'site' => 'site',
-		'occupation' => 'occupation',
-		'email' => 'email',
-		'birthDate' => 'birthDate',
 		'userP' => 'password',
 		'userPC' => 'password',
-		'latitude' => 'latitude',
-		'longitude' => 'longitude',
-
+    'zip' => 'zip',
 	);
 	public $adminWriteAttributes = array(
 		'lastLogin' => 'lastLogin',
@@ -86,8 +71,6 @@ class Api_User_Accessor extends Api_Data_Accessor
 				}
 			}
 		} else {
-			//$data = $form->getFormattedValuesForDatabase();
-
 			foreach($attributes as $attrFormName => $attrDBName){
 				if(!isset($data[$attrFormName])){
 					$log .= 'skipping '.$attrFormName.' -- ';

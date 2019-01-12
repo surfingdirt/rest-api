@@ -2,53 +2,6 @@
 class Api_User_Row extends User_Row
 {
 	/**
-	 * This array contains the list of attributes that
-	 * should not be sent to a client.
-	 * @var array
-	 */
-	protected $_hiddenFromClientAttr = array(
-		'password',
-		'date',
-		'lastLogin',
-		'openidIdentity',
-		'activationKey',
-		'newPassword',
-	);
-
-    protected $_notificationTable = 'Api_User_Notification';
-	
-	public $publicReadAttributes = array(
-		'userId',
-		'username',
-		'date',
-		'lang',
-		'country',
-    'firstName',
-    'lastName',
-    'site',
-		'avatar',
-	);
-	public $memberReadAttributes = array(
-		'lastLogin',
-		'occupation',
-	);
-	public $ownReadAttributes = array(
-		'email',
-	);
-	public $adminReadAttributes = array(
-		'status'
-	);
-
-	public $publicCreateAttributes = array(
-		'username' => 'username',
-		'userP' => 'password', // MD5??
-		'email' => 'email'
-	);
-	public $memberCreateAttributes = array();
-	public $adminCreateAttributes = array();
-
-
-	/**
 	 * Implements the missing isReadableBy method (defined in Data_Row)
 	 * @param User_Row $user
 	 * @param Lib_Acl $acl

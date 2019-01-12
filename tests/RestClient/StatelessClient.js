@@ -1,6 +1,7 @@
 import rp from 'request-promise';
 
 import { dateSetter } from './constants';
+import {TOKEN} from "./resources";
 
 const DEBUG_QUERY_PARAMS = 'XDEBUG_SESSION_START=PHP_STORM';
 // Only network errors throw exceptions (not application exceptions)
@@ -49,9 +50,9 @@ export default class RestClient {
     return await rp(options);
   }
 
-  async post({ path, data, type = TYPE_FORM_DATA, token = null, debugBackend = false }) {
+  async _sendData({ method, path, data, type = TYPE_FORM_DATA, token = null, debugBackend = false }) {
     const options = {
-      method: 'POST',
+      method,
       uri: this.getFullUri(path, debugBackend),
       headers: this.getHeaders(token),
       simple: SIMPLE_REQUESTS,
@@ -72,6 +73,14 @@ export default class RestClient {
     return await rp(options);
   }
 
+  post(args) {
+    return this._sendData(Object.assign({}, args, {method: 'POST'}));
+  }
+
+  put(args) {
+    return this._sendData(Object.assign({}, args, {method: 'PUT'}));
+  }
+
   async delete({ path, token = null, debugBackend = false }) {
     const options = {
       method: 'DELETE',
@@ -83,22 +92,37 @@ export default class RestClient {
     return await rp(options);
   }
 
-  async put() {
-    // TODO
+  async login(username, password) {
+    try {
+      const loginResponse = await this.post({
+        path: getResourcePath(TOKEN),
+        data: {userP: password, username: username},
+      });
+      const loginResponseBody = JSON.parse(loginResponse.body);
+      if (!loginResponseBody.token) {
+        throw new Error();
+      }
+      return loginResponseBody.token;
+    } catch (e) {
+      throw new Error(`Login as '${username}' failed`);
+    }
   }
+
+  async logout(token) {
+    try {
+      await this.delete({
+        path: getResourcePath(TOKEN),
+        token,
+      });
+    } catch (e) {
+      throw new Error(`Logout with token '${token}' failed`);
+    }
+  }
+
   async setDate(date = null) {
     const usp = new URLSearchParams();
     usp.append(dateSetter.arg, date || 'NOW');
 
     return await this.get({ path: `${dateSetter.path}?${usp.toString()}` });
   }
-
-  /*
-   * Stateful methods
-   */
-  setResource(resourceName) {}
-
-  login() {}
-
-  logout() {}
 }
