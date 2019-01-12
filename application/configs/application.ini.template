@@ -4,28 +4,12 @@
 phpSettings.display_startup_errors = 0
 phpSettings.display_errors = 0
 
-; Include path
-includePaths.library = APPLICATION_PATH "/../library"
-includePaths.simplehtmldom = APPLICATION_PATH "/../library/simplehtmldom"
-includePaths.phpFlickr = APPLICATION_PATH "/../library/phpFlickr"
-includePaths.htmlPurifier = APPLICATION_PATH "/../library/HTMLPurifier"
-
-; Bootstrap
-bootstrap.path = APPLICATION_PATH "/Bootstrap.php"
-bootstrap.class = "Bootstrap"
-
-; Front Controller
-resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
-resources.frontController.env = APPLICATION_ENV
-
-; Layout
-resources.layout.layout = "layout"
-resources.layout.layoutPath = APPLICATION_PATH "/layouts/scripts"
-
-; Views
-;resources.view.encoding = "UTF-8"
-resources.view.basePath = APPLICATION_PATH "/views/"
-
+; Database
+constants.GLOBAL_DB_HOST = 'localhost'
+constants.GLOBAL_DB_NAME = 'ridedb_prod'
+constants.GLOBAL_DB_USER = 'ridedb'
+constants.GLOBAL_DB_PASSWORD = ''
+constants.GLOBAL_DB_ENCODING = 'utf8'
 ; Session
 resources.session.save_path = APPLICATION_PATH "/../data/sessions"
 resources.session.remember_me_seconds = 864000
@@ -38,13 +22,6 @@ constants.PROFILE = false
 constants.CHAT_ENABLED = false;
 constants.JWT_SECRET = 'something';
 constants.JWT_TTL = 84600;
-
-; Database
-constants.GLOBAL_DB_HOST = 'localhost'
-constants.GLOBAL_DB_NAME = 'ridedb_prod'
-constants.GLOBAL_DB_USER = 'ridedb'
-constants.GLOBAL_DB_PASSWORD = ''
-constants.GLOBAL_DB_ENCODING = 'utf8'
 
 ; Email and contact
 constants.EMAIL_FROM = 'no-reply@ridedb.org'
@@ -77,10 +54,17 @@ constants.GLOBAL_DEFAULT_IMG_THUMB_QUALITY = 50
 constants.GLOBAL_DEFAULT_IMG_THUMB_WIDTH = 200
 constants.GLOBAL_DEFAULT_IMG_THUMB_HEIGHT = 200
 
+constants.GLOBAL_DEFAULT_IMG_MEDIUM_THUMB_WIDTH = 400
+constants.GLOBAL_DEFAULT_IMG_MEDIUM_THUMB_HEIGHT = 400
+
+constants.GLOBAL_DEFAULT_IMG_LARGE_THUMB_WIDTH = 600
+constants.GLOBAL_DEFAULT_IMG_LARGE_THUMB_HEIGHT = 600
+
 constants.CURRENT_SITE = 'ridedb.org'
 constants.GLOBAL_DOMAIN = 'ridedb'
 constants.GLOBAL_EXTENSION = 'org'
 constants.GLOBAL_DOMAIN_FULL = 'ridedb.org'
+constants.GLOBAL_DOMAIN_FULL_AND_SUB_OLD = 'www.ridedb.org'
 constants.COOKIE_DOMAIN = 'ridedb.org'
 constants.APP_SUBDOMAIN = 'api'
 constants.APP_URL = 'http://api.ridedb.org'
@@ -105,14 +89,13 @@ constants.GLOBAL_OPENID_ACTIVE =false
 constants.APP_OPENID_ACTIVE = false
 constants.OPENID_ACTIVE = false
 constants.NOREALDATA_MARK = '__NOREALDATA__'
-constants.ROUTES_CONF_FORMAT = 'xml'
 
 ; google maps
 constants.GOOGLEMAPS_VERSION = '2.160'
-constants.GOOGLEMAPS_URL = 'http://maps.google.com/maps?file=api&amp;v=2.160&amp;sensor=true&amp;key=ABQIAAAA2fX-mBaAGdPrivo8gYu_gRTLr4aE79MRFYYU-RWy0Bz-DBGW8BREt3QhGv0z6NfnlbBq38zc6OfWnA'
+constants.GOOGLEMAPS_URL = 'https://maps.google.com/maps?file=api&amp;v=2.160&amp;key=ABQIAAAA2fX-mBaAGdPrivo8gYu_gRTLr4aE79MRFYYU-RWy0Bz-DBGW8BREt3QhGv0z6NfnlbBq38zc6OfWnA'
 constants.APP_GOOGLE_MAPS_ACTIVE = true
 constants.DEFAULT_MEDIA_MAP_ZOOM = 6;
-constants.GOOGLEMAPS_URL_NEW = 'http://maps.google.com/maps/api/js?sensor=false'
+constants.GOOGLEMAPS_URL_NEW = 'https://maps.google.com/maps/api/js'
 
 ; flickr
 constants.FLICKR_API_KEY = ''
@@ -160,6 +143,8 @@ constants.MOST_RECENT_OLDSTYLE_TEST = 18
 constants.APP_MEDIA_DIR = 'media'
 constants.APP_MEDIA_DIR_RAW = '../data/rawUploads'
 constants.APP_MEDIA_THUMBNAILS_DIR = 'media/thumbnails'
+constants.APP_MEDIA_THUMBNAILS_MEDIUM_DIR = 'media/thumbnails/medium'
+constants.APP_MEDIA_THUMBNAILS_LARGE_DIR = 'media/thumbnails/large'
 
 constants.DEFAULT_AVATAR = ''
 constants.DEFAULT_MALE_AVATAR = 'member-male.jpg'
@@ -189,8 +174,9 @@ constants.TESTS_PER_PAGE = 10
 constants.TRICKS_PER_PAGE = 30
 constants.USERS_PER_PAGE = 30
 constants.MEDIA_PER_PAGE = 12
+; Multiples of 2, 3 and 4 only
 constants.PHOTOS_PER_PAGE = 12
-constants.VIDEOS_PER_PAGE = 9
+constants.VIDEOS_PER_PAGE = 12
 
 constants.FLICKR_PHOTOS_SIZE = 'Large'
 constants.FLICKR_THUMBNAILS_SIZE = 'Small'
@@ -224,11 +210,11 @@ constants.APP_DEBUGDIR = '../data/logs/test/'
 
 constants.GLOBAL_DOMAIN = 'api.ridedb'
 constants.GLOBAL_EXTENSION = 'dev'
-constants.GLOBAL_DOMAIN_FULL = 'api/ridedb.dev'
+constants.GLOBAL_DOMAIN_FULL = 'api/ridedb.wrk'
 
 constants.APP_SUBDOMAIN = 'test'
-constants.APP_URL = 'http://test.api.ridedb.dev'
-constants.COOKIE_DOMAIN = 'test.api.ridedb.dev'
+constants.APP_URL = 'http://test.api.ridedb.wrk'
+constants.COOKIE_DOMAIN = 'test.api.ridedb.wrk'
 
 constants.DEBUG = false
 constants.GLOBAL_DB_NAME = 'ridedb_test'
