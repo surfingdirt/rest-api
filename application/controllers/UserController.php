@@ -1,5 +1,5 @@
 <?php
-class RidersController extends Api_Controller_Action
+class UserController extends Api_Controller_Action
 {
 	const ACTIVATION_KEY_PARAMNAME = 'aK';
 

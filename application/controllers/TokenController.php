@@ -1,6 +1,6 @@
 <?php
 use Lcobucci\JWT\ValidationData;
-class TokensController extends Zend_Rest_Controller
+class TokenController extends Zend_Rest_Controller
 {
   const MISSING_VALUE = 'missingValue';
   const FAILED_TO_LOGIN = 'failedToLogin';
