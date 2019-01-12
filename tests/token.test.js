@@ -8,12 +8,6 @@ import { getSortedKeysAsString, getDateForBackend } from './RestClient/utils';
 const user1Path = getResourcePath(USER, 1);
 const tokenPath = getResourcePath(TOKEN);
 
-const user1publicInfo =
-  '["avatar","city","country","date","gear","gender","lang","latitude","level",' +
-  '"longitude","otherSports","rideType","userId","username","zip"]';
-
-const invalidToken = 'no-way-this-is-gonna-work';
-
 const client = new StatelessClient(hostUrl);
 
 beforeAll(() => {
@@ -21,7 +15,15 @@ beforeAll(() => {
   clearCache();
 });
 
-test('banned user cannot login', async () => {
+test('logged-out request results in 200', async () => {
+  const path = user1Path;
+  const response = await client.get({ path });
+
+  expect(response.statusCode).toBe(200);
+  expect(Object.keys(response.body).length > 0).toBeTruthy();
+});
+
+test('banned user login request results in 403', async () => {
   const { username, password } = bannedUser;
   const loginResponse = await client.post({
     path: tokenPath,
@@ -30,17 +32,9 @@ test('banned user cannot login', async () => {
   expect(loginResponse.statusCode).toBe(403);
 });
 
-test('logged-out request to user 1: should see public info', async () => {
+test('invalid token results in 403', async () => {
   const path = user1Path;
-  const response = await client.get({ path });
-
-  expect(response.statusCode).toBe(200);
-  expect(getSortedKeysAsString(response.body)).toEqual(user1publicInfo);
-});
-
-test('request to user 1 with invalid token', async () => {
-  const path = user1Path;
-  const token = invalidToken;
+  const token = 'no-way-this-is-gonna-work';
 
   const response = await client.get({ path, token });
   expect(response.statusCode).toBe(403);
