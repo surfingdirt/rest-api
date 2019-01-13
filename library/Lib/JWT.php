@@ -51,8 +51,14 @@ class Lib_JWT
     } catch (Exception $e) {
       throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_CANNOT_PARSE_TOKEN);
     }
+    $timestamp = Utils::date('timestamp');
+    if (APPLICATION_ENV === 'test') {
+      $datetime = Utils::date('Y-m-d H:i:s');
+      Globals::getLogger()->test("It's now $datetime $timestamp");
+    }
     $now = new DateTime();
-    $now->setTimestamp(Utils::date('timestamp'));
+    $now->setTimestamp($timestamp);
+
     if ($token->isExpired($now)) {
       throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_TOKEN_EXPIRED);
     }

@@ -50,23 +50,11 @@ class Globals
    */
   private static $_globalCache;
   /**
-   * Cache object (singleton)
-   *
-   * @var Zend_Log
-   */
-  private static $_appCache;
-  /**
    * Global JWT object
    *
    * @var string
    */
   private static $_JWT;
-  /**
-   * Global BreadCrumbs object
-   *
-   * @var BeadCrumbs
-   */
-  private static $_breadCrumbs;
   /**
    * Global Translate object
    *
@@ -273,20 +261,6 @@ class Globals
   }
 
   /**
-   * Get the application cache instance
-   *
-   * @return Zend_Cache_Core
-   */
-  public static function getAppCache()
-  {
-    if (empty(self::$_appCache)) {
-      $cache = Cache::factory(APP_CACHE_METHOD, array('cache_dir' => APP_CACHE_FILE_DIR));
-      self::$_appCache = $cache;
-    }
-    return self::$_appCache;
-  }
-
-  /**
    * Get the global JWT.
    * @return string
    */
@@ -363,8 +337,6 @@ class Globals
     self::$_loginErrorData = null;
     self::$_logger = null;
     self::$_globalCache = null;
-    self::$_appCache = null;
-    self::$_breadCrumbs = null;
   }
 
   public static function getAppName()
@@ -377,30 +349,6 @@ class Globals
     self::$_app = $app;
   }
 
-  /**
-   * Build and save in cache the categories/sucategories
-   * hierarchy.
-   *
-   * @param string $app
-   * @param string $file
-   * @return Zend_Config
-   */
-  public static function getMenuConfig($file = null)
-  {
-    $file = '../application/configs/menu.xml';
-    $cache = self::getAppCache();
-    $cacheId = 'menuConfig';
-    $config = null;
-
-    if (ALLOW_CACHE || !($config = $cache->load($cacheId))) {
-      $config = new Zend_Config_Xml($file);
-      if (ALLOW_CACHE) {
-        $cache->save($config, $cacheId);
-      }
-    }
-
-    return $config;
-  }
 
   /**
    * Get the chosen language from subdomain

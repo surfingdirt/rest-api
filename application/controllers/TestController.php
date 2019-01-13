@@ -3,25 +3,29 @@ class TestController extends Zend_Controller_Action
 {
 	public function init()
 	{
-		Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer')->setViewScriptPathSpec('test/time.json');
+    if(APPLICATION_ENV != 'test'){
+      throw new Api_Exception_Unauthorised();
+    }
+
+    Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer')->setViewScriptPathSpec('view.phtml');
 		$this->getResponse()->setRawHeader('Content-Type: application/json');
 	}
 
 	public function freezeTimeAction()
 	{
-		if(APPLICATION_ENV != 'test'){
-			throw new Api_Exception_Unauthorised();
-		}
-
 		$datetime = $this->_request->getParam('datetime');
 		if ($datetime === 'NOW') {
       $datetime = date("Y-m-d H:i:s");
     }
 
-		if(!preg_match("/^\d{4}-\d{2}-\d{2} [0-2][0-3]:[0-5][0-9]:[0-5][0-9]$/", $datetime, $matches)){
-			$this->view->status = false;
-			$this->view->datetime = null;
-			$this->view->date = null;
+		if(!preg_match("/^\d{4}-\d{2}-\d{2} [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$/", $datetime, $matches)){
+      $this->view->output = array(
+        status => false,
+        datetime => null,
+        date => null,
+        timestamp => null,
+      );
+      return;
 		}
 
 		$parts = explode(" ", $datetime);
@@ -31,11 +35,16 @@ class TestController extends Zend_Controller_Action
 		$cache->save($datetime, 'datetime');
 		$cache->save($date, 'date');
 		$cache->save(strtotime($datetime), 'timestamp');
-		
-		$this->view->status = true;
-		$this->view->datetime = $cache->load('datetime');
-		$this->view->date = $cache->load('date');
-		$this->view->timestamp = $cache->load('timestamp');
+
+    Globals::getLogger()->test("Setting time to $datetime");
+
+		$output = array(
+      'status' => true,
+      'datetime' => $cache->load('datetime'),
+      'date' => $cache->load('date'),
+      'timestamp' => $cache->load('timestamp'),
+    );
+    $this->view->output = $output;
 	}
 
 	public function getTimeAction()
@@ -44,4 +53,14 @@ class TestController extends Zend_Controller_Action
 		$this->view->datetime = Utils::date("Y-m-d H:i:s");
 		$this->view->date = Utils::date("Y-m-d");
 	}
+
+  public function clearCacheAction()
+  {
+    try {
+      Globals::getGlobalCache()->clean();
+      $this->view->output = array('status' => 'ok');
+    } catch (Exception $e) {
+      $this->view->output = array('error' => $e->getMessage());
+    }
+  }
 }
