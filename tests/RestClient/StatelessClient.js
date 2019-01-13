@@ -140,7 +140,12 @@ export default class RestClient {
   async setDate(date = null) {
     const usp = new URLSearchParams();
     usp.append(dateSetter.arg, date || 'NOW');
+    usp.append('XDEBUG_SESSION_START', 'PHP_STORM');
 
     return await this.get({ path: `${dateSetter.path}?${usp.toString()}` });
+  }
+
+  async clearCache() {
+    await this.get({ path: '/test/clear-cache' });
   }
 }
