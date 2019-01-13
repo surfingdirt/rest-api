@@ -32,6 +32,7 @@
     "jest": "^23.6.0",
     "nodeunit": "^0.11.3",
     "prettier-eslint": "^8.8.2",
+    "promise-mysql": "^3.3.1",
     "regenerator-runtime": "^0.13.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",

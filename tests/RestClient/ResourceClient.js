@@ -19,8 +19,13 @@ export default class ResourceClient {
     return await this.client.get({ path, token: this.token, urlParams, debugBackend: this.debugBackend });
   }
 
-  async post(id, data, files) {}
-  async put(id, data, files) {}
+  async post(data, urlParams = null) {
+    const path = getResourcePath(this.resource);
+    return await this.client.post({ path, data, token: this.token, urlParams, debugBackend: this.debugBackend });
+  }
+
+  async put(id, data, urlParams = null) {}
+
   async delete(id) {}
 
   setDebugBackend(debugBackend) {

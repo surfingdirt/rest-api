@@ -12,12 +12,18 @@ import {
   editorUser,
   otherUser,
 } from './RestClient/users';
+import { cleanupTestDatabase } from './RestClient/database';
 import { getDateForBackend, getSortedKeysAsString } from './RestClient/utils';
 
 const user1Path = getResourcePath(USER, 1);
 const tokenPath = getResourcePath(TOKEN);
 
 const client = new StatelessClient(hostUrl);
+
+beforeAll(async (done) => {
+  await cleanupTestDatabase();
+  done();
+});
 
 beforeEach(() => {
   clearCacheFiles();
@@ -168,7 +174,7 @@ describe('User tests', () => {
 
     test("Retrieve plainuser's data as self", async () => {
       await userClient.setUser(plainUser);
-      const { statusCode, body } = await userClient.get(plainUser.id);
+      const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserSelfInfo);
     });
   });
@@ -211,9 +217,28 @@ describe('User tests', () => {
   });
 
   describe('Create users', () => {
-    // testCreateUserAsPlainUserFail - It should fail to create a user because only guest is allowed to do so
-    // testCreateUserAsGuestFail - It should fail to create a user and return errors because of missing/invalid data
-    // testCreateUserAsGuestSuccess - It should create a new user and return its id
+    test('Logged-in user cannot create a new user', async () => {
+      await userClient.setUser(plainUser);
+      const { statusCode } = await userClient.post({});
+      expect(statusCode).toEqual(403);
+    });
+
+    test('Guest user cannot create a new user with invalid data', async () => {
+      await userClient.setToken(null);
+      const { statusCode } = await userClient.post({});
+      expect(statusCode).toEqual(400);
+    });
+
+    test('Successful user creation should return an id', async () => {
+      await userClient.setToken(null);
+      const { statusCode, body } = await userClient.post({
+        username: 'somenewuser',
+        userP: '123456789',
+        userPC: '123456789',
+        email: 'someemail@email.com',
+      });
+      expect(statusCode).toEqual(200);
+    });
   });
 
   describe('Update users', () => {

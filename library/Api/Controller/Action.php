@@ -128,20 +128,27 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     }
 
     $data = $this->_request->getPost();
-
-    $this->view->resourceId = null;
-    $this->view->errors = array();
-
-    $this->_preObjectCreation($object, $data);
-    list($id, $object, $this->view->errors) = $this->_accessor->createObjectWithData($object, $data);
+    try {
+      $this->_preObjectCreation($object, $data);
+      list($id, $object, $errors) = $this->_accessor->createObjectWithData($object, $data);
+    } catch (Lib_Exception $e) {
+      $errors = array($e->getMessage());
+    }
     if ($id) {
       $this->_postObjectCreation($object, $data);
     }
-    if ($this->view->errors) {
+    if ($errors) {
       $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
-    }
+      $this->view->output = array('errors' => $errors);
+    } else {
+//      $this->view->output = array('id' => $object->getId());
+      $this->view->output = $this->_accessor->getObjectData(
+        $object,
+        'get',
+        null
+      );
 
-    $this->view->output = array('id' => $object->getId());
+    }
   }
 
   protected function _preObjectCreation($object, $data)

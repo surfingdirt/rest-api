@@ -1,7 +1,7 @@
 import rp from 'request-promise';
 
 import { dateSetter } from './constants';
-import {TOKEN} from "./resources";
+import { TOKEN } from './resources';
 
 // Only network errors throw exceptions (not application exceptions)
 const SIMPLE_REQUESTS = false;
@@ -25,7 +25,7 @@ export default class RestClient {
     this.hostUrl = hostUrl;
   }
 
-  getFullUri({path, urlParams = null, debugBackend = false} ) {
+  getFullUri({ path, urlParams = null, debugBackend = false }) {
     let fullUri = `${this.hostUrl}${path}`;
     const usp = new URLSearchParams();
     if (urlParams) {
@@ -42,7 +42,6 @@ export default class RestClient {
     }
 
     return fullUri;
-
   }
 
   getHeaders(token) {
@@ -58,7 +57,7 @@ export default class RestClient {
    */
   async get({ path, token = null, urlParams = null, debugBackend = false }) {
     const options = {
-      uri: this.getFullUri({path, urlParams, debugBackend}),
+      uri: this.getFullUri({ path, urlParams, debugBackend }),
       headers: this.getHeaders(token),
       json: true,
       simple: SIMPLE_REQUESTS,
@@ -68,10 +67,17 @@ export default class RestClient {
     return await rp(options);
   }
 
-  async _sendData({ method, path, data, type = TYPE_FORM_DATA, token = null, debugBackend = false }) {
+  async _sendData({
+    method,
+    path,
+    data,
+    type = TYPE_FORM_DATA,
+    token = null,
+    debugBackend = false,
+  }) {
     const options = {
       method,
-      uri: this.getFullUri({path, debugBackend}),
+      uri: this.getFullUri({ path, debugBackend }),
       headers: this.getHeaders(token),
       simple: SIMPLE_REQUESTS,
       resolveWithFullResponse: true,
@@ -91,18 +97,18 @@ export default class RestClient {
     return await rp(options);
   }
 
-  post(args) {
-    return this._sendData(Object.assign({}, args, {method: 'POST'}));
+  post({ path, data, token, debugBackend }) {
+    return this._sendData({ data, method: 'POST', path, token, debugBackend });
   }
 
-  put(args) {
-    return this._sendData(Object.assign({}, args, {method: 'PUT'}));
+  put({ path, data, token, debugBackend }) {
+    return this._sendData({ data, method: 'PUT', path, token, debugBackend });
   }
 
   async delete({ path, token = null, debugBackend = false }) {
     const options = {
       method: 'DELETE',
-      uri: this.getFullUri({path, debugBackend}),
+      uri: this.getFullUri({ path, debugBackend }),
       headers: this.getHeaders(token),
       simple: SIMPLE_REQUESTS,
       resolveWithFullResponse: true,
@@ -114,7 +120,7 @@ export default class RestClient {
     try {
       const loginResponse = await this.post({
         path: getResourcePath(TOKEN),
-        data: {userP: password, username: username},
+        data: { userP: password, username: username },
       });
       const loginResponseBody = JSON.parse(loginResponse.body);
       if (!loginResponseBody.token) {

@@ -6,6 +6,8 @@ class Lib_Validate_IdenticalTo extends Zend_Validate_Abstract
 {
     const NOT_SAME      = 'notSame';
     const MISSING_REFERENCE = 'missingReference';
+    const NO_VALUE_FOR_REFERENCE = 'missingReference';
+    const NO_REFERENCE_ELEMENT = 'noReferenceElement';
 
     protected $_messageTemplates = array(
         self::NOT_SAME      => 'Fields do not match',
@@ -67,11 +69,13 @@ class Lib_Validate_IdenticalTo extends Zend_Validate_Abstract
 
         $referenceElement = $this->_form->getElement($this->_reference);
         if(empty($referenceElement)){
-            throw new Lib_Exception("Reference element {$this->_reference} does not exist in form.");
+          $this->_error(self::NO_REFERENCE_ELEMENT);
+          return false;
         }
 
         if(!isset($context[$this->_reference])){
-            throw new Lib_Exception("No value for {$this->_reference} in context.");
+          $this->_error(self::NO_VALUE_FOR_REFERENCE);
+          return false;
         }
 
         $referenceValue = $context[$this->_reference];
