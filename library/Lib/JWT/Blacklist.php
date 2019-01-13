@@ -29,7 +29,7 @@ class Lib_JWT_Blacklist
       return false;
     }
     $isBlacklisted = in_array($tokenAsString, $list) ? "true" : "false";
-    error_log("$tokenAsString is Blacklisted: $isBlacklisted");
+    Globals::getLogger()->security("$tokenAsString is Blacklisted: $isBlacklisted");
     return in_array($tokenAsString, $list);
   }
 

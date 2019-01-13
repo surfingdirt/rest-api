@@ -9,27 +9,12 @@ const SIMPLE_REQUESTS = false;
 export const TYPE_JSON = 'json';
 export const TYPE_FORM_DATA = 'formData';
 
-export const getResourcePath = (type, id = null, queryArgs = {}, debugBackend = false) => {
+export const getResourcePath = (type, id = null) => {
   let path;
   if (id) {
     path = `/${type}/${id}`;
   } else {
     path = `/${type}`;
-  }
-
-  const usp = new URLSearchParams();
-  if (queryArgs) {
-    for (let arg in queryArgs) {
-      usp.append(arg, queryArgs[arg]);
-    }
-  }
-  if (debugBackend) {
-    usp.append('XDEBUG_SESSION_START', 'PHP_STORM');
-  }
-
-  const argString = usp.toString();
-  if (argString) {
-    path = `${path}?${argString}`;
   }
 
   return path;
@@ -40,8 +25,24 @@ export default class RestClient {
     this.hostUrl = hostUrl;
   }
 
-  getFullUri(path) {
-    return `${this.hostUrl}${path}`;
+  getFullUri({path, urlParams = null, debugBackend = false} ) {
+    let fullUri = `${this.hostUrl}${path}`;
+    const usp = new URLSearchParams();
+    if (urlParams) {
+      for (let arg in urlParams) {
+        usp.append(arg, urlParams[arg]);
+      }
+    }
+    if (debugBackend) {
+      usp.append('XDEBUG_SESSION_START', 'PHP_STORM');
+    }
+    const argString = usp.toString();
+    if (argString) {
+      fullUri = `${fullUri}?${argString}`;
+    }
+
+    return fullUri;
+
   }
 
   getHeaders(token) {
@@ -55,9 +56,9 @@ export default class RestClient {
   /*
    * State-less methods: token must be passed-in when necessary.
    */
-  async get({ path, token = null, debugBackend = false }) {
+  async get({ path, token = null, urlParams = null, debugBackend = false }) {
     const options = {
-      uri: this.getFullUri(path, debugBackend),
+      uri: this.getFullUri({path, urlParams, debugBackend}),
       headers: this.getHeaders(token),
       json: true,
       simple: SIMPLE_REQUESTS,
@@ -70,7 +71,7 @@ export default class RestClient {
   async _sendData({ method, path, data, type = TYPE_FORM_DATA, token = null, debugBackend = false }) {
     const options = {
       method,
-      uri: this.getFullUri(path, debugBackend),
+      uri: this.getFullUri({path, debugBackend}),
       headers: this.getHeaders(token),
       simple: SIMPLE_REQUESTS,
       resolveWithFullResponse: true,
@@ -101,7 +102,7 @@ export default class RestClient {
   async delete({ path, token = null, debugBackend = false }) {
     const options = {
       method: 'DELETE',
-      uri: this.getFullUri(path, debugBackend),
+      uri: this.getFullUri({path, debugBackend}),
       headers: this.getHeaders(token),
       simple: SIMPLE_REQUESTS,
       resolveWithFullResponse: true,

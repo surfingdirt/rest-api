@@ -9,6 +9,10 @@ export const clearCache = () => {
       continue;
     }
 
-    fs.unlinkSync(cacheDir + files[i]);
+    try {
+      fs.unlinkSync(cacheDir + files[i]);
+    } catch (e) {
+      // Probably this method was called twice
+    }
   }
 };

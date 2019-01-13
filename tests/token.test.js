@@ -3,7 +3,7 @@ import { clearCache } from './RestClient/cache';
 import { hostUrl, JWT_TTL } from './RestClient/constants';
 import { USER, TOKEN } from './RestClient/resources';
 import { plainUser, bannedUser } from './RestClient/users';
-import { getSortedKeysAsString, getDateForBackend } from './RestClient/utils';
+import { getDateForBackend } from './RestClient/utils';
 
 const user1Path = getResourcePath(USER, 1);
 const tokenPath = getResourcePath(TOKEN);

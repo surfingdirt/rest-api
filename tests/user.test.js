@@ -84,7 +84,8 @@ describe('Single user data ACLs', () => {
 
   test("Retrieve plainuser's data as self", async () => {
     await userClient.setUser(plainUser);
-    const { body } = await userClient.get(plainUser.id);
+    userClient.setDebugBackend(true);
+    const { statusCode, body } = await userClient.get(plainUser.id);
     expect(getSortedKeysAsString(body)).toEqual(plainUserSelfInfo);
   });
 });
