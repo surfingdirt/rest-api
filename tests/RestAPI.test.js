@@ -74,7 +74,7 @@ describe('Token tests', () => {
       data: { userP: password, username: username },
     });
     expect(loginResponse.statusCode).toBe(200);
-    const loginResponseBody = JSON.parse(loginResponse.body);
+    const loginResponseBody = loginResponse.body;
     expect(loginResponseBody.token).toBeDefined();
     user1Token = loginResponseBody.token;
 
@@ -136,7 +136,7 @@ describe('User tests', () => {
 
     const plainUserSelfInfo =
       '["avatar","city","country","date","email","firstName","lang","lastName","latitude",' +
-      '"longitude","site","userId","username","zip"]';
+      '"longitude","site","status","userId","username","zip"]';
 
     const plainUserAdminInfo =
       '["avatar","city","country","date","email","firstName","lang","lastLogin","lastName","latitude",' +
@@ -217,6 +217,11 @@ describe('User tests', () => {
   });
 
   describe('Create users', () => {
+    const createdUserKeys =
+      '["avatar","city","country","date","email","firstName","lang","lastName","latitude",' +
+      '"longitude","site","status","userId","username","zip"]';
+// Need email and status: must treat user creating a new one as himself
+
     test('Logged-in user cannot create a new user', async () => {
       await userClient.setUser(plainUser);
       const { statusCode } = await userClient.post({});
@@ -238,6 +243,7 @@ describe('User tests', () => {
         email: 'someemail@email.com',
       });
       expect(statusCode).toEqual(200);
+      expect(getSortedKeysAsString(body)).toEqual(createdUserKeys);
     });
   });
 

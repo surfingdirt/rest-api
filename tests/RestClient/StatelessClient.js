@@ -88,7 +88,7 @@ export default class RestClient {
         Object.assign(options, { json: true, body: data });
         break;
       case TYPE_FORM_DATA:
-        Object.assign(options, { formData: data });
+        Object.assign(options, { json: true, formData: data });
         break;
       default:
         throw new Error(`Type not supported: '${type}'`);
@@ -122,7 +122,7 @@ export default class RestClient {
         path: getResourcePath(TOKEN),
         data: { userP: password, username: username },
       });
-      const loginResponseBody = JSON.parse(loginResponse.body);
+      const loginResponseBody = loginResponse.body;
       if (!loginResponseBody.token) {
         throw new Error();
       }
