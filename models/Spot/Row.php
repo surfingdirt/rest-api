@@ -165,7 +165,7 @@ class Spot_Row extends    Data_Row
         return $string;
     }
 
-    public function getSubCategory()
+    public function getSubCategory($type = null)
 	{
 		return SubCategory::SPOTS;
 	}

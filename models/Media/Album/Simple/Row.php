@@ -33,7 +33,7 @@ class Media_Album_Simple_Row extends Media_Album_Row
 		return $albumItems;
 	}
 
-	public function getCategory()
+	public function getCategory($type = null)
 	{
     	switch($this->id){
     		case Media_Album_PhotoMain::ID:
@@ -47,7 +47,7 @@ class Media_Album_Simple_Row extends Media_Album_Row
     	}
 	}
 
-	public function getSubCategory()
+	public function getSubCategory($type = null)
 	{
     	switch($this->id){
     		case Media_Album_PhotoMain::ID:

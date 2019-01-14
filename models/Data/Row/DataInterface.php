@@ -12,8 +12,8 @@ interface Data_Row_DataInterface
     public function getLastEditor();
     public function getLastEditionDate();
     public function getTags();
-    public function getCategory();
-    public function getSubCategory();
+    public function getCategory($type = null);
+    public function getSubCategory($type = null);
     public function getForm(User_Row $user, Lib_Acl $acl, $options = null);
 	public function getLayout();
 }
