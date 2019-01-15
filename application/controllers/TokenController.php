@@ -29,8 +29,8 @@ class TokenController extends Zend_Rest_Controller
     }
 
     $db = Globals::getMainDatabase();
-    $username = $this->getRequest()->getPost(User::INPUT_USERNAME);
-    $password = $this->getRequest()->getPost(User::INPUT_PASSWORD);
+    $username = $this->getRequest()->getParam(User::INPUT_USERNAME);
+    $password = $this->getRequest()->getParam(User::INPUT_PASSWORD);
 
     if (empty($username) || empty($password)) {
       return $this->_forbidden(self::MISSING_VALUE);

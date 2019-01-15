@@ -66,7 +66,7 @@ $frontController = Zend_Controller_Front::getInstance();
 $frontController
   ->setRequest('Lib_Controller_Request')
   ->setControllerDirectory(array('default' => APPLICATION_PATH . '/controllers'))
-  ->registerPlugin(new Zend_Controller_Plugin_PutHandler())
+  ->registerPlugin(new Lib_Controller_Plugin_RequestHandler())
   ->registerPlugin(new Zend_Controller_Plugin_ErrorHandler(
       array('controller' => 'error', 'action' => 'exception')));
 Zend_Controller_Action_HelperBroker::addPrefix('Lib_Controller_Helper');

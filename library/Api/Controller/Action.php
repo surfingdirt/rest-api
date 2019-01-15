@@ -127,7 +127,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       throw new Api_Exception_Unauthorised();
     }
 
-    $data = $this->_request->getPost();
+    $data = $this->_request->getParams();
     try {
       $this->_preObjectCreation($object, $data);
       list($id, $object, $errors) = $this->_accessor->createObjectWithData($object, $data);
@@ -146,7 +146,6 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
         'get',
         null
       );
-
     }
   }
 
@@ -189,7 +188,12 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     $errors = $this->_accessor->updateObjectWithData($object, $data);
     if (empty($errors)) {
       $this->_postObjectUpdate($object, $data);
-      $this->view->output = $id;
+      $this->view->output = $this->_accessor->getObjectData(
+        $object,
+        'get',
+        null
+      );
+
     } else {
       $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
       $this->view->output = array('errors' => $errors );

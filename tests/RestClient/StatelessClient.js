@@ -6,9 +6,6 @@ import { TOKEN } from './resources';
 // Only network errors throw exceptions (not application exceptions)
 const SIMPLE_REQUESTS = false;
 
-export const TYPE_JSON = 'json';
-export const TYPE_FORM_DATA = 'formData';
-
 export const getResourcePath = (type, id = null) => {
   let path;
   if (id) {
@@ -45,7 +42,9 @@ export default class RestClient {
   }
 
   getHeaders(token) {
-    const headers = {};
+    const headers = {
+      'Accept': 'application/json',
+    };
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
@@ -71,7 +70,6 @@ export default class RestClient {
     method,
     path,
     data,
-    type = TYPE_FORM_DATA,
     token = null,
     debugBackend = false,
   }) {
@@ -83,17 +81,7 @@ export default class RestClient {
       resolveWithFullResponse: true,
     };
 
-    switch (type) {
-      case TYPE_JSON:
-        Object.assign(options, { json: true, body: data });
-        break;
-      case TYPE_FORM_DATA:
-        Object.assign(options, { json: true, formData: data });
-        break;
-      default:
-        throw new Error(`Type not supported: '${type}'`);
-    }
-
+    Object.assign(options, { json: true, body: data });
     return await rp(options);
   }
 

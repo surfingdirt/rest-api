@@ -72,6 +72,7 @@ describe('Token tests', () => {
     const loginResponse = await client.post({
       path: tokenPath,
       data: { userP: password, username: username },
+      debugBackend: true,
     });
     expect(loginResponse.statusCode).toBe(200);
     const loginResponseBody = loginResponse.body;
@@ -111,6 +112,7 @@ describe('Token tests', () => {
 
 describe('User tests', () => {
   const userClient = new ResourceClient(client, USER);
+  const CREATED_USER_ID = '10';
 
   describe('Error cases', () => {
     test('Missing user request should return a 404', async () => {
@@ -243,11 +245,18 @@ describe('User tests', () => {
       });
       expect(statusCode).toEqual(200);
       expect(getSortedKeysAsString(body)).toEqual(createdUserKeys);
+      expect(body.userId).toEqual(CREATED_USER_ID);
     });
   });
 
   describe('User PUT', () => {
-    // testAdminMakesCreateduserAMember - It should update createduser status to member
+    test('Logged-in user cannot create a new user', async () => {
+      await userClient.setUser(adminUser);
+      const { statusCode, body } = await userClient.put(CREATED_USER_ID, { status: 'member' });
+      expect(statusCode).toEqual(200);
+      expect(body.status).toEqual('member');
+    });
+
     // testUpdateCreatedUserAsPlainuser - It should fail to update the existing user 10
     // testUpdateCreatedUserAsSelf - It should update the existing user 10
     // testFailUpdateCreatedUserPassword - It should fail to update createduser's password if passwords are different
