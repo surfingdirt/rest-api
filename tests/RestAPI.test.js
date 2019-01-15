@@ -129,7 +129,7 @@ describe('User tests', () => {
     });
   });
 
-  describe('Single user data ACLs', () => {
+  describe('User GET', () => {
     const plainUserPublicInfo =
       '["avatar","city","country","date","firstName","lang","lastName","latitude",' +
       '"longitude","site","userId","username","zip"]';
@@ -179,7 +179,7 @@ describe('User tests', () => {
     });
   });
 
-  describe('Listing users', () => {
+  describe('User list GET', () => {
     test('Retrieve all valid users as guest', async () => {
       await userClient.setToken(null);
       const { body } = await userClient.list();
@@ -216,11 +216,10 @@ describe('User tests', () => {
     });
   });
 
-  describe('Create users', () => {
+  describe('User POST', () => {
     const createdUserKeys =
       '["avatar","city","country","date","email","firstName","lang","lastName","latitude",' +
       '"longitude","site","status","userId","username","zip"]';
-// Need email and status: must treat user creating a new one as himself
 
     test('Logged-in user cannot create a new user', async () => {
       await userClient.setUser(plainUser);
@@ -234,7 +233,7 @@ describe('User tests', () => {
       expect(statusCode).toEqual(400);
     });
 
-    test.only('Successful user creation should return an id', async () => {
+    test('Successful user creation should return an id', async () => {
       await userClient.setToken(null);
       const { statusCode, body } = await userClient.post({
         username: 'somenewuser',
@@ -247,7 +246,7 @@ describe('User tests', () => {
     });
   });
 
-  describe('Update users', () => {
+  describe('User PUT', () => {
     // testAdminMakesCreateduserAMember - It should update createduser status to member
     // testUpdateCreatedUserAsPlainuser - It should fail to update the existing user 10
     // testUpdateCreatedUserAsSelf - It should update the existing user 10
@@ -258,7 +257,7 @@ describe('User tests', () => {
     // testPlainuserCannotUpdateCreatedUser - It should not let plain user edit createduser
   });
 
-  describe('Delete users', () => {
+  describe('User DELETE', () => {
     // failToDeletePlainUserAsGuest - It should return a 403 status code
     // deletePlainUserAsAdmin - It should delete plainuser
     // plainUserIsNotFound - xxxxx
