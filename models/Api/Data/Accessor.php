@@ -30,7 +30,6 @@ abstract class Api_Data_Accessor
 	 */
 	public function getReadAttributes($object)
 	{
-		$attr = array();
 		if(!$object->isReadableBy($this->_user, $this->_acl)){
 			throw new Api_Exception_Unauthorised('Access unauthorised for user '.$this->_user->getId());
 		}
