@@ -141,7 +141,6 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
       $this->view->output = array('errors' => $errors);
     } else {
-//      $this->view->output = array('id' => $object->getId());
       $this->view->output = $this->_accessor->getObjectData(
         $object,
         'get',

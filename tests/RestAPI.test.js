@@ -234,7 +234,7 @@ describe('User tests', () => {
       expect(statusCode).toEqual(400);
     });
 
-    test('Successful user creation should return an id', async () => {
+    test.only('Successful user creation should return an id', async () => {
       await userClient.setToken(null);
       const { statusCode, body } = await userClient.post({
         username: 'somenewuser',

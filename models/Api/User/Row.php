@@ -8,7 +8,11 @@ class Api_User_Row extends User_Row
 	 */
 	public function isReadableBy(User_Row $user, Lib_Acl $acl)
 	{
-		switch($this->status){
+		if ($user->getId() === $this->getId()) {
+		  return true;
+    }
+
+	  switch($this->status){
 			case User::STATUS_GUEST:
 				return false;
 				break;

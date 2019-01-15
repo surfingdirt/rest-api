@@ -20,6 +20,7 @@ class Api_User_Accessor extends Api_Data_Accessor
 	);
 	public $ownReadAttributes = array(
 		'email',
+    'status',
 	);
 	public $adminReadAttributes = array(
     'lastLogin',
@@ -59,7 +60,6 @@ class Api_User_Accessor extends Api_Data_Accessor
 	public function createObjectWithData($object, $data)
 	{
 		$attributes = $this->getCreateAttributes($object);
-		$log = '';
 
 		$errors = array();
 		$form = $object->getForm($this->_user, $this->_acl);
@@ -73,7 +73,6 @@ class Api_User_Accessor extends Api_Data_Accessor
 		} else {
 			foreach($attributes as $attrFormName => $attrDBName){
 				if(!isset($data[$attrFormName])){
-					$log .= 'skipping '.$attrFormName.' -- ';
 					continue;
 				}
 
@@ -83,17 +82,19 @@ class Api_User_Accessor extends Api_Data_Accessor
 					$target = $data[$attrFormName];
 				}
 
-				$log .= 'setting '.$attrDBName.' = ' . $target . ' -- ';
 				$object->$attrDBName = $target;
 			}
-			//error_log($log);
 
-			$object->status = User::STATUS_MEMBER;
+			$object->status = User::STATUS_PENDING;
 			$object->date = Utils::date('Y-m-d H:i:s');
-        	$object->lang = Globals::getTranslate()->getLocale();
-        	$object->activationKey = Utils::getRandomKey(32);
+			$object->lang = Globals::getTranslate()->getLocale();
+			$object->activationKey = Utils::getRandomKey(32);
 
 			$object->save();
+
+			// Update the user object so that the response can contain all user-visible properties.
+			$this->_user = $object;
+			Globals::setUser($object);
 		}
 		return array($object->getId(), $object, $errors);
 	}
