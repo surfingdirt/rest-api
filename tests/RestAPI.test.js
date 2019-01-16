@@ -11,6 +11,7 @@ import {
   pendingUser,
   editorUser,
   otherUser,
+  createdUser,
 } from './RestClient/users';
 import { cleanupTestDatabase } from './RestClient/database';
 import { getDateForBackend, getSortedKeysAsString } from './RestClient/utils';
@@ -112,7 +113,6 @@ describe('Token tests', () => {
 
 describe('User tests', () => {
   const userClient = new ResourceClient(client, USER);
-  const CREATED_USER_ID = '10';
 
   describe('Error cases', () => {
     test('Missing user request should return a 404', async () => {
@@ -235,35 +235,65 @@ describe('User tests', () => {
       expect(statusCode).toEqual(400);
     });
 
-    test('Successful user creation should return an id', async () => {
+    test.only('Successful user creation should return an id', async () => {
       await userClient.setToken(null);
       const { statusCode, body } = await userClient.post({
-        username: 'somenewuser',
-        userP: '123456789',
-        userPC: '123456789',
-        email: 'someemail@email.com',
+        username: createdUser.username,
+        userP: createdUser.password,
+        userPC: createdUser.password,
+        email: createdUser.email,
       });
       expect(statusCode).toEqual(200);
       expect(getSortedKeysAsString(body)).toEqual(createdUserKeys);
-      expect(body.userId).toEqual(CREATED_USER_ID);
+      expect(parseInt(body.userId, 10)).toEqual(createdUser.id);
     });
   });
 
   describe('User PUT', () => {
-    test('Logged-in user cannot create a new user', async () => {
+    test.only('Admin can change user status', async () => {
       await userClient.setUser(adminUser);
-      const { statusCode, body } = await userClient.put(CREATED_USER_ID, { status: 'member' });
+      const { statusCode, body } = await userClient.put(createdUser.id, { status: 'member' });
       expect(statusCode).toEqual(200);
       expect(body.status).toEqual('member');
     });
 
-    // testUpdateCreatedUserAsPlainuser - It should fail to update the existing user 10
-    // testUpdateCreatedUserAsSelf - It should update the existing user 10
-    // testFailUpdateCreatedUserPassword - It should fail to update createduser's password if passwords are different
-    // testUpdateCreatedUserPassword - It should update createduser's password
-    // testFailToLoginCreatedUserWithOldPassword - It should fail to login with the old password
-    // testLoginWithUpdatedCreatedUserPassword - It should let createduser login with the new password
-    // testPlainuserCannotUpdateCreatedUser - It should not let plain user edit createduser
+    test.only('Plain user cannot update new user', async () => {
+      await userClient.setUser(plainUser);
+      const { statusCode } = await userClient.put(createdUser.id, { firstName: 'nope' });
+      expect(statusCode).toEqual(403);
+    });
+
+    test.only('Plain user can update their account', async () => {
+      await userClient.setUser(createdUser);
+      const { statusCode, body } = await userClient.put(createdUser.id, { firstName: 'yes' });
+      expect(statusCode).toEqual(200);
+      expect(body.firstName).toEqual('yes');
+    });
+
+    test.only('Requests with password mismatch are rejected', async () => {
+      await userClient.setUser(createdUser);
+      const { statusCode, body } = await userClient.put(createdUser.id, { userP: '123', userPC: '345' });
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual({"errors": {"userPC": ["notSame"]}});
+    });
+
+    test.only('Requests with matching passwords are successful, and old password is made invalid', async () => {
+      const newPassword = '345';
+
+      await userClient.setUser(createdUser);
+      const { statusCode } = await userClient.put(createdUser.id, { userP: newPassword, userPC: newPassword });
+      expect(statusCode).toEqual(200);
+
+      userClient.setToken(null);
+      try {
+        await userClient.setUser(createdUser);
+      } catch (e) {
+        expect(e.message).toEqual(`Login as '${createdUser.username}' failed`);
+      }
+
+      userClient.setToken(null);
+      await userClient.setUser({username: createdUser.username, password: newPassword});
+    });
   });
 
   describe('User DELETE', () => {

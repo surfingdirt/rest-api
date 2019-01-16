@@ -40,3 +40,10 @@ export const pendingUser = {
   password: '123456789',
 };
 
+export const createdUser = {
+  id: 10,
+  username: 'createduser',
+  password: '123456789',
+  email: 'createduser@gmail.com',
+};
+
