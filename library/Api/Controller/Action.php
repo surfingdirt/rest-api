@@ -117,6 +117,9 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   public function getAction()
   {
     $id = $this->_request->getParam('id');
+    if (!$id) {
+      throw new Api_Exception_BadRequest();
+    }
     $result = $this->_table->find($id);
     if (empty($result) || !$object = $result->current()) {
       throw new Api_Exception_NotFound();
@@ -190,6 +193,9 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   public function putAction()
   {
     $id = $this->_request->getParam('id');
+    if (!$id) {
+      throw new Api_Exception_BadRequest();
+    }
     $data = $this->_getBodyParams();
 
     $result = $this->_table->find($id);
@@ -235,7 +241,9 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   public function deleteAction()
   {
     $id = $this->_request->getParam('id');
-
+    if (!$id) {
+      throw new Api_Exception_BadRequest();
+    }
     $result = $this->_table->find($id);
     if (empty($result) || !$object = $result->current()) {
       throw new Api_Exception_NotFound();

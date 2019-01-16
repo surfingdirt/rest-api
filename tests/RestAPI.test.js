@@ -235,7 +235,7 @@ describe('User tests', () => {
       expect(statusCode).toEqual(400);
     });
 
-    test.only('Successful user creation should return an id', async () => {
+    test('Successful user creation should return an id', async () => {
       await userClient.setToken(null);
       const { statusCode, body } = await userClient.post({
         username: createdUser.username,
@@ -250,34 +250,34 @@ describe('User tests', () => {
   });
 
   describe('User PUT', () => {
-    test.only('Admin can change user status', async () => {
+    test('Admin can change user status', async () => {
       await userClient.setUser(adminUser);
       const { statusCode, body } = await userClient.put(createdUser.id, { status: 'member' });
       expect(statusCode).toEqual(200);
       expect(body.status).toEqual('member');
     });
 
-    test.only('Plain user cannot update new user', async () => {
+    test('Plain user cannot update new user', async () => {
       await userClient.setUser(plainUser);
       const { statusCode } = await userClient.put(createdUser.id, { firstName: 'nope' });
       expect(statusCode).toEqual(403);
     });
 
-    test.only('Plain user can update their account', async () => {
+    test('Plain user can update their account', async () => {
       await userClient.setUser(createdUser);
       const { statusCode, body } = await userClient.put(createdUser.id, { firstName: 'yes' });
       expect(statusCode).toEqual(200);
       expect(body.firstName).toEqual('yes');
     });
 
-    test.only('Requests with password mismatch are rejected', async () => {
+    test('Requests with password mismatch are rejected', async () => {
       await userClient.setUser(createdUser);
       const { statusCode, body } = await userClient.put(createdUser.id, { userP: '123', userPC: '345' });
       expect(statusCode).toEqual(400);
       expect(body).toEqual({"errors": {"userPC": ["notSame"]}});
     });
 
-    test.only('Requests with matching passwords are successful, and old password is made invalid', async () => {
+    test('Requests with matching passwords are successful, and old password is made invalid', async () => {
       const newPassword = '345';
 
       await userClient.setUser(createdUser);
@@ -297,8 +297,44 @@ describe('User tests', () => {
   });
 
   describe('User DELETE', () => {
-    // failToDeletePlainUserAsGuest - It should return a 403 status code
-    // deletePlainUserAsAdmin - It should delete plainuser
-    // plainUserIsNotFound - xxxxx
+    let userIdToDelete;
+    const userToDelete = {username: 'userToDelete', password: '123456789'};
+
+    beforeAll(async() => {
+      await userClient.setToken(null);
+      const { body } = await userClient.post({
+        username: userToDelete.username,
+        userP: userToDelete.password,
+        userPC: userToDelete.password,
+        email: 'deleteme@gmail.com',
+      });
+      userIdToDelete = body.userId;
+
+      await userClient.setUser(adminUser);
+      await userClient.put(userIdToDelete, { status: 'member' });
+    });
+
+    test('Guest cannot delete a user', async () => {
+      userClient.setToken(null);
+      userClient.setDebugBackend(true);
+      const { statusCode } = await userClient.delete(userIdToDelete);
+      expect(statusCode).toEqual(403);
+    });
+
+    test('User cannot delete their account', async () => {
+      await userClient.setUser(userToDelete);
+      const { statusCode } = await userClient.delete(userIdToDelete);
+      expect(statusCode).toEqual(403);
+    });
+
+    test('Admin can delete an account', async () => {
+      await userClient.setUser(adminUser);
+      const { statusCode } = await userClient.delete(userIdToDelete);
+      expect(statusCode).toEqual(200);
+
+      userClient.setToken(null);
+      const { statusCode: notFoundStatusCode } = await userClient.get(userIdToDelete);
+      expect(notFoundStatusCode).toEqual(404);
+    });
   });
 });

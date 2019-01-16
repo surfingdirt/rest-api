@@ -51,7 +51,15 @@ export default class ResourceClient {
     });
   }
 
-  async delete(id) {}
+  async delete(id) {
+    const path = getResourcePath(this.resource, id);
+    return await this.client.delete({
+      path,
+      token: this.token,
+      debugBackend: this.debugBackend,
+    });
+
+  }
 
   setDebugBackend(debugBackend) {
     this.debugBackend = !!debugBackend;
