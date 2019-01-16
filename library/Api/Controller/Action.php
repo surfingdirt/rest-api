@@ -60,6 +60,22 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     $this->getResponse()->setRawHeader('Content-Type: application/json; charset=UTF-8');
   }
 
+  /**
+   * Returns all user-land parameters.
+   * @return array
+   * @throws Zend_Controller_Action_Exception
+   */
+  protected function _getBodyParams() {
+    $params = $this->_request->getParams();
+
+    unset($params[$this->_request->getControllerKey()]);
+    unset($params[$this->_request->getActionKey()]);
+    unset($params[$this->_request->getModuleKey()]);
+    unset($params['id']);
+
+    return $params;
+  }
+
   //-----------------------------------------------------------------------------------------------------------------
   // LIST
   //-----------------------------------------------------------------------------------------------------------------
@@ -127,7 +143,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       throw new Api_Exception_Unauthorised();
     }
 
-    $data = $this->_request->getParams();
+    $data = $this->_getBodyParams();
     try {
       $this->_preObjectCreation($object, $data);
       list($id, $object, $errors) = $this->_accessor->createObjectWithData($object, $data);
@@ -174,7 +190,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   public function putAction()
   {
     $id = $this->_request->getParam('id');
-    $data = $this->_getPut();
+    $data = $this->_getBodyParams();
 
     $result = $this->_table->find($id);
     if (empty($result) || !$object = $result->current()) {
@@ -198,19 +214,6 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
       $this->view->output = array('errors' => $errors );
     }
-  }
-
-  protected function _getPut()
-  {
-    $data = $this->_request->getParams();
-    unset($data['module']);
-    unset($data['controller']);
-    unset($data['action']);
-    unset($data['id']);
-
-    //error_log('PUT '.var_export($data, TRUE));
-
-    return $data;
   }
 
   protected function _preObjectUpdate($object, $data)
