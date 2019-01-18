@@ -21,7 +21,6 @@ export const cleanupTestDatabase = async () => {
     database : 'ridedb_test',
     multipleStatements: true,
   });
-  await runSQL('cleanup_and_inserts.sql', connection);
   await runSQL('test_fixtures.sql', connection);
   connection.end();
 };

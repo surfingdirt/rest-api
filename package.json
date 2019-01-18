@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "The REST API for SurfingDirt",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "installtestdb": "mysql ridedb_test -uroot < data/sql/structure.sql",
+    "resettestdb": "mysql ridedb_test -uroot < data/sql/test_fixtures.sql"
   },
   "repository": {
     "type": "git",

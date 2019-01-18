@@ -4,17 +4,13 @@ class Api_User_Accessor extends Api_Data_Accessor
 	public $publicReadAttributes = array(
     'avatar',
     'city',
-    'country',
     'date',
     'firstName',
     'lang',
     'lastName',
-    'latitude',
-    'longitude',
     'site',
 		'userId',
 		'username',
-    'zip',
 	);
 	public $memberReadAttributes = array(
 	);
@@ -29,7 +25,7 @@ class Api_User_Accessor extends Api_Data_Accessor
 
 	public $publicCreateAttributes = array(
 		'username' => 'username',
-		'userP' => 'password',
+    User::INPUT_PASSWORD => 'password',
 		'email' => 'email'
 	);
 	public $memberCreateAttributes = array();
@@ -39,18 +35,13 @@ class Api_User_Accessor extends Api_Data_Accessor
 	public $memberWriteAttributes = array();
 	public $ownWriteAttributes = array(
     'avatar' => 'avatar',
-    'city' => 'city',
-		'country' => 'country',
     'email' => 'email',
     'firstName' => 'firstName',
     'lang' => 'lang',
 		'lastName' => 'lastName',
-    'latitude' => 'latitude',
-    'longitude' => 'longitude',
 		'site' => 'site',
-		'userP' => 'password',
-		'userPC' => 'password',
-    'zip' => 'zip',
+    User::INPUT_PASSWORD => 'password',
+    User::INPUT_PASSWORD_CONFIRM => 'password',
 	);
 	public $adminWriteAttributes = array(
 		'lastLogin' => 'lastLogin',
@@ -76,7 +67,7 @@ class Api_User_Accessor extends Api_Data_Accessor
 					continue;
 				}
 
-				if($attrFormName == 'userP'){
+				if($attrFormName == User::INPUT_PASSWORD){
 					$target = md5($data[$attrFormName]);
 				} else {
 					$target = $data[$attrFormName];

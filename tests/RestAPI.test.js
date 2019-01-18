@@ -133,16 +133,16 @@ describe('User tests', () => {
 
   describe('User GET', () => {
     const plainUserPublicInfo =
-      '["avatar","city","country","date","firstName","lang","lastName","latitude",' +
-      '"longitude","site","userId","username","zip"]';
+      '["avatar","city","date","firstName","lang","lastName",' +
+      '"site","userId","username"]';
 
     const plainUserSelfInfo =
-      '["avatar","city","country","date","email","firstName","lang","lastName","latitude",' +
-      '"longitude","site","status","userId","username","zip"]';
+      '["avatar","city","date","email","firstName","lang","lastName",' +
+      '"site","status","userId","username"]';
 
     const plainUserAdminInfo =
-      '["avatar","city","country","date","email","firstName","lang","lastLogin","lastName","latitude",' +
-      '"longitude","site","status","userId","username","zip"]';
+      '["avatar","city","date","email","firstName","lang","lastLogin","lastName",' +
+      '"site","status","userId","username"]';
 
     test("Retrieve plainuser's data as guest", async () => {
       userClient.setToken(null);
@@ -220,8 +220,8 @@ describe('User tests', () => {
 
   describe('User POST', () => {
     const createdUserKeys =
-      '["avatar","city","country","date","email","firstName","lang","lastName","latitude",' +
-      '"longitude","site","status","userId","username","zip"]';
+      '["avatar","city","date","email","firstName","lang","lastName",' +
+      '"site","status","userId","username"]';
 
     test('Logged-in user cannot create a new user', async () => {
       await userClient.setUser(plainUser);
@@ -338,3 +338,35 @@ describe('User tests', () => {
     });
   });
 });
+
+describe.skip('Image tests', () => {
+  // describe('POST ACLS: all and only bad users get a 403', () => {
+  //   test('Guest cannot POST', async () => {});
+  //   test('Pending user cannot POST', async () => {});
+  //   test('Banned user cannot POST', async () => {});
+  //   test('Plain user can POST', async () => {});
+  //   test('Writer user can POST', async () => {});
+  //   test('Editor user can POST', async () => {});
+  //   test('Admin can POST', async () => {});
+  // });
+  //
+  // describe('GET/PUT/DELETE ACLS: everyone gets a 403', () => {
+  //   test('Guest cannot GET/PUT/DELETE', async () => {});
+  //   test('Plain user cannot GET/PUT/DELETE', async () => {});
+  //   test('Admin cannot GET/PUT/DELETE', async () => {});
+  // });
+  //
+  // describe('POST error cases', () => {
+  //   test('Admin cannot GET/PUT/DELETE', async () => {});
+  // });
+  //
+  // describe('POST success cases', () => {
+  //
+  // });
+});
+
+describe.skip('Media tests', () => {
+
+});
+
+describe.skip('Album tests', () => {});
