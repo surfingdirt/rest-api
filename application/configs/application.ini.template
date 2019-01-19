@@ -128,13 +128,7 @@ constants.CDN_URL = '';
 constants.CSS_CDN_URL = '';
 constants.JS_CDN_URL = '';
 
-constants.ANALYTICS_CODE = 'UA-1462148-1'
-
-constants.SWFOBJECT_VERSION = '2.1'
-constants.SWFOBJECT_USE_CDN = false
-constants.SWFOBJECT_LOCAL_PATH = 'swfobject/2.1/swfobject.js'
-constants.SWFOBJECT_FLASH_PLAYER_VERSION = '10'
-constants.SWFOBJECT_EXPRESS_INSTALL_LOCAL_PATH = 'js/swfobject/2.1/expressInstall.swf'
+constants.ANALYTICS_CODE = ''
 
 constants.FRONTPAGE_ITEMS_PER_PAGE = 8
 
