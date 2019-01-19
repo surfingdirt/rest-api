@@ -5,8 +5,7 @@ application/configs/application.ini
 .project
 *.log
 data/cache/*
-public/media/*.jpg
-public/media/thumbnails/*.jpg
+public/files/*
 todo.txt
 package-lock.json
 _tmp
