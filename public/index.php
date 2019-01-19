@@ -1,4 +1,6 @@
 <?php
+//phpinfo();
+//return;
 $t1 = microtime(true);
 
 /*
