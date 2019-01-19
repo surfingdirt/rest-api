@@ -481,21 +481,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
 
   public function getAvatar($baseUrl = null)
   {
-    if (!empty($this->avatar)) {
-      return $this->avatar;
-    }
-
-    // Default avatars:
-    if (empty($this->gender)) {
-      $avatar = DEFAULT_AVATAR;
-    } elseif ($this->gender == 2) {
-      $avatar = DEFAULT_FEMALE_AVATAR;
-    } else {
-      $avatar = DEFAULT_MALE_AVATAR;
-    }
-
-    $avatar = $baseUrl . '/' . IMAGES_PATH . $avatar;
-    return $avatar;
+    return $this->avatar;
   }
 
   public function getHeaderCacheIdPrefix()
