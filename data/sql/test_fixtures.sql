@@ -45,13 +45,13 @@ insert  into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEdito
 (11,'2002-02-18 14:00:00',8,NULL,NULL,'valid','aggregate','public','automatic',NULL),
 (12,'2002-02-18 14:00:00',1,NULL,NULL,'valid','simple','public','static',NULL);
 
-insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`, `status`, `albumId`, `mediaType`, `uri`, `width`, `height`, `size`, `mediaSubType`, `thumbnailWidth`, `thumbnailHeight`) VALUES
-(1, 6, '2002-02-18 10:00:00', null, null, 'valid', 1,  'photo', 'tata.jpg', 720, 540, 56789, 'jpg', 160, 120),
-(2, 6, '2002-02-19 10:00:00', null, null, 'valid', 1,  'photo', 'tata2.jpg', 720, 540, 5678900, 'jpg', 160, 120),
-(3, 1, '2002-02-20 10:00:00', null, null, 'valid', 12, 'video', 'myvideo', 720, 540, 5678900, 'youtube', 160, 120),
-(4, 6, '2002-02-19 10:00:00', null, null, 'valid', 1,  'photo', 'tata3.jpg', 720, 540, 5678900, 'jpg', 160, 120),
-(5, 6, '2002-02-19 10:00:00', null, null, 'valid', 1,  'photo', 'tata4.jpg', 720, 540, 5678900, 'jpg', 160, 120),
-(6, 1, '2002-02-19 10:00:00', null, null, 'invalid', 1,  'photo', 'invalid.jpg', 720, 540, 5678900, 'jpg', 160, 120);
+insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`, `status`, `albumId`, `mediaType`, `key`, `width`, `height`, `size`, `mediaSubType`, `thumbnailWidth`, `thumbnailHeight`, `storageType`) VALUES
+(1, 6, '2002-02-18 10:00:00', null, null, 'valid', 1,  'photo', 'tata.jpg', 720, 540, 56789, 'jpg', 160, 120, 'local'),
+(2, 6, '2002-02-19 10:00:00', null, null, 'valid', 1,  'photo', 'tata2.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local'),
+(3, 1, '2002-02-20 10:00:00', null, null, 'valid', 12, 'video', 'myvideo', 720, 540, 5678900, 'youtube', 160, 120, 'local'),
+(4, 6, '2002-02-19 10:00:00', null, null, 'valid', 1,  'photo', 'tata3.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local'),
+(5, 6, '2002-02-19 10:00:00', null, null, 'valid', 1,  'photo', 'tata4.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local'),
+(6, 1, '2002-02-19 10:00:00', null, null, 'invalid', 1,  'photo', 'invalid.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local');
 
 insert  into `translated_texts`(`id`,`itemType`,`lang`,`type`,`text`) values
 (1,'mediaalbum','fr','title','photoAlbumTitleFr'),

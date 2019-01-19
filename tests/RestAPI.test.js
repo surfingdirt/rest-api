@@ -350,14 +350,21 @@ describe.skip('Image tests', () => {
   //   test('Admin can POST', async () => {});
   // });
   //
-  // describe('GET/PUT/DELETE ACLS: everyone gets a 403', () => {
-  //   test('Guest cannot GET/PUT/DELETE', async () => {});
-  //   test('Plain user cannot GET/PUT/DELETE', async () => {});
-  //   test('Admin cannot GET/PUT/DELETE', async () => {});
+  // describe('GET/PUT ACLS: everyone gets a 403', () => {
+  //   test('Guest cannot GET/PUT', async () => {});
+  //   test('Plain user cannot GET/PUT', async () => {});
+  //   test('Admin cannot GET/PUT', async () => {});
+  // });
+  //
+  // describe('DELETE ACLS: owner and editor/admins can delete', () => {
+  //   test('Guest cannot DELETE', async () => {});
+  //   test('Plain user cannot DELETE someone else\'s', async () => {});
+  //   test('Editor user can DELETE someone else\'s', async () => {});
+  //   test('Admin user can DELETE someone else\'s', async () => {});
   // });
   //
   // describe('POST error cases', () => {
-  //   test('Admin cannot GET/PUT/DELETE', async () => {});
+  //   test('Admin cannot POST because...', async () => {});
   // });
   //
   // describe('POST success cases', () => {

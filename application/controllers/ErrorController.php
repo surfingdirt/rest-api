@@ -30,7 +30,13 @@ class ErrorController extends Zend_Controller_Action
             return $this->_notFound();
           default:
             error_log($logMessage);
-            return $this->_genericError($e->getMessage());
+            if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
+              $viewRenderer->setViewScriptPathSpec('view.phtml');
+              $viewRenderer->setNoRender(false);
+              $this->view->output = array('error' =>$logMessage);
+            } else {
+              return $this->_genericError($e->getMessage());
+            }
         }
     }
   }
