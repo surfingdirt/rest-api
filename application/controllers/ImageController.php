@@ -45,7 +45,7 @@ class ImageController extends Lib_Rest_Controller
     foreach ($_FILES['files']['tmp_name'] as $i => $tmpFile) {
       $thisFileOutput = array();
 
-      $uuid = Utils::uuidV4();
+      $id = Utils::uuidV4();
       try {
         if ($_FILES['files']['error'][$i]) {
           throw new Lib_Exception(
@@ -53,9 +53,9 @@ class ImageController extends Lib_Rest_Controller
             Api_ErrorCodes::IMAGE_UPLOAD_FAILED);
         }
 
-        Lib_Storage::storeFile($storageType, $tmpFile, $uuid);
+        Lib_Storage::storeFile($storageType, $tmpFile, $id);
         $imageRow = $this->_table->createRow(array(
-          'id' => $uuid,
+          'id' => $id,
           'storageType' => $storageType,
         ));
         try {
@@ -65,9 +65,9 @@ class ImageController extends Lib_Rest_Controller
             'Could not save image DB entry',
             Api_ErrorCodes::IMAGE_DB_SAVE_FAILURE);
         }
-        $thisFileOutput['key'] = $uuid;
+        $thisFileOutput['key'] = $id;
       } catch (Lib_Exception $e) {
-        Lib_Storage::cleanUpFiles($storageType, $uuid);
+        Lib_Storage::cleanUpFiles($storageType, $id);
         $thisFileOutput['error'] = $e->getCode();
       }
 
@@ -94,11 +94,26 @@ class ImageController extends Lib_Rest_Controller
       throw new Api_Exception_Unauthorised();
     }
 
+    try {
+      Lib_Storage::cleanUpFiles($object->storageType, $id);
+    } catch (Lib_Exception $e) {
+      $this->view->output = array('error' => $e->getCode());
+      return;
+    }
 
+    try {
+      $where = $this->_table->getAdapter()->quoteInto('id = ?', $id);
+      $this->_table->delete($where);
+    } catch (Exception $e) {
+      $this->view->output = array('error' => Api_ErrorCodes::IMAGE_DB_DELETE_FAILURE);
+      return;
+    }
+
+    $this->view->output = array('status' => 'ok');
   }
 
   /*
-   * All other methods are forbiddem
+   * All other methods are forbidden
    */
 
   public function indexAction()
