@@ -46,17 +46,6 @@ class Media_Item_Photo extends Media_Item
     	self::MIME_WEBP,
 	);
 
-  const SMALL = 'small';
-  const MEDIUM = 'medium';
-  const LARGE = 'large';
-
-  public static $standardSizes = array(
-    self::SMALL  => array('width' => 800, 'height' => 450, 'suffix' => '_s'),
-    self::MEDIUM => array('width' => 1280, 'height' => 720, 'suffix' => '_m'),
-    self::LARGE  => array('width' => 1920, 'height' => 1080, 'suffix' => '_l'),
-  );
-
-
 	/**
      * Get A list of random photos.
      * Given that some pictures might be private,

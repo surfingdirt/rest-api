@@ -30,62 +30,29 @@ class ImageController extends Lib_Rest_Controller
       return $this->_unauthorised();
     }
 
+    $storageType = $this->getRequest()->getParam('type', null);
+    if (!array_key_exists($storageType, Lib_Storage::$config)) {
+      throw new Api_Exception_BadRequest('No type given');
+    }
+
     if (!isset($_FILES) || !isset($_FILES['files'])) {
-      throw new Api_Exception_BadRequest();
+      throw new Api_Exception_BadRequest('No files found');
     }
 
     $fileErrors = array();
-    $savedFiles = array();
+    $savedUUIDs = array();
     $clearFilesList = array();
 
     foreach ($_FILES['files']['tmp_name'] as $i => $tmpFile) {
       try {
         if ($_FILES['files']['error'][$i]) {
-          throw new Lib_Exception("File upload failed - maybe too big");
+          throw new Lib_Exception("File upload failed for file $i - maybe too big");
         }
 
         $uuid = Utils::uuidV4();
-        $photoFile = new File_Photo($tmpFile);
-        $destination = PUBLIC_FILES_DIR . DIRECTORY_SEPARATOR . $uuid;
-        if ($extension = $photoFile->getExtensionForSubType()) {
-          $destination .= '.' . $extension;
-        }
-
-        if (!$photoFile->moveUploadedFile($destination)) {
-          throw new Lib_Exception("Could not move file '$tmpFile' to '$destination'");
-        }
-        $filePath = $photoFile->getFullPath();
-        $clearFilesList[] = $filePath;
-        $savedFiles[] = $filePath;
-
-        // Large JPG
-        $morePaths = $photoFile->generateResizedVersions(
-          Media_Item_Photo::$standardSizes,
-          PUBLIC_FILES_DIR,
-          Media_Item_Photo::SUBTYPE_JPG);
-        array_merge($clearFilesList, $morePaths);
-
-        // JPG Thumbs
-        $morePaths = $photoFile->generateResizedVersions(
-          Media_Item::$thumbSizes,
-          PUBLIC_FILES_DIR.'a',
-          Media_Item_Photo::SUBTYPE_JPG);
-        array_merge($clearFilesList, $morePaths);
-
-        if (function_exists('imagewebp')) {
-          // Large WebP
-          $morePaths = $photoFile->generateResizedVersions(
-            Media_Item_Photo::$standardSizes,
-            PUBLIC_FILES_DIR,
-            Media_Item_Photo::SUBTYPE_WEBP);
-          array_merge($clearFilesList, $morePaths);
-
-          // WebP Thumbs
-          $morePaths = $photoFile->generateResizedVersions(
-            Media_Item::$thumbSizes, PUBLIC_FILES_DIR,
-            Media_Item_Photo::SUBTYPE_WEBP);
-          array_merge($clearFilesList, $morePaths);
-        }
+        $currentSavedFiles = Lib_Storage::storeFile($storageType, $tmpFile, $uuid);
+        array_merge($clearFilesList, $currentSavedFiles);
+        $savedUUIDs[] = $uuid;
       } catch (Lib_Exception $e) {
         // TODO: send an actual code, and translate the message.
         $fileErrors[$i] = array('code' => $e->getCode(), 'message' => $e->getMessage());
@@ -93,7 +60,6 @@ class ImageController extends Lib_Rest_Controller
     }
 
     if (sizeof($fileErrors) > 0) {
-      // TODO: delete all files in $cleanupFileList
       foreach ($clearFilesList as $toDelete) {
         $file = new File($toDelete);
         $status = $file->delete();
@@ -105,7 +71,7 @@ class ImageController extends Lib_Rest_Controller
       return;
     }
 
-    $this->view->output = array('files' => $savedFiles);
+    $this->view->output = array('saved' => $savedUUIDs);
   }
 
   public function deleteAction()

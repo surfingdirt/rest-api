@@ -5,10 +5,6 @@ class Media_Item extends Data
   const TYPE_PHOTO = 'photo';
   const TYPE_VIDEO = 'video';
 
-  const SMALL = 'small';
-  const MEDIUM = 'medium';
-  const LARGE = 'large';
-
   public static $itemTypes = array(
     0 => self::TYPE_PHOTO,
     1 => self::TYPE_VIDEO,
@@ -19,12 +15,6 @@ class Media_Item extends Data
     Media_Item_Photo::SUBTYPE_PNG,
     Media_Item_Photo::SUBTYPE_GIF,
     Media_Item_Photo::SUBTYPE_WEBP,
-  );
-
-  public static $thumbSizes = array(
-    self::SMALL  => array('width' => 240, 'height' => 135, 'suffix' => '_ts'),
-    self::MEDIUM => array('width' => 400, 'height' => 225, 'suffix' => '_tm'),
-    self::LARGE  => array('width' => 640, 'height' => 360, 'suffix' => '_tl'),
   );
 
   protected $_itemType = 'media_Item';
