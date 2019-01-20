@@ -35,11 +35,9 @@ class Lib_Storage
    */
   public static function storeFile($storageType, $tmpFile, $id)
   {
-    $savedFiles = array();
-
     $config = self::$config[$storageType];
     if (!$config) {
-      throw new Lib_Exception("No config found for storage tyoe '$storageType'");
+      throw new Lib_Exception("No config found for storage type '$storageType'");
     }
 
     $photoFile = new File_Photo($tmpFile);
@@ -50,39 +48,35 @@ class Lib_Storage
     if (!$photoFile->moveUploadedFile($destination)) {
       throw new Lib_Exception("Could not move file '$tmpFile' to '$destination'");
     }
-    $filePath = $photoFile->getFullPath();
-    $savedFiles[] = $filePath;
 
     // Large JPG
-    $morePaths = $photoFile->generateResizedVersions(
+    $photoFile->generateResizedVersions(
       $config['images'],
       $config['path'],
       Media_Item_Photo::SUBTYPE_JPG);
-    array_merge($savedFiles, $morePaths);
 
     // JPG Thumbs
-    $morePaths = $photoFile->generateResizedVersions(
+    $photoFile->generateResizedVersions(
       $config['thumbs'],
       $config['path'],
       Media_Item_Photo::SUBTYPE_JPG);
-    array_merge($savedFiles, $morePaths);
 
     if (function_exists('imagewebp')) {
       // Large WebP
-      $morePaths = $photoFile->generateResizedVersions(
+      $photoFile->generateResizedVersions(
         $config['images'],
         $config['path'],
         Media_Item_Photo::SUBTYPE_WEBP);
-      array_merge($savedFiles, $morePaths);
 
       // WebP Thumbs
-      $morePaths = $photoFile->generateResizedVersions(
+      $photoFile->generateResizedVersions(
         $config['thumbs'],
         $config['path'],
         Media_Item_Photo::SUBTYPE_WEBP);
-      array_merge($savedFiles, $morePaths);
     }
+  }
 
-    return $savedFiles;
+  public static function cleanUpFiles($storageType, $id) {
+    // TODO: delete all files for this id
   }
 }

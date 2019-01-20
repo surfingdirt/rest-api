@@ -39,39 +39,28 @@ class ImageController extends Lib_Rest_Controller
       throw new Api_Exception_BadRequest('No files found');
     }
 
-    $fileErrors = array();
-    $savedUUIDs = array();
-    $clearFilesList = array();
-
+    $output = array();
     foreach ($_FILES['files']['tmp_name'] as $i => $tmpFile) {
+      $thisFileOutput = array();
+
+      $uuid = Utils::uuidV4();
       try {
         if ($_FILES['files']['error'][$i]) {
-          throw new Lib_Exception("File upload failed for file $i - maybe too big");
+          throw new Lib_Exception("Upload failed");
         }
 
-        $uuid = Utils::uuidV4();
-        $currentSavedFiles = Lib_Storage::storeFile($storageType, $tmpFile, $uuid);
-        array_merge($clearFilesList, $currentSavedFiles);
-        $savedUUIDs[] = $uuid;
+        Lib_Storage::storeFile($storageType, $tmpFile, $uuid);
+        $thisFileOutput['key'] = $uuid;
       } catch (Lib_Exception $e) {
         // TODO: send an actual code, and translate the message.
-        $fileErrors[$i] = array('code' => $e->getCode(), 'message' => $e->getMessage());
+        Lib_Storage::cleanUpFiles($storageType, $uuid);
+        $thisFileOutput['error'] = array('code' => $e->getCode(), 'message' => $e->getMessage());
       }
+
+      $output[] = $thisFileOutput;
     }
 
-    if (sizeof($fileErrors) > 0) {
-      foreach ($clearFilesList as $toDelete) {
-        $file = new File($toDelete);
-        $status = $file->delete();
-        if (!$status) {
-          Globals::getLogger()->error("Could not delete file: ". $file->getFullPath());
-        }
-      }
-      $this->view->output = array('errors' => $fileErrors);
-      return;
-    }
-
-    $this->view->output = array('saved' => $savedUUIDs);
+    $this->view->output = $output;
   }
 
   public function deleteAction()
