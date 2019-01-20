@@ -32,7 +32,7 @@ class ImageController extends Lib_Rest_Controller
 
     $storageType = $this->getRequest()->getParam('type', null);
     if (!array_key_exists($storageType, Lib_Storage::$config)) {
-      throw new Api_Exception_BadRequest('No type given');
+      throw new Api_Exception_BadRequest('No known type given');
     }
 
     if (!isset($_FILES) || !isset($_FILES['files'])) {
@@ -46,15 +46,14 @@ class ImageController extends Lib_Rest_Controller
       $uuid = Utils::uuidV4();
       try {
         if ($_FILES['files']['error'][$i]) {
-          throw new Lib_Exception("Upload failed");
+          throw new Lib_Exception("Uploaded file is marked with an error", Api_ErrorCodes::IMAGE_UPLOAD_FAILED);
         }
 
         Lib_Storage::storeFile($storageType, $tmpFile, $uuid);
         $thisFileOutput['key'] = $uuid;
       } catch (Lib_Exception $e) {
-        // TODO: send an actual code, and translate the message.
         Lib_Storage::cleanUpFiles($storageType, $uuid);
-        $thisFileOutput['error'] = array('code' => $e->getCode(), 'message' => $e->getMessage());
+        $thisFileOutput['error'] = $e->getCode();
       }
 
       $output[] = $thisFileOutput;

@@ -5,6 +5,8 @@ class Lib_Storage
   const MEDIUM = 'medium';
   const LARGE = 'large';
 
+  const FILENAME = 'img';
+
   const TYPE_LOCAL = 0;
 
   public static $config = array(
@@ -31,52 +33,108 @@ class Lib_Storage
    * @param $id
    * @throws Lib_Exception
    * @throws Lib_Exception_Media_Photo_Mime
-   * @return array
+   * @return void
    */
   public static function storeFile($storageType, $tmpFile, $id)
   {
     $config = self::$config[$storageType];
     if (!$config) {
-      throw new Lib_Exception("No config found for storage type '$storageType'");
+      throw new Lib_Exception(
+        "No config found for storage type '$storageType'",
+        Api_ErrorCodes::IMAGE_BAD_TYPE);
+    }
+
+    switch ($storageType) {
+      case self::TYPE_LOCAL:
+        return self::storeLocalFile($config, $tmpFile, $id);
+      default:
+        throw new Lib_Exception(
+          "Storage method not implemented for storage type '$storageType'",
+          Api_ErrorCodes::IMAGE_STORAGE_METHOD_NOT_IMPLEMENTED);
+        break;
+    }
+  }
+
+  public static function storeLocalFile($config, $tmpFile, $id)
+  {
+    $folder = self::_getFolderForFile($config['path'], $id);
+    if (!mkdir($folder)) {
+      throw new Lib_Exception(
+        "Could not create folder to store file",
+        Api_ErrorCodes::IMAGE_FOLDER_CREATION_FAILED);
     }
 
     $photoFile = new File_Photo($tmpFile);
-    $destination = $config['path'] . DIRECTORY_SEPARATOR . $id;
-    if ($extension = $photoFile->getExtensionForSubType()) {
-      $destination .= '.' . $extension;
+    if (!$extension = $photoFile->getExtensionForSubType()) {
+      throw new Lib_Exception(
+        "Could not determine file extensions",
+        Api_ErrorCodes::IMAGE_NO_EXTENSION);
     }
+
+    $destination = $folder . DIRECTORY_SEPARATOR . self::FILENAME . '.' . $extension;
     if (!$photoFile->moveUploadedFile($destination)) {
-      throw new Lib_Exception("Could not move file '$tmpFile' to '$destination'");
+      throw new Lib_Exception(
+        "Could not move file '$tmpFile' to '$destination'",
+        Api_ErrorCodes::IMAGE_COULD_NOT_MOVE_UPLOADED_FILE);
     }
 
     // Large JPG
     $photoFile->generateResizedVersions(
       $config['images'],
-      $config['path'],
+      $folder,
       Media_Item_Photo::SUBTYPE_JPG);
 
     // JPG Thumbs
     $photoFile->generateResizedVersions(
       $config['thumbs'],
-      $config['path'],
+      $folder,
       Media_Item_Photo::SUBTYPE_JPG);
 
     if (function_exists('imagewebp')) {
       // Large WebP
       $photoFile->generateResizedVersions(
         $config['images'],
-        $config['path'],
+        $folder,
         Media_Item_Photo::SUBTYPE_WEBP);
 
       // WebP Thumbs
       $photoFile->generateResizedVersions(
         $config['thumbs'],
-        $config['path'],
+        $folder,
         Media_Item_Photo::SUBTYPE_WEBP);
     }
   }
 
   public static function cleanUpFiles($storageType, $id) {
     // TODO: delete all files for this id
+    $config = self::$config[$storageType];
+    if (!$config) {
+      return;
+    }
+
+    switch($storageType) {
+      case self::TYPE_LOCAL:
+        $folder = self::_getFolderForFile($config['path'], $id);
+        self::_removeDirectory($folder);
+        break;
+      default:
+        throw new Lib_Exception(
+          "Cleanup not implemented for storage type '$storageType'",
+          Api_ErrorCodes::IMAGE_CLEANUP_METHOD_NOT_IMPLEMENTED);
+        break;
+    }
+  }
+
+  protected static function _getFolderForFile($path, $id) {
+    return $path . DIRECTORY_SEPARATOR . $id;
+  }
+
+  private static function _removeDirectory($path) {
+    Globals::getLogger()->log("Deleting '$path'");
+    $files = glob($path . '/*');
+    foreach ($files as $file) {
+      is_dir($file) ? self::_removeDirectory($file) : @unlink($file);
+    }
+    @rmdir($path);
   }
 }
