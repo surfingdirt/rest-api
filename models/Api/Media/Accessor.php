@@ -427,7 +427,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
     }
 
     return array(
-      'path' => GLOBAL_UPLOAD_DEST,
+      'path' => PUBLIC_FILES_DIR,
       'uri' => $photoFile->getName(),
       'mediaSubType' => $photoFile->getSubType(),
       'width' => $photoFile->getWidth(),

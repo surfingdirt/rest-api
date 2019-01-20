@@ -4,6 +4,20 @@
 
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
+/*Table structure for table `images` */
+
+DROP TABLE IF EXISTS `images`;
+
+CREATE TABLE `images` (
+  `id` varchar(36) NOT NULL,
+  `storageType` int(11) NOT NULL,
+  `submitter` varchar(36) NOT NULL,
+  `date` datetime NOT NULL,
+  `lastEditionDate` datetime DEFAULT NULL,
+  `lastEditor` varchar(36) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 /*Table structure for table `item_views` */
 
 DROP TABLE IF EXISTS `item_views`;

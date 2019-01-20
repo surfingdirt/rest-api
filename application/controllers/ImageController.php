@@ -40,16 +40,33 @@ class ImageController extends Lib_Rest_Controller
     }
 
     $output = array();
+    $table = new Api_Image();
+
     foreach ($_FILES['files']['tmp_name'] as $i => $tmpFile) {
       $thisFileOutput = array();
 
       $uuid = Utils::uuidV4();
       try {
         if ($_FILES['files']['error'][$i]) {
-          throw new Lib_Exception("Uploaded file is marked with an error", Api_ErrorCodes::IMAGE_UPLOAD_FAILED);
+          throw new Lib_Exception(
+            "Uploaded file is marked with an error",
+            Api_ErrorCodes::IMAGE_UPLOAD_FAILED);
         }
 
         Lib_Storage::storeFile($storageType, $tmpFile, $uuid);
+        $imageRow = $table->createRow(array(
+          'id' => $uuid,
+          'storageType' => $storageType,
+          'submitter' => $this->_user->getId(),
+          'date' => Utils::date('Y-m-d H:i:s')
+        ));
+        try {
+          $imageRow->save();
+        } catch (Zend_Db_Table_Exception $e) {
+          throw new Lib_Exception(
+            'Could not save image DB entry',
+            Api_ErrorCodes::IMAGE_DB_SAVE_FAILURE);
+        }
         $thisFileOutput['key'] = $uuid;
       } catch (Lib_Exception $e) {
         Lib_Storage::cleanUpFiles($storageType, $uuid);

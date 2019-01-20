@@ -213,27 +213,6 @@ class Globals
       }
 
       $logger = new Logger($userId);
-      /*
-            $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'local';
-
-            $logger = new Zend_Log();
-            $logger->setEventItem('timestamp', date('Y-m-d H:i:s'));
-            $logger->setEventItem(User::COLUMN_USERID, $userId);
-            $logger->setEventItem('url', Utils::getCompleteUrl());
-            $logger->setEventItem('referer', array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER'] : '');
-            $logger->setEventItem('ip', $ip);
-            $logger->setEventItem('hostname', Utils::getHost($ip));
-
-            $file = self::_getLogFile();
-
-            $format = '%timestamp% [%priorityName% (%priority%)] / '.User::COLUMN_USERID.': \'%'.User::COLUMN_USERID.'%\' / IP: %ip% / HOSTNAME: %hostname%'.PHP_EOL.'URL: %url%'.PHP_EOL.'REFERER: %referer%'.PHP_EOL.'%message%' . PHP_EOL.PHP_EOL.PHP_EOL;
-            $formatter = new Zend_Log_Formatter_Simple($format);
-
-            $writer = new Zend_Log_Writer_Stream($file);
-            $writer->setFormatter($formatter);
-
-            $logger->addWriter($writer);
-      */
       self::$_logger = $logger;
     }
 

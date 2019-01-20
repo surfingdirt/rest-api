@@ -106,7 +106,6 @@ class Lib_Storage
   }
 
   public static function cleanUpFiles($storageType, $id) {
-    // TODO: delete all files for this id
     $config = self::$config[$storageType];
     if (!$config) {
       return;

@@ -130,9 +130,6 @@ class User_Form_Update extends Lib_Form
     $avatarUrl->setLabel(ucfirst(Globals::getTranslate()->_('avatarUrl')))
       ->addFilter($htmlPurifier);
 
-    $avatarFile = new Lib_Form_Element_File('avatarFile', false, null, null, null, Media_Item_Photo::SUBTYPE_JPG);
-    $avatarFile->setLabel(ucfirst(Globals::getTranslate()->_('avatarFile')));
-
     $submit = new Zend_Form_Element_Submit('submit');
     $submit->setLabel(ucfirst(Globals::getTranslate()->_('doUpdateProfile')));
 
@@ -171,7 +168,6 @@ class User_Form_Update extends Lib_Form
       $gear,
       $otherSports,
       $avatarUrl,
-      $avatarFile,
     ));
 
     if (!$this->_pending) {
@@ -189,7 +185,7 @@ class User_Form_Update extends Lib_Form
       $this->addDisplayGroup($authGroupMembers, 'passwordGroup', array('disableLoadDefaultDecorators' => false));
     }
 
-    $this->addDisplayGroup(array('firstName', 'lastName', 'gender', 'birthDate', 'site', 'occupation', 'avatarUrl', 'avatarFile'), 'personGroup');
+    $this->addDisplayGroup(array('firstName', 'lastName', 'gender', 'birthDate', 'site', 'occupation', 'avatarUrl'), 'personGroup');
 
     $this->addDisplayGroup(array('longitude', 'latitude', 'zoom', 'mapType', 'yaw', 'pitch'), 'locationGroup');
 
@@ -320,7 +316,6 @@ class User_Form_Update extends Lib_Form
     }
 
     unset($formattedData['avatarUrl']);
-    unset($formattedData['avatarFile']);
 
     return $formattedData;
   }
