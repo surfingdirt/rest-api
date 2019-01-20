@@ -31,19 +31,19 @@ insert  into `items`(`id`,`itemId`,`itemType`,`date`,`status`,`parentItemId`,`su
 
 insert  into `media_album_aggregations`(`id`,`keyName`,`keyValue`,`albumId`) values (1,'user',1,4),(2,'user',3,5);
 
-insert  into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEditor`,`status`,`albumType`,`albumAccess`,`albumCreation`,`spot`) values
-(1, '2002-02-18 14:00:00',4,NULL,NULL,'valid','simple','public','static',NULL),
-(2, '2002-02-18 14:00:00',4,NULL,NULL,'valid','simple','public','static',NULL),
-(3, '2002-02-18 14:00:00',4,NULL,NULL,'valid','simple','public','static',NULL),
-(4, '2002-02-18 14:00:00',4,NULL,NULL,'valid','simple','public','static',NULL),
-(5, '2002-02-18 14:00:00',1,NULL,NULL,'valid','aggregate','public','automatic',NULL),
-(6, '2002-02-18 14:00:00',3,NULL,NULL,'valid','aggregate','public','automatic',NULL),
-(7, '2002-02-18 14:00:00',4,NULL,NULL,'valid','aggregate','public','automatic',NULL),
-(8, '2002-02-18 14:00:00',5,NULL,NULL,'valid','aggregate','public','automatic',NULL),
-(9, '2002-02-18 14:00:00',6,NULL,NULL,'valid','aggregate','public','automatic',NULL),
-(10,'2002-02-18 14:00:00',7,NULL,NULL,'valid','aggregate','public','automatic',NULL),
-(11,'2002-02-18 14:00:00',8,NULL,NULL,'valid','aggregate','public','automatic',NULL),
-(12,'2002-02-18 14:00:00',1,NULL,NULL,'valid','simple','public','static',NULL);
+insert  into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEditor`,`status`,`albumType`,`albumAccess`,`albumCreation`) values
+(1, '2002-02-18 14:00:00',4,NULL,NULL,'valid','simple','public','static'),
+(2, '2002-02-18 14:00:00',4,NULL,NULL,'valid','simple','public','static'),
+(3, '2002-02-18 14:00:00',4,NULL,NULL,'valid','simple','public','static'),
+(4, '2002-02-18 14:00:00',4,NULL,NULL,'valid','simple','public','static'),
+(5, '2002-02-18 14:00:00',1,NULL,NULL,'valid','aggregate','public','automatic'),
+(6, '2002-02-18 14:00:00',3,NULL,NULL,'valid','aggregate','public','automatic'),
+(7, '2002-02-18 14:00:00',4,NULL,NULL,'valid','aggregate','public','automatic'),
+(8, '2002-02-18 14:00:00',5,NULL,NULL,'valid','aggregate','public','automatic'),
+(9, '2002-02-18 14:00:00',6,NULL,NULL,'valid','aggregate','public','automatic'),
+(10,'2002-02-18 14:00:00',7,NULL,NULL,'valid','aggregate','public','automatic'),
+(11,'2002-02-18 14:00:00',8,NULL,NULL,'valid','aggregate','public','automatic'),
+(12,'2002-02-18 14:00:00',1,NULL,NULL,'valid','simple','public','static');
 
 insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`, `status`, `albumId`, `mediaType`, `key`, `width`, `height`, `size`, `mediaSubType`, `thumbnailWidth`, `thumbnailHeight`, `storageType`) VALUES
 (1, 6, '2002-02-18 10:00:00', null, null, 'valid', 1,  'photo', 'tata.jpg', 720, 540, 56789, 'jpg', 160, 120, 'local'),

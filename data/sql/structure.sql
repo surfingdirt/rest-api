@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS `images`;
 CREATE TABLE `images` (
   `id` varchar(36) NOT NULL,
   `storageType` int(11) NOT NULL,
+  `status` enum('valid','invalid') NOT NULL DEFAULT 'valid',
   `submitter` varchar(36) NOT NULL,
   `date` datetime NOT NULL,
   `lastEditionDate` datetime DEFAULT NULL,
@@ -39,12 +40,12 @@ DROP TABLE IF EXISTS `items`;
 
 CREATE TABLE `items` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Index of the item in its table',
-  `itemId` int(11) NOT NULL DEFAULT '0',
+  `itemId` varchar(36) NOT NULL DEFAULT '0',
   `itemType` varchar(32) NOT NULL DEFAULT '' COMMENT 'Type of the item (equivalent to its table)',
   `date` datetime DEFAULT NULL,
   `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
-  `parentItemId` int(10) unsigned DEFAULT NULL,
-  `submitter` int(10) unsigned NOT NULL,
+  `parentItemId` int(11) unsigned DEFAULT NULL,
+  `submitter` varchar(36) NOT NULL,
   `notification` enum('announce','silent') DEFAULT 'announce',
   PRIMARY KEY (`id`),
   UNIQUE KEY `item` (`date`,`itemId`,`itemType`) USING BTREE,
@@ -55,9 +56,9 @@ DROP TABLE IF EXISTS `media_album_aggregations`;
 
 CREATE TABLE `media_album_aggregations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'albumId',
-  `keyName` varchar(45) CHARACTER SET latin1 NOT NULL,
-  `keyValue` int(10) unsigned NOT NULL,
-  `albumId` int(10) unsigned NOT NULL DEFAULT '0',
+  `keyName` varchar(45) CHARACTER SET utf8 NOT NULL,
+  `keyValue` varchar(36) NOT NULL,
+  `albumId` varchar(36) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `Index_2` (`albumId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -67,16 +68,15 @@ CREATE TABLE `media_album_aggregations` (
 DROP TABLE IF EXISTS `media_albums`;
 
 CREATE TABLE `media_albums` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(36) NOT NULL,
   `date` datetime NOT NULL,
-  `submitter` int(11) NOT NULL,
+  `submitter` varchar(36) NOT NULL,
   `lastEditionDate` datetime DEFAULT NULL,
-  `lastEditor` int(11) DEFAULT NULL,
+  `lastEditor` varchar(36) DEFAULT NULL,
   `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
   `albumType` enum('simple','aggregate') NOT NULL DEFAULT 'simple' COMMENT 'Simple or aggregated',
   `albumAccess` enum('public','private') NOT NULL DEFAULT 'public',
   `albumCreation` enum('static','automatic','user') NOT NULL DEFAULT 'automatic',
-  `spot` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -87,8 +87,8 @@ DROP TABLE IF EXISTS `media_albums_items`;
 CREATE TABLE `media_albums_items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `itemType` varchar(32) NOT NULL,
-  `itemId` int(11) NOT NULL,
-  `albumId` int(11) NOT NULL,
+  `itemId` varchar(36) NOT NULL,
+  `albumId` varchar(36) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `item` (`itemType`,`itemId`),
   UNIQUE KEY `album` (`albumId`)
@@ -99,13 +99,13 @@ CREATE TABLE `media_albums_items` (
 DROP TABLE IF EXISTS `media_items`;
 
 CREATE TABLE `media_items` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` varchar(36) NOT NULL,
   `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
-  `albumId` int(11) unsigned NOT NULL,
-  `submitter` int(10) unsigned NOT NULL,
+  `albumId` varchar(36) NOT NULL,
+  `submitter` varchar(36) NOT NULL,
   `date` datetime NOT NULL,
   `lastEditionDate` datetime DEFAULT NULL,
-  `lastEditor` int(10) unsigned DEFAULT NULL,
+  `lastEditor` varchar(36) DEFAULT NULL,
   `mediaType` varchar(255) DEFAULT NULL,
   `mediaSubType` varchar(255) NOT NULL,
   `storageType` varchar(255) NOT NULL,
@@ -124,8 +124,8 @@ DROP TABLE IF EXISTS `media_items_riders`;
 
 CREATE TABLE `media_items_riders` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `mediaId` int(10) unsigned NOT NULL,
-  `riderId` int(10) unsigned NOT NULL,
+  `mediaId` varchar(36) NOT NULL,
+  `riderId` varchar(36) NOT NULL,
   `riderName` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -148,7 +148,7 @@ CREATE TABLE `translated_texts` (
 DROP TABLE IF EXISTS `user_notifications`;
 
 CREATE TABLE `user_notifications` (
-  `userId` int(10) unsigned NOT NULL,
+  `userId` varchar(36) NOT NULL,
   `itemType` varchar(30) NOT NULL,
   `medium` enum('none','homePage','email','twitter','facebook') NOT NULL DEFAULT 'none',
   `notify` tinyint(1) DEFAULT '0',
@@ -160,7 +160,7 @@ CREATE TABLE `user_notifications` (
 DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
-  `userId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` varchar(36) NOT NULL,
   `username` varchar(64) NOT NULL,
   `password` varchar(32) NOT NULL,
   `email` varchar(128) NOT NULL,

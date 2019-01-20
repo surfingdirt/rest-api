@@ -17,8 +17,10 @@ class ImageController extends Lib_Rest_Controller
       Globals::setUser($user);
       $this->_user = $user;
     } else {
-      throw new Exception("Could not find user '$userId'");
+      throw new Api_Exception_BadRequest("Could not find user '$userId'");
     }
+
+    $this->_table = new Api_Image();
   }
 
   public function postAction()
@@ -40,8 +42,6 @@ class ImageController extends Lib_Rest_Controller
     }
 
     $output = array();
-    $table = new Api_Image();
-
     foreach ($_FILES['files']['tmp_name'] as $i => $tmpFile) {
       $thisFileOutput = array();
 
@@ -54,11 +54,9 @@ class ImageController extends Lib_Rest_Controller
         }
 
         Lib_Storage::storeFile($storageType, $tmpFile, $uuid);
-        $imageRow = $table->createRow(array(
+        $imageRow = $this->_table->createRow(array(
           'id' => $uuid,
           'storageType' => $storageType,
-          'submitter' => $this->_user->getId(),
-          'date' => Utils::date('Y-m-d H:i:s')
         ));
         try {
           $imageRow->save();
@@ -81,7 +79,22 @@ class ImageController extends Lib_Rest_Controller
 
   public function deleteAction()
   {
+    $id = $this->_request->getParam('id');
+    if (!$id) {
+      throw new Api_Exception_BadRequest();
+    }
+
+    $result = $this->_table->find($id);
+    if (empty($result) || !$object = $result->current()) {
+      throw new Api_Exception_NotFound();
+    }
+
     // Only owner and editor/admin have access
+    if (!$object->isDeletableBy($this->_user, Globals::getAcl())) {
+      throw new Api_Exception_Unauthorised();
+    }
+
+
   }
 
   /*
