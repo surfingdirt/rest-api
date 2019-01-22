@@ -1,5 +1,4 @@
-import { getResourcePath, StatelessClient } from './StatelessClient';
-import { TOKENS } from './resources';
+import { getResourcePath } from './StatelessClient';
 
 export default class ResourceClient {
   constructor(client, resource, debugBackend = false) {
@@ -34,6 +33,18 @@ export default class ResourceClient {
     return await this.client.post({
       path,
       data,
+      token: this.token,
+      urlParams,
+      debugBackend: this.debugBackend,
+    });
+  }
+
+  async postFormData(data, files, urlParams = null) {
+    const path = getResourcePath(this.resource);
+    return await this.client.postFormData({
+      path,
+      data,
+      files,
       token: this.token,
       urlParams,
       debugBackend: this.debugBackend,

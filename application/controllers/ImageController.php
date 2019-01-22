@@ -1,6 +1,8 @@
 <?php
 class ImageController extends Lib_Rest_Controller
 {
+  const FILE_KEY = 'files';
+
   public function init()
   {
     parent::init();
@@ -37,17 +39,17 @@ class ImageController extends Lib_Rest_Controller
       throw new Api_Exception_BadRequest('No known type given');
     }
 
-    if (!isset($_FILES) || !isset($_FILES['files'])) {
+    if (!isset($_FILES) || !isset($_FILES[self::FILE_KEY])) {
       throw new Api_Exception_BadRequest('No files found');
     }
 
     $output = array();
-    foreach ($_FILES['files']['tmp_name'] as $i => $tmpFile) {
+    foreach ($_FILES[self::FILE_KEY]['tmp_name'] as $i => $tmpFile) {
       $thisFileOutput = array();
 
       $id = Utils::uuidV4();
       try {
-        if ($_FILES['files']['error'][$i]) {
+        if ($_FILES[self::FILE_KEY]['error'][$i]) {
           throw new Lib_Exception(
             "Uploaded file is marked with an error",
             Api_ErrorCodes::IMAGE_UPLOAD_FAILED);

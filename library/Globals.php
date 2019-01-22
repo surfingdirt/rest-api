@@ -369,7 +369,7 @@ class Globals
     $config->set('Core.Encoding', strtoupper(APP_PAGE_ENCODING)); // replace with your encoding
     $config->set('HTML.Doctype', APP_PAGE_DOCTYPE_AS_STRING); // replace with your doctype
     if (CACHE_HTMLPURIFIER_ACTIVE) {
-      $config->set('Cache.SerializerPath', APP_CACHE_HTMLPURIFIER_DIR);
+      $config->set('Cache.SerializerPath', CACHE_HTMLPURIFIER_DIR);
     } else {
       $config->set('Cache.DefinitionImpl', null);
     }

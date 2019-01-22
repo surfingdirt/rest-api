@@ -32,7 +32,7 @@ CREATE TABLE `item_views` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `item` (`itemId`,`itemType`),
   KEY `date` (`lastView`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /*Table structure for table `items` */
 
@@ -126,7 +126,7 @@ CREATE TABLE `media_items_riders` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `mediaId` varchar(36) NOT NULL,
   `riderId` varchar(36) NOT NULL,
-  `riderName` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `riderName` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -135,11 +135,11 @@ CREATE TABLE `media_items_riders` (
 DROP TABLE IF EXISTS `translated_texts`;
 
 CREATE TABLE `translated_texts` (
-  `id` int(10) unsigned NOT NULL DEFAULT '0',
-  `itemType` varchar(64) CHARACTER SET latin1 NOT NULL,
-  `lang` char(2) CHARACTER SET latin1 NOT NULL,
-  `type` enum('title','description','content') CHARACTER SET latin1 NOT NULL,
-  `text` text CHARACTER SET latin1 NOT NULL,
+  `id` varchar(36) NOT NULL,
+  `itemType` varchar(64) CHARACTER SET utf8 NOT NULL,
+  `lang` char(2) CHARACTER SET utf8 NOT NULL,
+  `type` enum('title','description','content') CHARACTER SET utf8 NOT NULL,
+  `text` text CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`,`itemType`,`lang`,`type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

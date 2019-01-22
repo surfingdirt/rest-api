@@ -1,4 +1,5 @@
 import rp from 'request-promise';
+import fs from 'fs';
 
 import { dateSetter } from './constants';
 import { TOKEN } from './resources';
@@ -17,7 +18,7 @@ export const getResourcePath = (type, id = null) => {
   return path;
 };
 
-export default class RestClient {
+export default class StatelessClient {
   constructor(hostUrl) {
     this.hostUrl = hostUrl;
   }
@@ -43,7 +44,8 @@ export default class RestClient {
 
   getHeaders(token) {
     const headers = {
-      'Accept': 'application/json',
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     };
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -66,27 +68,48 @@ export default class RestClient {
     return await rp(options);
   }
 
-  async _sendData({
-    method,
-    path,
-    data,
-    token = null,
-    debugBackend = false,
-  }) {
+  async _sendData({ method, path, data, token = null, debugBackend = false }) {
     const options = {
       method,
       uri: this.getFullUri({ path, debugBackend }),
       headers: this.getHeaders(token),
       simple: SIMPLE_REQUESTS,
       resolveWithFullResponse: true,
+      json: true,
+      body: data,
     };
 
-    Object.assign(options, { json: true, body: data });
     return await rp(options);
   }
 
   post({ path, data, token, debugBackend }) {
     return this._sendData({ data, method: 'POST', path, token, debugBackend });
+  }
+
+  async postFormData({ path, data, files, token, urlParams, debugBackend }) {
+    const fileData = [];
+    files.forEach(({ filePath, filename, contentType }) => {
+      const value = fs.createReadStream(filePath);
+      fileData.push({
+        value,
+        options: {
+          // TODO: get the name from the file
+          filename,
+          contentType,
+        },
+      });
+    });
+
+    const options = {
+      method: 'POST',
+      uri: this.getFullUri({ path, debugBackend }),
+      headers: this.getHeaders(token),
+      simple: SIMPLE_REQUESTS,
+      resolveWithFullResponse: true,
+      // 'files' is the name of the variable holding upload info on the backend
+      formData: Object.assign({}, data, { files: fileData }),
+    };
+    return await rp(options);
   }
 
   put({ path, data, token, debugBackend }) {

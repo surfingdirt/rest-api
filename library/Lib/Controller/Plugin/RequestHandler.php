@@ -6,7 +6,7 @@ class Lib_Controller_Plugin_RequestHandler extends Zend_Controller_Plugin_Abstra
 
   public function preDispatch($request)
   {
-    if (!$request instanceof Zend_Controller_Request_Http) {
+    if (!$request instanceof Zend_Controller_Request_Http && !$request instanceof Lib_Controller_Request) {
       return;
     }
 

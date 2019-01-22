@@ -104,6 +104,7 @@ class Media_Album extends Data
 
         $title = Globals::getTranslate()->translate('albumFor');
         $title = sprintf($title, $user->getTitle());
+        $album->id = Utils::uuidV4();
         $album->submitter = $user->getId();
         $album->title = $title;
         $album->description = $title;

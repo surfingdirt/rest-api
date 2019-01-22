@@ -76,11 +76,11 @@ class Api_User_Accessor extends Api_Data_Accessor
 				$object->$attrDBName = $target;
 			}
 
+      $object->{User::COLUMN_USERID} = Utils::uuidV4();
 			$object->status = User::STATUS_PENDING;
 			$object->date = Utils::date('Y-m-d H:i:s');
 			$object->lang = Globals::getTranslate()->getLocale();
 			$object->activationKey = Utils::getRandomKey(32);
-
 			$object->save();
 
 			// Update the user object so that the response can contain all user-visible properties.

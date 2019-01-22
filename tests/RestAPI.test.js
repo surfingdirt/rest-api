@@ -2,7 +2,7 @@ import ResourceClient from './RestClient/ResourceClient';
 import { default as StatelessClient, getResourcePath } from './RestClient/StatelessClient';
 import { clearCacheFiles } from './RestClient/cache';
 import { hostUrl, JWT_TTL } from './RestClient/constants';
-import { USER, TOKEN } from './RestClient/resources';
+import { IMAGE, USER, TOKEN } from './RestClient/resources';
 import {
   plainUser,
   bannedUser,
@@ -73,7 +73,6 @@ describe('Token tests', () => {
     const loginResponse = await client.post({
       path: tokenPath,
       data: { userP: password, username: username },
-      debugBackend: true,
     });
     expect(loginResponse.statusCode).toBe(200);
     const loginResponseBody = loginResponse.body;
@@ -245,7 +244,7 @@ describe('User tests', () => {
       });
       expect(statusCode).toEqual(200);
       expect(getSortedKeysAsString(body)).toEqual(createdUserKeys);
-      expect(parseInt(body.userId, 10)).toEqual(createdUser.id);
+      expect(body.userId.length).toEqual(36);
     });
   });
 
@@ -316,7 +315,6 @@ describe('User tests', () => {
 
     test('Guest cannot delete a user', async () => {
       userClient.setToken(null);
-      userClient.setDebugBackend(true);
       const { statusCode } = await userClient.delete(userIdToDelete);
       expect(statusCode).toEqual(403);
     });
@@ -339,37 +337,64 @@ describe('User tests', () => {
   });
 });
 
-describe.skip('Image tests', () => {
-  // describe('POST ACLS: all and only bad users get a 403', () => {
-  //   test('Guest cannot POST', async () => {});
-  //   test('Pending user cannot POST', async () => {});
-  //   test('Banned user cannot POST', async () => {});
-  //   test('Plain user can POST', async () => {});
-  //   test('Writer user can POST', async () => {});
-  //   test('Editor user can POST', async () => {});
-  //   test('Admin can POST', async () => {});
-  // });
-  //
-  // describe('GET/PUT ACLS: everyone gets a 403', () => {
-  //   test('Guest cannot GET/PUT', async () => {});
-  //   test('Plain user cannot GET/PUT', async () => {});
-  //   test('Admin cannot GET/PUT', async () => {});
-  // });
-  //
-  // describe('DELETE ACLS: owner and editor/admins can delete', () => {
-  //   test('Guest cannot DELETE', async () => {});
-  //   test('Plain user cannot DELETE someone else\'s', async () => {});
-  //   test('Editor user can DELETE someone else\'s', async () => {});
-  //   test('Admin user can DELETE someone else\'s', async () => {});
-  // });
-  //
-  // describe('POST error cases', () => {
-  //   test('Admin cannot POST because...', async () => {});
-  // });
-  //
-  // describe('POST success cases', () => {
-  //
-  // });
+describe('Image tests', () => {
+  const imageClient = new ResourceClient(client, IMAGE);
+
+  describe('POST ACLS: all and only bad users get a 403', () => {
+    test('Guest cannot POST', async () => {
+      await imageClient.setToken(null);
+      const { statusCode } = await imageClient.postFormData({});
+      expect(statusCode).toEqual(403);
+    });
+
+    test('Pending user cannot POST', async () => {
+      await imageClient.setUser(pendingUser);
+      const { statusCode } = await imageClient.postFormData({});
+      expect(statusCode).toEqual(403);
+    });
+
+    test('Banned user cannot POST', async () => {
+      await imageClient.setUser(bannedUser);
+      const { statusCode } = await imageClient.postFormData({});
+      expect(statusCode).toEqual(403);
+    });
+
+    test('Plain user can POST', async () => {
+      //await imageClient.setUser(plainUser);
+      const files = [{
+        filePath: 'files/640x480.jpg',
+        filename: '640x480.jpg',
+        contentType: 'image/jpeg',
+      }]
+      const { response, statusCode } = await imageClient.postFormData({type: 0}, files);
+      expect(statusCode).toEqual(200);
+    });
+
+    test('Writer user can POST', async () => {});
+    test('Editor user can POST', async () => {});
+    test('Admin can POST', async () => {});
+  });
+
+  describe('GET/PUT ACLS: everyone gets a 403', () => {
+    test('Guest cannot GET/PUT', async () => {});
+    test('Plain user cannot GET/PUT', async () => {});
+    test('Admin cannot GET/PUT', async () => {});
+  });
+
+  describe('DELETE ACLS: owner and editor/admins can delete', () => {
+    test('Guest cannot DELETE', async () => {});
+    test('Plain user cannot DELETE someone else\'s', async () => {});
+    test('Editor user can DELETE someone else\'s', async () => {});
+    test('Admin user can DELETE someone else\'s', async () => {});
+  });
+
+  describe('POST error cases', () => {
+    test('Admin cannot POST because...', async () => {});
+  });
+
+  describe('POST success cases', () => {
+
+  });
 });
 
 describe.skip('Media tests', () => {

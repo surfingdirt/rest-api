@@ -80,8 +80,7 @@ class Data_TranslatedText extends Cache_Object
 	public static function getAllTranslatedTexts($id, $itemType)
 	{
 		$table = new self();
-
-		$where = "id = $id AND itemType='$itemType'";
+    $where = $table->getAdapter()->quoteInto('id = ? AND itemType = ?', $id, $itemType);
 		$textRowset = $table->fetchAll($where);
 
 		return $textRowset;
