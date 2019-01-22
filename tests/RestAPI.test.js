@@ -112,6 +112,7 @@ describe('Token tests', () => {
 
 describe('User tests', () => {
   const userClient = new ResourceClient(client, USER);
+  let createdUserId;
 
   describe('Error cases', () => {
     test('Missing user request should return a 404', async () => {
@@ -245,33 +246,34 @@ describe('User tests', () => {
       expect(statusCode).toEqual(200);
       expect(getSortedKeysAsString(body)).toEqual(createdUserKeys);
       expect(body.userId.length).toEqual(36);
+      createdUserId = body.userId;
     });
   });
 
   describe('User PUT', () => {
     test('Admin can change user status', async () => {
       await userClient.setUser(adminUser);
-      const { statusCode, body } = await userClient.put(createdUser.id, { status: 'member' });
+      const { statusCode, body } = await userClient.put(createdUserId, { status: 'member' });
       expect(statusCode).toEqual(200);
       expect(body.status).toEqual('member');
     });
 
     test('Plain user cannot update new user', async () => {
       await userClient.setUser(plainUser);
-      const { statusCode } = await userClient.put(createdUser.id, { firstName: 'nope' });
+      const { statusCode } = await userClient.put(createdUserId, { firstName: 'nope' });
       expect(statusCode).toEqual(403);
     });
 
     test('Plain user can update their account', async () => {
       await userClient.setUser(createdUser);
-      const { statusCode, body } = await userClient.put(createdUser.id, { firstName: 'yes' });
+      const { statusCode, body } = await userClient.put(createdUserId, { firstName: 'yes' });
       expect(statusCode).toEqual(200);
       expect(body.firstName).toEqual('yes');
     });
 
     test('Requests with password mismatch are rejected', async () => {
       await userClient.setUser(createdUser);
-      const { statusCode, body } = await userClient.put(createdUser.id, { userP: '123', userPC: '345' });
+      const { statusCode, body } = await userClient.put(createdUserId, { userP: '123', userPC: '345' });
       expect(statusCode).toEqual(400);
       expect(body).toEqual({"errors": {"userPC": ["notSame"]}});
     });
@@ -280,7 +282,7 @@ describe('User tests', () => {
       const newPassword = '345';
 
       await userClient.setUser(createdUser);
-      const { statusCode } = await userClient.put(createdUser.id, { userP: newPassword, userPC: newPassword });
+      const { statusCode } = await userClient.put(createdUserId, { userP: newPassword, userPC: newPassword });
       expect(statusCode).toEqual(200);
 
       userClient.setToken(null);
