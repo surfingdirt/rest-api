@@ -86,7 +86,7 @@ export default class StatelessClient {
     return this._sendData({ data, method: 'POST', path, token, debugBackend });
   }
 
-  async postFormData({ path, data, files, token, urlParams, debugBackend }) {
+  async postFormData({ path, data, files = [], token, urlParams, debugBackend }) {
     const fileData = [];
     files.forEach(({ filePath, filename, contentType }) => {
       const value = fs.createReadStream(filePath);

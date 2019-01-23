@@ -56,7 +56,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
       $this->_getNotificationsCacheId(),
       $this->_getBlogsCacheId(),
       User::VALID_USER_LIST_CACHE_ID,
-      'user' . $this->{User::COLUMN_USERID},
+      'user' . $this->_getIdForCacheId(),
       $this->_getLocationCacheId()
     );
 
@@ -68,6 +68,11 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
   public function getId()
   {
     return $this->{User::COLUMN_USERID};
+  }
+
+  protected function _getIdForCacheId()
+  {
+    return str_replace('-', '', $this->getId());
   }
 
   public function getItemType()
@@ -122,7 +127,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
       return null;
     }
 
-    $where = "itemType = '" . $this->getItemType() . "' AND itemId = " . $this->getId();
+    $where = $table->getAdapter()->quoteInto('itemType = ? AND itemId', $this->getItemType(), $this->getId());
     $location = $table->fetchRow($where);
     if ($location === null) {
       $cache->save($noLocationMarker, $cacheId);
@@ -135,7 +140,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
 
   protected function _getLocationCacheId()
   {
-    $cacheId = 'locationFor_' . $this->getItemType() . $this->getId();
+    $cacheId = 'locationFor_' . $this->getItemType() . $this->_getIdForCacheId();
     return $cacheId;
   }
 
@@ -351,7 +356,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
 
   protected function _getNotificationsCacheId()
   {
-    $return = 'notificationsForUser' . $this->getId();
+    $return = 'notificationsForUser' . $this->_getIdForCacheId();
     return $return;
   }
 
@@ -475,7 +480,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
 
   protected function _getBlogsCacheId()
   {
-    $return = 'blogsForUser' . $this->getId();
+    $return = 'blogsForUser' . $this->_getIdForCacheId();
     return $return;
   }
 
@@ -486,7 +491,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
 
   public function getHeaderCacheIdPrefix()
   {
-    $cacheId = 'headerForUser' . $this->getId() . '_' . Zend_Registry::get('Zend_Locale');
+    $cacheId = 'headerForUser' . $this->_getIdForCacheId() . '_' . Zend_Registry::get('Zend_Locale');
     return $cacheId;
   }
 
