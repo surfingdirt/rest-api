@@ -1,3 +1,6 @@
+import jwt from 'jsonwebtoken';
+import { JWT_SECRET, JWT_TTL } from './constants';
+
 import { getResourcePath } from './StatelessClient';
 
 export default class ResourceClient {
@@ -69,7 +72,6 @@ export default class ResourceClient {
       token: this.token,
       debugBackend: this.debugBackend,
     });
-
   }
 
   setDebugBackend(debugBackend) {
@@ -77,7 +79,14 @@ export default class ResourceClient {
   }
 
   async setUser(user) {
-    this.token = await this.client.login(user.username, user.password);
+    if (user.id) {
+      this.token = jwt.sign({
+        uid: user.id,
+        exp: Math.floor(Date.now() / 1000) + JWT_TTL
+      }, JWT_SECRET);
+    } else {
+      this.token = await this.client.login(user.username, user.password);
+    }
   }
 
   setToken(token) {

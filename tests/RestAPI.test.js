@@ -150,31 +150,31 @@ describe('User tests', () => {
     });
 
     test("Retrieve plainuser's data as other user", async () => {
-      await userClient.setUser(otherUser);
+      userClient.setUser(otherUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as writer user", async () => {
-      await userClient.setUser(writerUser);
+      userClient.setUser(writerUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as editor", async () => {
-      await userClient.setUser(editorUser);
+      userClient.setUser(editorUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as admin", async () => {
-      await userClient.setUser(adminUser);
+      userClient.setUser(adminUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserAdminInfo);
     });
 
     test("Retrieve plainuser's data as self", async () => {
-      await userClient.setUser(plainUser);
+      userClient.setUser(plainUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserSelfInfo);
     });
@@ -189,7 +189,7 @@ describe('User tests', () => {
     });
 
     test('Retrieve all users in the database as admin', async () => {
-      await userClient.setUser(adminUser);
+      userClient.setUser(adminUser);
       const { body } = await userClient.list();
       const userIds = body.map((u) => u.userId).join(',');
       expect(userIds).toEqual('1,3,4,5,6,7,8');
@@ -223,7 +223,7 @@ describe('User tests', () => {
       '"site","status","userId","username"]';
 
     test('Logged-in user cannot create a new user', async () => {
-      await userClient.setUser(plainUser);
+      userClient.setUser(plainUser);
       const { statusCode } = await userClient.post({});
       expect(statusCode).toEqual(403);
     });
@@ -251,27 +251,27 @@ describe('User tests', () => {
 
   describe('User PUT', () => {
     test('Admin can change user status', async () => {
-      await userClient.setUser(adminUser);
+      userClient.setUser(adminUser);
       const { statusCode, body } = await userClient.put(createdUserId, { status: 'member' });
       expect(statusCode).toEqual(200);
       expect(body.status).toEqual('member');
     });
 
     test('Plain user cannot update new user', async () => {
-      await userClient.setUser(plainUser);
+      userClient.setUser(plainUser);
       const { statusCode } = await userClient.put(createdUserId, { firstName: 'nope' });
       expect(statusCode).toEqual(403);
     });
 
     test('Plain user can update their account', async () => {
-      await userClient.setUser(createdUser);
+      userClient.setUser({id: createdUserId});
       const { statusCode, body } = await userClient.put(createdUserId, { firstName: 'yes' });
       expect(statusCode).toEqual(200);
       expect(body.firstName).toEqual('yes');
     });
 
     test('Requests with password mismatch are rejected', async () => {
-      await userClient.setUser(createdUser);
+      userClient.setUser({id: createdUserId});
       const { statusCode, body } = await userClient.put(createdUserId, { userP: '123', userPC: '345' });
       expect(statusCode).toEqual(400);
       expect(body).toEqual({"errors": {"userPC": ["notSame"]}});
@@ -280,13 +280,13 @@ describe('User tests', () => {
     test('Requests with matching passwords are successful, and old password is made invalid', async () => {
       const newPassword = '345';
 
-      await userClient.setUser(createdUser);
+      userClient.setUser({id: createdUserId});
       const { statusCode } = await userClient.put(createdUserId, { userP: newPassword, userPC: newPassword });
       expect(statusCode).toEqual(200);
 
       userClient.setToken(null);
       try {
-        await userClient.setUser(createdUser);
+        userClient.setUser({id: createdUserId});
       } catch (e) {
         expect(e.message).toEqual(`Login as '${createdUser.username}' failed`);
       }
@@ -310,7 +310,7 @@ describe('User tests', () => {
       });
       userIdToDelete = body.userId;
 
-      await userClient.setUser(adminUser);
+      userClient.setUser(adminUser);
       await userClient.put(userIdToDelete, { status: 'member' });
     });
 
@@ -321,13 +321,13 @@ describe('User tests', () => {
     });
 
     test('User cannot delete their account', async () => {
-      await userClient.setUser(userToDelete);
+      userClient.setUser(userToDelete);
       const { statusCode } = await userClient.delete(userIdToDelete);
       expect(statusCode).toEqual(403);
     });
 
     test('Admin can delete an account', async () => {
-      await userClient.setUser(adminUser);
+      userClient.setUser(adminUser);
       const { statusCode } = await userClient.delete(userIdToDelete);
       expect(statusCode).toEqual(200);
 
@@ -349,21 +349,20 @@ describe('Image tests', () => {
       expect(statusCode).toEqual(403);
     });
 
-    // Try these two tests again after we start generating JWTs in Node and we don't need to login.
-    test.skip('Pending user cannot POST', async () => {
-      await imageClient.setUser(pendingUser);
+    test('Pending user cannot POST', async () => {
+      imageClient.setUser(pendingUser);
       const { statusCode } = await imageClient.postFormData({});
       expect(statusCode).toEqual(403);
     });
 
-    test.skip('Banned user cannot POST', async () => {
-      await imageClient.setUser(bannedUser);
+    test('Banned user cannot POST', async () => {
+      imageClient.setUser(bannedUser);
       const { statusCode } = await imageClient.postFormData({});
       expect(statusCode).toEqual(403);
     });
 
     test('Plain user can POST', async () => {
-      await imageClient.setUser(plainUser);
+      imageClient.setUser(plainUser);
       const files = [{
         filePath: 'files/640x480.jpg',
         filename: '640x480.jpg',
