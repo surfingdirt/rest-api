@@ -11,6 +11,8 @@ export default class ResourceClient {
     this.debugBackend = debugBackend;
   }
 
+  /* REST methods */
+
   async list(urlParams = null) {
     const path = getResourcePath(this.resource);
     return await this.client.get({
@@ -73,6 +75,17 @@ export default class ResourceClient {
       debugBackend: this.debugBackend,
     });
   }
+
+  /* Helpers */
+
+  setUUIDs(uuids) {
+    this.client.setUUIDs(uuids);
+  }
+
+  clearUUIDs() {
+    this.client.clearUUIDs();
+  }
+
 
   setDebugBackend(debugBackend) {
     this.debugBackend = !!debugBackend;

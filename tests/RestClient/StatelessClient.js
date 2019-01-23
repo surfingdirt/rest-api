@@ -21,6 +21,7 @@ export const getResourcePath = (type, id = null) => {
 export default class StatelessClient {
   constructor(hostUrl) {
     this.hostUrl = hostUrl;
+    this.uuids = [];
   }
 
   getFullUri({ path, urlParams = null, debugBackend = false }) {
@@ -50,7 +51,18 @@ export default class StatelessClient {
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
+    if (this.uuids.length > 0) {
+      headers['X-uuids'] = JSON.stringify(this.uuids);
+    }
     return headers;
+  }
+
+  setUUIDs(uuids) {
+    this.uuids = uuids;
+  }
+
+  clearUUIDs() {
+    this.uuids = [];
   }
 
   /*

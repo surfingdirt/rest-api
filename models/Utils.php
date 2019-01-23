@@ -311,6 +311,19 @@ class Utils
 
   public static function uuidV4($data = null)
   {
+    if (APPLICATION_ENV === 'test') {
+      // Allows for per-request UUID generation based on request header.
+      $headers = apache_request_headers();
+      if ($headers['X-uuids']) {
+        $uuids = json_decode($headers['X-uuids']);
+        if (sizeof($uuids) >= self::$_currentUUIDIndex) {
+          $uuid = $uuids[self::$_currentUUIDIndex];
+          self::$_currentUUIDIndex++;
+          return $uuid;
+        }
+      }
+    }
+
     if (!$data) {
       $data = random_bytes(16);
     }
@@ -322,4 +335,6 @@ class Utils
 
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
   }
+
+  protected static $_currentUUIDIndex = 0;
 }
