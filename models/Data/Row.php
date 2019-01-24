@@ -356,7 +356,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    */
   protected function _getTranslatedTextsCacheId()
   {
-    $cacheId = 'translatedTextsFor_' . $this->getItemType() . $this->getId();
+    $cacheId = 'translatedTextsFor_' . $this->getItemType() . $this->_getIdForCache($this->getId());
     return $cacheId;
   }
 
@@ -506,19 +506,19 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
 
   protected function _getSubmitterCacheId()
   {
-    $cacheId = User::ITEM_TYPE . $this->submitter;
+    $cacheId = User::ITEM_TYPE . $this->_getIdForCache($this->submitter);
     return $cacheId;
   }
 
   protected function _getLastEditorCacheId()
   {
-    $cacheId = User::ITEM_TYPE . $this->lastEditor;
+    $cacheId = User::ITEM_TYPE . $this->_getIdForCache($this->lastEditor);
     return $cacheId;
   }
 
   protected function _getLocationCacheId()
   {
-    $cacheId = 'locationFor_' . $this->getItemType() . $this->getId();
+    $cacheId = 'locationFor_' . $this->getItemType() . $this->_getIdForCache($this->getId());
     return $cacheId;
   }
 
@@ -529,7 +529,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    */
   protected function _getCommentsCacheId()
   {
-    $cacheId = 'commentsFor_' . $this->getItemType() . $this->getId();
+    $cacheId = 'commentsFor_' . $this->getItemType() . $this->_getIdForCache($this->getId());
     return $cacheId;
   }
 
@@ -803,7 +803,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    */
   protected function _getTagsCacheId()
   {
-    $cacheId = 'tagsFor_' . $this->getItemType() . $this->getId();
+    $cacheId = 'tagsFor_' . $this->getItemType() . $this->_getIdForCache($this->getId());
     return $cacheId;
   }
 
@@ -1249,7 +1249,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
 
   protected function _getViewsCacheId()
   {
-    $id = 'viewsFor' . ucfirst($this->getItemType()) . $this->getId();
+    $id = 'viewsFor' . ucfirst($this->getItemType()) . $this->_getIdForCache($this->getId());
     return $id;
   }
 

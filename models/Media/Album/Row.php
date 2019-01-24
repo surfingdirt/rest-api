@@ -104,7 +104,7 @@ abstract class Media_Album_Row extends Data_Row
 
 	public function getItemsCacheId()
 	{
-		return 'ItemsForAlbum_'.$this->getId();
+		return 'ItemsForAlbum_'.$this->_getIdForCache($this->getId());
 	}
 
     /**

@@ -314,7 +314,7 @@ class Utils
     if (APPLICATION_ENV === 'test') {
       // Allows for per-request UUID generation based on request header.
       $headers = apache_request_headers();
-      if ($headers['X-uuids']) {
+      if (isset($headers['X-uuids'])) {
         $uuids = json_decode($headers['X-uuids']);
         if (sizeof($uuids) >= self::$_currentUUIDIndex) {
           $uuid = $uuids[self::$_currentUUIDIndex];

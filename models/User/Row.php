@@ -126,8 +126,8 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
     } elseif ($location === $noLocationMarker) {
       return null;
     }
-
-    $where = $table->getAdapter()->quoteInto('itemType = ? AND itemId', $this->getItemType(), $this->getId());
+    $where  = $table->getAdapter()->quoteInto('itemType = ?', $this->getItemType());
+    $where .= $table->getAdapter()->quoteInto(' AND itemId = ?', $this->getId());
     $location = $table->fetchRow($where);
     if ($location === null) {
       $cache->save($noLocationMarker, $cacheId);
@@ -356,7 +356,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
 
   protected function _getNotificationsCacheId()
   {
-    $return = 'notificationsForUser' . $this->_getIdForCacheId();
+    $return = 'notificationsForUser' . $this->_getIdForCacheId($this->getId());
     return $return;
   }
 
@@ -480,7 +480,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
 
   protected function _getBlogsCacheId()
   {
-    $return = 'blogsForUser' . $this->_getIdForCacheId();
+    $return = 'blogsForUser' . $this->_getIdForCacheId($this->getId());
     return $return;
   }
 

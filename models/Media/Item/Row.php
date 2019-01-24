@@ -536,7 +536,7 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
 
     protected function _getRidersInMediaCacheId()
     {
-    	return 'ridersInMedia'.$this->getId();
+    	return 'ridersInMedia'.$this->_getIdForCache($this->getId());
     }
 
     public function getRiderNamesInMedia()

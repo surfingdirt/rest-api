@@ -344,7 +344,6 @@ describe('Image tests', () => {
   describe('POST ACLS: all and only bad users get a 403', () => {
     test('Guest cannot POST', async () => {
       await imageClient.setToken(null);
-      imageClient.setDebugBackend(true);
       const { statusCode } = await imageClient.postFormData({});
       expect(statusCode).toEqual(403);
     });

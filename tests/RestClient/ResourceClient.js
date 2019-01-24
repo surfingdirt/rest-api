@@ -86,7 +86,6 @@ export default class ResourceClient {
     this.client.clearUUIDs();
   }
 
-
   setDebugBackend(debugBackend) {
     this.debugBackend = !!debugBackend;
   }

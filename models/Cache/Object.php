@@ -68,7 +68,7 @@ abstract class Cache_Object extends Zend_Db_Table_Abstract
 		}
 
 		$id = $this->getItemType() . $index;
-		return $id;
+		return str_replace('-', '', $id);
 	}
 
 }

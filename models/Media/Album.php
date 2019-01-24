@@ -175,7 +175,7 @@ class Media_Album extends Data
 	public static function getCacheId($albumId)
 	{
 		$cacheId = 'mediaalbum'.$albumId;
-		return $cacheId;
+		return str_replace('-', '', $cacheId);
 	}
 
 	/**

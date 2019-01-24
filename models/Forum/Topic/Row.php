@@ -107,7 +107,7 @@ class Forum_Topic_Row extends Data_Row
 
     protected function _getPostsCacheId()
     {
-    	$return = 'postsForTopic'.$this->getId();
+    	$return = 'postsForTopic'.$this->_getIdForCache($this->getId());
     	return $return;
     }
 

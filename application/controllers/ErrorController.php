@@ -29,7 +29,7 @@ class ErrorController extends Zend_Controller_Action
           case 'Api_Exception_NotFound':
             return $this->_notFound();
           default:
-            error_log($logMessage);
+            Globals::getLogger()->exception($logMessage);
             if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
               $viewRenderer->setViewScriptPathSpec('view.phtml');
               $viewRenderer->setNoRender(false);

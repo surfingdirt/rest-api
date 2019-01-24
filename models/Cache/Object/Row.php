@@ -14,6 +14,11 @@ abstract class Cache_Object_Row extends Zend_Db_Table_Row
     	}
     }
 
+  protected function _getIdForCache($id)
+  {
+    return str_replace('-', '', $id);
+  }
+
 	protected function _doUpdate()
 	{
 		$return = parent::_doUpdate();
@@ -100,13 +105,13 @@ abstract class Cache_Object_Row extends Zend_Db_Table_Row
 			$id = $parentTable;
 		}
 
-		$id .= '_For_'.ucfirst($this->getItemType()).$this->getId();
+		$id .= '_For_'.ucfirst($this->getItemType()).$this->_getIdForCache($this->getId());
 		return $id;
 	}
 	
 	public function getIndividualCacheId($args = null)
 	{
-		$id = $this->getTable()->getIndividualCacheId($this->getId());
+		$id = $this->getTable()->getIndividualCacheId($this->_getIdForCache($this->getId()));
 		return $id;
 	}	
 }
