@@ -1,5 +1,6 @@
 import rp from 'request-promise';
 import fs from 'fs';
+import { basename } from 'path';
 
 import { dateSetter } from './constants';
 import { TOKEN } from './resources';
@@ -100,7 +101,8 @@ export default class StatelessClient {
 
   async postFormData({ path, data, files = [], token, urlParams, debugBackend }) {
     const fileData = [];
-    files.forEach(({ filePath, filename, contentType }) => {
+    files.forEach(({ filePath, contentType }) => {
+      const filename = basename(filePath);
       const value = fs.createReadStream(filePath);
       fileData.push({
         value,

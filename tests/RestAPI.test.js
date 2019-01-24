@@ -13,6 +13,7 @@ import {
   otherUser,
   createdUser,
 } from './RestClient/users';
+import { img640 } from './RestClient/files';
 import { cleanupTestDatabase } from './RestClient/database';
 import { getDateForBackend, getSortedKeysAsString } from './RestClient/utils';
 
@@ -132,8 +133,7 @@ describe('User tests', () => {
 
   describe('User GET', () => {
     const plainUserPublicInfo =
-      '["avatar","city","date","firstName","lang","lastName",' +
-      '"site","userId","username"]';
+      '["avatar","city","date","firstName","lang","lastName",' + '"site","userId","username"]';
 
     const plainUserSelfInfo =
       '["avatar","city","date","email","firstName","lang","lastName",' +
@@ -264,43 +264,49 @@ describe('User tests', () => {
     });
 
     test('Plain user can update their account', async () => {
-      userClient.setUser({id: createdUserId});
+      userClient.setUser({ id: createdUserId });
       const { statusCode, body } = await userClient.put(createdUserId, { firstName: 'yes' });
       expect(statusCode).toEqual(200);
       expect(body.firstName).toEqual('yes');
     });
 
     test('Requests with password mismatch are rejected', async () => {
-      userClient.setUser({id: createdUserId});
-      const { statusCode, body } = await userClient.put(createdUserId, { userP: '123', userPC: '345' });
+      userClient.setUser({ id: createdUserId });
+      const { statusCode, body } = await userClient.put(createdUserId, {
+        userP: '123',
+        userPC: '345',
+      });
       expect(statusCode).toEqual(400);
-      expect(body).toEqual({"errors": {"userPC": ["notSame"]}});
+      expect(body).toEqual({ errors: { userPC: ['notSame'] } });
     });
 
     test('Requests with matching passwords are successful, and old password is made invalid', async () => {
       const newPassword = '345';
 
-      userClient.setUser({id: createdUserId});
-      const { statusCode } = await userClient.put(createdUserId, { userP: newPassword, userPC: newPassword });
+      userClient.setUser({ id: createdUserId });
+      const { statusCode } = await userClient.put(createdUserId, {
+        userP: newPassword,
+        userPC: newPassword,
+      });
       expect(statusCode).toEqual(200);
 
       userClient.setToken(null);
       try {
-        userClient.setUser({id: createdUserId});
+        userClient.setUser({ id: createdUserId });
       } catch (e) {
         expect(e.message).toEqual(`Login as '${createdUser.username}' failed`);
       }
 
       userClient.setToken(null);
-      await userClient.setUser({username: createdUser.username, password: newPassword});
+      await userClient.setUser({ username: createdUser.username, password: newPassword });
     });
   });
 
   describe('User DELETE', () => {
     let userIdToDelete;
-    const userToDelete = {username: 'userToDelete', password: '123456789'};
+    const userToDelete = { username: 'userToDelete', password: '123456789' };
 
-    beforeAll(async() => {
+    beforeAll(async () => {
       await userClient.setToken(null);
       const { body } = await userClient.post({
         username: userToDelete.username,
@@ -362,12 +368,7 @@ describe('Image tests', () => {
 
     test('Plain user can POST', async () => {
       imageClient.setUser(plainUser);
-      const files = [{
-        filePath: 'files/640x480.jpg',
-        filename: '640x480.jpg',
-        contentType: 'image/jpeg',
-      }]
-      const { response, statusCode } = await imageClient.postFormData({type: 0}, files);
+      const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
       expect(statusCode).toEqual(200);
     });
 
@@ -384,22 +385,61 @@ describe('Image tests', () => {
 
   describe('DELETE ACLS: owner and editor/admins can delete', () => {
     test('Guest cannot DELETE', async () => {});
-    test('Plain user cannot DELETE someone else\'s', async () => {});
-    test('Editor user can DELETE someone else\'s', async () => {});
-    test('Admin user can DELETE someone else\'s', async () => {});
+    test("Plain user cannot DELETE someone else's", async () => {});
+    test("Editor user can DELETE someone else's", async () => {});
+    test("Admin user can DELETE someone else's", async () => {});
   });
 
   describe('POST error cases', () => {
     test('Admin cannot POST because...', async () => {});
   });
 
-  describe('POST success cases', () => {
-
-  });
+  describe('POST success cases', () => {});
 });
 
-describe.skip('Media tests', () => {
+/*
+TODO:
+ajouter un index unique sur la colonne key dans media
+salt sur les passwords, revoir l'algo de chiffrage
+user avatars doit etre un image key + storageType, pas un chemin
 
+ */
+
+describe.skip('Photo tests', () => {
+  /*
+   *
+   * GET: photo valide et public, photo invalide et public (guest, owner, writer, editor, admin)
+   * POST
+   * - photo valide, ACLs: guest, plain user, writer, editor, admin
+   * - image manquante et autres valeurs invalides (storageType, fichier trop lourd, pas lisible,)
+   * PUT
+   * - ACLs
+   * - mauvaises donnees d'update
+   * - GET avec updates
+   * DELETE
+   * - ACLs
+   * - GET 404
+   */
 });
 
-describe.skip('Album tests', () => {});
+describe.skip('Video tests', () => {
+  /*
+   * GET: video valide et public, video invalide et public (guest, owner, writer, editor, admin)
+   * POST
+   * - video valide, ACLs: guest, plain user, writer, editor, admin
+   * - url ou id incomprehensible
+   * PUT
+   * - ACLs
+   * - mauvaises donnees d'update
+   * - GET avec updates
+   * DELETE
+   * - ACLs
+   * - GET 404
+   */
+});
+
+describe.skip('Album tests', () => {
+  /*
+   * Tous les utilisateurs ont un album public associe
+   */
+});
