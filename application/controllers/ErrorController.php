@@ -30,10 +30,15 @@ class ErrorController extends Zend_Controller_Action
             return $this->_notFound();
           default:
             Globals::getLogger()->exception($logMessage);
+
             if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
               $viewRenderer->setViewScriptPathSpec('view.phtml');
               $viewRenderer->setNoRender(false);
-              $this->view->output = array('error' =>$logMessage);
+              $this->view->output = array('error' => array(
+                'type' => $errors->type . ' - ' . get_class($e),
+                'message' =>  $e->getMessage(),
+                'trace' => $e->getTrace(),
+              ));
             } else {
               return $this->_genericError($e->getMessage());
             }
@@ -59,9 +64,6 @@ class ErrorController extends Zend_Controller_Action
   protected function _genericError($message)
   {
     $this->_error('HTTP/1.1 500 Internal Server Error');
-    if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
-      $this->getResponse()->setHeader('x-error-message', $message);
-    }
   }
 
   protected function _error($rawHeader)
