@@ -78,7 +78,10 @@ export default class StatelessClient {
       resolveWithFullResponse: true,
     };
 
-    return await rp(options);
+    const response = await rp(options);
+    this.clearUUIDs();
+
+    return response;
   }
 
   async _sendData({ method, path, data, token = null, debugBackend = false }) {
@@ -92,7 +95,10 @@ export default class StatelessClient {
       body: data,
     };
 
-    return await rp(options);
+    const response = await rp(options);
+    this.clearUUIDs();
+
+    return response;
   }
 
   post({ path, data, token, debugBackend }) {
@@ -123,7 +129,10 @@ export default class StatelessClient {
       // 'files' is the name of the variable holding upload info on the backend
       formData: Object.assign({}, data, { files: fileData }),
     };
-    return await rp(options);
+    const response = await rp(options);
+    this.clearUUIDs();
+
+    return response;
   }
 
   put({ path, data, token, debugBackend }) {
@@ -138,7 +147,10 @@ export default class StatelessClient {
       simple: SIMPLE_REQUESTS,
       resolveWithFullResponse: true,
     };
-    return await rp(options);
+    const response = await rp(options);
+    this.clearUUIDs();
+
+    return response;
   }
 
   async login(username, password) {

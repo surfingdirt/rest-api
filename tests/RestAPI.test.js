@@ -17,7 +17,7 @@ import { img640 } from './RestClient/files';
 import { cleanupTestDatabase } from './RestClient/database';
 import { getDateForBackend, getSortedKeysAsString } from './RestClient/utils';
 
-const user1Path = getResourcePath(USER, 1);
+const plainUserPath = getResourcePath(USER, plainUser.id);
 const tokenPath = getResourcePath(TOKEN);
 
 const client = new StatelessClient(hostUrl);
@@ -34,7 +34,7 @@ beforeEach(() => {
 
 describe('Token tests', () => {
   test('logged-out request results in 200', async () => {
-    const path = user1Path;
+    const path = plainUserPath;
     const response = await client.get({ path });
 
     expect(response.statusCode).toBe(200);
@@ -51,7 +51,7 @@ describe('Token tests', () => {
   });
 
   test('invalid token results in 403', async () => {
-    const path = user1Path;
+    const path = plainUserPath;
     const token = 'no-way-this-is-gonna-work';
 
     const response = await client.get({ path, token });
@@ -85,7 +85,7 @@ describe('Token tests', () => {
 
     // Request user 1 with user1Token while server thinks it's the future
     const futureResponse = await client.get({
-      path: user1Path,
+      path: plainUserPath,
       token: user1Token,
     });
     expect(futureResponse.statusCode).toBe(403);
@@ -94,7 +94,7 @@ describe('Token tests', () => {
     await client.setDate();
 
     // Request user 1 with user1Token while server thinks it's the present again
-    const loginNowResponse = await client.get({ path: user1Path, token: user1Token });
+    const loginNowResponse = await client.get({ path: plainUserPath, token: user1Token });
     expect(loginNowResponse.statusCode).toBe(200);
 
     // Delete token as self (ie, logout)
@@ -105,14 +105,13 @@ describe('Token tests', () => {
     expect(deleteResponse.statusCode).toBe(200);
 
     // Request user 1 with blacklisted user1Token
-    const loginAgainResponse = await client.get({ path: user1Path, token: user1Token });
+    const loginAgainResponse = await client.get({ path: plainUserPath, token: user1Token });
     expect(loginAgainResponse.statusCode).toBe(403);
   });
 });
 
 describe('User tests', () => {
   const userClient = new ResourceClient(client, USER);
-  let createdUserId;
 
   describe('Error cases', () => {
     test('Missing user request should return a 404', async () => {
@@ -184,36 +183,52 @@ describe('User tests', () => {
     test('Retrieve all valid users as guest', async () => {
       await userClient.setToken(null);
       const { body } = await userClient.list();
-      const userIds = body.map((u) => u.userId).join(',');
-      expect(userIds).toEqual('1,4,5,6,7');
+      const userIds = body.map((u) => u.userId);
+      const expectedUserIds = [
+        plainUser.id,
+        adminUser.id,
+        editorUser.id,
+        writerUser.id,
+        otherUser.id,
+      ];
+      expect(userIds).toEqual(expectedUserIds);
     });
 
     test('Retrieve all users in the database as admin', async () => {
       userClient.setUser(adminUser);
       const { body } = await userClient.list();
-      const userIds = body.map((u) => u.userId).join(',');
-      expect(userIds).toEqual('1,3,4,5,6,7,8');
+      const userIds = body.map((u) => u.userId);
+      const expectedUserIds = [
+        plainUser.id,
+        bannedUser.id,
+        adminUser.id,
+        editorUser.id,
+        writerUser.id,
+        otherUser.id,
+        pendingUser.id,
+      ];
+      expect(userIds).toEqual(expectedUserIds);
     });
 
     test('Retrieve 3rd and 4th valid users as guest', async () => {
       await userClient.setToken(null);
       const { body } = await userClient.list({ start: 2, count: 2 });
-      const userIds = body.map((u) => u.userId).join(',');
-      expect(userIds).toEqual('5,6');
+      const userIds = body.map((u) => u.userId);
+      expect(userIds).toEqual([editorUser.id, writerUser.id]);
     });
 
     test('Retrieve 2nd and 3rd valid users sorted by username ascending as guest', async () => {
       await userClient.setToken(null);
       const { body } = await userClient.list({ start: 1, count: 2, sort: 'username' });
-      const userIds = body.map((u) => u.userId).join(',');
-      expect(userIds).toEqual('5,7');
+      const userIds = body.map((u) => u.userId);
+      expect(userIds).toEqual([editorUser.id, otherUser.id]);
     });
 
     test('Retrieve 2nd and 3rd valid users sorted by username descending as guest', async () => {
       await userClient.setToken(null);
       const { body } = await userClient.list({ start: 1, count: 2, sort: 'username', dir: 'desc' });
-      const userIds = body.map((u) => u.userId).join(',');
-      expect(userIds).toEqual('1,7');
+      const userIds = body.map((u) => u.userId);
+      expect(userIds).toEqual([plainUser.id, otherUser.id]);
     });
   });
 
@@ -236,6 +251,7 @@ describe('User tests', () => {
 
     test('Successful user creation should return an id', async () => {
       await userClient.setToken(null);
+      userClient.setUUIDs([createdUser.id]);
       const { statusCode, body } = await userClient.post({
         username: createdUser.username,
         userP: createdUser.password,
@@ -245,34 +261,34 @@ describe('User tests', () => {
       expect(statusCode).toEqual(200);
       expect(getSortedKeysAsString(body)).toEqual(createdUserKeys);
       expect(body.userId.length).toEqual(36);
-      createdUserId = body.userId;
+      expect(body.userId).toEqual(createdUser.id);
     });
   });
 
   describe('User PUT', () => {
     test('Admin can change user status', async () => {
       userClient.setUser(adminUser);
-      const { statusCode, body } = await userClient.put(createdUserId, { status: 'member' });
+      const { statusCode, body } = await userClient.put(createdUser.id, { status: 'member' });
       expect(statusCode).toEqual(200);
       expect(body.status).toEqual('member');
     });
 
     test('Plain user cannot update new user', async () => {
       userClient.setUser(plainUser);
-      const { statusCode } = await userClient.put(createdUserId, { firstName: 'nope' });
+      const { statusCode } = await userClient.put(createdUser.id, { firstName: 'nope' });
       expect(statusCode).toEqual(403);
     });
 
     test('Plain user can update their account', async () => {
-      userClient.setUser({ id: createdUserId });
-      const { statusCode, body } = await userClient.put(createdUserId, { firstName: 'yes' });
+      userClient.setUser({ id: createdUser.id });
+      const { statusCode, body } = await userClient.put(createdUser.id, { firstName: 'yes' });
       expect(statusCode).toEqual(200);
       expect(body.firstName).toEqual('yes');
     });
 
     test('Requests with password mismatch are rejected', async () => {
-      userClient.setUser({ id: createdUserId });
-      const { statusCode, body } = await userClient.put(createdUserId, {
+      userClient.setUser({ id: createdUser.id });
+      const { statusCode, body } = await userClient.put(createdUser.id, {
         userP: '123',
         userPC: '345',
       });
@@ -283,8 +299,8 @@ describe('User tests', () => {
     test('Requests with matching passwords are successful, and old password is made invalid', async () => {
       const newPassword = '345';
 
-      userClient.setUser({ id: createdUserId });
-      const { statusCode } = await userClient.put(createdUserId, {
+      userClient.setUser({ id: createdUser.id });
+      const { statusCode } = await userClient.put(createdUser.id, {
         userP: newPassword,
         userPC: newPassword,
       });
@@ -292,7 +308,7 @@ describe('User tests', () => {
 
       userClient.setToken(null);
       try {
-        userClient.setUser({ id: createdUserId });
+        userClient.setUser({ id: createdUser.id });
       } catch (e) {
         expect(e.message).toEqual(`Login as '${createdUser.username}' failed`);
       }

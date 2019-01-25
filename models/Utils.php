@@ -316,7 +316,7 @@ class Utils
       $headers = apache_request_headers();
       if (isset($headers['X-uuids'])) {
         $uuids = json_decode($headers['X-uuids']);
-        if (sizeof($uuids) >= self::$_currentUUIDIndex) {
+        if (sizeof($uuids) > self::$_currentUUIDIndex) {
           $uuid = $uuids[self::$_currentUUIDIndex];
           self::$_currentUUIDIndex++;
           return $uuid;

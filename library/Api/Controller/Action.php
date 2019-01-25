@@ -23,7 +23,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
    * The default sorting key
    * @var string
    */
-  public $listKey = 'id';
+  public $listKey = 'date';
 
   public function init()
   {
@@ -123,6 +123,10 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     $result = $this->_table->find($id);
     if (empty($result) || !$object = $result->current()) {
       throw new Api_Exception_NotFound();
+    }
+
+    if (!$object->isReadableBy($this->_user, $this->_acl)) {
+      throw new Api_Exception_Unauthorised();
     }
 
     $this->view->output = $this->_accessor->getObjectData(

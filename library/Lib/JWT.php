@@ -8,6 +8,7 @@ use Lcobucci\JWT\ValidationData;
 class Lib_JWT
 {
   const USER_ID = 'uid';
+  const GUEST_ID = '0230ec1d-dc7b-42e6-89d3-3707ee5ade71';
 
   static public function getHeaderMatches($request) {
     preg_match(
@@ -29,7 +30,7 @@ class Lib_JWT
       case 0:
         Globals::clearJWT();
         // User id of the unlogged user:
-        return 0;
+        return self::GUEST_ID;
         break;
       case 2:
         $token = self::getParsedToken($matches[1], $secret);

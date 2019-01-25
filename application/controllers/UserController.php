@@ -4,7 +4,7 @@ class UserController extends Api_Controller_Action
 {
   const ACTIVATION_KEY_PARAMNAME = 'aK';
 
-  public $listKey = 'userId';
+  public $listKey = 'date';
 
   protected function _getWhereClause(User_Row $user)
   {
