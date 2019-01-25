@@ -32,7 +32,6 @@ class Lib_Translate_Factory
             $chosenLang = GLOBAL_LANG_DEFAULT;
         }
 
-        $_SESSION['lang'] = $chosenLang;
         $translate->setLocale($chosenLang);
         Zend_Registry::set('Zend_Locale', $chosenLang);
         return $translate;
@@ -102,8 +101,6 @@ class Lib_Translate_Factory
 
         if($updateTo !== null){
         	$return = $updateTo;
-        } elseif(isset($_SESSION['lang'])){
-            $return = $_SESSION['lang'];
         } elseif(self::_isRobot()){
         	$return = Globals::getDefaultSiteLanguage();
         } elseif(!empty($user) && $user->isLoggedIn() && isset($user->lang) && !empty($user->lang)){

@@ -25,33 +25,27 @@ class UserController extends Api_Controller_Action
    */
   protected function _postObjectCreation($object, $data)
   {
-    if (APPLICATION_ENV == 'production') {
-      // send email for password and confirmation
-      $params['activationKey'] = $object->activationKey;
-      $params['link'] = APP_URL . Globals::getRouter()->assemble(array(), 'userconfirmation');
-      $params['link'] .= '?' . User::COLUMN_USERID . '=' . $object->getId() . '&' . self::ACTIVATION_KEY_PARAMNAME . "={$object->activationKey}";
-      $params['site'] = APP_NAME;
-
-      try {
-        // Send Email
-        $emailer = new Lib_Controller_Helper_Emailer();
-        $emailStatus = $emailer->sendEmail($object->{User::COLUMN_EMAIL}, $params);
-      } catch (Exception $e) {
-        $emailStatus = false;
-        $msg = "Email error" . $e->getMessage();
-        Globals::getLogger()->registrationError($msg);
-      }
-    } else {
-      $emailStatus = true;
+    if (APPLICATION_ENV != 'production') {
+      return true;
     }
+    // send email for password and confirmation
+    $params['activationKey'] = $object->activationKey;
+    $params['link'] = APP_URL . Globals::getRouter()->assemble(array(), 'userconfirmation');
+    $params['link'] .= '?' . User::COLUMN_USERID . '=' . $object->getId() . '&' . self::ACTIVATION_KEY_PARAMNAME . "={$object->activationKey}";
+    $params['site'] = APP_NAME;
 
-    if ($emailStatus) {
-      $_SESSION[User::COLUMN_USERID] = $object->getId();
-    } else {
+    try {
+      // Send Email
+      $emailer = new Lib_Controller_Helper_Emailer();
+      $emailStatus = $emailer->sendEmail($object->{User::COLUMN_EMAIL}, $params);
+    } catch (Exception $e) {
       $this->_cleanUpAfterCreationFailure($object, $data);
-      return false;
+      $emailStatus = false;
+      $msg = "Email error" . $e->getMessage();
+      Globals::getLogger()->registrationError($msg);
     }
-    return true;
+
+    return $emailStatus;
   }
 
   protected function _cleanUpAfterCreationFailure($object, $data)
