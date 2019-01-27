@@ -24,7 +24,7 @@ class Constants_TableNames
   const ITEM_VIEW = 'item_views';
   const LOCATION = 'locations';
   const MEDIA = 'media_items';
-  const MEDIAITEMRIDERS = 'media_items_riders';
+  const MEDIAITEMUSERS = 'media_items_users';
   const NEWS = 'news';
   const POST = 'forum_posts';
   const PRIVATEMESSAGES = 'privatemessages';

@@ -9,9 +9,9 @@ $media = array(
 
 	'backToAlbum' => 'back to the album \'%s\'',
 
-	'ridersInMedia' => 'in this media',
-	'ridersInPhoto' => 'in this photo',
-	'ridersInVideo' => 'in this video',
+	'usersInMedia' => 'in this media',
+	'usersInPhoto' => 'in this photo',
+	'usersInVideo' => 'in this video',
 
 	'seeOnVimeo' => 'see on Vimeo',
 	'seeOnYouTube' => 'see on YouTube',

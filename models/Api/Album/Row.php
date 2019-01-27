@@ -123,7 +123,7 @@ class Api_Album_Row extends Media_Album_Row
 			}
 
 			if($aggregationRow->keyName == Media_Album_Aggregation::KEYNAME_USER){
-				$rawItems = $this->_getRiderAggregationItems($aggregationRow->keyValue);
+				$rawItems = $this->_getUserAggregationItems($aggregationRow->keyValue);
 				$parentTable = new User();
 			} else {
 				$parentType = Data::mapDataType($aggregationRow->keyName);
@@ -148,23 +148,23 @@ class Api_Album_Row extends Media_Album_Row
 	}
 		
 	/**
-	 * Aggregation via the intermediate media_riders_items table
-	 * Here we return a list of media items that the given rider
+	 * Aggregation via the intermediate media_users_items table
+	 * Here we return a list of media items that the given user
 	 * is tagged in.
 	 * This information is held in a separate table, in order to
-	 * be able to tag several riders on a single media item.
+	 * be able to tag several users on a single media item.
 	 *
-	 * @param int $riderId
+	 * @param int $userId
 	 * @return Zend_Db_Table_Rowset
 	 */
-	protected function _getRiderAggregationItems($riderId)
+	protected function _getUserAggregationItems($userId)
 	{
-		// Build the list of media where the rider $riderId appears
+		// Build the list of media where the user $userId appears
 		$select = new Zend_Db_Select(Globals::getMainDatabase());
-		$select->from(Constants_TableNames::MEDIAITEMRIDERS)
+		$select->from(Constants_TableNames::MEDIAITEMUSERS)
 			   ->distinct()
 			   ->columns('mediaId')
-			   ->where('riderId = '.$riderId);
+			   ->where('userId = '.$userId);
 		$rowset = Globals::getMainDatabase()->query($select);
 		if(empty($rowset)){
 			return null;

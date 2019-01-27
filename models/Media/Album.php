@@ -154,7 +154,7 @@ class Media_Album extends Data
     $album->date = $user->date;
     $album->title = 'album for ' . $user->getTitle();
     $album->description = 'album for ' . $user->getTitle();
-    $album->riderId = $user->{User::COLUMN_USERID};
+    $album->userId = $user->{User::COLUMN_USERID};
     $album->albumType = self::TYPE_AGGREGATE;
     $album->albumCreation = self::CREATION_AUTOMATIC;
     $album->albumAccess = self::ACCESS_PUBLIC;

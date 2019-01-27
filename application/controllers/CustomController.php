@@ -22,7 +22,7 @@ class CustomController extends Zend_Controller_Action
    * @throws Api_Exception_NotFound
    * @throws Api_Exception
    */
-  public function riderConfirmationAction()
+  public function userConfirmationAction()
   {
     return;
 

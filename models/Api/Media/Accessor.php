@@ -21,7 +21,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'mapType',
     'token',
     'media',
-    'riders',
+    'users',
     'path',
     'locationFlag'
   );
@@ -149,8 +149,8 @@ class Api_Media_Accessor extends Api_Data_Accessor
         $data['status'] = Data::VALID;
       }
       $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
-      $table = new Media_Item_Riders();
-      $table->insertRiders($object->id, $form->riders->getNames());
+      $table = new Media_Item_Users();
+      $table->insertUsers($object->id, $form->users->getNames());
     }
 
     return array($object->getId(), $errors);
@@ -494,9 +494,9 @@ class Api_Media_Accessor extends Api_Data_Accessor
   {
     if ($media->id) {
       $media->delete();
-      // Erase any rider tags on this media
-      $mediaRidersTable = new Media_Item_Riders();
-      $mediaRidersTable->delete(array('id' => $media->id));
+      // Erase any user tagged in this media
+      $mediaUsersTable = new Media_Item_Users();
+      $mediaUsersTable->delete(array('id' => $media->id));
     }
   }
 

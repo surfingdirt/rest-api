@@ -136,7 +136,7 @@ $user = array(
 		// suggestions
 		'userActionSuggestion_header' => 'in the meantime...',
 		'userActionSuggestion_Location_link' => 'Indicate your location on a map',
-		'userActionSuggestion_Location_text' => '%s so that you get a better chance to meet local riders!',
+		'userActionSuggestion_Location_text' => '%s so that you get a better chance to meet local users!',
 
 		'userActionSuggestion_Avatar_link' => 'add one now!',
 		'userActionSuggestion_Avatar_text' => 'Your profile doesn\'t seem to have a picture yet, %s',

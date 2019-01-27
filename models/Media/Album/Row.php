@@ -212,7 +212,7 @@ abstract class Media_Album_Row extends Data_Row
 		}
 		if($this->albumType == Media_Album::TYPE_AGGREGATE && $this->albumCreation = Media_Album::CREATION_AUTOMATIC){
 			$aggTable = new Media_Album_Aggregation();
-			$where = "albumId = $this->id AND keyValue = " . $user->{User::COLUMN_USERID} ." AND keyName = 'rider'";
+			$where = "albumId = $this->id AND keyValue = " . $user->{User::COLUMN_USERID} ." AND keyName = 'user'";
 			$exists = $aggTable->fetchRow($where);
 			if($exists){
 				return true;

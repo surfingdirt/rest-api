@@ -118,15 +118,15 @@ CREATE TABLE `media_items` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-/*Table structure for table `media_items_riders` */
+/*Table structure for table `media_items_users` */
 
-DROP TABLE IF EXISTS `media_items_riders`;
+DROP TABLE IF EXISTS `media_items_users`;
 
-CREATE TABLE `media_items_riders` (
+CREATE TABLE `media_items_users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `mediaId` varchar(36) NOT NULL,
-  `riderId` varchar(36) NOT NULL,
-  `riderName` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `userId` varchar(36) NOT NULL,
+  `userName` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

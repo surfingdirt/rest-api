@@ -35,7 +35,7 @@ class Media_Album_Aggregate_User_Row extends Media_Album_Aggregate_Row
 				SELECT i.id, i.mediaType
 				FROM ".Constants_TableNames::ALBUM." a
 				JOIN ".Constants_TableNames::AGGREGATION." ag ON ag.albumId = a.id
-				JOIN ".Constants_TableNames::MEDIAITEMRIDERS." mir ON mir.riderId = ag.keyValue
+				JOIN ".Constants_TableNames::MEDIAITEMUSERS." mir ON mir.userId = ag.keyValue
 				JOIN ".Constants_TableNames::MEDIA." i ON i.id = mir.mediaId
 				WHERE ag.keyName = 'user' AND ag.keyValue = $userId
 				ORDER BY i.id DESC

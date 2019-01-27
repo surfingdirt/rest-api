@@ -11,11 +11,11 @@ class Routes {
       'default' => new Zend_Rest_Route($frontController),
       'test' => new Zend_Controller_Router_Route('test/:action', array('controller' => 'test', 'action' => 'freeze-timer')),
 
-      'riderConfirmation' => new Zend_Controller_Router_Route('/riders/:id/confirmation/', array('controller' => 'custom', 'action' => 'rider-confirmation')),
+      'userConfirmation' => new Zend_Controller_Router_Route('/users/:id/confirmation/', array('controller' => 'custom', 'action' => 'user-confirmation')),
       'lostPassword' => new Zend_Controller_Router_Route('/lost-password/', array('controller' => 'custom', 'action' => 'lost-password')),
-      'activateNewPassword' => new Zend_Controller_Router_Route('/riders/:id/activate-new-password/', array('controller' => 'custom', 'action' => 'activate-new-password')),
+      'activateNewPassword' => new Zend_Controller_Router_Route('/users/:id/activate-new-password/', array('controller' => 'custom', 'action' => 'activate-new-password')),
 
-      'userAlbums' => new Zend_Controller_Router_Route('/riders/:id/albums/', array('controller' => 'riders-albums', 'action' => 'list')),
+      'userAlbums' => new Zend_Controller_Router_Route('/users/:id/albums/', array('controller' => 'users-albums', 'action' => 'list')),
       'comments' => new Zend_Controller_Router_Route('/:itemType/:itemId/comments/', array('controller' => 'comments')),
       'countryRegions' => new Zend_Controller_Router_Route('/countries/:countryId/regions/', array('controller' => 'regions', 'action' => 'list')),
 
@@ -26,8 +26,8 @@ class Routes {
       'checkinsBySpotCurrent' => new Zend_Controller_Router_Route('/checkins/spot/:spotId/current/', array('controller' => 'checkins', 'action' => 'list', 'onlyCurrent' => true)),
       'checkinsByCountry' => new Zend_Controller_Router_Route('/checkins/countries/:countryId/', array('controller' => 'checkins', 'action' => 'list')),
       'checkinsByRegion' => new Zend_Controller_Router_Route('/checkins/regions/:regionId/', array('controller' => 'checkins', 'action' => 'list')),
-      'checkinsByRider' => new Zend_Controller_Router_Route('/checkins/riders/:riderId/', array('controller' => 'checkins', 'action' => 'list')),
-      'checkinsByRiderCurrent' => new Zend_Controller_Router_Route('/checkins/riders/:riderId/current/', array('controller' => 'checkins', 'action' => 'list', 'onlyCurrent' => true)),
+      'checkinsByUser' => new Zend_Controller_Router_Route('/checkins/users/:userId/', array('controller' => 'checkins', 'action' => 'list')),
+      'checkinsByUserCurrent' => new Zend_Controller_Router_Route('/checkins/users/:userId/current/', array('controller' => 'checkins', 'action' => 'list', 'onlyCurrent' => true)),
       'checkinsAroundSpot' => new Zend_Controller_Router_Route('/checkins/spots/:spotId/around/', array('controller' => 'checkins', 'action' => 'list', 'fetchAround' => true)),
       'checkinsAroundLocation' => new Zend_Controller_Router_Route('/checkins/around/', array('controller' => 'checkins', 'action' => 'list', 'fetchAround' => true)),
 

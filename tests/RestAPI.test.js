@@ -2,7 +2,7 @@ import ResourceClient from './RestClient/ResourceClient';
 import { default as StatelessClient, getResourcePath } from './RestClient/StatelessClient';
 import { clearCacheFiles } from './RestClient/cache';
 import { hostUrl, JWT_TTL } from './RestClient/constants';
-import { IMAGE, USER, TOKEN } from './RestClient/resources';
+import { IMAGE, MEDIA, USER, TOKEN } from './RestClient/resources';
 import {
   plainUser,
   bannedUser,
@@ -423,6 +423,8 @@ user avatars doit etre un image key + storageType, pas un chemin
  */
 
 describe.skip('Photo tests', () => {
+  const mediaClient = new ResourceClient(client, MEDIA);
+
   /*
    *
    * GET: photo valide et public, photo invalide et public (guest, owner, writer, editor, admin)
@@ -437,6 +439,26 @@ describe.skip('Photo tests', () => {
    * - ACLs
    * - GET 404
    */
+  describe('GET ACLs', () => {
+    describe('Valid photo', () => {
+      test('Guest can see', async () => {
+        await mediaClient.get();
+      });
+      test('Owner can see', async () => {});
+      test('Writer can see', async () => {});
+      test('Editor can see', async () => {});
+      test('Admin can see', async () => {});
+    });
+
+    describe('Invalid photo', () => {
+      test('Guest cannot see', async () => {});
+      test('Owner can see', async () => {});
+      test('Writer cannot see', async () => {});
+      test('Editor can see', async () => {});
+      test('Admin can see', async () => {});
+    });
+  });
+
 });
 
 describe.skip('Video tests', () => {

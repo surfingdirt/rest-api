@@ -195,7 +195,7 @@ $data = array(
 		'itemSing_'.Constants_DataTypes::TEST 			=> 'review',
         'itemSing_'.Constants_DataTypes::TRICK 			=> 'trick',
 		'itemSing_'.Constants_DataTypes::SPOT 			=> 'spot',
-		'itemSing_'.Constants_DataTypes::USER 			=> 'rider',
+		'itemSing_'.Constants_DataTypes::USER 			=> 'user',
 		'itemSing_'.Constants_DataTypes::VIDEO 			=> 'video',
 
         'itemPlur_'.Constants_DataTypes::ALBUM 			=> 'albums',
@@ -214,7 +214,7 @@ $data = array(
 		'itemPlur_'.Constants_DataTypes::TEST 			=> 'reviews',
         'itemPlur_'.Constants_DataTypes::TRICK 			=> 'tricks',
 		'itemPlur_'.Constants_DataTypes::SPOT 			=> 'spots',
-		'itemPlur_'.Constants_DataTypes::USER 			=> 'riders',
+		'itemPlur_'.Constants_DataTypes::USER 			=> 'users',
 		'itemPlur_'.Constants_DataTypes::VIDEO 			=> 'videos',
 
 	// NEW ITEMS
@@ -304,7 +304,7 @@ $data = array(
 		'videoHint' => 'paste here the code for this video (supported sites: Vimeo, YouTube, Dailymotion)',
         'trickHint' => 'type the name of a trick... if there is one!',
 		'spotHint' => 'type the name of a spot if you know it.',
-		'ridersHint' => 'type the name of the rider(s) if you know them, press TAB to switch to the next one.',
+		'usersHint' => 'type the name of the user(s) if you know them, press TAB to switch to the next one.',
 		'tagsHint' => 'type keywords describing this page, press TAB to start another word.',
 		'userNameHint' => 'type the name of that person.',
 		'pickYourUserNameHint' => 'pick a (unique) username.',
@@ -338,8 +338,8 @@ $data = array(
 
 	// COUNTRIES
 		'gotoDptSubmit' => 'Go to that region',
-		'franceDesc' => 'it\'s not that easy to find great spots to ride in France, just yet. If you\'re looking for riders or spots nearby, this is where it\'s at.',
-		'countryTextDefault' => 'having a hard time finding other riders, or cool spots nearby?. We may have the answer here!',
+		'franceDesc' => 'it\'s not that easy to find great spots to ride in France, just yet. If you\'re looking for users or spots nearby, this is where it\'s at.',
+		'countryTextDefault' => 'having a hard time finding other users, or cool spots nearby?. We may have the answer here!',
 		'locationString' => 'location',
 		'regionTabMap' => 'map',
 		'regionTabList' => 'list',

@@ -197,7 +197,7 @@ $data = array(
 		'itemSing_'.Constants_DataTypes::TEST 			=> 'test',
 		'itemSing_'.Constants_DataTypes::TRICK 			=> 'trick',
 		'itemSing_'.Constants_DataTypes::SPOT 			=> 'spot',
-		'itemSing_'.Constants_DataTypes::USER 			=> 'rider',
+		'itemSing_'.Constants_DataTypes::USER 			=> 'user',
 		'itemSing_'.Constants_DataTypes::VIDEO 			=> 'vidéo',
 
         'itemPlur_'.Constants_DataTypes::ALBUM 			=> 'albums',
@@ -216,7 +216,7 @@ $data = array(
 		'itemPlur_'.Constants_DataTypes::TEST 			=> 'tests',
 		'itemPlur_'.Constants_DataTypes::TRICK 			=> 'tricks',
 		'itemPlur_'.Constants_DataTypes::SPOT 			=> 'spots',
-		'itemPlur_'.Constants_DataTypes::USER 			=> 'riders',
+		'itemPlur_'.Constants_DataTypes::USER 			=> 'users',
 		'itemPlur_'.Constants_DataTypes::VIDEO 			=> 'vidéos',
 
 	// NEW ITEMS
@@ -306,7 +306,7 @@ $data = array(
 		'videoHint' => 'colle ici le code de la vidéo (sites supportés: Vimeo, YouTube, Dailymotion).',
 		'trickHint' => 'tape le nom d\'un trick... s\'il y en a un!',
 		'spotHint' => 'tape le nom d\'un spot si tu le connais.',
-		'ridersHint' => 'tape le nom du ou des riders si tu le(s) connais, appuie sur TAB pour passer au suivant.',
+		'usersHint' => 'tape le nom du ou des users si tu le(s) connais, appuie sur TAB pour passer au suivant.',
 		'tagsHint' => 'tape les mots-clés les plus descriptifs pour cette page, appuie sur TAB pour passer au mot suivant.',
 		'userNameHint' => 'tape le nom de cette personne.',
 		'pickYourUserNameHint' => 'choisis un pseudo (unique).',
@@ -340,8 +340,8 @@ $data = array(
 
 	// COUNTRIES
 		'gotoDptSubmit' => 'aller à ce département',
-		'franceDesc' => 'c\'est pas encore si facile de trouver des spots de mountainboard qui déchirent, en France, non? si tu cherches d\'autres riders, ou de nouveaux spots pas loin de chez toi, c\'est par ici que ca se passe.',
-		'countryTextDefault' => 'tu galeres a trouver des spots ou des riders pas loin de chez toi? On a peut-être la solution ici!',
+		'franceDesc' => 'c\'est pas encore si facile de trouver des spots de mountainboard qui déchirent, en France, non? si tu cherches d\'autres users, ou de nouveaux spots pas loin de chez toi, c\'est par ici que ca se passe.',
+		'countryTextDefault' => 'tu galeres a trouver des spots ou des users pas loin de chez toi? On a peut-être la solution ici!',
 		'locationString' => 'localisation',
 		'regionTabMap' => 'carte',
 		'regionTabList' => 'liste',

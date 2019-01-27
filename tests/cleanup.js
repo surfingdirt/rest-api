@@ -18,7 +18,7 @@ mysql.createConnection({
   multipleStatements: true,
 }).then((conn) => {
   connection = conn;
-  return runSQL('cleanup_and_inserts.sql', connection);
+  return runSQL('structure.sql', connection);
 }).then((db) => {
   runSQL('test_fixtures.sql', connection);
   connection.end();

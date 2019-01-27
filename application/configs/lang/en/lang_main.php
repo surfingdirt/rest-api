@@ -199,11 +199,11 @@ $array = array(
 		'portfolioDescription' => 'this is a list of particularly awesome pictures, hand-picked for your viewing pleasure. Ideally, this is a place to point people to when you want to show them what mountainboarding is all about',
 
 		'communitySubCategoriesTitle' => 'community',
-		'communitySubCategoriesDescription' => 'mountainboarding is a young sport and it is defined by the riders. The following pages are here to help keep the community alive. Cos we\'re all about social!',
+		'communitySubCategoriesDescription' => 'mountainboarding is a young sport and it is defined by the users. The following pages are here to help keep the community alive. Cos we\'re all about social!',
 		'forumsDescription' => 'the forum (chat) has long been the heart of the site. It helps French mountainboarders, beginners and veterans, keep in touch throughout the year. We also have regional sub-forums or forums for associations.',
 		'photosDescription' => 'here you can post your pictures, or just see what others are up to. Just don\'t hesitate, don\'t be shy, we were all beginners at some point!',
 		'videosDescription' => 'here you can post links to videos you found online, or those you made yourself and want to show your dirt brothers.',
-		'franceDescription' => 'a map of France to find riders and spots near you.',
+		'franceDescription' => 'a map of France to find users and spots near you.',
 		'usersDescription' => 'a comprehensive list of the members of this site.',
 		'spotsDescription' => 'submit your favorite spot to our database, that\'s bound to make somebody\'s day sooner or later.',
 		'tricksDescription' => 'the list of tricks you can pull on a mountainboard is not infinite, but it\s damn close.. If you\'re looking for inspiration or advice, this is the place!',
