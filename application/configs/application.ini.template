@@ -89,7 +89,7 @@ constants.GLOBAL_CACHE_HTMLPURIFIER_SUFFIX = "../data/cache/HTMLPurifier"
 constants.APP_CACHE_HTMLPURIFIER_DIR = "../data/cache/HTMLPurifier"
 constants.CACHE_HTMLPURIFIER_ACTIVE = true
 
-constants.GLOBAL_OPENID_ACTIVE =false 
+constants.GLOBAL_OPENID_ACTIVE =false
 constants.APP_OPENID_ACTIVE = false
 constants.OPENID_ACTIVE = false
 constants.NOREALDATA_MARK = '__NOREALDATA__'

@@ -1,4 +1,5 @@
 <?php
+
 class Api_Image extends Api_Data
 {
   protected $_name = Constants_TableNames::IMAGE;

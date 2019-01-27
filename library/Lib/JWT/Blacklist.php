@@ -1,9 +1,11 @@
 <?php
+
 class Lib_JWT_Blacklist
 {
   const CACHE_ID = 'JWTBlacklist';
 
-  public static function addToken($token) {
+  public static function addToken($token)
+  {
     $cache = Globals::getGlobalCache();
     $list = $cache->load(self::CACHE_ID);
     if (!$list) {
@@ -13,7 +15,8 @@ class Lib_JWT_Blacklist
     $cache->save($list, self::CACHE_ID);
   }
 
-  public static function removeToken($token) {
+  public static function removeToken($token)
+  {
     $cache = Globals::getGlobalCache();
     $list = $cache->load(self::CACHE_ID);
     if (!$list) {
@@ -23,7 +26,8 @@ class Lib_JWT_Blacklist
     $cache->save($list, self::CACHE_ID);
   }
 
-  public static function isBlacklisted($tokenAsString) {
+  public static function isBlacklisted($tokenAsString)
+  {
     $list = Globals::getGlobalCache()->load(self::CACHE_ID);
     if (!$list) {
       return false;
@@ -33,7 +37,8 @@ class Lib_JWT_Blacklist
     return in_array($tokenAsString, $list);
   }
 
-  public static function cleanupInvalidAndExpiredTokens($secret) {
+  public static function cleanupInvalidAndExpiredTokens($secret)
+  {
     $cache = Globals::getGlobalCache();
     $list = $cache->load(self::CACHE_ID);
     if (!$list) {

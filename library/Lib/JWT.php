@@ -10,7 +10,8 @@ class Lib_JWT
   const USER_ID = 'uid';
   const GUEST_ID = '0230ec1d-dc7b-42e6-89d3-3707ee5ade71';
 
-  static public function getHeaderMatches($request) {
+  static public function getHeaderMatches($request)
+  {
     preg_match(
       '/Bearer ([a-z0-9\.\-_]*)/i',
       $request->getHeader('Authorization', ''),
@@ -26,7 +27,7 @@ class Lib_JWT
   static public function setup(Zend_Controller_Request_Abstract $request, $secret)
   {
     $matches = self::getHeaderMatches($request);
-    switch(sizeof($matches)) {
+    switch (sizeof($matches)) {
       case 0:
         Globals::clearJWT();
         // User id of the unlogged user:
@@ -46,9 +47,10 @@ class Lib_JWT
     }
   }
 
-  static public function getParsedToken($tokenAsString, $secret) {
+  static public function getParsedToken($tokenAsString, $secret)
+  {
     try {
-      $token = (new Parser())->parse((string) $tokenAsString);
+      $token = (new Parser())->parse((string)$tokenAsString);
     } catch (Exception $e) {
       throw new Lib_JWT_Exception(Lib_JWT_Exception::ERROR_CANNOT_PARSE_TOKEN);
     }
@@ -85,7 +87,8 @@ class Lib_JWT
    * Whether the token is valid and not expired yet.
    * @return boolean
    */
-  static public function isBlacklistable($tokenAsString, $secret) {
+  static public function isBlacklistable($tokenAsString, $secret)
+  {
     try {
       self::getParsedToken($tokenAsString, $secret);
       return true;

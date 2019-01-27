@@ -1,4 +1,5 @@
 <?php
+
 abstract class Lib_Rest_Controller extends Zend_Rest_Controller
 {
   public function init()
@@ -16,7 +17,8 @@ abstract class Lib_Rest_Controller extends Zend_Rest_Controller
     $this->getResponse()->setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, DELETE');
   }
 
-  protected function _unauthorised($errorId = null) {
+  protected function _unauthorised($errorId = null)
+  {
     throw new Api_Exception_Unauthorised($errorId);
   }
 }

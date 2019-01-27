@@ -1,4 +1,5 @@
 <?php
+
 class TokenController extends Lib_Rest_Controller
 {
   const MISSING_VALUE = 'missingValue';

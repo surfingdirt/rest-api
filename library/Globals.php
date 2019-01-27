@@ -243,7 +243,8 @@ class Globals
    * Get the global JWT.
    * @return string
    */
-  public static function getJWT() {
+  public static function getJWT()
+  {
     return self::$_JWT;
   }
 
@@ -252,7 +253,8 @@ class Globals
    * @param JWT string
    * @throws Error
    */
-  public static function setJWT($JWT) {
+  public static function setJWT($JWT)
+  {
     if (self::$_JWT) {
       throw new Error("JWT already set");
     }
@@ -263,7 +265,8 @@ class Globals
   /**
    * Clears the global JWT.
    */
-  public static function clearJWT() {
+  public static function clearJWT()
+  {
     self::$_JWT = null;
   }
 

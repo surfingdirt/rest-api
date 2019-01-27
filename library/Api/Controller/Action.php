@@ -65,7 +65,8 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
    * @return array
    * @throws Zend_Controller_Action_Exception
    */
-  protected function _getBodyParams() {
+  protected function _getBodyParams()
+  {
     $params = $this->_request->getParams();
 
     unset($params[$this->_request->getControllerKey()]);
@@ -222,7 +223,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 
     } else {
       $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
-      $this->view->output = array('errors' => $errors );
+      $this->view->output = array('errors' => $errors);
     }
   }
 

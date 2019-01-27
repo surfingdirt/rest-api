@@ -1,4 +1,5 @@
 <?php
+
 class Api_Image_Row extends Api_Data_Row
 {
   public function isDeletableBy(User_Row $user, Lib_Acl $acl)
@@ -11,5 +12,7 @@ class Api_Image_Row extends Api_Data_Row
   }
 
   // No need for that
-  public function _saveTranslatedTexts() {}
+  public function _saveTranslatedTexts()
+  {
+  }
 }

@@ -1,4 +1,5 @@
 <?php
+
 class Lib_Storage
 {
   const SMALL = 'small';
@@ -12,18 +13,18 @@ class Lib_Storage
   public static $config = array(
     self::TYPE_LOCAL =>
       array(
-      'images' => array(
-        self::SMALL  => array('width' => 800, 'height' => 450, 'suffix' => '_s'),
-        self::MEDIUM => array('width' => 1280, 'height' => 720, 'suffix' => '_m'),
-        self::LARGE  => array('width' => 1920, 'height' => 1080, 'suffix' => '_l'),
-      ),
-      'thumbs' => array(
-        self::SMALL  => array('width' => 240, 'height' => 135, 'suffix' => '_ts'),
-        self::MEDIUM => array('width' => 400, 'height' => 225, 'suffix' => '_tm'),
-        self::LARGE  => array('width' => 640, 'height' => 360, 'suffix' => '_tl'),
-      ),
-      'path' => PUBLIC_FILES_DIR
-    )
+        'images' => array(
+          self::SMALL => array('width' => 800, 'height' => 450, 'suffix' => '_s'),
+          self::MEDIUM => array('width' => 1280, 'height' => 720, 'suffix' => '_m'),
+          self::LARGE => array('width' => 1920, 'height' => 1080, 'suffix' => '_l'),
+        ),
+        'thumbs' => array(
+          self::SMALL => array('width' => 240, 'height' => 135, 'suffix' => '_ts'),
+          self::MEDIUM => array('width' => 400, 'height' => 225, 'suffix' => '_tm'),
+          self::LARGE => array('width' => 640, 'height' => 360, 'suffix' => '_tl'),
+        ),
+        'path' => PUBLIC_FILES_DIR
+      )
   );
 
   /**
@@ -105,13 +106,14 @@ class Lib_Storage
     }
   }
 
-  public static function cleanUpFiles($storageType, $id) {
+  public static function cleanUpFiles($storageType, $id)
+  {
     $config = self::$config[$storageType];
     if (!$config) {
       return;
     }
 
-    switch($storageType) {
+    switch ($storageType) {
       case self::TYPE_LOCAL:
         $folder = self::_getFolderForFile($config['path'], $id);
         self::_removeDirectory($folder);
@@ -124,11 +126,13 @@ class Lib_Storage
     }
   }
 
-  protected static function _getFolderForFile($path, $id) {
+  protected static function _getFolderForFile($path, $id)
+  {
     return $path . DIRECTORY_SEPARATOR . $id;
   }
 
-  private static function _removeDirectory($path) {
+  private static function _removeDirectory($path)
+  {
     Globals::getLogger()->log("Deleting '$path'");
     $files = glob($path . '/*');
     foreach ($files as $file) {

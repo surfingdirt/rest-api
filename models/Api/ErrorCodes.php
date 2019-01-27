@@ -1,4 +1,5 @@
 <?php
+
 class Api_ErrorCodes
 {
   /*

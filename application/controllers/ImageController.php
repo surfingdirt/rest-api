@@ -1,4 +1,5 @@
 <?php
+
 class ImageController extends Lib_Rest_Controller
 {
   const FILE_KEY = 'files';

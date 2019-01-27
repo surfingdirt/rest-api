@@ -1,4 +1,5 @@
 <?php
+
 class Lib_JWT_Exception extends Exception
 {
   const ERROR_CANNOT_PARSE_HEADER = 'cannotParseHeader';

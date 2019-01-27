@@ -1,22 +1,23 @@
 <?php
+
 class Lib_Form_Element_Tags extends Zend_Form_Element_Text
 {
-    protected $_defaultName = 'tags';
+  protected $_defaultName = 'tags';
 
-    /**
-     * Default form view helper to use for rendering
-     * @var string
-     */
-    public $helper = 'Tags';    
+  /**
+   * Default form view helper to use for rendering
+   * @var string
+   */
+  public $helper = 'Tags';
 
-	/**
-     * Does the element represent an array?
-     * @var bool
-     */
-    protected $_isArray = true;	
+  /**
+   * Does the element represent an array?
+   * @var bool
+   */
+  protected $_isArray = true;
 
-	public function getHint()
-	{
-		return 'tagsHint';
-	}
+  public function getHint()
+  {
+    return 'tagsHint';
+  }
 }

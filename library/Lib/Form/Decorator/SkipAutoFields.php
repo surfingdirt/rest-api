@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Generates inline script to hide auto fields
  *
  */
 class Lib_Form_Decorator_SkipAutoFields extends Zend_Form_Decorator_Abstract
 {
-    public function render($content)
-    {
-        $id = $this->getElement()->getId();
-        // The loop added here looks for errors in the auto fields fieldset
-        $js = <<<JS
+  public function render($content)
+  {
+    $id = $this->getElement()->getId();
+    // The loop added here looks for errors in the auto fields fieldset
+    $js = <<<JS
 
 $('#$id').click(function(){
     var container = $(this).parent().parent().get(0);
@@ -33,7 +34,7 @@ $('#$id').click(function(){
 $('#$id').click().attr('checked', false);
 JS;
 
-        $this->getElement()->getView()->JQuery()->addOnLoad($js);
-        return $content;
-    }
+    $this->getElement()->getView()->JQuery()->addOnLoad($js);
+    return $content;
+  }
 }

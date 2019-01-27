@@ -36,7 +36,7 @@ class ErrorController extends Zend_Controller_Action
               $viewRenderer->setNoRender(false);
               $this->view->output = array('error' => array(
                 'type' => $errors->type . ' - ' . get_class($e),
-                'message' =>  $e->getMessage(),
+                'message' => $e->getMessage(),
                 'trace' => $e->getTrace(),
               ));
             } else {
