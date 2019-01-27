@@ -25,7 +25,6 @@ set_include_path(
   . PATH_SEPARATOR . BASE_PATH . '/application'
   . PATH_SEPARATOR . BASE_PATH . '/application/models'
   . PATH_SEPARATOR . BASE_PATH . '/library/HTMLPurifier'
-  . PATH_SEPARATOR . BASE_PATH . '/library/sphinx'
 );
 require BASE_PATH . '/library/vendor/autoload.php';
 
