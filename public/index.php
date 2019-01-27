@@ -1,6 +1,4 @@
 <?php
-//phpinfo();
-//return;
 $t1 = microtime(true);
 
 /*
@@ -24,8 +22,8 @@ defined("CURRENT_DIR") || define("CURRENT_DIR", getcwd());
 
 set_include_path(
   BASE_PATH . '/library'
-  . PATH_SEPARATOR . BASE_PATH . '/models'
-  . PATH_SEPARATOR . BASE_PATH . '/routes'
+  . PATH_SEPARATOR . BASE_PATH . '/application'
+  . PATH_SEPARATOR . BASE_PATH . '/application/models'
   . PATH_SEPARATOR . BASE_PATH . '/library/HTMLPurifier'
   . PATH_SEPARATOR . BASE_PATH . '/library/sphinx'
 );

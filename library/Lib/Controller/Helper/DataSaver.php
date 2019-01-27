@@ -25,7 +25,7 @@ class Lib_Controller_Helper_DataSaver extends Zend_Controller_Action_Helper_Abst
     // Clearing spot album caches if the data moved to  new spot
     if ($reflection->implementsInterface('Data_Row_SpotInterface') && $dataRow->spot != $data['spot']) {
       if ($spot = $dataRow->getSpot() && $spot instanceof Spot_Row) {
-        $oldSpotAlbumId = $spot()->getAlbum()->getId();
+        $oldSpotAlbumId = $spot->getAlbum()->getId();
         $oldSpotAlbumCacheId = Media_Album::getCacheId($oldSpotAlbumId);
         $dataRow->getCache()->remove($oldSpotAlbumCacheId);
       }
