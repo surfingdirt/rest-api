@@ -109,7 +109,7 @@ export default class StatelessClient {
     const fileData = [];
     files.forEach(({ filePath, contentType }) => {
       const filename = basename(filePath);
-      const value = fs.createReadStream(filePath);
+      const value = fs.createReadStream(`./data/files/${filePath}`);
       fileData.push({
         value,
         options: {

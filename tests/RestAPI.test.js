@@ -12,8 +12,8 @@ import {
   editorUser,
   otherUser,
   createdUser,
-} from './RestClient/users';
-import { img640 } from './RestClient/files';
+} from './data/users';
+import { img640 } from './data/files';
 import { cleanupTestDatabase } from './RestClient/database';
 import { getDateForBackend, getSortedKeysAsString } from './RestClient/utils';
 
