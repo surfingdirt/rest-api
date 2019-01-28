@@ -2,16 +2,18 @@ import ResourceClient from './RestClient/ResourceClient';
 import { default as StatelessClient, getResourcePath } from './RestClient/StatelessClient';
 import { clearCacheFiles } from './RestClient/cache';
 import { hostUrl, JWT_TTL } from './RestClient/constants';
-import { IMAGE, MEDIA, USER, TOKEN } from './RestClient/resources';
+import { IMAGE, MEDIA, TOKEN, USER } from './RestClient/resources';
+import { images } from './data/images';
+import { media } from './data/media';
 import {
-  plainUser,
-  bannedUser,
   adminUser,
-  writerUser,
-  pendingUser,
+  bannedUser,
+  createdUser,
   editorUser,
   otherUser,
-  createdUser,
+  pendingUser,
+  plainUser,
+  writerUser,
 } from './data/users';
 import { img640 } from './data/files';
 import { cleanupTestDatabase } from './RestClient/database';
@@ -251,7 +253,6 @@ describe('User tests', () => {
 
     test('Successful user creation should return an id', async () => {
       await userClient.setToken(null);
-      await userClient.setDebugBackend(true);
       userClient.setUUIDs([createdUser.id]);
       const { statusCode, body } = await userClient.post({
         username: createdUser.username,
@@ -363,6 +364,7 @@ describe('User tests', () => {
 
 describe('Image tests', () => {
   const imageClient = new ResourceClient(client, IMAGE);
+  const defaultImageId = images[0].id;
 
   describe('POST ACLS: all and only bad users get a 403', () => {
     test('Guest cannot POST', async () => {
@@ -389,22 +391,78 @@ describe('Image tests', () => {
       expect(statusCode).toEqual(200);
     });
 
-    test('Writer user can POST', async () => {});
-    test('Editor user can POST', async () => {});
-    test('Admin can POST', async () => {});
+    test('Writer user can POST', async () => {
+      imageClient.setUser(writerUser);
+      const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
+      expect(statusCode).toEqual(200);
+    });
+
+    test('Editor user can POST', async () => {
+      imageClient.setUser(editorUser);
+      const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
+      expect(statusCode).toEqual(200);
+    });
+
+    test('Admin can POST', async () => {
+      imageClient.setUser(adminUser);
+      const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
+      expect(statusCode).toEqual(200);
+    });
   });
 
   describe('GET/PUT ACLS: everyone gets a 403', () => {
-    test('Guest cannot GET/PUT', async () => {});
-    test('Plain user cannot GET/PUT', async () => {});
-    test('Admin cannot GET/PUT', async () => {});
+    test('Guest cannot GET/PUT', async () => {
+      await imageClient.setToken(null);
+      const { statusCode: getStatus } = await imageClient.get(defaultImageId);
+      expect(getStatus).toEqual(403);
+
+      const { statusCode: putStatus } = await imageClient.put(defaultImageId, {});
+      expect(putStatus).toEqual(403);
+    });
+
+    test('Plain user cannot GET/PUT', async () => {
+      await imageClient.setUser(plainUser);
+      const { statusCode: getStatus } = await imageClient.get(defaultImageId);
+      expect(getStatus).toEqual(403);
+
+      const { statusCode: putStatus } = await imageClient.put(defaultImageId, {});
+      expect(putStatus).toEqual(403);
+    });
+
+    test('Admin user cannot GET/PUT', async () => {
+      await imageClient.setUser(adminUser);
+      const { statusCode: getStatus } = await imageClient.get(defaultImageId);
+      expect(getStatus).toEqual(403);
+
+      const { statusCode: putStatus } = await imageClient.put(defaultImageId, {});
+      expect(putStatus).toEqual(403);
+    });
   });
 
   describe('DELETE ACLS: owner and editor/admins can delete', () => {
-    test('Guest cannot DELETE', async () => {});
-    test("Plain user cannot DELETE someone else's", async () => {});
-    test("Editor user can DELETE someone else's", async () => {});
-    test("Admin user can DELETE someone else's", async () => {});
+    test('Guest cannot DELETE', async () => {
+      await imageClient.setToken(null);
+      const { statusCode } = await imageClient.delete(defaultImageId);
+      expect(statusCode).toEqual(403);
+    });
+
+    test('Plain user cannot DELETE', async () => {
+      await imageClient.setUser(plainUser);
+      const { statusCode } = await imageClient.delete(defaultImageId);
+      expect(statusCode).toEqual(403);
+    });
+
+    test('Editor user can DELETE', async () => {
+      await imageClient.setUser(editorUser);
+      const { statusCode } = await imageClient.delete(images[0].id);
+      expect(statusCode).toEqual(200);
+    });
+
+    test('Admin user can DELETE', async () => {
+      await imageClient.setUser(adminUser);
+      const { statusCode } = await imageClient.delete(images[1].id);
+      expect(statusCode).toEqual(200);
+    });
   });
 
   describe('POST error cases', () => {
@@ -442,7 +500,8 @@ describe.skip('Photo tests', () => {
   describe('GET ACLs', () => {
     describe('Valid photo', () => {
       test('Guest can see', async () => {
-        await mediaClient.get();
+        const { statusCode } = await mediaClient.get(media[0]);
+        expect(statusCode).toEqual(200);
       });
       test('Owner can see', async () => {});
       test('Writer can see', async () => {});
@@ -458,7 +517,6 @@ describe.skip('Photo tests', () => {
       test('Admin can see', async () => {});
     });
   });
-
 });
 
 describe.skip('Video tests', () => {

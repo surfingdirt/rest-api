@@ -35,11 +35,11 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'lastEditor',
     'lastEditionDate',
     'status',
-    'dpt',
-    'spot',
-    'trick',
-    'longitude',
-    'latitude',
+//    'dpt',
+//    'spot',
+//    'trick',
+//    'longitude',
+//    'latitude',
     'album',
     'mediaType',
     'uri',
@@ -51,8 +51,8 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'thumbnailWidth',
     'thumbnailHeight',
     'thumbnailSubType',
-    'author',
-    'externalKey'
+//    'author',
+    'key'
   );
 
   public $memberCreateAttributes = array(
@@ -111,7 +111,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
     $object = $table->find($neutralObject->getId())->current();
 
     $attributes = $this->getReadAttributes($object);
-    $location = $object->getLocation();
 
     $ret = array();
     foreach ($attributes as $attr) {

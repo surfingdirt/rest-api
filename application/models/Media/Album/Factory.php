@@ -10,7 +10,7 @@ class Media_Album_Factory
 			FROM " . Constants_TableNames::ALBUM . " a
 			LEFT JOIN " . Constants_TableNames::AGGREGATION . " agg ON a.id = agg.albumId
 			LEFT JOIN " . Constants_TableNames::ALBUM_ITEM . " mai ON a.id = mai.albumId
-			WHERE a.id = $albumId
+			WHERE a.id = '$albumId'
 			LIMIT 1
 		";
     $stmt = $db->query($sql);

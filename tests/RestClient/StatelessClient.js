@@ -113,7 +113,6 @@ export default class StatelessClient {
       fileData.push({
         value,
         options: {
-          // TODO: get the name from the file
           filename,
           contentType,
         },

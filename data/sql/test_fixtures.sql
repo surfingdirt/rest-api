@@ -1,3 +1,4 @@
+TRUNCATE images;
 TRUNCATE items;
 TRUNCATE media_album_aggregations;
 TRUNCATE media_albums;
@@ -7,6 +8,14 @@ TRUNCATE media_items_riders;
 TRUNCATE translated_texts;
 TRUNCATE user_notifications;
 TRUNCATE users;
+
+
+insert into `images`(`id`,`storageType`, `status`, `submitter`, `date`, `lastEditionDate`, `lastEditor`) values
+('44130f1c-2931-451a-b6cd-0f49d0b3ad85', '0', 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null),
+('84846b0b-254e-472b-94a4-2ecd6bc4cd5e', '0', 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:01', null, null),
+('66059f80-59d4-4237-8602-fbbf17f26616', '0', 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-20 10:00:03', null, null),
+('a9c8081c-43ec-418a-acc2-1ad575672250', '0', 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:04', null, null),
+('b5c1429b-f492-4d71-892d-38dd33deffda', '0', 'invalid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:05', null, null);
 
 insert  into `items`(`id`,`itemId`,`itemType`,`date`,`status`,`parentItemId`,`submitter`,`notification`) values
 (1,'a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','2002-02-18 14:00:00','valid',NULL,'60bfb8a7-5754-4186-acd2-44b20ef32399','silent'),
@@ -49,11 +58,11 @@ insert  into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEdito
 
 insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`, `status`, `albumId`, `mediaType`, `key`, `width`, `height`, `size`, `mediaSubType`, `thumbnailWidth`, `thumbnailHeight`, `storageType`) VALUES
 ('44aa386d-3171-432b-a648-f40929043758', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'tata.jpg', 720, 540, 56789, 'jpg', 160, 120, 'local'),
-('9b523108-9b34-43ea-916d-874ff6013021', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:00', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'tata2.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local'),
-('6af68e15-276b-42d7-8683-909943b0ae27', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-20 10:00:00', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'myvideo', 720, 540, 0, 'youtube', 160, 120, null),
-('e4e4cb62-4820-4cff-baff-74b2bdcb1993', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:00', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'tata3.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local'),
-('9119c477-1c48-4449-9b8e-9cdb745fc912', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:00', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'tata4.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local'),
-('051cae3a-95f7-4a29-996d-796d4c263a1e', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:00', null, null, 'invalid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'invalid.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local');
+('9b523108-9b34-43ea-916d-874ff6013021', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:01', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'tata2.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local'),
+('6af68e15-276b-42d7-8683-909943b0ae27', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-20 10:00:02', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'myvideo', 720, 540, 0, 'youtube', 160, 120, null),
+('e4e4cb62-4820-4cff-baff-74b2bdcb1993', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:03', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'tata3.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local'),
+('9119c477-1c48-4449-9b8e-9cdb745fc912', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:04', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'tata4.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local'),
+('051cae3a-95f7-4a29-996d-796d4c263a1e', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:05', null, null, 'invalid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'invalid.jpg', 720, 540, 5678900, 'jpg', 160, 120, 'local');
 
 insert  into `translated_texts`(`id`,`itemType`,`lang`,`type`,`text`) values
 ('a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','fr','title','photoAlbumTitleFr'),

@@ -131,11 +131,29 @@ class ImageController extends Lib_Rest_Controller
 
   public function putAction()
   {
+    $id = $this->_request->getParam('id');
+    if (!$id) {
+      throw new Api_Exception_BadRequest();
+    }
+    $result = $this->_table->find($id);
+    if (empty($result) || !$object = $result->current()) {
+      throw new Api_Exception_NotFound();
+    }
+
     $this->_unauthorised();
   }
 
   public function getAction()
   {
+    $id = $this->_request->getParam('id');
+    if (!$id) {
+      throw new Api_Exception_BadRequest();
+    }
+    $result = $this->_table->find($id);
+    if (empty($result) || !$object = $result->current()) {
+      throw new Api_Exception_NotFound();
+    }
+
     $this->_unauthorised();
   }
 }
