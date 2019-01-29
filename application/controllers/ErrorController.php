@@ -22,7 +22,16 @@ class ErrorController extends Zend_Controller_Action
         $class = get_class($e);
         switch ($class) {
           case 'Api_Exception_BadRequest':
-            return $this->_badRequest();
+            $this->getResponse()->setRawHeader('Content-Type: application/json; charset=UTF-8');
+            $viewRenderer->setViewScriptPathSpec('view.phtml');
+            $viewRenderer->setNoRender(false);
+            if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
+              $this->view->output = array('error' => $e->getCode(), 'message' => $e->getMessage());
+            } else {
+              $this->view->output = array('error' => $e->getCode());
+            }
+            $this->_badRequest();
+            break;
           case 'Lib_JWT_Exception':
           case 'Api_Exception_Unauthorised':
             return $this->_forbidden();

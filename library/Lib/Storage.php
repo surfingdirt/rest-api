@@ -104,6 +104,13 @@ class Lib_Storage
         $folder,
         Media_Item_Photo::SUBTYPE_WEBP);
     }
+
+    $photoFile->limitDimensions(
+      GLOBAL_DEFAULT_IMG_MAX_WIDTH,
+      GLOBAL_DEFAULT_IMG_MAX_HEIGHT,
+      false);
+
+    return array($photoFile->getWidth(), $photoFile->getHeight());
   }
 
   public static function cleanUpFiles($storageType, $id)

@@ -15,7 +15,7 @@ import {
   plainUser,
   writerUser,
 } from './data/users';
-import { img640 } from './data/files';
+import { img640, img3000, imgHeavy, textFileAsJPEG, textFileAsTxt } from './data/files';
 import { cleanupTestDatabase } from './RestClient/database';
 import { getDateForBackend, getSortedKeysAsString } from './RestClient/utils';
 
@@ -26,6 +26,7 @@ const client = new StatelessClient(hostUrl);
 
 beforeAll(async (done) => {
   await cleanupTestDatabase();
+  await client.clearPublicFiles();
   done();
 });
 
@@ -365,6 +366,74 @@ describe('User tests', () => {
 describe('Image tests', () => {
   const imageClient = new ResourceClient(client, IMAGE);
   const defaultImageId = images[0].id;
+  const type = 0;
+  const MAX_WIDTH = 1920;
+  const MAX_HEIGHT = 1920;
+
+  describe('POST error cases', () => {
+    test('Plain user POST fails when no file is sent', async () => {
+      imageClient.setUser(plainUser);
+      const {statusCode, body } = await imageClient.postFormData({ type }, []);
+      expect(statusCode).toEqual(400);
+      expect(body.error).toEqual(10010);
+    });
+
+    test('Plain user POST fails because file is not actually an image', async () => {
+      imageClient.setUser(plainUser);
+      const {statusCode, body } = await imageClient.postFormData({ type }, [textFileAsJPEG]);
+      expect(statusCode).toEqual(400);
+      expect(body.error).toEqual(10011);
+    });
+
+    test('Plain user POST fails because file is a text file', async () => {
+      imageClient.setUser(plainUser);
+      const {statusCode, body } = await imageClient.postFormData({ type }, [textFileAsTxt]);
+      expect(statusCode).toEqual(400);
+      expect(body.error).toEqual(10011);
+    });
+
+    test('Plain user POST fails because image filesize is too big', async () => {
+      imageClient.setUser(plainUser);
+      const {statusCode, body } = await imageClient.postFormData({ type }, [imgHeavy]);
+      expect(statusCode).toEqual(400);
+      expect(body.error).toEqual(10002);
+    });
+
+    test('Plain user POST fails because storage type is not supported', async () => {
+      imageClient.setUser(plainUser);
+      const {statusCode, body } = await imageClient.postFormData({ type: 1 }, [img640]);
+      expect(statusCode).toEqual(400);
+      expect(body.error).toEqual(10001);
+    });
+
+    test('Plain user POST fails because uuid already exists', async () => {
+      imageClient.setUser(plainUser);
+      imageClient.setUUIDs([images[0].id]);
+      const {statusCode, body } = await imageClient.postFormData({ type }, [img640]);
+      expect(statusCode).toEqual(400);
+      expect(body.error).toEqual(10008);
+    });
+  });
+
+  describe('POST success cases', () => {
+    test('Plain user POST succeeds and returns the right dimensions', async () => {
+      imageClient.setUser(plainUser);
+      const {statusCode, body: [{key, width, height}] } = await imageClient.postFormData({ type }, [img640]);
+      expect(statusCode).toEqual(200);
+      expect(key.length).toEqual(36);
+      expect(parseInt(width, 10)).toEqual(img640.width);
+      expect(parseInt(height, 10)).toEqual(img640.height);
+    });
+
+    test('Plain user POST succeeds even when image dimensions are brought down', async () => {
+      imageClient.setUser(plainUser);
+      const {statusCode, body: [{key, width, height}] } = await imageClient.postFormData({ type }, [img3000]);
+      expect(statusCode).toEqual(200);
+      expect(key.length).toEqual(36);
+      expect(parseInt(width, 10)).toEqual(MAX_WIDTH);
+      expect(parseInt(height, 10)).toEqual(MAX_HEIGHT);
+    });
+  });
 
   describe('POST ACLS: all and only bad users get a 403', () => {
     test('Guest cannot POST', async () => {
@@ -464,12 +533,6 @@ describe('Image tests', () => {
       expect(statusCode).toEqual(200);
     });
   });
-
-  describe('POST error cases', () => {
-    test('Admin cannot POST because...', async () => {});
-  });
-
-  describe('POST success cases', () => {});
 });
 
 /*

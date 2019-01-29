@@ -20,7 +20,7 @@ class ImageController extends Lib_Rest_Controller
       Globals::setUser($user);
       $this->_user = $user;
     } else {
-      throw new Api_Exception_BadRequest("Could not find user '$userId'");
+      throw new Lib_Exception_BadRequest("Could not find user '$userId'");
     }
 
     $this->_table = new Api_Image();
@@ -35,14 +35,19 @@ class ImageController extends Lib_Rest_Controller
       return $this->_unauthorised();
     }
 
-    $storageType = $this->getRequest()->getParam('type', null);
-    if (!array_key_exists($storageType, Lib_Storage::$config)) {
-      throw new Api_Exception_BadRequest('No known type given');
-    }
+//    try {
+      $storageType = $this->getRequest()->getParam('type', null);
+      if (!array_key_exists($storageType, Lib_Storage::$config)) {
+        throw new Api_Exception_BadRequest('Bad storage type', Api_ErrorCodes::IMAGE_BAD_STORAGE_TYPE);
+      }
 
-    if (!isset($_FILES) || !isset($_FILES[self::FILE_KEY])) {
-      throw new Api_Exception_BadRequest('No files found');
-    }
+      if (!isset($_FILES) || !isset($_FILES[self::FILE_KEY])) {
+        throw new Api_Exception_BadRequest('No files found', Api_ErrorCodes::IMAGE_NO_FILE);
+      }
+//    } catch (Lib_Exception_BadRequest $e) {
+//      $this->view->output = array('error' =>  $e->getCode());
+//      return;
+//    }
 
     $output = array();
     foreach ($_FILES[self::FILE_KEY]['tmp_name'] as $i => $tmpFile) {
@@ -51,24 +56,30 @@ class ImageController extends Lib_Rest_Controller
       $id = Utils::uuidV4();
       try {
         if ($_FILES[self::FILE_KEY]['error'][$i]) {
-          throw new Lib_Exception(
+          throw new Api_Exception_BadRequest(
             "Uploaded file is marked with an error",
             Api_ErrorCodes::IMAGE_UPLOAD_FAILED);
         }
-
-        Lib_Storage::storeFile($storageType, $tmpFile, $id);
+        try {
+          list($w, $h) = Lib_Storage::storeFile($storageType, $tmpFile, $id);
+        } catch (Lib_Exception_Media_Photo_Mime $e) {
+          throw new Api_Exception_BadRequest($e->getMessage(), Api_ErrorCodes::IMAGE_BAD_MIME);
+        }
         $imageRow = $this->_table->createRow(array(
           'id' => $id,
           'storageType' => $storageType,
         ));
         try {
           $imageRow->save();
-        } catch (Zend_Db_Table_Exception $e) {
-          throw new Lib_Exception(
+        } catch (Zend_Db_Exception $e) {
+          Lib_Storage::cleanUpFiles($storageType, $id);
+          throw new Api_Exception_BadRequest(
             'Could not save image DB entry',
             Api_ErrorCodes::IMAGE_DB_SAVE_FAILURE);
         }
         $thisFileOutput['key'] = $id;
+        $thisFileOutput['width'] = $w;
+        $thisFileOutput['height'] = $h;
       } catch (Lib_Exception $e) {
         Lib_Storage::cleanUpFiles($storageType, $id);
         $thisFileOutput['error'] = $e->getCode();

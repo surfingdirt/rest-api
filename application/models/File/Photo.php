@@ -123,6 +123,7 @@ class File_Photo extends File_Media
     }
 
     if (!$copy) {
+      $this->resize($maxWidth, $maxHeight);
       return;
     }
 

@@ -340,4 +340,22 @@ class Utils
   }
 
   protected static $_currentUUIDIndex = 0;
+
+  private static function _removeDirectory($path)
+  {
+    Globals::getLogger()->log("Deleting '$path'");
+    $files = glob($path . '/*');
+    foreach ($files as $file) {
+      is_dir($file) ? self::_removeDirectory($file) : @unlink($file);
+    }
+    @rmdir($path);
+  }
+
+  public static function clearPublicFiles() {
+    if (APPLICATION_ENV != 'test') {
+      throw new Lib_Exception('Not authorized');
+    }
+
+    self::_removeDirectory(PUBLIC_FILES_DIR);
+  }
 }

@@ -121,12 +121,13 @@ export default class StatelessClient {
 
     const options = {
       method: 'POST',
+      json: true,
       uri: this.getFullUri({ path, debugBackend }),
       headers: this.getHeaders(token),
       simple: SIMPLE_REQUESTS,
       resolveWithFullResponse: true,
       // 'files' is the name of the variable holding upload info on the backend
-      formData: Object.assign({}, data, { files: fileData }),
+      formData: Object.assign({}, data, { 'files[]': fileData }),
     };
     const response = await rp(options);
     this.clearUUIDs();
@@ -189,5 +190,9 @@ export default class StatelessClient {
 
   async clearCache() {
     await this.get({ path: '/test/clear-cache' });
+  }
+
+  async clearPublicFiles() {
+    await this.get({ path: '/test/clear-public-files', debugBackend: true });
   }
 }

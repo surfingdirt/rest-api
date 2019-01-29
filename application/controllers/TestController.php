@@ -12,6 +12,12 @@ class TestController extends Zend_Controller_Action
     $this->getResponse()->setRawHeader('Content-Type: application/json');
   }
 
+  public function clearPublicFilesAction()
+  {
+    Utils::clearPublicFiles();
+    @mkdir(PUBLIC_FILES_DIR);
+  }
+
   public function freezeTimeAction()
   {
     $datetime = $this->_request->getParam('datetime');
