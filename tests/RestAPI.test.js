@@ -4,7 +4,7 @@ import { clearCacheFiles } from './RestClient/cache';
 import { hostUrl, JWT_TTL } from './RestClient/constants';
 import { IMAGE, MEDIA, TOKEN, USER } from './RestClient/resources';
 import { images } from './data/images';
-import { media } from './data/media';
+import { validPhoto, invalidPhoto, validVideo } from './data/media';
 import {
   adminUser,
   bannedUser,
@@ -135,7 +135,7 @@ describe('User tests', () => {
 
   describe('User GET', () => {
     const plainUserPublicInfo =
-      '["avatar","city","date","firstName","lang","lastName",' + '"site","userId","username"]';
+      '["avatar","city","date","firstName","lang","lastName","site","userId","username"]';
 
     const plainUserSelfInfo =
       '["avatar","city","date","email","firstName","lang","lastName",' +
@@ -392,7 +392,7 @@ describe('Image tests', () => {
       expect(body.error).toEqual(10011);
     });
 
-    test('Plain user POST fails because image filesize is too big', async () => {
+    test('Plain user POST fails because image file size is too big', async () => {
       imageClient.setUser(plainUser);
       const {statusCode, body } = await imageClient.postFormData({ type }, [imgHeavy]);
       expect(statusCode).toEqual(400);
@@ -482,6 +482,10 @@ describe('Image tests', () => {
   describe('GET/PUT ACLS: everyone gets a 403', () => {
     test('Guest cannot GET/PUT', async () => {
       await imageClient.setToken(null);
+
+      const { statusCode: listStatus } = await imageClient.get();
+      expect(listStatus).toEqual(403);
+
       const { statusCode: getStatus } = await imageClient.get(defaultImageId);
       expect(getStatus).toEqual(403);
 
@@ -491,6 +495,10 @@ describe('Image tests', () => {
 
     test('Plain user cannot GET/PUT', async () => {
       await imageClient.setUser(plainUser);
+
+      const { statusCode: listStatus } = await imageClient.get();
+      expect(listStatus).toEqual(403);
+
       const { statusCode: getStatus } = await imageClient.get(defaultImageId);
       expect(getStatus).toEqual(403);
 
@@ -500,6 +508,10 @@ describe('Image tests', () => {
 
     test('Admin user cannot GET/PUT', async () => {
       await imageClient.setUser(adminUser);
+
+      const { statusCode: listStatus } = await imageClient.get();
+      expect(listStatus).toEqual(403);
+
       const { statusCode: getStatus } = await imageClient.get(defaultImageId);
       expect(getStatus).toEqual(403);
 
@@ -540,15 +552,20 @@ TODO:
 ajouter un index unique sur la colonne key dans media
 salt sur les passwords, revoir l'algo de chiffrage
 user avatars doit etre un image key + storageType, pas un chemin
-
+verifier que les folders de image post failure sont effaces
+verification du format des id avec une regex pour GET/PUT/DELETE
  */
 
 describe.skip('Photo tests', () => {
   const mediaClient = new ResourceClient(client, MEDIA);
 
+  const media0PublicInfo =
+    '["album","date","description","height","id","key","lastEditionDate","lastEditor",' +
+    '"mediaSubType","mediaType","size","status","submitter","thumbnailHeight","thumbnailWidth",' +
+    '"title","width"]';
+
   /*
    *
-   * GET: photo valide et public, photo invalide et public (guest, owner, writer, editor, admin)
    * POST
    * - photo valide, ACLs: guest, plain user, writer, editor, admin
    * - image manquante et autres valeurs invalides (storageType, fichier trop lourd, pas lisible,)
@@ -560,24 +577,74 @@ describe.skip('Photo tests', () => {
    * - ACLs
    * - GET 404
    */
+
+  // TODO: connecter les media photo existants et les images existantes, avec tout le tralala.
+  // TODO: rajouter author
+
   describe('GET ACLs', () => {
     describe('Valid photo', () => {
-      test('Guest can see', async () => {
-        const { statusCode } = await mediaClient.get(media[0]);
+      test('Guest can see public info', async () => {
+        mediaClient.setToken(null);
+        const { statusCode, body } = await mediaClient.get(validPhoto.id);
         expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
-      test('Owner can see', async () => {});
-      test('Writer can see', async () => {});
-      test('Editor can see', async () => {});
-      test('Admin can see', async () => {});
+
+      test('Owner can see public info', async () => {
+        mediaClient.setUser(writerUser);
+        const { statusCode, body } = await mediaClient.get(validPhoto.id);
+        expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+      });
+
+      test('Editor can see', async () => {
+        mediaClient.setUser(editorUser);
+        const { statusCode, body } = await mediaClient.get(validPhoto.id);
+        expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+      });
+
+      test('Admin can see', async () => {
+        mediaClient.setUser(adminUser);
+        const { statusCode, body } = await mediaClient.get(validPhoto.id);
+        expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+      });
     });
 
     describe('Invalid photo', () => {
-      test('Guest cannot see', async () => {});
-      test('Owner can see', async () => {});
-      test('Writer cannot see', async () => {});
-      test('Editor can see', async () => {});
-      test('Admin can see', async () => {});
+      test('Guest cannot see', async () => {
+        mediaClient.setToken(null);
+        const { statusCode } = await mediaClient.get(invalidPhoto.id);
+        expect(statusCode).toEqual(403);
+      });
+
+      test('Owner can see', async () => {
+        mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.get(invalidPhoto.id);
+        expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+      });
+
+      test('Writer cannot see', async () => {
+        mediaClient.setUser(writerUser);
+        const { statusCode } = await mediaClient.get(invalidPhoto.id);
+        expect(statusCode).toEqual(403);
+      });
+
+      test('Editor can see', async () => {
+        mediaClient.setUser(editorUser);
+        const { statusCode, body } = await mediaClient.get(invalidPhoto.id);
+        expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+      });
+
+      test('Admin can see', async () => {
+        mediaClient.setUser(adminUser);
+        const { statusCode, body } = await mediaClient.get(invalidPhoto.id);
+        expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+      });
     });
   });
 });

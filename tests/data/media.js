@@ -26,3 +26,7 @@ export const media = [
     id: '051cae3a-95f7-4a29-996d-796d4c263a1e',
   },
 ];
+
+export const validPhoto = {id: '44aa386d-3171-432b-a648-f40929043758'};
+export const validVideo = {id: '6af68e15-276b-42d7-8683-909943b0ae27'};
+export const invalidPhoto = {id: '051cae3a-95f7-4a29-996d-796d4c263a1e'};
