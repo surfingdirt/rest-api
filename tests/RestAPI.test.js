@@ -562,7 +562,7 @@ verifier que les folders de image post failure sont effaces
 verification du format des id avec une regex pour GET/PUT/DELETE
  */
 
-describe.skip('Photo tests', () => {
+describe('Photo tests', () => {
   const mediaClient = new ResourceClient(client, MEDIA);
 
   const media0PublicInfo =
@@ -654,19 +654,27 @@ describe.skip('Photo tests', () => {
    * POST
    * - photo valide, ACLs: guest, plain user, writer, editor, admin
    * - photo invalide: image manquante, storageType incorrect, fichier trop lourd, pas lisible, key manquante ou fausse)
+   * - album ACLs
    */
   describe('POST ACLs', () => {
+    const existingImageId = images[2].id;
+
     test('Guest cannot POST', async () => {
       mediaClient.setToken(null);
-      const { statusCode } = await mediaClient.post({});
+      mediaClient.setDebugBackend(true);
+      const { statusCode } = await mediaClient.post({
+        mediaType: 'photo',
+        albumId: plainUser.albumId,
+        title: 'A new photo title',
+        description: 'A new photo description',
+        key: existingImageId,
+        storageType: 0,
+      });
       expect(statusCode).toEqual(403);
     });
 
-    test.only('Plain user can POST', async () => {
-      const existingImageId = images[2].id;
-
+    test('Plain user can POST', async () => {
       mediaClient.setUser(plainUser);
-      mediaClient.setDebugBackend(true);
       const { statusCode, body } = await mediaClient.post({
         mediaType: 'photo',
         albumId: plainUser.albumId,
@@ -674,7 +682,6 @@ describe.skip('Photo tests', () => {
         description: 'A new photo description',
         key: existingImageId,
         storageType: 0,
-
       });
       expect(statusCode).toEqual(200);
     });
