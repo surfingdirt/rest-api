@@ -2,6 +2,7 @@
 
 class Media_Item_Photo extends Media_Item
 {
+  const SUBTYPE_IMG = 'img';
   const SUBTYPE_JPG = 'jpg';
   const SUBTYPE_PNG = 'png';
   const SUBTYPE_GIF = 'gif';
@@ -33,6 +34,7 @@ class Media_Item_Photo extends Media_Item
   protected $_itemType = 'photo';
 
   public static $allowedMediaSubTypes = array(
+    self::SUBTYPE_IMG,
     self::SUBTYPE_JPG,
     self::SUBTYPE_PNG,
     self::SUBTYPE_GIF,

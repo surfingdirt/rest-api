@@ -1,5 +1,4 @@
 <?php
-
 class MediaController extends Api_Controller_Action
 {
   public function listAction()
@@ -9,9 +8,14 @@ class MediaController extends Api_Controller_Action
 
   public function postAction()
   {
-    $data = $this->_request->getPost();
-    if (!isset($data['mediaType']) || $data['mediaType'] != Media_Item::TYPE_PHOTO) {
-      $data['mediaType'] = Media_Item::TYPE_PHOTO;
+    $data = $this->_getBodyParams();
+    if (!isset($data['mediaType']) ||
+      !in_array($data['mediaType'], array(
+        Media_Item::TYPE_PHOTO, Media_Item::TYPE_VIDEO
+      ))) {
+      throw new Api_Exception_BadRequest(
+        "Bad media type: '${data['mediaType']}'",
+        Api_ErrorCodes::MEDIA_BAD_MEDIA_TYPE);
     }
 
     $this->_table = $data['mediaType'] == Media_Item::TYPE_PHOTO ? new Api_Media_Photo() : new Api_Media_Video();
@@ -19,10 +23,6 @@ class MediaController extends Api_Controller_Action
     $object = $this->_table->createRow();
     // TODO: Move this to Api_Media_Photo and new Api_Media_Video
     $object->mediaType = $data['mediaType'];
-
-    if (!$object->isCreatableBy($this->_user, $this->_acl)) {
-      throw new Api_Exception_Unauthorised();
-    }
 
     $this->_preObjectCreation($object, $data);
     list($id, $errors) = $this->_accessor->createObjectWithData($object, $data);

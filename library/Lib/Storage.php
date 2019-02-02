@@ -10,6 +10,8 @@ class Lib_Storage
 
   const TYPE_LOCAL = 0;
 
+  public static $validTypes = array(self::TYPE_LOCAL);
+
   public static $config = array(
     self::TYPE_LOCAL =>
       array(

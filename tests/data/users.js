@@ -2,6 +2,7 @@ export const plainUser = {
   id: '85193083-ce22-43a5-993b-1c7aba53d13c',
   username: 'plainuser',
   password: '123456789',
+  albumId: 'feba0696-8954-4596-a849-0087cbe8ea76',
 };
 
 export const bannedUser = {

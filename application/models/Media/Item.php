@@ -11,6 +11,7 @@ class Media_Item extends Data
   );
 
   public static $allowedThumbnailSubTypes = array(
+    Media_Item_Photo::SUBTYPE_IMG,
     Media_Item_Photo::SUBTYPE_JPG,
     Media_Item_Photo::SUBTYPE_PNG,
     Media_Item_Photo::SUBTYPE_GIF,

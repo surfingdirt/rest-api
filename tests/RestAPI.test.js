@@ -373,35 +373,35 @@ describe('Image tests', () => {
   describe('POST error cases', () => {
     test('Plain user POST fails when no file is sent', async () => {
       imageClient.setUser(plainUser);
-      const {statusCode, body } = await imageClient.postFormData({ type }, []);
+      const { statusCode, body } = await imageClient.postFormData({ type }, []);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10010);
     });
 
     test('Plain user POST fails because file is not actually an image', async () => {
       imageClient.setUser(plainUser);
-      const {statusCode, body } = await imageClient.postFormData({ type }, [textFileAsJPEG]);
+      const { statusCode, body } = await imageClient.postFormData({ type }, [textFileAsJPEG]);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10011);
     });
 
     test('Plain user POST fails because file is a text file', async () => {
       imageClient.setUser(plainUser);
-      const {statusCode, body } = await imageClient.postFormData({ type }, [textFileAsTxt]);
+      const { statusCode, body } = await imageClient.postFormData({ type }, [textFileAsTxt]);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10011);
     });
 
     test('Plain user POST fails because image file size is too big', async () => {
       imageClient.setUser(plainUser);
-      const {statusCode, body } = await imageClient.postFormData({ type }, [imgHeavy]);
+      const { statusCode, body } = await imageClient.postFormData({ type }, [imgHeavy]);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10002);
     });
 
     test('Plain user POST fails because storage type is not supported', async () => {
       imageClient.setUser(plainUser);
-      const {statusCode, body } = await imageClient.postFormData({ type: 1 }, [img640]);
+      const { statusCode, body } = await imageClient.postFormData({ type: 1 }, [img640]);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10001);
     });
@@ -409,7 +409,7 @@ describe('Image tests', () => {
     test('Plain user POST fails because uuid already exists', async () => {
       imageClient.setUser(plainUser);
       imageClient.setUUIDs([images[0].id]);
-      const {statusCode, body } = await imageClient.postFormData({ type }, [img640]);
+      const { statusCode, body } = await imageClient.postFormData({ type }, [img640]);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10008);
     });
@@ -418,7 +418,10 @@ describe('Image tests', () => {
   describe('POST success cases', () => {
     test('Plain user POST succeeds and returns the right dimensions', async () => {
       imageClient.setUser(plainUser);
-      const {statusCode, body: [{key, width, height}] } = await imageClient.postFormData({ type }, [img640]);
+      const {
+        statusCode,
+        body: [{ key, width, height }],
+      } = await imageClient.postFormData({ type }, [img640]);
       expect(statusCode).toEqual(200);
       expect(key.length).toEqual(36);
       expect(parseInt(width, 10)).toEqual(img640.width);
@@ -427,7 +430,10 @@ describe('Image tests', () => {
 
     test('Plain user POST succeeds even when image dimensions are brought down', async () => {
       imageClient.setUser(plainUser);
-      const {statusCode, body: [{key, width, height}] } = await imageClient.postFormData({ type }, [img3000]);
+      const {
+        statusCode,
+        body: [{ key, width, height }],
+      } = await imageClient.postFormData({ type }, [img3000]);
       expect(statusCode).toEqual(200);
       expect(key.length).toEqual(36);
       expect(parseInt(width, 10)).toEqual(MAX_WIDTH);
@@ -563,12 +569,10 @@ describe.skip('Photo tests', () => {
     '["album","date","description","height","id","key","lastEditionDate","lastEditor",' +
     '"mediaSubType","mediaType","size","status","submitter","thumbnailHeight","thumbnailWidth",' +
     '"title","width"]';
+  // TODO: rajouter author
 
   /*
    *
-   * POST
-   * - photo valide, ACLs: guest, plain user, writer, editor, admin
-   * - image manquante et autres valeurs invalides (storageType, fichier trop lourd, pas lisible,)
    * PUT
    * - ACLs
    * - mauvaises donnees d'update
@@ -577,9 +581,6 @@ describe.skip('Photo tests', () => {
    * - ACLs
    * - GET 404
    */
-
-  // TODO: connecter les media photo existants et les images existantes, avec tout le tralala.
-  // TODO: rajouter author
 
   describe('GET ACLs', () => {
     describe('Valid photo', () => {
@@ -647,6 +648,45 @@ describe.skip('Photo tests', () => {
       });
     });
   });
+
+  /*
+   *
+   * POST
+   * - photo valide, ACLs: guest, plain user, writer, editor, admin
+   * - photo invalide: image manquante, storageType incorrect, fichier trop lourd, pas lisible, key manquante ou fausse)
+   */
+  describe('POST ACLs', () => {
+    test('Guest cannot POST', async () => {
+      mediaClient.setToken(null);
+      const { statusCode } = await mediaClient.post({});
+      expect(statusCode).toEqual(403);
+    });
+
+    test.only('Plain user can POST', async () => {
+      const existingImageId = images[2].id;
+
+      mediaClient.setUser(plainUser);
+      mediaClient.setDebugBackend(true);
+      const { statusCode, body } = await mediaClient.post({
+        mediaType: 'photo',
+        albumId: plainUser.albumId,
+        title: 'A new photo title',
+        description: 'A new photo description',
+        key: existingImageId,
+        storageType: 0,
+
+      });
+      expect(statusCode).toEqual(200);
+    });
+  });
+
+  describe('Valid photo POST', () => {
+  });
+
+  describe('Invalid photo', () => {
+
+  });
+
 });
 
 describe.skip('Video tests', () => {

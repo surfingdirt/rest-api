@@ -10,21 +10,21 @@ class Media_Item_Video_Form extends Media_Item_Form
   protected function _buildElements()
   {
     $elements = array(
-      'media' => $this->getMedia(),
+      'key' => $this->getKey(),
       'title' => $this->getTitle(),
       'description' => $this->getDescription(),
-      'author' => $this->getAuthor(),
-      'users' => $this->getUsers(),
-      'trick' => $this->getTrick(),
-      'spot' => $this->getSpot(),
-      'locationFlag' => $this->getLocationFlag(),
-      'longitude' => $this->getLongitude(),
-      'latitude' => $this->getLatitude(),
-      'zoom' => $this->getZoom(),
-      'yaw' => $this->getYaw(),
-      'pitch' => $this->getPitch(),
-      'mapType' => $this->getMapType(),
-      'tags' => $this->getTags()
+//      'author' => $this->getAuthor(),
+//      'users' => $this->getUsers(),
+//      'trick' => $this->getTrick(),
+//      'spot' => $this->getSpot(),
+//      'locationFlag' => $this->getLocationFlag(),
+//      'longitude' => $this->getLongitude(),
+//      'latitude' => $this->getLatitude(),
+//      'zoom' => $this->getZoom(),
+//      'yaw' => $this->getYaw(),
+//      'pitch' => $this->getPitch(),
+//      'mapType' => $this->getMapType(),
+//      'tags' => $this->getTags()
     );
     return $elements;
   }
@@ -49,18 +49,5 @@ class Media_Item_Video_Form extends Media_Item_Form
     } else {
       $this->addDisplayGroup(array('tags'), 'miscGroup');
     }
-  }
-
-  /**
-   * Factory for the video element
-   *
-   * @param boolean $required
-   * @return Lib_Form_Element_Video
-   *
-   */
-  public function getMedia($required = true)
-  {
-    $element = new Lib_Form_Element_Video($this->_object, $required, 'media');
-    return $element;
   }
 }

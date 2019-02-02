@@ -16,7 +16,7 @@ class Media_Album_Factory
     $stmt = $db->query($sql);
     $data = $stmt->fetch();
     if (empty($data)) {
-      throw new Lib_Exception_User("Album '$albumId' was not found");
+      throw new Lib_Exception("Album '$albumId' was not found");
     }
 
     if (empty($data['keyName'])) {

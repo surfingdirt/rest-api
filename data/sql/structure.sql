@@ -16,6 +16,8 @@ CREATE TABLE `images` (
   `date` datetime NOT NULL,
   `lastEditionDate` datetime DEFAULT NULL,
   `lastEditor` varchar(36) DEFAULT NULL,
+  `width` int(11) NOT NULL,
+  `height` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

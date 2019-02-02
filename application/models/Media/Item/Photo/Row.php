@@ -151,10 +151,7 @@ class Media_Item_Photo_Row extends Media_Item_Row
       switch ($this->albumId) {
         case null:
         case Media_Album_PhotoMain::ID:
-          $action = Globals::getRouter()->assemble(array(), 'uploadphotomain', true);
-          break;
         case Media_Album_Portfolio::ID:
-          $action = Globals::getRouter()->assemble(array(), 'uploadportfolio', true);
           break;
         case Media_Album_VideoMain::ID:
           throw new Lib_Exception_Media("Attempting to create photo form for video album '{$this->albumId}'");
@@ -169,7 +166,6 @@ class Media_Item_Photo_Row extends Media_Item_Row
           break;
       }
     }
-    $form->setAction($action);
     return $form;
   }
 

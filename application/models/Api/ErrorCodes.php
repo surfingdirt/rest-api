@@ -16,4 +16,10 @@ class Api_ErrorCodes
   const IMAGE_DB_DELETE_FAILURE = 10009;
   const IMAGE_NO_FILE = 10010;
   const IMAGE_BAD_MIME = 10011;
+
+  /*
+   * MEDIA
+   */
+  const MEDIA_BAD_MEDIA_TYPE = 11001;
+  const MEDIA_BAD_ALBUM_FOR_POST = 11002;
 }

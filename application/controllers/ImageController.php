@@ -35,19 +35,14 @@ class ImageController extends Lib_Rest_Controller
       return $this->_unauthorised();
     }
 
-//    try {
-      $storageType = $this->getRequest()->getParam('type', null);
-      if (!array_key_exists($storageType, Lib_Storage::$config)) {
-        throw new Api_Exception_BadRequest('Bad storage type', Api_ErrorCodes::IMAGE_BAD_STORAGE_TYPE);
-      }
+    $storageType = $this->getRequest()->getParam('type', null);
+    if (!array_key_exists($storageType, Lib_Storage::$config)) {
+      throw new Api_Exception_BadRequest('Bad storage type', Api_ErrorCodes::IMAGE_BAD_STORAGE_TYPE);
+    }
 
-      if (!isset($_FILES) || !isset($_FILES[self::FILE_KEY])) {
-        throw new Api_Exception_BadRequest('No files found', Api_ErrorCodes::IMAGE_NO_FILE);
-      }
-//    } catch (Lib_Exception_BadRequest $e) {
-//      $this->view->output = array('error' =>  $e->getCode());
-//      return;
-//    }
+    if (!isset($_FILES) || !isset($_FILES[self::FILE_KEY])) {
+      throw new Api_Exception_BadRequest('No files found', Api_ErrorCodes::IMAGE_NO_FILE);
+    }
 
     $output = array();
     foreach ($_FILES[self::FILE_KEY]['tmp_name'] as $i => $tmpFile) {
@@ -68,6 +63,8 @@ class ImageController extends Lib_Rest_Controller
         $imageRow = $this->_table->createRow(array(
           'id' => $id,
           'storageType' => $storageType,
+          'width' => $w,
+          'height' => $h,
         ));
         try {
           $imageRow->save();
