@@ -72,34 +72,6 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
   protected $_arrTags = null;
 
   /**
-   * Default category
-   *
-   * @var int
-   */
-  protected $_category = Category::COMMUNITY;
-
-  /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::NONE;
-
-  /**
-   * Default creation category
-   *
-   * @var int
-   */
-  protected $_creationCategory = Category::COMMUNITY;
-
-  /**
-   * Default creation subcategory
-   *
-   * @var int
-   */
-  protected $_creationSubCategory = SubCategory::NONE;
-
-  /**
    * Name of the class of form used to edit this object
    *
    * @var string
@@ -805,44 +777,6 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
   {
     $cacheId = 'tagsFor_' . $this->getItemType() . $this->_getIdForCache($this->getId());
     return $cacheId;
-  }
-
-  /**
-   * Getter function for the category
-   *
-   * @return int
-   */
-  public function getCategory($type = null)
-  {
-    switch ($type) {
-      case 'creation':
-        $return = $this->_creationCategory;
-        break;
-      case 'display':
-      default:
-        $return = $this->_category;
-        break;
-    }
-    return $return;
-  }
-
-  /**
-   * Getter function for the subcategory
-   *
-   * @return string
-   */
-  public function getSubCategory($type = null)
-  {
-    switch ($type) {
-      case 'creation':
-        $return = $this->_creationSubCategory;
-        break;
-      case 'display':
-      default:
-        $return = $this->_subCategory;
-        break;
-    }
-    return $return;
   }
 
   /**

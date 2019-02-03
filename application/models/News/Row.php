@@ -68,34 +68,6 @@ class News_Row extends Article_Row implements Data_Row_LocationInterface,
   protected $_location;
 
   /**
-   * Category
-   *
-   * @var int
-   */
-  protected $_category = Category::ARTICLES;
-
-  /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::NEWS;
-
-  /**
-   * Default creation category
-   *
-   * @var int
-   */
-  protected $_creationCategory = Category::EDITION;
-
-  /**
-   * Default creation subcategory
-   *
-   * @var int
-   */
-  protected $_creationSubCategory = SubCategory::CREATENEWS;
-
-  /**
    * Name of the layouts used to display this item
    *
    * @var string

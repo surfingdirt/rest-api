@@ -38,13 +38,6 @@ class Forum_Topic_Row extends Data_Row
   protected $_formClass = 'Forum_Topic_Form';
 
   /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::FORUMS;
-
-  /**
    * Indicates whether the title is found in another table (true)
    * or directly here (false)
    *

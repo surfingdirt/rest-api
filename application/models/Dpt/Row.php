@@ -10,13 +10,6 @@ class Dpt_Row extends Data_Row implements Data_Row_BoundsInterface
   protected $_routeDataType = Constants_DataTypes::DPT;
 
   /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::DPT;
-
-  /**
    * Name of the route used to construct urls
    *
    * @var string

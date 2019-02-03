@@ -16,13 +16,6 @@ class Forum_Post_Row extends Data_Row implements Data_Row_MetaDataInterface
   protected $_routeDataType = 'post';
 
   /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::FORUMS;
-
-  /**
    * Name of the class of form used to edit this object
    *
    * @var string

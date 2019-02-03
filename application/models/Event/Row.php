@@ -45,34 +45,6 @@ class Event_Row extends Article_Row
   protected $_deleteRoute = 'deleteevent';
 
   /**
-   * Default category
-   *
-   * @var int
-   */
-  protected $_category = Category::START;
-
-  /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::EVENTS;
-
-  /**
-   * Default creation category
-   *
-   * @var int
-   */
-  protected $_creationCategory = Category::EDITION;
-
-  /**
-   * Default creation category
-   *
-   * @var int
-   */
-  protected $_creationSubCategory = SubCategory::CREATEEVENT;
-
-  /**
    * Name of the class of form used to edit this object
    *
    * @var string

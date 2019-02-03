@@ -60,34 +60,6 @@ class Dossier_Row extends Article_Row
   protected $_subForm2Class = 'Dossier_Form_SubForm2';
 
   /**
-   * Default category
-   *
-   * @var int
-   */
-  protected $_category = Category::ARTICLES;
-
-  /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::DOSSIERS;
-
-  /**
-   * Default creation category
-   *
-   * @var int
-   */
-  protected $_creationCategory = Category::EDITION;
-
-  /**
-   * Default creation subcategory
-   *
-   * @var int
-   */
-  protected $_creationSubCategory = SubCategory::CREATEDOSSIERS;
-
-  /**
    * Returns the whole path for the folder associated
    * to this object
    */

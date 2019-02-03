@@ -33,20 +33,4 @@ class Media_Album_Simple_Row extends Media_Album_Row
 
     return $albumItems;
   }
-
-  public function getCategory($type = null)
-  {
-    switch ($this->id) {
-      case Media_Album_PhotoMain::ID:
-      case Media_Album_VideoMain::ID:
-      default:
-        return Category::COMMUNITY;
-        break;
-    }
-  }
-
-  public function getSubCategory($type = null)
-  {
-    return SubCategory::NONE;
-  }
 }

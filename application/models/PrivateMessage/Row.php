@@ -38,20 +38,6 @@ class PrivateMessage_Row extends Data_Row
   protected $_createRoute = 'privatemessagesnew';
 
   /**
-   * Default category
-   *
-   * @var int
-   */
-  protected $_category = Category::ACCOUNT;
-
-  /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::PRIVATEMESSAGES;
-
-  /**
    * Indicates whether the title is found in another table (true)
    * or directly here (false)
    *

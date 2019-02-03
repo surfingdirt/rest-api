@@ -56,13 +56,6 @@ class Blog_Row extends Data_Row
   protected $_formClass = 'Blog_Form';
 
   /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::BLOGS;
-
-  /**
    * Returns the url for the page describing the current object
    *
    * @return string

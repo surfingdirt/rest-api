@@ -73,13 +73,6 @@ class Spot_Row extends Data_Row
   protected $_formClass = 'Spot_Form';
 
   /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::SPOTS;
-
-  /**
    * Whether or not we should create an album when this
    * item is saved
    *
@@ -164,11 +157,6 @@ class Spot_Row extends Data_Row
     }
     $string = Globals::getTranslate()->_($string);
     return $string;
-  }
-
-  public function getSubCategory($type = null)
-  {
-    return SubCategory::SPOTS;
   }
 
   public function getAlbum()

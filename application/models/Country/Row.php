@@ -10,13 +10,6 @@ class Country_Row extends Data_Row implements Data_Row_BoundsInterface
   protected $_routeDataType = Constants_DataTypes::COUNTRY;
 
   /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::COUNTRIES;
-
-  /**
    * Name of the route used to construct urls
    *
    * @var string
@@ -130,51 +123,5 @@ class Country_Row extends Data_Row implements Data_Row_BoundsInterface
   {
     $title = Utils::cleanStringForUrl($this->title);
     return $title;
-  }
-
-  /**
-   * Getter function for the category
-   *
-   * @return int
-   */
-  public function getCategory($type = null)
-  {
-    switch ($type) {
-      case 'creation':
-        $return = $this->_creationCategory;
-        break;
-      case 'display':
-      default:
-        if ($this->id == Country::FRANCE_ID) {
-          $return = Category::START;
-        } else {
-          $return = $this->_category;
-        }
-        break;
-    }
-    return $return;
-  }
-
-  /**
-   * Getter function for the subcategory
-   *
-   * @return string
-   */
-  public function getSubCategory($type = null)
-  {
-    switch ($type) {
-      case 'creation':
-        $return = $this->_creationSubCategory;
-        break;
-      case 'display':
-      default:
-        if ($this->id == Country::FRANCE_ID) {
-          $return = SubCategory::FRANCE;
-        } else {
-          $return = $this->_subCategory;
-        }
-        break;
-    }
-    return $return;
   }
 }

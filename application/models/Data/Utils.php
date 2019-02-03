@@ -14,7 +14,6 @@ class Data_Utils
 
     switch ($dataType) {
       case 'archives':
-        Zend_Registry::set('Category', Category::ARTICLES);
         $itemsPerPage = ARCHIVES_PER_PAGE;
         $table = new News();
         break;
@@ -24,7 +23,6 @@ class Data_Utils
         $order = "date ASC";
         break;
       case 'dossier':
-        Zend_Registry::set('Category', Category::ARTICLES);
         $itemsPerPage = DOSSIERS_PER_PAGE;
         $table = new Dossier();
         break;

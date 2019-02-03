@@ -55,13 +55,6 @@ class Blog_Post_Row extends Data_Row
   protected $_isContentTranslated = true;
 
   /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::BLOGS;
-
-  /**
    * Determines whether a field is translated or not
    *
    * @param string $columnName

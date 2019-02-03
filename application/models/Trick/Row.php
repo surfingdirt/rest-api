@@ -59,20 +59,6 @@ class Trick_Row extends Data_Row implements Data_Row_AlbumInterface
   protected $_formClass = 'Trick_Form';
 
   /**
-   * Default category
-   *
-   * @var int
-   */
-  protected $_category = Category::START;
-
-  /**
-   * Default subcategory
-   *
-   * @var int
-   */
-  protected $_subCategory = SubCategory::TRICKS;
-
-  /**
    * Whether or not we should create an album when this
    * item is saved
    *

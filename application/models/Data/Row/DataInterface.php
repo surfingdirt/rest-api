@@ -24,10 +24,6 @@ interface Data_Row_DataInterface
 
   public function getTags();
 
-  public function getCategory($type = null);
-
-  public function getSubCategory($type = null);
-
   public function getForm(User_Row $user, Lib_Acl $acl, $options = null);
 
   public function getLayout();
