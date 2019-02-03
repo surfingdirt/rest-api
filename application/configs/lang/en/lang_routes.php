@@ -56,7 +56,6 @@ $routes = array(
   'editphoto' => 'edit this photo',
   'deletephoto' => 'delete this photo',
   'uploadphotomain' => 'add a photo',
-  'uploadportfolio' => 'add a photo',
 
   // VIDEOS
   'displayvideo' => 'display this video',

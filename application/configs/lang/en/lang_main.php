@@ -168,7 +168,6 @@ $array = array(
   'forums' => 'forums',
   'photos' => 'photos',
   'videos' => 'videos',
-  'portfolio' => 'portfolio',
 
   // Index page
   'indexMoreArticles' => 'more articles',
@@ -196,7 +195,6 @@ $array = array(
   'dossiersDescription' => 'here, among other things, you\'ll find a list of detailed articles to help you ride better and smarter, to build and install jump features.',
   'newsDescription' => 'this is the complete archive of past news articles, dating back to early 2002. A good place to see the progression of our sport in the early years.',
   'testsDescription' => 'board and accessories reviews, with pictures and our unbiased view on them (or so we like to think).',
-  'portfolioDescription' => 'this is a list of particularly awesome pictures, hand-picked for your viewing pleasure. Ideally, this is a place to point people to when you want to show them what mountainboarding is all about',
 
   'communitySubCategoriesTitle' => 'community',
   'communitySubCategoriesDescription' => 'mountainboarding is a young sport and it is defined by the users. The following pages are here to help keep the community alive. Cos we\'re all about social!',

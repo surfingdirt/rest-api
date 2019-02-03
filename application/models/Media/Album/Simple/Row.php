@@ -42,26 +42,11 @@ class Media_Album_Simple_Row extends Media_Album_Row
       default:
         return Category::COMMUNITY;
         break;
-      case Media_Album_Portfolio::ID:
-        return Category::START;
-        break;
     }
   }
 
   public function getSubCategory($type = null)
   {
-    switch ($this->id) {
-      case Media_Album_PhotoMain::ID:
-        return SubCategory::PHOTOS;
-        break;
-      case Media_Album_VideoMain::ID:
-        return SubCategory::VIDEOS;
-        break;
-      case Media_Album_Portfolio::ID:
-        return SubCategory::PORTFOLIO;
-        break;
-      default:
-        return SubCategory::NONE;
-    }
+    return SubCategory::NONE;
   }
 }

@@ -17,7 +17,6 @@ class Media_Album extends Data
 
   const ALBUM_PHOTO = 'photo';
   const ALBUM_VIDEO = 'video';
-  const ALBUM_PORTFOLIO = 'portfolio';
 
   public static $albumTypes = array(
     0 => self::TYPE_SIMPLE,
@@ -38,7 +37,6 @@ class Media_Album extends Data
   public static $mainAlbums = array(
     0 => self::ALBUM_PHOTO,
     1 => self::ALBUM_VIDEO,
-    2 => self::ALBUM_PORTFOLIO,
   );
 
   public static $mainAlbumIds = array(1, 2, 3);
@@ -59,7 +57,6 @@ class Media_Album extends Data
     $array = array(
       Media_Album_PhotoMain::ID,
       Media_Album_VideoMain::ID,
-      Media_Album_Portfolio::ID,
     );
     return $array;
   }

@@ -160,9 +160,6 @@ abstract class Media_Album_Row extends Data_Row
       case Media_Album_VideoMain::ID:
         $link = Globals::getRouter()->assemble(array(), 'videos');
         break;
-      case Media_Album_Portfolio::ID:
-        $link = Globals::getRouter()->assemble(array(), 'portfolio');
-        break;
       default:
         $params = array(
           'albumName' => $this->getCleanTitle(),

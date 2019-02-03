@@ -22,48 +22,6 @@ class Media_Item_Video extends Media_Item
   protected $_itemType = 'video';
 
   /**
-   * Get A list of random photos.
-   * Given that some pictures might be private,
-   * this function will only return pictures belonging to
-   * the main photo album or the portfolio album.
-   *
-   * @param integer $amount
-   * @return array
-   */
-  public function getRandom($amount = 1)
-  {
-    $amount = is_integer($amount) ? $amount : 1;
-    $authorisedAlbums = array(
-      Media_Album_VideoMain::ID,
-    );
-    $authorisedAlbums = implode(', ', $authorisedAlbums);
-
-    $data = $this->fetchAll('status = "' . self::VALID . '" AND albumId IN (' . $authorisedAlbums . ')', 'RAND()', $amount);
-    return $data;
-  }
-
-  /**
-   * Get the latest photos.
-   * Given that some pictures might be private,
-   * this function will only return pictures belonging to
-   * the main photo album or the portfolio album.
-   *
-   * @param integer $amount
-   * @return array
-   */
-  public function getLatest($amount = 1)
-  {
-    $amount = is_integer($amount) ? $amount : 1;
-    $authorisedAlbums = array(
-      Media_Album_VideoMain::ID,
-    );
-    $authorisedAlbums = implode(', ', $authorisedAlbums);
-
-    $data = $this->fetchAll('status = "' . self::VALID . '" AND albumId IN (' . $authorisedAlbums . ')', 'id DESC', $amount);
-    return $data;
-  }
-
-  /**
    * Returns the regex used to make sure a correct video html code was submitted
    *
    * @return string

@@ -44,7 +44,6 @@ class SubCategory
     self::INDEX => 'index',
 
     self::FRANCE => 'france',
-    self::PORTFOLIO => 'portfolio',
     self::EVENTS => 'events',
     self::TRICKS => 'tricks',
 

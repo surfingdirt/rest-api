@@ -169,7 +169,6 @@ $array = array(
   'forums' => 'forums',
   'photos' => 'photos',
   'videos' => 'vidéos',
-  'portfolio' => 'portfolio',
 
   // Index page
   'indexMoreArticles' => 'plus d\'articles',
@@ -197,7 +196,6 @@ $array = array(
   'dossiersDescription' => 'tu trouveras ici, entre autres, une liste d\'articles détaillés pour t\'aider à rider mieux et plus malin, et des plans et indications pour construire des modules.',
   'newsDescription' => 'toutes les news publiées sur ce site depuis 2002! Un bon endroit pour voir la progression du mountainboard en France depuis ses débuts.',
   'testsDescription' => 'des tests de boards et d\'accessoires et protecs, avec des photos et des points de vue neutres (ou en tout cas on essaie).',
-  'portfolioDescription' => 'une liste de photos particulièrement belles ou originales, choisies à la main pour le plaisir de tes yeux. Dans l\'idéal, c\'est la page à montrer à quelqu\'un qui ne connait pas du tout le mountainboard.',
 
   'communitySubCategoriesTitle' => 'communauté',
   'communitySubCategoriesDescription' => 'le mountainboard est un sport jeune, pas pourri par l\'argent, et porté par les riders avant tout. Les pages suivantes sont là pour aider à rapprocher les riders et les aider à partager leur expérience... du social, bordel!',

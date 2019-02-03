@@ -49,50 +49,6 @@ class Media_Item_Photo extends Media_Item
     self::MIME_WEBP,
   );
 
-  /**
-   * Get A list of random photos.
-   * Given that some pictures might be private,
-   * this function will only return pictures belonging to
-   * the main photo album or the portfolio album.
-   *
-   * @param integer $amount
-   * @return array
-   */
-  public function getRandom($amount = 1)
-  {
-    $amount = is_integer($amount) ? $amount : 1;
-    $authorisedAlbums = array(
-      Media_Album_PhotoMain::ID,
-      Media_Album_Portfolio::ID
-    );
-    $authorisedAlbums = implode(', ', $authorisedAlbums);
-
-    $data = $this->fetchAll('status = "' . self::VALID . '" AND albumId IN (' . $authorisedAlbums . ')', 'RAND()', $amount);
-    return $data;
-  }
-
-  /**
-   * Get the latest photos.
-   * Given that some pictures might be private,
-   * this function will only return pictures belonging to
-   * the main photo album or the portfolio album.
-   *
-   * @param integer $amount
-   * @return array
-   */
-  public function getLatest($amount = 1)
-  {
-    $amount = is_integer($amount) ? $amount : 1;
-    $authorisedAlbums = array(
-      Media_Album_PhotoMain::ID,
-      Media_Album_Portfolio::ID
-    );
-    $authorisedAlbums = implode(', ', $authorisedAlbums);
-
-    $data = $this->fetchAll('status = "' . self::VALID . '" AND albumId IN (' . $authorisedAlbums . ')', 'id DESC', $amount);
-    return $data;
-  }
-
   public static function getAllowedExtensionsString()
   {
     return 'jpg,jpeg,png,gif';

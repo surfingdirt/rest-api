@@ -132,43 +132,6 @@ class Media_Item_Photo_Row extends Media_Item_Row
     $this->save();
   }
 
-  /**
-   * Returns a form to upload a photo
-   *
-   * @param User_Row $user
-   * @param Lib_Acl $acl
-   * @param array $options
-   * @return Media_Item_Photo_Form
-   */
-  public function getForm(User_Row $user, Lib_Acl $acl, $options = null)
-  {
-    $form = parent::getForm($user, $acl, $options);
-    if ($this->id) {
-      // Edition form
-      $action = Globals::getRouter()->assemble(array('id' => $this->id), 'editphoto', true);
-    } else {
-      // Creation form
-      switch ($this->albumId) {
-        case null:
-        case Media_Album_PhotoMain::ID:
-        case Media_Album_Portfolio::ID:
-          break;
-        case Media_Album_VideoMain::ID:
-          throw new Lib_Exception_Media("Attempting to create photo form for video album '{$this->albumId}'");
-          break;
-        default:
-          $albumTable = new Media_Album();
-          $album = $albumTable->find($this->albumId)->current();
-          if (empty($album)) {
-            throw new Lib_Exception_Media("Creating media form: album '{$this->albumId}' does not exist");
-          }
-          $action = Globals::getRouter()->assemble(array('albumId' => $this->albumId), 'uploadphoto', true);
-          break;
-      }
-    }
-    return $form;
-  }
-
   public function getLink()
   {
     return '/photo/' . $this->getCleanTitle() . '_' . $this->getId() . '/';

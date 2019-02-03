@@ -59,21 +59,7 @@ class Media_Album_Factory
 
   public static function buildSimpleAlbum($albumId, $page = 1)
   {
-    switch ($albumId) {
-      case Media_Album_PhotoMain::ID:
-        $table = new Media_Album_PhotoMain();
-        break;
-      case Media_Album_VideoMain::ID:
-        $table = new Media_Album_VideoMain();
-        break;
-      case Media_Album_Portfolio::ID:
-        $table = new Media_Album_Portfolio();
-        break;
-      default:
-        $table = new Media_Album_Simple();
-        break;
-    }
-
+    $table = new Media_Album_Simple();
     $album = $table->find($albumId);
     $album = $album->current();
     $album->page = $page;
