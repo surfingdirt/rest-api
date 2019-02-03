@@ -2,9 +2,9 @@ import ResourceClient from './RestClient/ResourceClient';
 import { default as StatelessClient, getResourcePath } from './RestClient/StatelessClient';
 import { clearCacheFiles } from './RestClient/cache';
 import { hostUrl, JWT_TTL } from './RestClient/constants';
-import { IMAGE, MEDIA, TOKEN, USER } from './RestClient/resources';
+import { IMAGE, MEDIA, MEDIA_TYPES, MEDIA_SUBTYPES_VIDEO, TOKEN, USER } from './RestClient/resources';
 import { images } from './data/images';
-import { validPhoto, invalidPhoto, validVideo } from './data/media';
+import { invalidPhoto, validPhoto } from './data/media';
 import {
   adminUser,
   bannedUser,
@@ -15,10 +15,12 @@ import {
   plainUser,
   writerUser,
 } from './data/users';
-import { img640, img3000, imgHeavy, textFileAsJPEG, textFileAsTxt } from './data/files';
+import { img3000, img640, imgHeavy, textFileAsJPEG, textFileAsTxt } from './data/files';
 import { cleanupTestDatabase } from './RestClient/database';
 import { getDateForBackend, getSortedKeysAsString } from './RestClient/utils';
 
+const { PHOTO, VIDEO } = MEDIA_TYPES;
+const { YOUTUBE, VIMEO } = MEDIA_SUBTYPES_VIDEO;
 const plainUserPath = getResourcePath(USER, plainUser.id);
 const tokenPath = getResourcePath(TOKEN);
 
@@ -661,9 +663,8 @@ describe('Photo tests', () => {
 
     test('Guest cannot POST', async () => {
       mediaClient.setToken(null);
-      mediaClient.setDebugBackend(true);
       const { statusCode } = await mediaClient.post({
-        mediaType: 'photo',
+        mediaType: PHOTO,
         albumId: plainUser.albumId,
         title: 'A new photo title',
         description: 'A new photo description',
@@ -676,7 +677,7 @@ describe('Photo tests', () => {
     test('Plain user can POST', async () => {
       mediaClient.setUser(plainUser);
       const { statusCode, body } = await mediaClient.post({
-        mediaType: 'photo',
+        mediaType: PHOTO,
         albumId: plainUser.albumId,
         title: 'A new photo title',
         description: 'A new photo description',
@@ -687,16 +688,29 @@ describe('Photo tests', () => {
     });
   });
 
-  describe('Valid photo POST', () => {
-  });
+  describe('Valid photo POST', () => {});
 
-  describe('Invalid photo', () => {
-
-  });
-
+  describe('Invalid photo', () => {});
 });
 
-describe.skip('Video tests', () => {
+describe.only('Video tests', () => {
+  const mediaClient = new ResourceClient(client, MEDIA);
+
+  test('Plain user can POST', async () => {
+    // mediaClient.setDebugBackend(true);
+    mediaClient.setUser(plainUser);
+    const { statusCode, body } = await mediaClient.post({
+      mediaType: VIDEO,
+      mediaSubType: 'sds',
+      albumId: plainUser.albumId,
+      title: 'A new video title',
+      description: 'A new photo description',
+      key: '1PcGJIjhQjg',
+      storageType: 0,
+    });
+    expect(statusCode).toEqual(200);
+  });
+
   /*
    * GET: video valide et public, video invalide et public (guest, owner, writer, editor, admin)
    * POST

@@ -164,10 +164,13 @@ class Api_Media_Accessor extends Api_Data_Accessor
       throw new Api_Exception_BadRequest("Bad album type for album with id '$albumId'", Api_ErrorCodes::MEDIA_BAD_ALBUM_FOR_POST);
     }
 
+    $object->id = Utils::uuidV4();
     if ($object->mediaType == Media_Item::TYPE_PHOTO) {
       $data = array_merge($data, $this->_getPhotoAttributes($data['key']));
     } else {
-      $data = array_merge($data, $this->_getVideoAttributes($object, $form->media));
+      $scraper = new Lib_VideoScraper($data['key'], $object->id);
+      $this->_saveVideoThumbs($scraper);
+      $data = array_merge($data, $this->_getVideoAttributes($scraper));
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
     return array($object->getId(), null);
@@ -253,9 +256,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
 
     // Saving
     $skipAutomaticEditionFields = false;
-    if (empty($dataRow->id)) {
-      $dataRow->id = Utils::uuidV4();
-    }
     $dataRow->save($skipAutomaticEditionFields);
     if (empty($dataRow->id)) {
       throw new Lib_Exception("Could not save data");
@@ -284,6 +284,19 @@ class Api_Media_Accessor extends Api_Data_Accessor
     );
   }
 
+  protected function _saveVideoThumbs(Lib_VideoScraper $scraper)
+  {
+    /*
+     * Call API, fetch largest thumb URL
+     * download it
+     * treat it like an image
+     * save data to DB
+     */
+    $imageRow = $scraper->saveThumbs(Lib_Storage::TYPE_LOCAL);
+    return $imageRow;
+
+  }
+
   /**
    * Returns information about the video uri, thumbnail dimensions in order to save to database
    *
@@ -292,94 +305,13 @@ class Api_Media_Accessor extends Api_Data_Accessor
    * @return array
    * @throws Lib_Exception_Media
    */
-  protected function _getVideoAttributes(Media_Item_Video_Row $video, Lib_Form_Element_Video $videoElement)
+  protected function _getVideoAttributes(Lib_VideoScraper $scraper)
   {
-    $value = $videoElement->getValue();
-    if ($video->getId() && empty($value)) {
-      return array();
-    }
-
-    $regex = Media_Item_Video::getCleanVideoCodeRegex();
-
-    $matches = null;
-    $matchCount = preg_match_all($regex, $value, $matches);
-    if (!$matchCount) {
-      throw new Lib_Exception_Media("Impossible to get data out of the video regex: value='$value', regex='$regex', videoId:'$video->id'");
-    }
-    $return = array();
-    switch ($matches[1][0]) {
-      case Media_Item_Video::SUBTYPE_YOUTUBE:
-        if (APPLICATION_ENV == 'test') {
-          $return['thumbnailSubType'] = Media_Item_Photo::SUBTYPE_YOUTUBE_THUMBNAIL;
-          $return['thumbnailUri'] = 'fakeUri';
-          $return['thumbnailWidth'] = '320';
-          $return['thumbnailHeight'] = '240';
-        } else {
-          $youtube = new Zend_Gdata_YouTube(null, YOUTUBE_APPLICATION_ID, YOUTUBE_CLIENT_ID, YOUTUBE_API_KEY);
-          $entry = $youtube->getVideoEntry($matches[4][0]);
-          $thumbnails = $entry->getVideoThumbnails();
-          $return['thumbnailSubType'] = Media_Item_Photo::SUBTYPE_YOUTUBE_THUMBNAIL;
-          $return['thumbnailUri'] = $thumbnails[3]['url'];
-          $return['thumbnailWidth'] = $thumbnails[3]['width'];
-          $return['thumbnailHeight'] = $thumbnails[3]['height'];
-        }
-        break;
-      case Media_Item_Video::SUBTYPE_DAILYMOTION:
-        $return['thumbnailSubType'] = Media_Item_Photo::SUBTYPE_DAILYMOTION_THUMBNAIL;
-        $return['thumbnailUri'] = 'http://www.dailymotion.com/thumbnail/320x240/video/' . $matches[4][0];
-        $return['thumbnailWidth'] = 320;
-        $return['thumbnailHeight'] = 240;
-        break;
-      case Media_Item_Video::SUBTYPE_VIMEO:
-        $uri = 'http://vimeo.com/api/v2/video/' . $matches[4][0] . '.php';
-        $client = new Zend_Http_Client($uri);
-        $response = $client->request();
-        $vimeo = unserialize($response->getBody());
-        $return['thumbnailSubType'] = Media_Item_Photo::SUBTYPE_VIMEO_THUMBNAIL;
-        $return['thumbnailUri'] = $vimeo[0]['thumbnail_medium'];
-        $return['thumbnailWidth'] = 200;
-        $return['thumbnailHeight'] = floor($vimeo[0]['width'] * 0.234375); // 150 / 200 * ( 200 / 640 )
-        break;
-      default:
-        throw new Lib_Exception_Media("Unsupported video provider: '{$matches[1][1]}'");
-        break;
-    }
-
-    $return['mediaSubType'] = $matches[1][0];
-    $return['width'] = $matches[2][0];
-    $return['height'] = $matches[3][0];
-    $return['uri'] = $matches[4][0];
-    $return['size'] = 0;
-
-    $return = $this->_writeLocalVideoThumbnail($return);
-
-    return $return;
-  }
-
-  protected function _writeLocalVideoThumbnail($params)
-  {
-    if (APPLICATION_ENV == 'test') {
-      $params['thumbnailSubType'] = Media_Item_Photo::SUBTYPE_JPG;
-      $params['thumbnailWidth'] = 160;
-      $params['thumbnailHeight'] = 120;
-      $params['thumbnailUri'] = 'fakeThumb';
-      return $params;
-    }
-    $file = file_get_contents($params['thumbnailUri']);
-    if (empty($file)) {
-      return $params;
-    }
-    $destination = APP_MEDIA_THUMBNAILS_DIR . '/' . md5(uniqid(rand())) . '.jpg';
-    file_put_contents($destination, $file);
-    $thumbnail = new File_Photo($destination);
-    $thumbnail->resize(200, 150);
-
-    $params['thumbnailSubType'] = Media_Item_Photo::SUBTYPE_JPG;
-    $params['thumbnailWidth'] = $thumbnail->getWidth();
-    $params['thumbnailHeight'] = $thumbnail->getHeight();
-    $params['thumbnailUri'] = $destination;
-
-    return $params;
+    return array(
+      'width' => 0,
+      'height' => 0,
+      'mediaSubType' => 'youtube',
+    );
   }
 
   protected function _getMediaFileName($title, $uniqid)

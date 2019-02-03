@@ -58,6 +58,35 @@ class Lib_Storage
     }
   }
 
+  /**
+   * Performs file storage and resizing operations
+   * @param $storageType
+   * @param $tmpFile
+   * @param $id
+   * @throws Lib_Exception
+   * @throws Lib_Exception_Media_Photo_Mime
+   * @return void
+   */
+  public static function storeThumbs($storageType, $tmpFile, $id)
+  {
+    $config = self::$config[$storageType];
+    if (!$config) {
+      throw new Lib_Exception(
+        "No config found for storage type '$storageType'",
+        Api_ErrorCodes::IMAGE_BAD_TYPE);
+    }
+
+    switch ($storageType) {
+      case self::TYPE_LOCAL:
+        return self::storeLocalThumbs($config, $tmpFile, $id);
+      default:
+        throw new Lib_Exception(
+          "Storage method not implemented for storage type '$storageType'",
+          Api_ErrorCodes::IMAGE_STORAGE_METHOD_NOT_IMPLEMENTED);
+        break;
+    }
+  }
+
   public static function storeLocalFile($config, $tmpFile, $id)
   {
     $folder = self::_getFolderForFile($config['path'], $id);
@@ -111,6 +140,39 @@ class Lib_Storage
       GLOBAL_DEFAULT_IMG_MAX_WIDTH,
       GLOBAL_DEFAULT_IMG_MAX_HEIGHT,
       false);
+
+    return array($photoFile->getWidth(), $photoFile->getHeight());
+  }
+
+  public static function storeLocalThumbs($config, $tmpFile, $id)
+  {
+    $folder = self::_getFolderForFile($config['path'], $id);
+    if (!mkdir($folder)) {
+      throw new Lib_Exception(
+        "Could not create folder to store file",
+        Api_ErrorCodes::IMAGE_FOLDER_CREATION_FAILED);
+    }
+
+    $photoFile = new File_Photo($tmpFile);
+    if (!$extension = $photoFile->getExtensionForSubType()) {
+      throw new Lib_Exception(
+        "Could not determine file extensions",
+        Api_ErrorCodes::IMAGE_NO_EXTENSION);
+    }
+
+    // JPG Thumbs
+    $photoFile->generateResizedVersions(
+      $config['thumbs'],
+      $folder,
+      Media_Item_Photo::SUBTYPE_JPG);
+
+    if (function_exists('imagewebp')) {
+      // WebP Thumbs
+      $photoFile->generateResizedVersions(
+        $config['thumbs'],
+        $folder,
+        Media_Item_Photo::SUBTYPE_WEBP);
+    }
 
     return array($photoFile->getWidth(), $photoFile->getHeight());
   }

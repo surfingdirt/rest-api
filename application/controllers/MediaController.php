@@ -21,8 +21,6 @@ class MediaController extends Api_Controller_Action
     $this->_table = $data['mediaType'] == Media_Item::TYPE_PHOTO ? new Api_Media_Photo() : new Api_Media_Video();
 
     $object = $this->_table->createRow();
-    // TODO: Move this to Api_Media_Photo and new Api_Media_Video
-    $object->mediaType = $data['mediaType'];
 
     $this->_preObjectCreation($object, $data);
     list($id, $errors) = $this->_accessor->createObjectWithData($object, $data);
