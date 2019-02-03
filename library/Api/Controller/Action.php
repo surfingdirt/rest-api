@@ -286,6 +286,34 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   }
 
   //-----------------------------------------------------------------------------------------------------------------
+  // ERROR HEADERS
+  //-----------------------------------------------------------------------------------------------------------------
+  protected function _notFound()
+  {
+    $this->_error('HTTP/1.1 404 Not Found');
+  }
+
+  protected function _forbidden()
+  {
+    $this->_error('HTTP/1.1 403 Forbidden');
+  }
+
+  protected function _badRequest()
+  {
+    $this->_error('HTTP/1.1 400 Bad Request');
+  }
+
+  protected function _genericError($message)
+  {
+    $this->_error('HTTP/1.1 500 Internal Server Error');
+  }
+
+  protected function _error($rawHeader)
+  {
+    $this->getResponse()->setRawHeader($rawHeader);
+  }
+
+  //-----------------------------------------------------------------------------------------------------------------
   // MISC FUNCTIONS
   //-----------------------------------------------------------------------------------------------------------------
   /**
@@ -297,35 +325,8 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   protected function _mapResource($key)
   {
     $resources = array(
-      'albums' => 'Album',
-      'users-albums' => 'Album',
-      'mediaalbum' => 'Album',
-
-      'checkins' => 'Checkin',
-
-      'comments' => 'Comment',
-
-      'countries' => 'Country',
-
-      'regions' => 'Dpt',
-
-      'notifications' => 'Item',
-      'locations' => 'Item',
-
+      'album' => 'Album',
       'media' => 'Media',
-      'photo' => 'Media',
-      'video' => 'Media',
-
-      'messages' => 'PrivateMessage',
-      'privatemessage' => 'PrivateMessage',
-
-      'spots' => 'Spot',
-      'spot' => 'Spot',
-
-      'tricks' => 'Trick',
-      'trick' => 'Trick',
-
-      'users' => 'User',
       'user' => 'User',
     );
 

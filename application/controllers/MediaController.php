@@ -26,7 +26,7 @@ class MediaController extends Api_Controller_Action
     list($id, $errors) = $this->_accessor->createObjectWithData($object, $data);
 
     if ($errors) {
-      $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
+      $this->_badRequest();
       $this->view->output = array('errors' => $errors);
     } else if ($id) {
       $this->_postObjectCreation($object, $data);
@@ -36,7 +36,7 @@ class MediaController extends Api_Controller_Action
         null
       );
     } else {
-      throw new Api_Exception('Saving failed');
+      throw new Api_Exception('Saving failed but errors were not detected early');
     }
   }
 

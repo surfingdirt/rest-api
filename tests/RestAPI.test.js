@@ -704,7 +704,22 @@ describe.only('Video tests', () => {
       mediaSubType: 'sds',
       albumId: plainUser.albumId,
       title: 'A new video title',
-      description: 'A new photo description',
+      description: 'A new video description',
+      key: '1PcGJIjhQjg',
+      storageType: 0,
+    });
+    expect(statusCode).toEqual(400);
+    expect(body.errors).toEqual({"mediaSubType": ["invalidType"]});
+  });
+
+  test('Plain user can POST', async () => {
+    mediaClient.setUser(plainUser);
+    const { statusCode } = await mediaClient.post({
+      mediaType: VIDEO,
+      mediaSubType: YOUTUBE,
+      albumId: plainUser.albumId,
+      title: 'A new video title',
+      description: 'A new video description',
       key: '1PcGJIjhQjg',
       storageType: 0,
     });
