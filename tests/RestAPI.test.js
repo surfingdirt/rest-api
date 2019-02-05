@@ -705,24 +705,26 @@ describe.only('Video tests', () => {
       albumId: plainUser.albumId,
       title: 'A new video title',
       description: 'A new video description',
-      key: '1PcGJIjhQjg',
+      vendorKey: '1PcGJIjhQjg',
       storageType: 0,
     });
     expect(statusCode).toEqual(400);
     expect(body.errors).toEqual({"mediaSubType": ["invalidType"]});
   });
 
-  test('Plain user can POST', async () => {
+  test.only('Plain user can POST', async () => {
+    mediaClient.setDebugBackend(true);
     mediaClient.setUser(plainUser);
-    const { statusCode } = await mediaClient.post({
+    const { statusCode, body } = await mediaClient.post({
       mediaType: VIDEO,
       mediaSubType: YOUTUBE,
+      vendorKey: 'https://www.youtube.com/watch?v=1PcGJIjhQjg',
       albumId: plainUser.albumId,
       title: 'A new video title',
       description: 'A new video description',
-      key: '1PcGJIjhQjg',
       storageType: 0,
     });
+    console.log({body});
     expect(statusCode).toEqual(200);
   });
 

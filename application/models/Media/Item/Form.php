@@ -65,7 +65,7 @@ abstract class Media_Item_Form extends Data_Form
     $isEditor = $this->_acl->isAllowed($this->_user, Lib_Acl::EDITOR_RESOURCE);
 
     $elements = array(
-      'key' => $this->getKey(),
+      'vendorKey' => $this->getKey(),
       'title' => $this->getTitle(),
       'description' => $this->getDescription(),
       'storageType' => $this->getStorageType(),
@@ -107,7 +107,7 @@ abstract class Media_Item_Form extends Data_Form
 
   public function getKey($required = true)
   {
-    $element = new Lib_Form_Element_Media_Key('key');
+    $element = new Lib_Form_Element_Media_Key('vendorKey');
     $element->setRequired($required);
     return $element;
   }

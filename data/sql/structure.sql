@@ -102,21 +102,19 @@ DROP TABLE IF EXISTS `media_items`;
 
 CREATE TABLE `media_items` (
   `id` varchar(36) NOT NULL,
-  `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
+  `mediaType` varchar(255) DEFAULT NULL,
+  `mediaSubType` varchar(255) NOT NULL,
+  `vendorKey` varchar(1024) DEFAULT NULL,
   `albumId` varchar(36) NOT NULL,
+  `storageType` varchar(255) NOT NULL,
+  `imageId` varchar(36) NOT NULL,
+  `width` int(10) unsigned NOT NULL,
+  `height` int(10) unsigned NOT NULL,
+  `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
   `submitter` varchar(36) NOT NULL,
   `date` datetime NOT NULL,
   `lastEditionDate` datetime DEFAULT NULL,
   `lastEditor` varchar(36) DEFAULT NULL,
-  `mediaType` varchar(255) DEFAULT NULL,
-  `mediaSubType` varchar(255) NOT NULL,
-  `storageType` varchar(255) NOT NULL,
-  `key` varchar(1024) DEFAULT NULL,
-  `width` int(10) unsigned NOT NULL,
-  `height` int(10) unsigned NOT NULL,
-  `size` int(10) unsigned DEFAULT NULL,
-  `thumbnailWidth` int(10) unsigned DEFAULT NULL,
-  `thumbnailHeight` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

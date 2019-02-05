@@ -35,6 +35,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'lastEditor',
     'lastEditionDate',
     'status',
+    'imageId',
 //    'dpt',
 //    'spot',
 //    'trick',
@@ -45,14 +46,9 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'uri',
     'width',
     'height',
-    'size',
     'mediaSubType',
-    'thumbnailUri',
-    'thumbnailWidth',
-    'thumbnailHeight',
-    'thumbnailSubType',
 //    'author',
-    'key'
+    'vendorKey'
   );
 
   public $memberCreateAttributes = array(
@@ -66,7 +62,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
 //    'latitude' => 'latitude',
     'albumId' => 'albumId',
     'mediaType' => 'mediaType',
-    'key' => 'key',
+    'vendorKey' => 'vendorKey',
     'mediaSubType' => 'mediaSubType',
     'storageType' => 'storageType',
 
@@ -80,7 +76,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
   public $ownWriteAttributes = array(
     'title' => 'title',
     'description' => 'description',
-    'key' => 'key',
+    'vendorKey' => 'vendorKey',
 //    'dpt' => 'dpt',
 //    'spot' => 'spot',
 //    'trick' => 'trick',
@@ -93,7 +89,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'status' => 'status',
     'albumId' => 'albumId',
     'mediaType' => 'mediaType',
-    'key' => 'key',
+    'vendorKey' => 'vendorKey',
   );
 
   /**
@@ -166,10 +162,11 @@ class Api_Media_Accessor extends Api_Data_Accessor
 
     $object->id = Utils::uuidV4();
     if ($object->mediaType == Media_Item::TYPE_PHOTO) {
-      $data = array_merge($data, $this->_getPhotoAttributes($data['key']));
+      $data = array_merge($data, $this->_getPhotoAttributes($data['vendorKey']));
     } else {
-      $scraper = new Lib_VideoScraper($data['key'], $object->id);
-      $this->_saveVideoThumbs($scraper);
+      $scraper = new Lib_VideoScraper($data['vendorKey'], $object->id);
+      $thumbRow = $this->_saveVideoThumbs($scraper);
+      $object->imageId = $thumbRow->getId();
       $data = array_merge($data, $this->_getVideoAttributes($scraper));
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
