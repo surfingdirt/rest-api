@@ -696,7 +696,7 @@ describe('Photo tests', () => {
 describe.only('Video tests', () => {
   const mediaClient = new ResourceClient(client, MEDIA);
 
-  test('Plain user can POST', async () => {
+  test.only('Plain user can POST', async () => {
     // mediaClient.setDebugBackend(true);
     mediaClient.setUser(plainUser);
     const { statusCode, body } = await mediaClient.post({
@@ -712,19 +712,31 @@ describe.only('Video tests', () => {
     expect(body.errors).toEqual({"mediaSubType": ["invalidType"]});
   });
 
-  test.only('Plain user can POST', async () => {
-    mediaClient.setDebugBackend(true);
+  test('Plain user can POST YouTube videos', async () => {
     mediaClient.setUser(plainUser);
     const { statusCode, body } = await mediaClient.post({
       mediaType: VIDEO,
       mediaSubType: YOUTUBE,
-      vendorKey: 'https://www.youtube.com/watch?v=1PcGJIjhQjg',
+      vendorKey: '1PcGJIjhQjg',
       albumId: plainUser.albumId,
-      title: 'A new video title',
-      description: 'A new video description',
+      title: 'A new YouTube video title',
+      description: 'A new YouTube video description',
       storageType: 0,
     });
-    console.log({body});
+    expect(statusCode).toEqual(200);
+  });
+
+  test('Plain user can POST Vimeo videos', async () => {
+    mediaClient.setUser(plainUser);
+    const { statusCode, body } = await mediaClient.post({
+      mediaType: VIDEO,
+      mediaSubType: VIMEO,
+      vendorKey: '16567910',
+      albumId: plainUser.albumId,
+      title: 'A new Vimeo video title',
+      description: 'A new Vimeo video description',
+      storageType: 0,
+    });
     expect(statusCode).toEqual(200);
   });
 

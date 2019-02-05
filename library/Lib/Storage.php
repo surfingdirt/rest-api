@@ -159,6 +159,8 @@ class Lib_Storage
         "Could not determine file extensions",
         Api_ErrorCodes::IMAGE_NO_EXTENSION);
     }
+    $photoFile->move($folder);
+    $photoFile->rename(self::FILENAME . '.' . $extension, true);
 
     // JPG Thumbs
     $photoFile->generateResizedVersions(
@@ -174,7 +176,9 @@ class Lib_Storage
         Media_Item_Photo::SUBTYPE_WEBP);
     }
 
-    return array($photoFile->getWidth(), $photoFile->getHeight());
+    $output = array($photoFile->getWidth(), $photoFile->getHeight());
+    $photoFile->delete();
+    return $output;
   }
 
   public static function cleanUpFiles($storageType, $id)

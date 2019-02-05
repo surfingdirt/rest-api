@@ -164,10 +164,11 @@ class Api_Media_Accessor extends Api_Data_Accessor
     if ($object->mediaType == Media_Item::TYPE_PHOTO) {
       $data = array_merge($data, $this->_getPhotoAttributes($data['vendorKey']));
     } else {
-      $scraper = new Lib_VideoScraper($data['vendorKey'], $object->id);
-      $thumbRow = $this->_saveVideoThumbs($scraper);
+      $videoUrl = VideoUrlBuilder::buildUrl($data['mediaSubType'], $data['vendorKey']);
+      $scraper = new Lib_VideoScraper($videoUrl);
+      $thumbRow = $this->_saveVideoThumbs($scraper, $object->id);
       $object->imageId = $thumbRow->getId();
-      $data = array_merge($data, $this->_getVideoAttributes($scraper));
+      $data = array_merge($data, $this->_getVideoAttributes();
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
     return array($object->getId(), null);
@@ -281,17 +282,10 @@ class Api_Media_Accessor extends Api_Data_Accessor
     );
   }
 
-  protected function _saveVideoThumbs(Lib_VideoScraper $scraper)
+  protected function _saveVideoThumbs(Lib_VideoScraper $scraper, $objectId)
   {
-    /*
-     * Call API, fetch largest thumb URL
-     * download it
-     * treat it like an image
-     * save data to DB
-     */
-    $imageRow = $scraper->saveThumbs(Lib_Storage::TYPE_LOCAL);
+    $imageRow = $scraper->saveThumbs(Lib_Storage::TYPE_LOCAL, $objectId);
     return $imageRow;
-
   }
 
   /**
@@ -302,12 +296,12 @@ class Api_Media_Accessor extends Api_Data_Accessor
    * @return array
    * @throws Lib_Exception_Media
    */
-  protected function _getVideoAttributes(Lib_VideoScraper $scraper)
+  protected function _getVideoAttributes()
   {
     return array(
+      // width and height are irrelevant to video embeds.
       'width' => 0,
       'height' => 0,
-      'mediaSubType' => 'youtube',
     );
   }
 

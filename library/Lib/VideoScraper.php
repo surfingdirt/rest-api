@@ -4,15 +4,14 @@ use RicardoFiorani\Matcher\VideoServiceMatcher;
 
 class Lib_VideoScraper
 {
-  public function __construct($videoUrl, $objectId)
+  public function __construct($videoUrl)
   {
     $this->_vsm = new VideoServiceMatcher();
     $this->_videoUrl = $videoUrl;
-    $this->_objectId = $objectId;
     $this->_table = new Api_Image();
   }
 
-  public function saveThumbs($storageType)
+  public function saveThumbs($storageType, $objectId)
   {
     $video = $this->_vsm->parse($this->_videoUrl);
     $thumbUrl = $video->getLargeThumbnail();
@@ -22,7 +21,7 @@ class Lib_VideoScraper
 
     switch ($storageType) {
       case Lib_Storage::TYPE_LOCAL:
-        $imageRow = $this->_saveLocalThumbs($tmpFile, $storageType);
+        $imageRow = $this->_saveLocalThumbs($tmpFile, $storageType, $objectId);
         return $imageRow;
         break;
       default:
@@ -33,15 +32,15 @@ class Lib_VideoScraper
     }
   }
 
-  protected function _saveLocalThumbs($tmpFile, $storageType)
+  protected function _saveLocalThumbs($tmpFile, $storageType, $objectId)
   {
     try {
-      list($w, $h) = Lib_Storage::storeThumbs($storageType, $tmpFile, $this->_objectId);
+      list($w, $h) = Lib_Storage::storeThumbs($storageType, $tmpFile, $objectId);
     } catch (Lib_Exception_Media_Photo_Mime $e) {
       throw new Api_Exception_BadRequest($e->getMessage(), Api_ErrorCodes::IMAGE_BAD_MIME);
     }
     $imageRow = $this->_table->createRow(array(
-      'id' => $this->_objectId,
+      'id' => $objectId,
       'storageType' => $storageType,
       'width' => $w,
       'height' => $h,

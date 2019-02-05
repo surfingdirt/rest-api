@@ -132,13 +132,13 @@ CODE;
     $uri = '';
     switch ($this->mediaSubType) {
       case Media_Item_Video::SUBTYPE_YOUTUBE:
-        $uri = 'http://www.youtube.com/?v=' . $this->uri;
+        $uri = 'https://www.youtube.com/watch?v=' . $this->uri;
         break;
       case Media_Item_Video::SUBTYPE_VIMEO:
-        $uri = 'http://vimeo.com/' . $this->uri;
+        $uri = 'https://vimeo.com/' . $this->uri;
         break;
       case Media_Item_Video::SUBTYPE_DAILYMOTION:
-        $uri = 'http://www.dailymotion.com/video/' . $this->uri;
+        $uri = 'https://www.dailymotion.com/video/' . $this->uri;
         break;
       default:
         throw new Lib_Exception_Media("Unsupported mediaSubType '$this->mediaSubType' for video '$this->id'");
