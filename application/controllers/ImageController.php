@@ -62,6 +62,7 @@ class ImageController extends Lib_Rest_Controller
         }
         $imageRow = $this->_table->createRow(array(
           'id' => $id,
+          'imageType' => Api_Image::IMAGE_TYPE_PLAIN,
           'storageType' => $storageType,
           'width' => $w,
           'height' => $h,

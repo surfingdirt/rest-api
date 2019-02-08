@@ -17,11 +17,12 @@ class Lib_VideoScraper
     $thumbUrl = $video->getLargeThumbnail();
 
     $tmpFile = tempnam(GLOBAL_UPLOAD_TMPDIR, 'thumb');
-    file_put_contents($tmpFile, file_get_contents($thumbUrl));
+    $this->_writeFileToDisk($tmpFile, $thumbUrl);
 
     switch ($storageType) {
       case Lib_Storage::TYPE_LOCAL:
         $imageRow = $this->_saveLocalThumbs($tmpFile, $storageType, $objectId);
+        @unlink($tmpFile);
         return $imageRow;
         break;
       default:
@@ -41,6 +42,7 @@ class Lib_VideoScraper
     }
     $imageRow = $this->_table->createRow(array(
       'id' => $objectId,
+      'imageType' => Api_Image::IMAGE_TYPE_THUMB,
       'storageType' => $storageType,
       'width' => $w,
       'height' => $h,
@@ -54,5 +56,14 @@ class Lib_VideoScraper
         Api_ErrorCodes::IMAGE_DB_SAVE_FAILURE);
     }
     return $imageRow;
+  }
+
+  protected function _writeFileToDisk($tmpFile, $thumbUrl)
+  {
+    if (APPLICATION_ENV == 'test') {
+      $thumbUrl = TEST_UPLOAD_FILE;
+    }
+
+    file_put_contents($tmpFile, file_get_contents($thumbUrl));
   }
 }

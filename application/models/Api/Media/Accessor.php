@@ -168,7 +168,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
       $scraper = new Lib_VideoScraper($videoUrl);
       $thumbRow = $this->_saveVideoThumbs($scraper, $object->id);
       $object->imageId = $thumbRow->getId();
-      $data = array_merge($data, $this->_getVideoAttributes();
+      $data = array_merge($data, $this->_getVideoAttributes());
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
     return array($object->getId(), null);

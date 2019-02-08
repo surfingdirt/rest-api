@@ -10,13 +10,13 @@ TRUNCATE user_notifications;
 TRUNCATE users;
 
 
-insert into `images`(`id`,`storageType`, `status`, `submitter`, `date`, `lastEditionDate`, `lastEditor`, `width`, `height`) values
-('44130f1c-2931-451a-b6cd-0f49d0b3ad85', '0', 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 720, 540),
-('84846b0b-254e-472b-94a4-2ecd6bc4cd5e', '0', 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:01', null, null, 720, 540),
-('66059f80-59d4-4237-8602-fbbf17f26616', '0', 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-20 10:00:03', null, null, 720, 540),
-('a9c8081c-43ec-418a-acc2-1ad575672250', '0', 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:04', null, null, 720, 540),
-('b5c1429b-f492-4d71-892d-38dd33deffda', '0', 'invalid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:05', null, null, 720, 540),
-('325edced-b174-4479-8d6f-fea7a4d5e84b', '0', 'valid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:07', null, null, 720, 540);
+insert into `images`(`id`,`imageType`,`storageType`, `status`, `submitter`, `date`, `lastEditionDate`, `lastEditor`, `width`, `height`) values
+('44130f1c-2931-451a-b6cd-0f49d0b3ad85', 0, 0, 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 720, 540),
+('84846b0b-254e-472b-94a4-2ecd6bc4cd5e', 0, 0, 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:01', null, null, 720, 540),
+('66059f80-59d4-4237-8602-fbbf17f26616', 0, 0, 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-20 10:00:03', null, null, 720, 540),
+('a9c8081c-43ec-418a-acc2-1ad575672250', 0, 0, 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:04', null, null, 720, 540),
+('b5c1429b-f492-4d71-892d-38dd33deffda', 0, 0, 'invalid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:05', null, null, 720, 540),
+('325edced-b174-4479-8d6f-fea7a4d5e84b', 0, 0, 'valid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:07', null, null, 720, 540);
 
 insert  into `items`(`id`,`itemId`,`itemType`,`date`,`status`,`parentItemId`,`submitter`,`notification`) values
 (1,'a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','2002-02-18 14:00:00','valid',NULL,'60bfb8a7-5754-4186-acd2-44b20ef32399','silent'),

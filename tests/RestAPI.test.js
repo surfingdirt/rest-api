@@ -651,13 +651,6 @@ describe('Photo tests', () => {
     });
   });
 
-  /*
-   *
-   * POST
-   * - photo valide, ACLs: guest, plain user, writer, editor, admin
-   * - photo invalide: image manquante, storageType incorrect, fichier trop lourd, pas lisible, key manquante ou fausse)
-   * - album ACLs
-   */
   describe('POST ACLs', () => {
     const existingImageId = images[2].id;
 
@@ -694,10 +687,14 @@ describe('Photo tests', () => {
 });
 
 describe.only('Video tests', () => {
+  const createdVideoKeys =
+    '["album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
+    '"mediaSubType","mediaType","status","submitter","title","vendorKey","width"]';
+  // TODO: rajouter author
+
   const mediaClient = new ResourceClient(client, MEDIA);
 
-  test.only('Plain user can POST', async () => {
-    // mediaClient.setDebugBackend(true);
+  test('Invalid mediaSubType fails', async () => {
     mediaClient.setUser(plainUser);
     const { statusCode, body } = await mediaClient.post({
       mediaType: VIDEO,
@@ -712,7 +709,7 @@ describe.only('Video tests', () => {
     expect(body.errors).toEqual({"mediaSubType": ["invalidType"]});
   });
 
-  test('Plain user can POST YouTube videos', async () => {
+  test.only('Plain user can POST YouTube videos', async () => {
     mediaClient.setUser(plainUser);
     const { statusCode, body } = await mediaClient.post({
       mediaType: VIDEO,
@@ -723,12 +720,13 @@ describe.only('Video tests', () => {
       description: 'A new YouTube video description',
       storageType: 0,
     });
+    expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
     expect(statusCode).toEqual(200);
   });
 
   test('Plain user can POST Vimeo videos', async () => {
     mediaClient.setUser(plainUser);
-    const { statusCode, body } = await mediaClient.post({
+    const { statusCode } = await mediaClient.post({
       mediaType: VIDEO,
       mediaSubType: VIMEO,
       vendorKey: '16567910',

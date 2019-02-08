@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS `images`;
 
 CREATE TABLE `images` (
   `id` varchar(36) NOT NULL,
+  `imageType` int(11) NOT NULL,
   `storageType` int(11) NOT NULL,
   `status` enum('valid','invalid') NOT NULL DEFAULT 'valid',
   `submitter` varchar(36) NOT NULL,
