@@ -17,7 +17,7 @@ import {
 } from './data/users';
 import { img3000, img640, imgHeavy, textFileAsJPEG, textFileAsTxt } from './data/files';
 import { cleanupTestDatabase } from './RestClient/database';
-import { getDateForBackend, getSortedKeysAsString } from './RestClient/utils';
+import { getDateForBackend, getSortedKeysAsString, looksLikeUUID } from './RestClient/utils';
 
 const { PHOTO, VIDEO } = MEDIA_TYPES;
 const { YOUTUBE, VIMEO } = MEDIA_SUBTYPES_VIDEO;
@@ -154,31 +154,31 @@ describe('User tests', () => {
     });
 
     test("Retrieve plainuser's data as other user", async () => {
-      userClient.setUser(otherUser);
+      await userClient.setUser(otherUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as writer user", async () => {
-      userClient.setUser(writerUser);
+      await userClient.setUser(writerUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as editor", async () => {
-      userClient.setUser(editorUser);
+      await userClient.setUser(editorUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as admin", async () => {
-      userClient.setUser(adminUser);
+      await userClient.setUser(adminUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserAdminInfo);
     });
 
     test("Retrieve plainuser's data as self", async () => {
-      userClient.setUser(plainUser);
+      await userClient.setUser(plainUser);
       const { body } = await userClient.get(plainUser.id);
       expect(getSortedKeysAsString(body)).toEqual(plainUserSelfInfo);
     });
@@ -186,7 +186,7 @@ describe('User tests', () => {
 
   describe('User list GET', () => {
     test('Retrieve all valid users as guest', async () => {
-      await userClient.setToken(null);
+      userClient.setToken(null);
       const { body } = await userClient.list();
       const userIds = body.map((u) => u.userId);
       const expectedUserIds = [
@@ -200,7 +200,7 @@ describe('User tests', () => {
     });
 
     test('Retrieve all users in the database as admin', async () => {
-      userClient.setUser(adminUser);
+      await userClient.setUser(adminUser);
       const { body } = await userClient.list();
       const userIds = body.map((u) => u.userId);
       const expectedUserIds = [
@@ -216,21 +216,21 @@ describe('User tests', () => {
     });
 
     test('Retrieve 3rd and 4th valid users as guest', async () => {
-      await userClient.setToken(null);
+      userClient.setToken(null);
       const { body } = await userClient.list({ start: 2, count: 2 });
       const userIds = body.map((u) => u.userId);
       expect(userIds).toEqual([editorUser.id, writerUser.id]);
     });
 
     test('Retrieve 2nd and 3rd valid users sorted by username ascending as guest', async () => {
-      await userClient.setToken(null);
+      userClient.setToken(null);
       const { body } = await userClient.list({ start: 1, count: 2, sort: 'username' });
       const userIds = body.map((u) => u.userId);
       expect(userIds).toEqual([editorUser.id, otherUser.id]);
     });
 
     test('Retrieve 2nd and 3rd valid users sorted by username descending as guest', async () => {
-      await userClient.setToken(null);
+      userClient.setToken(null);
       const { body } = await userClient.list({ start: 1, count: 2, sort: 'username', dir: 'desc' });
       const userIds = body.map((u) => u.userId);
       expect(userIds).toEqual([plainUser.id, otherUser.id]);
@@ -243,7 +243,7 @@ describe('User tests', () => {
       '"site","status","userId","username"]';
 
     test('Logged-in user cannot create a new user', async () => {
-      userClient.setUser(plainUser);
+      await userClient.setUser(plainUser);
       const { statusCode } = await userClient.post({});
       expect(statusCode).toEqual(403);
     });
@@ -265,34 +265,34 @@ describe('User tests', () => {
       });
       expect(statusCode).toEqual(200);
       expect(getSortedKeysAsString(body)).toEqual(createdUserKeys);
-      expect(body.userId.length).toEqual(36);
+      expect(looksLikeUUID(body.userId)).toBeTruthy();
       expect(body.userId).toEqual(createdUser.id);
     });
   });
 
   describe('User PUT', () => {
     test('Admin can change user status', async () => {
-      userClient.setUser(adminUser);
+      await userClient.setUser(adminUser);
       const { statusCode, body } = await userClient.put(createdUser.id, { status: 'member' });
       expect(statusCode).toEqual(200);
       expect(body.status).toEqual('member');
     });
 
     test('Plain user cannot update new user', async () => {
-      userClient.setUser(plainUser);
+      await userClient.setUser(plainUser);
       const { statusCode } = await userClient.put(createdUser.id, { firstName: 'nope' });
       expect(statusCode).toEqual(403);
     });
 
     test('Plain user can update their account', async () => {
-      userClient.setUser({ id: createdUser.id });
+      await userClient.setUser({ id: createdUser.id });
       const { statusCode, body } = await userClient.put(createdUser.id, { firstName: 'yes' });
       expect(statusCode).toEqual(200);
       expect(body.firstName).toEqual('yes');
     });
 
     test('Requests with password mismatch are rejected', async () => {
-      userClient.setUser({ id: createdUser.id });
+      await userClient.setUser({ id: createdUser.id });
       const { statusCode, body } = await userClient.put(createdUser.id, {
         userP: '123',
         userPC: '345',
@@ -304,7 +304,7 @@ describe('User tests', () => {
     test('Requests with matching passwords are successful, and old password is made invalid', async () => {
       const newPassword = '345';
 
-      userClient.setUser({ id: createdUser.id });
+      await userClient.setUser({ id: createdUser.id });
       const { statusCode } = await userClient.put(createdUser.id, {
         userP: newPassword,
         userPC: newPassword,
@@ -313,7 +313,7 @@ describe('User tests', () => {
 
       userClient.setToken(null);
       try {
-        userClient.setUser({ id: createdUser.id });
+        await userClient.setUser({ id: createdUser.id });
       } catch (e) {
         expect(e.message).toEqual(`Login as '${createdUser.username}' failed`);
       }
@@ -337,7 +337,7 @@ describe('User tests', () => {
       });
       userIdToDelete = body.userId;
 
-      userClient.setUser(adminUser);
+      await userClient.setUser(adminUser);
       await userClient.put(userIdToDelete, { status: 'member' });
     });
 
@@ -348,13 +348,13 @@ describe('User tests', () => {
     });
 
     test('User cannot delete their account', async () => {
-      userClient.setUser(userToDelete);
+      await userClient.setUser(userToDelete);
       const { statusCode } = await userClient.delete(userIdToDelete);
       expect(statusCode).toEqual(403);
     });
 
     test('Admin can delete an account', async () => {
-      userClient.setUser(adminUser);
+      await userClient.setUser(adminUser);
       const { statusCode } = await userClient.delete(userIdToDelete);
       expect(statusCode).toEqual(200);
 
@@ -374,42 +374,42 @@ describe('Image tests', () => {
 
   describe('POST error cases', () => {
     test('Plain user POST fails when no file is sent', async () => {
-      imageClient.setUser(plainUser);
+      await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type }, []);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10010);
     });
 
     test('Plain user POST fails because file is not actually an image', async () => {
-      imageClient.setUser(plainUser);
+      await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type }, [textFileAsJPEG]);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10011);
     });
 
     test('Plain user POST fails because file is a text file', async () => {
-      imageClient.setUser(plainUser);
+      await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type }, [textFileAsTxt]);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10011);
     });
 
     test('Plain user POST fails because image file size is too big', async () => {
-      imageClient.setUser(plainUser);
+      await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type }, [imgHeavy]);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10002);
     });
 
     test('Plain user POST fails because storage type is not supported', async () => {
-      imageClient.setUser(plainUser);
+      await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type: 1 }, [img640]);
       expect(statusCode).toEqual(400);
       expect(body.error).toEqual(10001);
     });
 
     test('Plain user POST fails because uuid already exists', async () => {
-      imageClient.setUser(plainUser);
+      await imageClient.setUser(plainUser);
       imageClient.setUUIDs([images[0].id]);
       const { statusCode, body } = await imageClient.postFormData({ type }, [img640]);
       expect(statusCode).toEqual(400);
@@ -419,25 +419,25 @@ describe('Image tests', () => {
 
   describe('POST success cases', () => {
     test('Plain user POST succeeds and returns the right dimensions', async () => {
-      imageClient.setUser(plainUser);
+      await imageClient.setUser(plainUser);
       const {
         statusCode,
         body: [{ key, width, height }],
       } = await imageClient.postFormData({ type }, [img640]);
       expect(statusCode).toEqual(200);
-      expect(key.length).toEqual(36);
+      expect(looksLikeUUID(key)).toBeTruthy();
       expect(parseInt(width, 10)).toEqual(img640.width);
       expect(parseInt(height, 10)).toEqual(img640.height);
     });
 
     test('Plain user POST succeeds even when image dimensions are brought down', async () => {
-      imageClient.setUser(plainUser);
+      await imageClient.setUser(plainUser);
       const {
         statusCode,
         body: [{ key, width, height }],
       } = await imageClient.postFormData({ type }, [img3000]);
       expect(statusCode).toEqual(200);
-      expect(key.length).toEqual(36);
+      expect(looksLikeUUID(key)).toBeTruthy();
       expect(parseInt(width, 10)).toEqual(MAX_WIDTH);
       expect(parseInt(height, 10)).toEqual(MAX_HEIGHT);
     });
@@ -451,37 +451,37 @@ describe('Image tests', () => {
     });
 
     test('Pending user cannot POST', async () => {
-      imageClient.setUser(pendingUser);
+      await imageClient.setUser(pendingUser);
       const { statusCode } = await imageClient.postFormData({});
       expect(statusCode).toEqual(403);
     });
 
     test('Banned user cannot POST', async () => {
-      imageClient.setUser(bannedUser);
+      await imageClient.setUser(bannedUser);
       const { statusCode } = await imageClient.postFormData({});
       expect(statusCode).toEqual(403);
     });
 
     test('Plain user can POST', async () => {
-      imageClient.setUser(plainUser);
+      await imageClient.setUser(plainUser);
       const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
       expect(statusCode).toEqual(200);
     });
 
     test('Writer user can POST', async () => {
-      imageClient.setUser(writerUser);
+      await imageClient.setUser(writerUser);
       const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
       expect(statusCode).toEqual(200);
     });
 
     test('Editor user can POST', async () => {
-      imageClient.setUser(editorUser);
+      await imageClient.setUser(editorUser);
       const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
       expect(statusCode).toEqual(200);
     });
 
     test('Admin can POST', async () => {
-      imageClient.setUser(adminUser);
+      await imageClient.setUser(adminUser);
       const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
       expect(statusCode).toEqual(200);
     });
@@ -489,7 +489,7 @@ describe('Image tests', () => {
 
   describe('GET/PUT ACLS: everyone gets a 403', () => {
     test('Guest cannot GET/PUT', async () => {
-      await imageClient.setToken(null);
+      imageClient.setToken(null);
 
       const { statusCode: listStatus } = await imageClient.get();
       expect(listStatus).toEqual(403);
@@ -530,7 +530,7 @@ describe('Image tests', () => {
 
   describe('DELETE ACLS: owner and editor/admins can delete', () => {
     test('Guest cannot DELETE', async () => {
-      await imageClient.setToken(null);
+      imageClient.setToken(null);
       const { statusCode } = await imageClient.delete(defaultImageId);
       expect(statusCode).toEqual(403);
     });
@@ -555,60 +555,39 @@ describe('Image tests', () => {
   });
 });
 
-/*
-TODO:
-ajouter un index unique sur la colonne key dans media
-salt sur les passwords, revoir l'algo de chiffrage
-user avatars doit etre un image key + storageType, pas un chemin
-verifier que les folders de image post failure sont effaces
-verification du format des id avec une regex pour GET/PUT/DELETE
- */
-
-describe('Photo tests', () => {
+describe('Media tests', () => {
   const mediaClient = new ResourceClient(client, MEDIA);
 
-  const media0PublicInfo =
-    '["album","date","description","height","id","key","lastEditionDate","lastEditor",' +
-    '"mediaSubType","mediaType","size","status","submitter","thumbnailHeight","thumbnailWidth",' +
-    '"title","width"]';
-  // TODO: rajouter author
+  describe('Media GET ACLs', () => {
+    const media0PublicInfo =
+      '["album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
+      '"mediaSubType","mediaType","status","submitter","title","vendorKey","width"]';
+    // TODO: rajouter author
 
-  /*
-   *
-   * PUT
-   * - ACLs
-   * - mauvaises donnees d'update
-   * - GET avec updates
-   * DELETE
-   * - ACLs
-   * - GET 404
-   */
-
-  describe('GET ACLs', () => {
     describe('Valid photo', () => {
       test('Guest can see public info', async () => {
-        mediaClient.setToken(null);
+        await mediaClient.setToken(null);
         const { statusCode, body } = await mediaClient.get(validPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
 
       test('Owner can see public info', async () => {
-        mediaClient.setUser(writerUser);
+        await mediaClient.setUser(writerUser);
         const { statusCode, body } = await mediaClient.get(validPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
 
       test('Editor can see', async () => {
-        mediaClient.setUser(editorUser);
+        await mediaClient.setUser(editorUser);
         const { statusCode, body } = await mediaClient.get(validPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
 
       test('Admin can see', async () => {
-        mediaClient.setUser(adminUser);
+        await mediaClient.setUser(adminUser);
         const { statusCode, body } = await mediaClient.get(validPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
@@ -617,33 +596,33 @@ describe('Photo tests', () => {
 
     describe('Invalid photo', () => {
       test('Guest cannot see', async () => {
-        mediaClient.setToken(null);
+        await mediaClient.setToken(null);
         const { statusCode } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(403);
       });
 
       test('Owner can see', async () => {
-        mediaClient.setUser(plainUser);
+        await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
 
       test('Writer cannot see', async () => {
-        mediaClient.setUser(writerUser);
+        await mediaClient.setUser(writerUser);
         const { statusCode } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(403);
       });
 
       test('Editor can see', async () => {
-        mediaClient.setUser(editorUser);
+        await mediaClient.setUser(editorUser);
         const { statusCode, body } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
 
       test('Admin can see', async () => {
-        mediaClient.setUser(adminUser);
+        await mediaClient.setUser(adminUser);
         const { statusCode, body } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
@@ -651,106 +630,107 @@ describe('Photo tests', () => {
     });
   });
 
-  describe('POST ACLs', () => {
-    const existingImageId = images[2].id;
+  describe('Photo tests', () => {
+    describe('POST ACLs', () => {
+      const existingImageId = images[2].id;
 
-    test('Guest cannot POST', async () => {
-      mediaClient.setToken(null);
-      const { statusCode } = await mediaClient.post({
-        mediaType: PHOTO,
-        albumId: plainUser.albumId,
-        title: 'A new photo title',
-        description: 'A new photo description',
-        key: existingImageId,
-        storageType: 0,
+      test('Guest cannot POST', async () => {
+        await mediaClient.setToken(null);
+        const { statusCode } = await mediaClient.post({
+          mediaType: PHOTO,
+          albumId: plainUser.albumId,
+          title: 'A new photo title',
+          description: 'A new photo description',
+          imageId: existingImageId,
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(403);
       });
-      expect(statusCode).toEqual(403);
-    });
 
-    test('Plain user can POST', async () => {
-      mediaClient.setUser(plainUser);
-      const { statusCode, body } = await mediaClient.post({
-        mediaType: PHOTO,
-        albumId: plainUser.albumId,
-        title: 'A new photo title',
-        description: 'A new photo description',
-        key: existingImageId,
-        storageType: 0,
+      test('Plain user can POST', async () => {
+        mediaClient.setDebugBackend(true);
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: PHOTO,
+          albumId: plainUser.albumId,
+          title: 'A new photo title',
+          description: 'A new photo description',
+          imageId: existingImageId,
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(200);
+        expect(looksLikeUUID(body.id)).toBeTruthy();
       });
-      expect(statusCode).toEqual(200);
     });
+
+    describe('Successful POST', () => {});
+
+    describe('Failing POST', () => {});
   });
 
-  describe('Valid photo POST', () => {});
+  describe('Video tests', () => {
+    const createdVideoKeys =
+      '["album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
+      '"mediaSubType","mediaType","status","submitter","title","vendorKey","width"]';
+    // TODO: rajouter author
 
-  describe('Invalid photo', () => {});
-});
+    describe('POST ACLs', () => {});
 
-describe.only('Video tests', () => {
-  const createdVideoKeys =
-    '["album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
-    '"mediaSubType","mediaType","status","submitter","title","vendorKey","width"]';
-  // TODO: rajouter author
+    describe('Successful POST', () => {
+      // Dailymotion, Instagram and Facebook videos
 
-  const mediaClient = new ResourceClient(client, MEDIA);
+      test('Plain user can POST YouTube videos', async () => {
+        mediaClient.setDebugBackend();
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey: '1PcGJIjhQjg',
+          albumId: plainUser.albumId,
+          title: 'A new YouTube video title',
+          description: 'A new YouTube video description',
+          storageType: 0,
+        });
+        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+        expect(looksLikeUUID(body.id)).toBeTruthy();
+        expect(statusCode).toEqual(200);
+      });
 
-  test('Invalid mediaSubType fails', async () => {
-    mediaClient.setUser(plainUser);
-    const { statusCode, body } = await mediaClient.post({
-      mediaType: VIDEO,
-      mediaSubType: 'sds',
-      albumId: plainUser.albumId,
-      title: 'A new video title',
-      description: 'A new video description',
-      vendorKey: '1PcGJIjhQjg',
-      storageType: 0,
+      test('Plain user can POST Vimeo videos', async () => {
+        await mediaClient.setUser(plainUser);
+        const { statusCode } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: VIMEO,
+          vendorKey: '16567910',
+          albumId: plainUser.albumId,
+          title: 'A new Vimeo video title',
+          description: 'A new Vimeo video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(200);
+      });
     });
-    expect(statusCode).toEqual(400);
-    expect(body.errors).toEqual({"mediaSubType": ["invalidType"]});
-  });
 
-  test.only('Plain user can POST YouTube videos', async () => {
-    mediaClient.setUser(plainUser);
-    const { statusCode, body } = await mediaClient.post({
-      mediaType: VIDEO,
-      mediaSubType: YOUTUBE,
-      vendorKey: '1PcGJIjhQjg',
-      albumId: plainUser.albumId,
-      title: 'A new YouTube video title',
-      description: 'A new YouTube video description',
-      storageType: 0,
+    describe('Failing POST', () => {
+      // Bad cases: missing/bad vendorKey, bad albumId (aggregate album, someone else's album),
+      // bad storageType
+
+      test('Invalid mediaSubType fails', async () => {
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: 'sds',
+          albumId: plainUser.albumId,
+          title: 'A new video title',
+          description: 'A new video description',
+          vendorKey: '1PcGJIjhQjg',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({"mediaSubType": ["invalidType"]});
+      });
     });
-    expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
-    expect(statusCode).toEqual(200);
   });
-
-  test('Plain user can POST Vimeo videos', async () => {
-    mediaClient.setUser(plainUser);
-    const { statusCode } = await mediaClient.post({
-      mediaType: VIDEO,
-      mediaSubType: VIMEO,
-      vendorKey: '16567910',
-      albumId: plainUser.albumId,
-      title: 'A new Vimeo video title',
-      description: 'A new Vimeo video description',
-      storageType: 0,
-    });
-    expect(statusCode).toEqual(200);
-  });
-
-  /*
-   * GET: video valide et public, video invalide et public (guest, owner, writer, editor, admin)
-   * POST
-   * - video valide, ACLs: guest, plain user, writer, editor, admin
-   * - url ou id incomprehensible
-   * PUT
-   * - ACLs
-   * - mauvaises donnees d'update
-   * - GET avec updates
-   * DELETE
-   * - ACLs
-   * - GET 404
-   */
 });
 
 describe.skip('Album tests', () => {

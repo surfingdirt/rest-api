@@ -19,3 +19,8 @@ export const getDateForBackend = (offsetAsSeconds = 0) => {
 
   return `${Y}-${M}-${D} ${h}:${i}:${s}`;
 }
+
+export const looksLikeUUID = (str) => {
+  const regexp = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
+  return !!str.match(regexp);
+};

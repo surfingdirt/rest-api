@@ -55,17 +55,11 @@ abstract class Media_Item_Form extends Data_Form
     $this->addElements($elements);
   }
 
-  /**
-   * Builds and returns an array of form elements
-   *
-   * @return array
-   */
   protected function _buildElements()
   {
     $isEditor = $this->_acl->isAllowed($this->_user, Lib_Acl::EDITOR_RESOURCE);
 
     $elements = array(
-      'vendorKey' => $this->getKey(),
       'title' => $this->getTitle(),
       'description' => $this->getDescription(),
       'storageType' => $this->getStorageType(),
@@ -79,11 +73,6 @@ abstract class Media_Item_Form extends Data_Form
     return $elements;
   }
 
-  /**
-   * Factory for the users element
-   *
-   * @return Lib_Form_Element_Users
-   */
   public function getUsers()
   {
     $element = new Lib_Form_Element_Users('users', $this->_object);
@@ -93,21 +82,9 @@ abstract class Media_Item_Form extends Data_Form
     return $element;
   }
 
-  /**
-   * Factory for the album element
-   *
-   * @return Lib_Form_Element_Album
-   */
   public function getAlbumId($required = true)
   {
     $element = new Lib_Form_Element_Album_Id('albumId');
-    $element->setRequired($required);
-    return $element;
-  }
-
-  public function getKey($required = true)
-  {
-    $element = new Lib_Form_Element_Media_Key('vendorKey');
     $element->setRequired($required);
     return $element;
   }

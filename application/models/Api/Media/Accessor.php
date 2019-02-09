@@ -63,6 +63,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'albumId' => 'albumId',
     'mediaType' => 'mediaType',
     'vendorKey' => 'vendorKey',
+    'imageId' => 'imageId',
     'mediaSubType' => 'mediaSubType',
     'storageType' => 'storageType',
 
@@ -162,13 +163,12 @@ class Api_Media_Accessor extends Api_Data_Accessor
 
     $object->id = Utils::uuidV4();
     if ($object->mediaType == Media_Item::TYPE_PHOTO) {
-      $data = array_merge($data, $this->_getPhotoAttributes($data['vendorKey']));
+      $data = array_merge($data, $this->_getPhotoAttributes($data['imageId']));
     } else {
       $videoUrl = VideoUrlBuilder::buildUrl($data['mediaSubType'], $data['vendorKey']);
       $scraper = new Lib_VideoScraper($videoUrl);
       $thumbRow = $this->_saveVideoThumbs($scraper, $object->id);
-      $object->imageId = $thumbRow->getId();
-      $data = array_merge($data, $this->_getVideoAttributes());
+      $data = array_merge($data, $this->_getVideoAttributes($thumbRow));
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
     return array($object->getId(), null);
@@ -249,7 +249,9 @@ class Api_Media_Accessor extends Api_Data_Accessor
       if (in_array($key, $disregardUpdates)) {
         continue;
       }
-      $dataRow->$key = $data[$key];
+      if (isset($data[$key])) {
+        $dataRow->$key = $data[$key];
+      }
     }
 
     // Saving
@@ -263,17 +265,10 @@ class Api_Media_Accessor extends Api_Data_Accessor
     return $dataRow->id;
   }
 
-  /**
-   * Proceeds to save the photo file, resize it if necessary,
-   * and create the thumbnail
-   *
-   * @param string $key
-   * @return array
-   */
-  protected function _getPhotoAttributes($key)
+  protected function _getPhotoAttributes($imageId)
   {
     $table = new Api_Image();
-    $image = $table->find($key)->current();
+    $image = $table->find($imageId)->current();
 // TODO: throw an API exception if anything goes badly here.
     return array(
       'width' => $image->width,
@@ -296,9 +291,10 @@ class Api_Media_Accessor extends Api_Data_Accessor
    * @return array
    * @throws Lib_Exception_Media
    */
-  protected function _getVideoAttributes()
+  protected function _getVideoAttributes($imageRow)
   {
     return array(
+      'imageId' => $imageRow->getId(),
       // width and height are irrelevant to video embeds.
       'width' => 0,
       'height' => 0,

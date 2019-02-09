@@ -22,7 +22,6 @@ class Lib_VideoScraper
     switch ($storageType) {
       case Lib_Storage::TYPE_LOCAL:
         $imageRow = $this->_saveLocalThumbs($tmpFile, $storageType, $objectId);
-        @unlink($tmpFile);
         return $imageRow;
         break;
       default:
