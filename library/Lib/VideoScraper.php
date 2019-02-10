@@ -15,7 +15,7 @@ class Lib_VideoScraper
     switch($this->_mediaSubType) {
       case Media_Item_Video::SUBTYPE_YOUTUBE:
         $id = $this->_vendorKey;
-        $thumbUrl = "https:/img.youtube.com/vi/${id}/hqdefault.jpg";
+        $thumbUrl = "https://i.ytimg.com/vi/${id}/hqdefault.jpg";
         break;
       default:
         $graph = Lib_OG::fetch($this->_videoUrl);
@@ -24,7 +24,7 @@ class Lib_VideoScraper
     }
 
     if (APPLICATION_ENV == 'test') {
-      $thumbUrl = TEST_UPLOAD_FILE;
+      //$thumbUrl = TEST_UPLOAD_FILE;
     }
 
     return $thumbUrl;
