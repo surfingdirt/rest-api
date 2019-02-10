@@ -165,8 +165,8 @@ class Api_Media_Accessor extends Api_Data_Accessor
     if ($object->mediaType == Media_Item::TYPE_PHOTO) {
       $data = array_merge($data, $this->_getPhotoAttributes($data['imageId']));
     } else {
-      $videoUrl = VideoUrlBuilder::buildUrl($data['mediaSubType'], $data['vendorKey']);
-      $scraper = new Lib_VideoScraper($videoUrl);
+
+      $scraper = new Lib_VideoScraper($data['mediaSubType'], $data['vendorKey']);
       $thumbRow = $this->_saveVideoThumbs($scraper, $object->id);
       $data = array_merge($data, $this->_getVideoAttributes($thumbRow));
     }

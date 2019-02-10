@@ -20,7 +20,7 @@ import { cleanupTestDatabase } from './RestClient/database';
 import { getDateForBackend, getSortedKeysAsString, looksLikeUUID } from './RestClient/utils';
 
 const { PHOTO, VIDEO } = MEDIA_TYPES;
-const { YOUTUBE, VIMEO } = MEDIA_SUBTYPES_VIDEO;
+const { DAILYMOTION, FACEBOOK, INSTAGRAM, VIMEO, YOUTUBE } = MEDIA_SUBTYPES_VIDEO;
 const plainUserPath = getResourcePath(USER, plainUser.id);
 const tokenPath = getResourcePath(TOKEN);
 
@@ -631,9 +631,9 @@ describe('Media tests', () => {
   });
 
   describe('Photo tests', () => {
-    describe('POST ACLs', () => {
-      const existingImageId = images[2].id;
+    const existingImageId = images[2].id;
 
+    describe('POST ACLs', () => {
       test('Guest cannot POST', async () => {
         await mediaClient.setToken(null);
         const { statusCode } = await mediaClient.post({
@@ -646,9 +646,10 @@ describe('Media tests', () => {
         });
         expect(statusCode).toEqual(403);
       });
+    });
 
+    describe('Successful POST', () => {
       test('Plain user can POST', async () => {
-        mediaClient.setDebugBackend(true);
         await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.post({
           mediaType: PHOTO,
@@ -663,9 +664,11 @@ describe('Media tests', () => {
       });
     });
 
-    describe('Successful POST', () => {});
-
-    describe('Failing POST', () => {});
+    describe('Failing POST', () => {
+      // Missing/bad imageId
+      // Bad albumId (aggregate album, someone else's album),
+      // Bad storageType
+    });
   });
 
   describe('Video tests', () => {
@@ -676,10 +679,8 @@ describe('Media tests', () => {
 
     describe('POST ACLs', () => {});
 
-    describe('Successful POST', () => {
-      // Dailymotion, Instagram and Facebook videos
-
-      test('Plain user can POST YouTube videos', async () => {
+    describe.only('Successful POST', () => {
+      test('YouTube video', async () => {
         mediaClient.setDebugBackend();
         await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.post({
@@ -696,8 +697,9 @@ describe('Media tests', () => {
         expect(statusCode).toEqual(200);
       });
 
-      test('Plain user can POST Vimeo videos', async () => {
+      test('Vimeo video', async () => {
         await mediaClient.setUser(plainUser);
+        mediaClient.setDebugBackend();
         const { statusCode } = await mediaClient.post({
           mediaType: VIDEO,
           mediaSubType: VIMEO,
@@ -709,11 +711,57 @@ describe('Media tests', () => {
         });
         expect(statusCode).toEqual(200);
       });
+
+      test('Facebook video', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setDebugBackend();
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: FACEBOOK,
+          vendorKey: 'showhey.miyata/videos/1854604844577137',
+          albumId: plainUser.albumId,
+          title: 'A new Facebook video title',
+          description: 'A new Facebook video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(200);
+      });
+
+      test('Dailymotion video', async () => {
+        mediaClient.setDebugBackend();
+        await mediaClient.setUser(plainUser);
+        const { statusCode } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: DAILYMOTION,
+          vendorKey: 'x1buew',
+          albumId: plainUser.albumId,
+          title: 'A new Dailymotion video title',
+          description: 'A new Dailymotion video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(200);
+      });
+
+      test('Instagram video', async () => {
+        mediaClient.setDebugBackend();
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: INSTAGRAM,
+          vendorKey: 'Bks-3LhgiDQ',
+          albumId: plainUser.albumId,
+          title: 'A new Instagram video title',
+          description: 'A new Instagram video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(200);
+      });
     });
 
     describe('Failing POST', () => {
-      // Bad cases: missing/bad vendorKey, bad albumId (aggregate album, someone else's album),
-      // bad storageType
+      // Missing/bad vendorKey
+      // Bad albumId (aggregate album, someone else's album) Api_ErrorCodes::MEDIA_BAD_ALBUM_FOR_POST
+      // Bad storageType
 
       test('Invalid mediaSubType fails', async () => {
         await mediaClient.setUser(plainUser);

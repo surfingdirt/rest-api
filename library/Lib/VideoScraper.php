@@ -1,21 +1,38 @@
 <?php
 
-use RicardoFiorani\Matcher\VideoServiceMatcher;
-
 class Lib_VideoScraper
 {
-  public function __construct($videoUrl)
+  public function __construct($mediaSubType, $vendorKey)
   {
-    $this->_vsm = new VideoServiceMatcher();
-    $this->_videoUrl = $videoUrl;
+    $this->_mediaSubType = $mediaSubType;
+    $this->_vendorKey = $vendorKey;
+    $this->_videoUrl = VideoUrlBuilder::buildUrl($mediaSubType, $vendorKey);
     $this->_table = new Api_Image();
+  }
+
+  protected function _getThumbUrl()
+  {
+    switch($this->_mediaSubType) {
+      case Media_Item_Video::SUBTYPE_YOUTUBE:
+        $id = $this->_vendorKey;
+        $thumbUrl = "https:/img.youtube.com/vi/${id}/hqdefault.jpg";
+        break;
+      default:
+        $graph = Lib_OG::fetch($this->_videoUrl);
+        $thumbUrl = $graph->image;
+        break;
+    }
+
+    if (APPLICATION_ENV == 'test') {
+      $thumbUrl = TEST_UPLOAD_FILE;
+    }
+
+    return $thumbUrl;
   }
 
   public function saveThumbs($storageType, $objectId)
   {
-    $video = $this->_vsm->parse($this->_videoUrl);
-    $thumbUrl = $video->getLargeThumbnail();
-
+    $thumbUrl = $this->_getThumbUrl();
     $tmpFile = tempnam(GLOBAL_UPLOAD_TMPDIR, 'thumb');
     $this->_writeFileToDisk($tmpFile, $thumbUrl);
 
@@ -59,10 +76,6 @@ class Lib_VideoScraper
 
   protected function _writeFileToDisk($tmpFile, $thumbUrl)
   {
-    if (APPLICATION_ENV == 'test') {
-      $thumbUrl = TEST_UPLOAD_FILE;
-    }
-
     file_put_contents($tmpFile, file_get_contents($thumbUrl));
   }
 }

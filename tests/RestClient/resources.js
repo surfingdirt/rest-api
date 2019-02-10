@@ -4,4 +4,10 @@ export const TOKEN = 'token';
 export const USER = 'user';
 
 export const MEDIA_TYPES = { PHOTO: 'photo', VIDEO: 'video' };
-export const MEDIA_SUBTYPES_VIDEO = { YOUTUBE: 'youtube', VIMEO: 'vimeo' };
+export const MEDIA_SUBTYPES_VIDEO = {
+  DAILYMOTION: 'dailymotion',
+  FACEBOOK: 'facebook',
+  INSTAGRAM: 'instagram',
+  VIMEO: 'vimeo',
+  YOUTUBE: 'youtube',
+};

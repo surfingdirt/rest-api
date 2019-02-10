@@ -2,14 +2,18 @@
 
 class Media_Item_Video extends Media_Item
 {
-  const SUBTYPE_YOUTUBE = 'youtube';
-  const SUBTYPE_VIMEO = 'vimeo';
   const SUBTYPE_DAILYMOTION = 'dailymotion';
+  const SUBTYPE_FACEBOOK = 'facebook';
+  const SUBTYPE_INSTAGRAM = 'instagram';
+  const SUBTYPE_VIMEO = 'vimeo';
+  const SUBTYPE_YOUTUBE = 'youtube';
 
   public static $allowedMediaSubTypes = array(
-    self::SUBTYPE_YOUTUBE,
-    self::SUBTYPE_VIMEO,
     self::SUBTYPE_DAILYMOTION,
+    self::SUBTYPE_FACEBOOK,
+    self::SUBTYPE_INSTAGRAM,
+    self::SUBTYPE_VIMEO,
+    self::SUBTYPE_YOUTUBE,
   );
 
   /**
