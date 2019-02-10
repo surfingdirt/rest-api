@@ -24,7 +24,7 @@ class Lib_VideoScraper
     }
 
     if (APPLICATION_ENV == 'test') {
-      //$thumbUrl = TEST_UPLOAD_FILE;
+      $thumbUrl = TEST_UPLOAD_FILE;
     }
 
     return $thumbUrl;
