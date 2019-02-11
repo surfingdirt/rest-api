@@ -3,6 +3,7 @@
 class Lib_Validate_Album extends Lib_Validate_Data
 {
   const ALBUMTYPENOTALLOWED = 'albumTypeNotAllowed';
+  const ALBUMNOTWRITABLE = 'albumNotWritable';
 
   /**
    * @var array
@@ -11,6 +12,7 @@ class Lib_Validate_Album extends Lib_Validate_Data
     Lib_Validate_Data::DOES_NOT_EXIST => "albumDoesNotExist",
     Lib_Validate_Data::EXISTS => "albumExists",
     self::ALBUMTYPENOTALLOWED => "albumTypeNotAllowed",
+    self::ALBUMNOTWRITABLE => "albumNotWritable",
   );
 
   /**

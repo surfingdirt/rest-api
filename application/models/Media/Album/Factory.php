@@ -20,7 +20,7 @@ class Media_Album_Factory
     }
 
     if (empty($data['keyName'])) {
-      // album simple
+      // Simple Album
       $album = self::buildSimpleAlbum($albumId, $page);
     } elseif (empty($data['itemType'])) {
       $dataType = Data::mapDataType($data['keyName']);
@@ -77,7 +77,7 @@ class Media_Album_Factory
     		WHERE agg.keyName = 'user'
     		AND a.albumType = '" . Media_Album::TYPE_AGGREGATE . "'
     		AND a.albumCreation = '" . Media_Album::CREATION_AUTOMATIC . "'
-    		AND agg.keyValue = " . $user->getId();
+    		AND agg.keyValue = '" . $user->getId() . "'";
     $stmt = $db->query($sql);
     $data = $stmt->fetch();
 
@@ -97,7 +97,7 @@ class Media_Album_Factory
       'SELECT a.* FROM ' . Constants_TableNames::AGGREGATION . ' agg
     		JOIN ' . Constants_TableNames::ALBUM . " a ON a.id = agg.albumId
     		WHERE agg.keyName = '$itemType'
-    		AND agg.keyValue = " . $itemId;
+    		AND agg.keyValue = '" . $itemId. "'";
     $stmt = $db->query($sql);
     $data = $stmt->fetch();
 

@@ -86,6 +86,14 @@ export default class ResourceClient {
     this.client.clearUUIDs();
   }
 
+  setLocalVideoThumb(url) {
+    this.client.setLocalVideoThumb(url);
+  }
+
+  clearLocalVideoThumb() {
+    this.client.clearLocalVideoThumb();
+  }
+
   setDebugBackend(debugBackend = true) {
     this.debugBackend = !!debugBackend;
   }

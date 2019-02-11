@@ -1,10 +1,11 @@
 import ResourceClient from './RestClient/ResourceClient';
 import { default as StatelessClient, getResourcePath } from './RestClient/StatelessClient';
 import { clearCacheFiles } from './RestClient/cache';
-import { hostUrl, JWT_TTL } from './RestClient/constants';
-import { IMAGE, MEDIA, MEDIA_TYPES, MEDIA_SUBTYPES_VIDEO, TOKEN, USER } from './RestClient/resources';
+import { hostUrl, JWT_TTL, LOCAL_BAD_THUMB_PATH, LOCAL_THUMB_PATH } from './RestClient/constants';
+import { IMAGE, MEDIA, MEDIA_SUBTYPES_VIDEO, MEDIA_TYPES, TOKEN, USER } from './RestClient/resources';
 import { images } from './data/images';
 import { invalidPhoto, validPhoto } from './data/media';
+import { aggregateAlbum, editorUserStaticAlbum, plainUserStaticAlbum } from './data/albums';
 import {
   adminUser,
   bannedUser,
@@ -377,35 +378,35 @@ describe('Image tests', () => {
       await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type }, []);
       expect(statusCode).toEqual(400);
-      expect(body.error).toEqual(10010);
+      expect(body.errors.topLevelError.code).toEqual(10010);
     });
 
     test('Plain user POST fails because file is not actually an image', async () => {
       await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type }, [textFileAsJPEG]);
       expect(statusCode).toEqual(400);
-      expect(body.error).toEqual(10011);
+      expect(body.errors.topLevelError.code).toEqual(10011);
     });
 
     test('Plain user POST fails because file is a text file', async () => {
       await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type }, [textFileAsTxt]);
       expect(statusCode).toEqual(400);
-      expect(body.error).toEqual(10011);
+      expect(body.errors.topLevelError.code).toEqual(10011);
     });
 
     test('Plain user POST fails because image file size is too big', async () => {
       await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type }, [imgHeavy]);
       expect(statusCode).toEqual(400);
-      expect(body.error).toEqual(10002);
+      expect(body.errors.topLevelError.code).toEqual(10002);
     });
 
     test('Plain user POST fails because storage type is not supported', async () => {
       await imageClient.setUser(plainUser);
       const { statusCode, body } = await imageClient.postFormData({ type: 1 }, [img640]);
       expect(statusCode).toEqual(400);
-      expect(body.error).toEqual(10001);
+      expect(body.errors.topLevelError.code).toEqual(10001);
     });
 
     test('Plain user POST fails because uuid already exists', async () => {
@@ -413,7 +414,7 @@ describe('Image tests', () => {
       imageClient.setUUIDs([images[0].id]);
       const { statusCode, body } = await imageClient.postFormData({ type }, [img640]);
       expect(statusCode).toEqual(400);
-      expect(body.error).toEqual(10008);
+      expect(body.errors.topLevelError.code).toEqual(10008);
     });
   });
 
@@ -679,9 +680,9 @@ describe('Media tests', () => {
 
     describe('POST ACLs', () => {});
 
-    describe.only('Successful POST', () => {
+    describe('Successful POST', () => {
       test('YouTube video', async () => {
-        mediaClient.setDebugBackend();
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
         await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.post({
           mediaType: VIDEO,
@@ -692,15 +693,15 @@ describe('Media tests', () => {
           description: 'A new YouTube video description',
           storageType: 0,
         });
+        expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
         expect(looksLikeUUID(body.id)).toBeTruthy();
-        expect(statusCode).toEqual(200);
       });
 
       test('Vimeo video', async () => {
         await mediaClient.setUser(plainUser);
-        mediaClient.setDebugBackend();
-        const { statusCode } = await mediaClient.post({
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+        const { statusCode, body } = await mediaClient.post({
           mediaType: VIDEO,
           mediaSubType: VIMEO,
           vendorKey: '16567910',
@@ -710,11 +711,13 @@ describe('Media tests', () => {
           storageType: 0,
         });
         expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+        expect(looksLikeUUID(body.id)).toBeTruthy();
       });
 
       test('Facebook video', async () => {
         await mediaClient.setUser(plainUser);
-        mediaClient.setDebugBackend();
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
         const { statusCode, body } = await mediaClient.post({
           mediaType: VIDEO,
           mediaSubType: FACEBOOK,
@@ -725,12 +728,14 @@ describe('Media tests', () => {
           storageType: 0,
         });
         expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+        expect(looksLikeUUID(body.id)).toBeTruthy();
       });
 
       test('Dailymotion video', async () => {
-        mediaClient.setDebugBackend();
         await mediaClient.setUser(plainUser);
-        const { statusCode } = await mediaClient.post({
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+        const { statusCode, body } = await mediaClient.post({
           mediaType: VIDEO,
           mediaSubType: DAILYMOTION,
           vendorKey: 'x1buew',
@@ -740,11 +745,13 @@ describe('Media tests', () => {
           storageType: 0,
         });
         expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+        expect(looksLikeUUID(body.id)).toBeTruthy();
       });
 
       test('Instagram video', async () => {
-        mediaClient.setDebugBackend();
         await mediaClient.setUser(plainUser);
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
         const { statusCode, body } = await mediaClient.post({
           mediaType: VIDEO,
           mediaSubType: INSTAGRAM,
@@ -755,7 +762,29 @@ describe('Media tests', () => {
           storageType: 0,
         });
         expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+        expect(looksLikeUUID(body.id)).toBeTruthy();
       });
+
+      test('Plain user can post to their own static album', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey: 'RoAV-FSDGlA',
+          albumId: plainUserStaticAlbum.id,
+          title: 'A failing YouTube video title',
+          description: 'A failing YouTube video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(200);
+        expect(statusCode).toEqual(200);
+        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+        expect(looksLikeUUID(body.id)).toBeTruthy();
+        expect(body.album.id).toEqual(plainUserStaticAlbum.id);
+      });
+
     });
 
     describe('Failing POST', () => {
@@ -765,6 +794,7 @@ describe('Media tests', () => {
 
       test('Invalid mediaSubType fails', async () => {
         await mediaClient.setUser(plainUser);
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
         const { statusCode, body } = await mediaClient.post({
           mediaType: VIDEO,
           mediaSubType: 'sds',
@@ -776,6 +806,86 @@ describe('Media tests', () => {
         });
         expect(statusCode).toEqual(400);
         expect(body.errors).toEqual({"mediaSubType": ["invalidType"]});
+      });
+
+      test('Invalid vendorKey fails because thumbnail is invalid', async () => {
+        mediaClient.setLocalVideoThumb(LOCAL_BAD_THUMB_PATH);
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey: 'badKey',
+          albumId: plainUser.albumId,
+          title: 'A failing YouTube video title',
+          description: 'A failing YouTube video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors.topLevelError.code).toEqual(10011);
+      });
+
+      test('Invalid storageType fails', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey: '1PcGJIjhQjg',
+          albumId: plainUser.albumId,
+          title: 'A failing YouTube video title',
+          description: 'A failing YouTube video description',
+          storageType: 27,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'storageType': ["invalidType"]});
+      });
+
+      test('Aggregate albumId fails', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey: '1PcGJIjhQjg',
+          albumId: aggregateAlbum.id,
+          title: 'A failing YouTube video title',
+          description: 'A failing YouTube video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'albumId': ["albumTypeNotAllowed"]});
+      });
+
+      test('Plain user cannot post to another user\'s album', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey: '1PcGJIjhQjg',
+          albumId: editorUserStaticAlbum.id,
+          title: 'A failing YouTube video title',
+          description: 'A failing YouTube video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'albumId': ["albumNotWritable"]});
+      });
+
+      test('Plain user cannot post to non-existing album', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey: '1PcGJIjhQjg',
+          albumId: 'nachoalbum',
+          title: 'A failing YouTube video title',
+          description: 'A failing YouTube video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'albumId': ["doesNotExist"]});
       });
     });
   });

@@ -26,10 +26,11 @@ class ErrorController extends Zend_Controller_Action
             $viewRenderer->setViewScriptPathSpec('view.phtml');
             $viewRenderer->setNoRender(false);
             if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
-              $this->view->output = array('error' => $e->getCode(), 'message' => $e->getMessage());
+              $error = array('code' => $e->getCode(), 'message' => $e->getMessage());
             } else {
-              $this->view->output = array('error' => $e->getCode());
+              $error = array('code' => $e->getCode());
             }
+            $this->view->output = array('errors' => array('topLevelError' => $error));
             $this->_badRequest();
             break;
           case 'Lib_JWT_Exception':

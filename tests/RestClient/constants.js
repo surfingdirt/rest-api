@@ -5,3 +5,5 @@ export const port = 80;
 export const baseUrl = '/';
 export const cacheDir = '../data/cache/test/';
 export const dateSetter = { path: '/test/freeze-time', arg: 'datetime' };
+export const LOCAL_THUMB_PATH = '../tests/data/files/testUpload.jpg';
+export const LOCAL_BAD_THUMB_PATH = '../tests/data/files/testBadUpload.jpg';

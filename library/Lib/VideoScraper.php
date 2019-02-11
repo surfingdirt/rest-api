@@ -12,21 +12,25 @@ class Lib_VideoScraper
 
   protected function _getThumbUrl()
   {
-    switch($this->_mediaSubType) {
-      case Media_Item_Video::SUBTYPE_YOUTUBE:
-        $id = $this->_vendorKey;
-        $thumbUrl = "https://i.ytimg.com/vi/${id}/hqdefault.jpg";
-        break;
-      default:
-        $graph = Lib_OG::fetch($this->_videoUrl);
-        $thumbUrl = $graph->image;
-        break;
-    }
-
     if (APPLICATION_ENV == 'test') {
-      $thumbUrl = TEST_UPLOAD_FILE;
+      $headers = apache_request_headers();
+      if (isset($headers['X-localVideoThumb'])) {
+        $thumbUrl = $headers['X-localVideoThumb'];
+      }
     }
 
+    if (!$thumbUrl) {
+      switch ($this->_mediaSubType) {
+        case Media_Item_Video::SUBTYPE_YOUTUBE:
+          $id = $this->_vendorKey;
+          $thumbUrl = "https://i.ytimg.com/vi/${id}/hqdefault.jpg";
+          break;
+        default:
+          $graph = Lib_OG::fetch($this->_videoUrl);
+          $thumbUrl = $graph->image;
+          break;
+      }
+    }
     return $thumbUrl;
   }
 

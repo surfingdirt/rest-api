@@ -55,6 +55,9 @@ export default class StatelessClient {
     if (this.uuids.length > 0) {
       headers['X-uuids'] = JSON.stringify(this.uuids);
     }
+    if (this.localVideoThumb) {
+      headers['X-localVideoThumb'] = this.localVideoThumb;
+    }
     return headers;
   }
 
@@ -64,6 +67,19 @@ export default class StatelessClient {
 
   clearUUIDs() {
     this.uuids = [];
+  }
+
+  setLocalVideoThumb(url) {
+    this.localVideoThumb = url;
+  }
+
+  clearLocalVideoThumb() {
+    this.localVideoThumb = null;
+  }
+
+  postRequestCleanup() {
+    this.clearUUIDs();
+    this.clearLocalVideoThumb();
   }
 
   /*
@@ -79,7 +95,7 @@ export default class StatelessClient {
     };
 
     const response = await rp(options);
-    this.clearUUIDs();
+    this.postRequestCleanup();
 
     return response;
   }
@@ -96,7 +112,7 @@ export default class StatelessClient {
     };
 
     const response = await rp(options);
-    this.clearUUIDs();
+    this.postRequestCleanup();
 
     return response;
   }
@@ -130,7 +146,7 @@ export default class StatelessClient {
       formData: Object.assign({}, data, { 'files[]': fileData }),
     };
     const response = await rp(options);
-    this.clearUUIDs();
+    this.postRequestCleanup();
 
     return response;
   }
@@ -148,7 +164,7 @@ export default class StatelessClient {
       resolveWithFullResponse: true,
     };
     const response = await rp(options);
-    this.clearUUIDs();
+    this.postRequestCleanup();
 
     return response;
   }

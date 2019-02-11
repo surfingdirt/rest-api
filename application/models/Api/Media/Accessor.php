@@ -148,19 +148,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
       return array(null, $errors);
     }
 
-    try {
-      $albumId = $data['albumId'];
-      $album = Media_Album_Factory::buildAlbumById($albumId);
-    } catch (Lib_Exception $e) {
-      throw new Api_Exception_BadRequest("Bad album '$albumId'", Api_ErrorCodes::MEDIA_BAD_ALBUM_FOR_POST);
-    }
-
-    // TODO: check if user can post to this album!
-
-    if ($album->albumType !== Media_Album::TYPE_SIMPLE) {
-      throw new Api_Exception_BadRequest("Bad album type for album with id '$albumId'", Api_ErrorCodes::MEDIA_BAD_ALBUM_FOR_POST);
-    }
-
     $object->id = Utils::uuidV4();
     if ($object->mediaType == Media_Item::TYPE_PHOTO) {
       $data = array_merge($data, $this->_getPhotoAttributes($data['imageId']));
