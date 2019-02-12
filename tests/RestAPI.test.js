@@ -666,9 +666,76 @@ describe('Media tests', () => {
     });
 
     describe('Failing POST', () => {
-      // Missing/bad imageId
-      // Bad albumId (aggregate album, someone else's album),
-      // Bad storageType
+      test('Invalid imageId fails', async () => {
+        await mediaClient.setUser(plainUser);
+        // mediaClient.setDebugBackend();
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: PHOTO,
+          imageId: 'badImageId',
+          albumId: plainUser.albumId,
+          title: 'A failing photo title',
+          description: 'A failing photo description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'imageId': ["doesNotExist"]});
+      });
+
+      test('Aggregate albumId fails', async () => {
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: PHOTO,
+          imageId: images[2].id,
+          albumId: aggregateAlbum.id,
+          title: 'A failing photo title',
+          description: 'A failing photo description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'albumId': ["albumTypeNotAllowed"]});
+      });
+
+      test('Plain user cannot post to another user\'s album', async () => {
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: PHOTO,
+          imageId: images[2].id,
+          albumId: editorUserStaticAlbum.id,
+          title: 'A failing photo title',
+          description: 'A failing photo description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'albumId': ["albumNotWritable"]});
+      });
+
+      test('Plain user cannot post to non-existing album', async () => {
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: PHOTO,
+          imageId: images[2].id,
+          albumId: 'nachoAlbum',
+          title: 'A failing photo title',
+          description: 'A failing photo description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'albumId': ["doesNotExist"]});
+      });
+
+      test('Bad storageType fails', async () => {
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: PHOTO,
+          imageId: images[2].id,
+          albumId: plainUser.albumId,
+          title: 'A failing photo title',
+          description: 'A failing photo description',
+          storageType: 27,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'storageType': ["invalidType"]});
+      });
     });
   });
 
@@ -788,10 +855,6 @@ describe('Media tests', () => {
     });
 
     describe('Failing POST', () => {
-      // Missing/bad vendorKey
-      // Bad albumId (aggregate album, someone else's album) Api_ErrorCodes::MEDIA_BAD_ALBUM_FOR_POST
-      // Bad storageType
-
       test('Invalid mediaSubType fails', async () => {
         await mediaClient.setUser(plainUser);
         mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
@@ -886,6 +949,22 @@ describe('Media tests', () => {
         });
         expect(statusCode).toEqual(400);
         expect(body.errors).toEqual({'albumId': ["doesNotExist"]});
+      });
+
+      test('Bad storageType fails', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey: '1PcGJIjhQjg',
+          albumId: plainUser.albumId,
+          title: 'A failing YouTube video title',
+          description: 'A failing YouTube video description',
+          storageType: 27,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'storageType': ["invalidType"]});
       });
     });
   });
