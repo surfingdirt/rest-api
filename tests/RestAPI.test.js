@@ -65,13 +65,6 @@ describe('Token tests', () => {
   });
 
   test('token management is working properly', async () => {
-    /*
-     - login request as user 1 => fine
-     - logged-in request to user 1 in the future so token has expired => error (expired)
-     - logged-in request to user 1 now: => fine
-     - log-out request => fine
-     - request with deleted token to user 1 => error
-    */
     let user1Token;
 
     const { username, password } = plainUser;
@@ -580,14 +573,14 @@ describe('Media tests', () => {
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
 
-      test('Editor can see', async () => {
+      test('Editor can see public info', async () => {
         await mediaClient.setUser(editorUser);
         const { statusCode, body } = await mediaClient.get(validPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
 
-      test('Admin can see', async () => {
+      test('Admin can see public info', async () => {
         await mediaClient.setUser(adminUser);
         const { statusCode, body } = await mediaClient.get(validPhoto.id);
         expect(statusCode).toEqual(200);
@@ -596,33 +589,33 @@ describe('Media tests', () => {
     });
 
     describe('Invalid photo', () => {
-      test('Guest cannot see', async () => {
+      test('Guest cannot see invalid photo', async () => {
         await mediaClient.setToken(null);
         const { statusCode } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(403);
       });
 
-      test('Owner can see', async () => {
+      test('Owner can see invalid photo', async () => {
         await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
 
-      test('Writer cannot see', async () => {
+      test('Writer cannot see invalid photo', async () => {
         await mediaClient.setUser(writerUser);
         const { statusCode } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(403);
       });
 
-      test('Editor can see', async () => {
+      test('Editor can see invalid photo', async () => {
         await mediaClient.setUser(editorUser);
         const { statusCode, body } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(200);
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
       });
 
-      test('Admin can see', async () => {
+      test('Admin can see invalid photo', async () => {
         await mediaClient.setUser(adminUser);
         const { statusCode, body } = await mediaClient.get(invalidPhoto.id);
         expect(statusCode).toEqual(200);
@@ -633,6 +626,7 @@ describe('Media tests', () => {
 
   describe('Photo tests', () => {
     const existingImageId = images[2].id;
+    const secondExistingImageId = images[3].id;
 
     describe('POST ACLs', () => {
       test('Guest cannot POST', async () => {
@@ -662,13 +656,42 @@ describe('Media tests', () => {
         });
         expect(statusCode).toEqual(200);
         expect(looksLikeUUID(body.id)).toBeTruthy();
+
+        // Can't post the same image twice
+        const { statusCode: statusCodeDupe, body: bodyDupe } = await mediaClient.post({
+          mediaType: PHOTO,
+          albumId: plainUser.albumId,
+          title: 'A new photo title',
+          description: 'A new photo description',
+          imageId: existingImageId,
+          storageType: 0,
+        });
+
+        expect(statusCodeDupe).toEqual(400);
+        expect(bodyDupe.errors).toEqual({'imageId': ["duplicatedImageId"]});
+      });
+
+      test('Plain user can post to their own static album', async () => {
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: PHOTO,
+          albumId: plainUserStaticAlbum.id,
+          title: 'A new photo title',
+          description: 'A new photo description',
+          imageId: secondExistingImageId,
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(200);
+        expect(looksLikeUUID(body.id)).toBeTruthy();
+        expect(body.album.id).toEqual(plainUserStaticAlbum.id);
       });
     });
 
     describe('Failing POST', () => {
+      const notPostedImageId = images[4].id;
+
       test('Invalid imageId fails', async () => {
         await mediaClient.setUser(plainUser);
-        // mediaClient.setDebugBackend();
         const { statusCode, body } = await mediaClient.post({
           mediaType: PHOTO,
           imageId: 'badImageId',
@@ -685,7 +708,7 @@ describe('Media tests', () => {
         await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.post({
           mediaType: PHOTO,
-          imageId: images[2].id,
+          imageId: notPostedImageId,
           albumId: aggregateAlbum.id,
           title: 'A failing photo title',
           description: 'A failing photo description',
@@ -699,7 +722,7 @@ describe('Media tests', () => {
         await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.post({
           mediaType: PHOTO,
-          imageId: images[2].id,
+          imageId: notPostedImageId,
           albumId: editorUserStaticAlbum.id,
           title: 'A failing photo title',
           description: 'A failing photo description',
@@ -713,7 +736,7 @@ describe('Media tests', () => {
         await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.post({
           mediaType: PHOTO,
-          imageId: images[2].id,
+          imageId: notPostedImageId,
           albumId: 'nachoAlbum',
           title: 'A failing photo title',
           description: 'A failing photo description',
@@ -727,7 +750,7 @@ describe('Media tests', () => {
         await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.post({
           mediaType: PHOTO,
-          imageId: images[2].id,
+          imageId: notPostedImageId,
           albumId: plainUser.albumId,
           title: 'A failing photo title',
           description: 'A failing photo description',
@@ -745,7 +768,21 @@ describe('Media tests', () => {
       '"mediaSubType","mediaType","status","submitter","title","vendorKey","width"]';
     // TODO: rajouter author
 
-    describe('POST ACLs', () => {});
+    describe('POST ACLs', () => {
+      test('Guest cannot POST', async () => {
+        await mediaClient.setToken(null);
+        const { statusCode } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey: '1PcGJIjhQjg',
+          albumId: plainUser.albumId,
+          title: 'A new YouTube video title',
+          description: 'A new YouTube video description',
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(403);
+      });
+    });
 
     describe('Successful POST', () => {
       test('YouTube video', async () => {
@@ -851,7 +888,6 @@ describe('Media tests', () => {
         expect(looksLikeUUID(body.id)).toBeTruthy();
         expect(body.album.id).toEqual(plainUserStaticAlbum.id);
       });
-
     });
 
     describe('Failing POST', () => {

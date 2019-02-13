@@ -256,7 +256,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
   {
     $table = new Api_Image();
     $image = $table->find($imageId)->current();
-// TODO: throw an API exception if anything goes badly here.
     return array(
       'width' => $image->width,
       'height' => $image->height,

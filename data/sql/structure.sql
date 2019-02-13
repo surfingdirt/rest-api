@@ -116,6 +116,7 @@ CREATE TABLE `media_items` (
   `date` datetime NOT NULL,
   `lastEditionDate` datetime DEFAULT NULL,
   `lastEditor` varchar(36) DEFAULT NULL,
+  UNIQUE KEY `imageId` (`imageId`),
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
