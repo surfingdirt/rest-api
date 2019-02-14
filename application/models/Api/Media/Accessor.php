@@ -77,6 +77,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
   public $ownWriteAttributes = array(
     'title' => 'title',
     'description' => 'description',
+    'imageId' => 'imageId',
 //    'dpt' => 'dpt',
 //    'spot' => 'spot',
 //    'trick' => 'trick',

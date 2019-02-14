@@ -21,8 +21,15 @@ class Lib_Form_Element_Media_ImageId_Validate extends Zend_Validate_Abstract
     if (!$mediaRow) {
       return true;
     }
-    if (!isset($context['id']) || $context['id'] && $mediaRow->imageId !== $value) {
-      // Another object uses this image already
+
+    if (!isset($context['id']) && $mediaRow) {
+      // Creating an object but another one uses this image already
+      $this->_error(self::DUPLICATED_IMAGE_ID);
+      return false;
+    }
+
+    if (isset($context['id']) && $context['id'] !== $mediaRow->getId()) {
+      // Another existing object uses this image already
       $this->_error(self::DUPLICATED_IMAGE_ID);
       return false;
     }

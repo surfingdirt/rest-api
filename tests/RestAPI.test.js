@@ -781,6 +781,7 @@ describe('Media tests', () => {
 
       test('Owner can PUT', async () => {
         await mediaClient.setUser(plainUser);
+        mediaClient.setDebugBackend();
         const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
           title: 'Modified title',
         });
@@ -814,7 +815,6 @@ describe('Media tests', () => {
     describe('Failing PUT', () => {
       test('Cannot change mediaType', async () => {
         await mediaClient.setUser(plainUser);
-        mediaClient.setDebugBackend();
         const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
           mediaType: VIDEO,
         });
@@ -824,7 +824,6 @@ describe('Media tests', () => {
 
       test('Cannot change mediaSubType', async () => {
         await mediaClient.setUser(plainUser);
-        mediaClient.setDebugBackend();
         const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
           mediaSubType: 'toto',
         });
@@ -834,12 +833,51 @@ describe('Media tests', () => {
 
       test('Cannot change storageType', async () => {
         await mediaClient.setUser(plainUser);
-        mediaClient.setDebugBackend();
         const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
           storageType: 27,
         });
         expect(statusCode).toEqual(400);
         expect(body.errors).toEqual({'storageType': 'immutable'});
+      });
+
+      test.only('Cannot use an existing imageId', async () => {
+        mediaClient.setDebugBackend(false);
+        const postImage = async () => {
+          const imageClient = new ResourceClient(client, IMAGE);
+          await imageClient.setUser(plainUser);
+          const {
+            statusCode,
+            body,
+          } = await imageClient.postFormData({ type: 0 }, [img640]);
+          expect(statusCode).toEqual(200);
+          return body[0].key;
+        };
+        const postPhoto = async (imageId) => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: PHOTO,
+            albumId: plainUserStaticAlbum.id,
+            title: 'A new photo title',
+            description: 'A new photo description',
+            imageId: imageId,
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(200);
+          return body;
+        };
+
+        const initialImageId = await postImage();
+        await postPhoto(initialImageId);
+        const secondImageId = await postImage();
+        const secondPhoto = await postPhoto(secondImageId);
+
+        await mediaClient.setUser(plainUser);
+        mediaClient.setDebugBackend();
+        const { statusCode, body } = await mediaClient.put(secondPhoto.id, {
+          imageId: initialImageId,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'imageId': ['duplicatedImageId']});
       });
     });
   });
