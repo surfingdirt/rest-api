@@ -40,7 +40,7 @@ class ErrorController extends Zend_Controller_Action
             return $this->_notFound();
           default:
             Globals::getLogger()->exception($logMessage);
-
+            $this->_error('HTTP/1.1 500 Internal Server Error');
             if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
               $viewRenderer->setViewScriptPathSpec('view.phtml');
               $viewRenderer->setNoRender(false);

@@ -18,7 +18,11 @@ class Lib_Form_Element_Media_ImageId_Validate extends Zend_Validate_Abstract
     $mediaTable = new Media_Item_Photo();
     $where = $mediaTable->getAdapter()->quoteInto('imageId = ?', $value);
     $mediaRow = $mediaTable->fetchRow($where);
-    if ($mediaRow) {
+    if (!$mediaRow) {
+      return true;
+    }
+    if (!isset($context['id']) || $context['id'] && $mediaRow->imageId !== $value) {
+      // Another object uses this image already
       $this->_error(self::DUPLICATED_IMAGE_ID);
       return false;
     }

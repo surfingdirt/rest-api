@@ -30,6 +30,10 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'id',
     'title',
     'description',
+    'mediaType',
+    'mediaSubType',
+    'album',
+    'vendorKey',
     'date',
     'submitter',
     'lastEditor',
@@ -41,14 +45,10 @@ class Api_Media_Accessor extends Api_Data_Accessor
 //    'trick',
 //    'longitude',
 //    'latitude',
-    'album',
-    'mediaType',
     'uri',
     'width',
     'height',
-    'mediaSubType',
 //    'author',
-    'vendorKey'
   );
 
   public $memberCreateAttributes = array(
@@ -77,7 +77,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
   public $ownWriteAttributes = array(
     'title' => 'title',
     'description' => 'description',
-    'vendorKey' => 'vendorKey',
 //    'dpt' => 'dpt',
 //    'spot' => 'spot',
 //    'trick' => 'trick',
@@ -92,6 +91,19 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'mediaType' => 'mediaType',
     'vendorKey' => 'vendorKey',
   );
+
+  public function getUpdateAttributes($object)
+  {
+    $attrs = parent::getUpdateAttributes($object);
+    if ($object->mediaType == Media_Item::TYPE_PHOTO) {
+      // TODO: faire que les attrs ne contiennent que ce qui est necessaire pour les photos
+    } else {
+      // TODO: faire que les attrs ne contiennent que ce qui est necessaire pour les videos
+      $attrs['vendorKey'] = 'vendorKey';
+    }
+
+    return $attrs;
+  }
 
   /**
    * Performs a read operation
@@ -138,24 +150,18 @@ class Api_Media_Accessor extends Api_Data_Accessor
 
     $form = $object->getForm($this->_user, $this->_acl, null, $data);
     if (!$form->isValid($data)) {
-      $errors = array();
-      $rawErrors = $form->getErrors();
-      foreach ($rawErrors as $name => $err) {
-        if (!empty($err)) {
-          $errors[$name] = $err;
-        }
-      }
+      $errors = $form->getNonEmptyErrors();
       return array(null, $errors);
     }
 
     $object->id = Utils::uuidV4();
     if ($object->mediaType == Media_Item::TYPE_PHOTO) {
-      $data = array_merge($data, $this->_getPhotoAttributes($data['imageId']));
+      $data = array_merge($data, $this->_getPhotoData($data['imageId']));
     } else {
 
       $scraper = new Lib_VideoScraper($data['mediaSubType'], $data['vendorKey']);
       $thumbRow = $this->_saveVideoThumbs($scraper, $object->id);
-      $data = array_merge($data, $this->_getVideoAttributes($thumbRow));
+      $data = array_merge($data, $this->_getVideoData($thumbRow));
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
     return array($object->getId(), null);
@@ -164,54 +170,31 @@ class Api_Media_Accessor extends Api_Data_Accessor
   /**
    * Updates an object for a PUT operations
    */
-  public function updateObjectWithData($object, $data)
-  {
-    $attributes = $this->getUpdateAttributes($object);
-    //error_log('attributes ' . var_export($attributes, true));
-    //error_log('data before form' . var_export($data, true));
-    $log = '';
-
-    $errors = array();
-    switch ($object->mediaType) {
-      default:
-      case Media_Item::TYPE_PHOTO:
-        $form = new Api_Media_Form_Photo($object, $this->_user, $this->_acl);
-        $form->setName('PhotoForm');
-        break;
-      case Media_Item::TYPE_VIDEO:
-        $form = new Api_Media_Form_Video($object, $this->_user, $this->_acl);
-        $form->setName('VideoForm');
-        break;
-    }
-
-    $formattedData = array_merge($object->toArray(), $data, $this->_populateLocationFormElements($object, $data));
-    $form->populateFromDatabaseData($formattedData);
-    $dbData = $form->getFormattedValuesForDatabase();
-    // TODO: if given, check that the album qualifies to receive this media
-    if (!$form->isValid($data)) {
-      $rawErrors = $form->getErrors();
-      foreach ($rawErrors as $name => $err) {
-        if (!empty($err)) {
-          $errors[$name] = $err;
-        }
-      }
-    } else {
-      if ($object->mediaType == Media_Item::TYPE_PHOTO) {
-        $data = array_merge($data, $this->_getPhotoAttributes($object));
-      } else {
-        $data = array_merge($data, $this->_getVideoAttributes($object, $form->media));
-      }
-      /*
-      $formattedData = $form->getFormattedValuesForDatabase();
-      foreach($attributes as $attrFormName => $attrDBName){
-        $this->_updateKey($object, $attrFormName, $attrDBName, $data, $formattedData);
-      }
-      */
-      //error_log($log);
-      $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
-    }
-    return $errors;
-  }
+//  public function updateObjectWithData($object, $data)
+//  {
+//    $form = $object->getForm($this->_user, $this->_acl, null, $data);
+//    // TODO: go over allowed update attributes
+//    if (!$form->isValid($data)) {
+//      $errors = $form->getNonEmptyErrors();
+//    } else {
+//      $attributes = $this->getUpdateAttributes($object);
+//      $formattedData = array_merge($object->toArray(), $data);
+//      if ($object->mediaType == Media_Item::TYPE_PHOTO) {
+//        $data = array_merge($data, $this->_getPhotoData($object));
+//      } else {
+//        $data = array_merge($data, $this->_getVideoData($object, $form->media));
+//      }
+//      /*
+//      $formattedData = $form->getFormattedValuesForDatabase();
+//      foreach($attributes as $attrFormName => $attrDBName){
+//        $this->_updateKey($object, $attrFormName, $attrDBName, $data, $formattedData);
+//      }
+//      */
+//      //error_log($log);
+//      $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
+//    }
+//    return $errors;
+//  }
 
   /**
    * Saves a Data_Row in database, setting its data from the submitted form
@@ -252,7 +235,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
     return $dataRow->id;
   }
 
-  protected function _getPhotoAttributes($imageId)
+  protected function _getPhotoData($imageId)
   {
     $table = new Api_Image();
     $image = $table->find($imageId)->current();
@@ -277,7 +260,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
    * @return array
    * @throws Lib_Exception_Media
    */
-  protected function _getVideoAttributes($imageRow)
+  protected function _getVideoData($imageRow)
   {
     return array(
       'imageId' => $imageRow->getId(),

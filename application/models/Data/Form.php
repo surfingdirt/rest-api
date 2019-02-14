@@ -40,7 +40,6 @@ abstract class Data_Form extends Lib_Form implements Data_Form_DataInterface
     $this->_user = $user;
     $this->_acl = $acl;
 
-    $this->setAction($this->_object->getEditLink());
     $this->_setup();
   }
 

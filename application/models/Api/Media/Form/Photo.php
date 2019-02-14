@@ -17,11 +17,11 @@ class Api_Media_Form_Photo extends Media_Item_Form
     return $elements;
   }
 
-  public function getImageId($required = true)
+  public function getImageId()
   {
     $element = new Lib_Form_Element_Media_ImageId('imageId');
     $element->addValidator(new Lib_Form_Element_Media_ImageId_Validate());
-    $element->setRequired($required);
+    $element->setRequired($this->_mediaRequired);
     return $element;
   }
 

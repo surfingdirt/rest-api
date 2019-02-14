@@ -14,10 +14,8 @@ class Data_Form_Element_Title extends Zend_Form_Element_Text
 
     $this->setLabel(ucfirst(Globals::getTranslate()->_('title')))
       ->setRequired(true)
-      ->addValidator('NotEmpty')
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier')
-      ->addFilter($toLowerFilter);
+      ->addFilter('HTMLPurifier');
   }
 
   public function getHint()

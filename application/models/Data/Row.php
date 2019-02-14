@@ -790,7 +790,6 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
   public function getForm(User_Row $user, Lib_Acl $acl, $options = null)
   {
     $form = new $this->_formClass($this, $user, $acl, $options);
-    $form->setName($this->getItemType() . 'Form');
     return $form;
   }
 
@@ -1303,7 +1302,8 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     }
 
     $itemTable = new Item();
-    $item = $itemTable->fetchRow("itemType = '" . $this->_table->getItemType() . "' AND itemId = $this->id");
+    $where = $itemTable->getAdapter()->quoteInto('itemType = ? AND itemId = ?', $this->_table->getItemType(), $this->id);
+    $item = $itemTable->fetchRow($where);
     if ($item) {
       $item->status = $this->status;
       $item->notification = $this->_notification;
@@ -1314,11 +1314,8 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     }
     $return = parent::_doUpdate();
     $this->_saveTranslatedTexts();
-    $this->_updateTags();
-    /**
-     * @todo: ajouter le renommage du repertoire si un attribut le specifie
-     */
-
+    // TODO: add this back in once tags are implemented.
+    // $this->_updateTags();
     return $return;
   }
 

@@ -45,6 +45,7 @@ class Lib_Form extends Zend_Form
       }
     }
     $this->populate($formattedData);
+    return $formattedData;
   }
 
   /**
@@ -67,87 +68,16 @@ class Lib_Form extends Zend_Form
     return $formattedData;
   }
 
-  /**
-   * Render form
-   * Clear default decorators for elements and groups, and redefine them
-   * to include a custom error decorator, among other things
-   *
-   * @param Zend_View_Interface $view
-   * @return string
-   */
-  public function render(Zend_View_Interface $view = null)
+
+  public function getNonEmptyErrors()
   {
-    $this->_setOwnDecorators();
-
-    $elements = $this->getElements();
-    foreach ($elements as $element) {
-      if ($element instanceof Zend_Form_Element_File) {
-        // File elements require a 'File' decorator
-        $element->setDecorators(array(
-          array('AjaxValidation'),
-          array('File'),
-          array('CustomErrors'),
-          array('Description'),
-          array('Label', array('separator' => ' ', 'class' => 'form-element-label')),
-          array('HtmlTag', array('tag' => 'p', 'class' => $this->_groupClass)),
-        ));
-      }
-
-      if ($element instanceof Zend_Form_Element_Hidden) {
-        // Zend_Form_Element_Hidden elements should not be rendered in a group at all
-        $element->setDecorators(array(
-          array('AjaxValidation'),
-          array('ViewHelper'),
-          array('CustomErrors'),
-          array('Description'),
-          array('Label', array('separator' => ' ', 'class' => 'form-element-label')),
-          array('HtmlTag', array('tag' => 'p', 'class' => 'element-group-hidden')),
-        ));
-      }
-
-      if (($element instanceof Zend_Form_Element_Submit)) {
-        $this->_setSubmitDecorators($element);
+    $errors = array();
+    $rawErrors = $this->getErrors();
+    foreach ($rawErrors as $name => $err) {
+      if (!empty($err)) {
+        $errors[$name] = $err;
       }
     }
-
-    $content = parent::render($view);
-    return $content;
-  }
-
-
-  public function getAdditionalJs()
-  {
-    return '';
-  }
-
-  protected function _setSubmitDecorators($element)
-  {
-    // Buttons do not need labels
-    $element->setDecorators(array(
-      array('ViewHelper'),
-      array('HtmlTag', array('tag' => 'p', 'class' => $this->_submitGroupClass)),
-    ));
-  }
-
-  protected function _setOwnDecorators()
-  {
-    $this->clearDecorators();
-    $this->addDecorator('FormElements')
-      ->addDecorator('JsForm')
-      ->addDecorator('JsValidation');
-
-    $this->setDisplayGroupDecorators(array(
-      'FormElements',
-      'Fieldset'
-    ));
-
-    $this->setElementDecorators(array(
-      array('AjaxValidation'),
-      array('ViewHelper'),
-      array('CustomErrors'),
-      array('Description'),
-      array('Label', array('separator' => ' ', 'class' => 'form-element-label')),
-      array('HtmlTag', array('tag' => 'p', 'class' => $this->_groupClass)),
-    ));
+    return $errors;
   }
 }

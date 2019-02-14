@@ -658,6 +658,7 @@ describe('Media tests', () => {
         expect(looksLikeUUID(body.id)).toBeTruthy();
 
         // Can't post the same image twice
+        mediaClient.setDebugBackend();
         const { statusCode: statusCodeDupe, body: bodyDupe } = await mediaClient.post({
           mediaType: PHOTO,
           albumId: plainUser.albumId,
@@ -759,6 +760,69 @@ describe('Media tests', () => {
         expect(statusCode).toEqual(400);
         expect(body.errors).toEqual({'storageType': ["invalidType"]});
       });
+    });
+
+    describe('PUT ACLs', () => {
+      test('Guest can\'t PUT', async () => {
+        await mediaClient.setToken(null);
+        const { statusCode } = await mediaClient.put(invalidPhoto.id, {
+          title: 'Modified title',
+        });
+        expect(statusCode).toEqual(403);
+      });
+
+      test('Writer can\'t PUT', async () => {
+        await mediaClient.setUser(writerUser);
+        const { statusCode } = await mediaClient.put(invalidPhoto.id, {
+          title: 'Modified title',
+        });
+        expect(statusCode).toEqual(403);
+      });
+
+      test('Owner can PUT', async () => {
+        await mediaClient.setUser(plainUser);
+        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+          title: 'Modified title',
+        });
+        expect(statusCode).toEqual(200);
+        expect(body.title).toEqual('Modified title');
+      });
+
+      test('Editor can PUT', async () => {
+        await mediaClient.setUser(editorUser);
+        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+          title: 'Modified title2',
+        });
+        expect(statusCode).toEqual(200);
+        expect(body.title).toEqual('Modified title2');
+      });
+
+      test('Admin can PUT', async () => {
+        await mediaClient.setUser(adminUser);
+        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+          title: 'Modified title3',
+        });
+        expect(statusCode).toEqual(200);
+        expect(body.title).toEqual('Modified title3');
+      });
+    });
+
+    describe('Successful PUT', () => {
+
+    });
+
+    describe.skip('Failing PUT', () => {
+      test('Cannot change mediaType', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setDebugBackend();
+        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+          mediaType: VIDEO,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual([]);
+      });
+
+
     });
   });
 
@@ -1002,6 +1066,22 @@ describe('Media tests', () => {
         expect(statusCode).toEqual(400);
         expect(body.errors).toEqual({'storageType': ["invalidType"]});
       });
+    });
+
+    describe('PUT ACLs', () => {
+      // Guest can't PUT
+      // Owner can PUT
+      // Writer can't PUT
+      // Editor can PUT
+      // Admin can PUT
+    });
+
+    describe('Successful PUT', () => {
+
+    });
+
+    describe('Failing PUT', () => {
+
     });
   });
 });

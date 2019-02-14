@@ -13,7 +13,6 @@ class Data_Form_Element_Description extends Lib_Form_Element_TinyMce
     parent::__construct('description', $options);
     $this->setLabel(ucfirst(Globals::getTranslate()->_('description')))
       ->setRequired(true)
-      ->addValidator('NotEmpty')
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
       ->addFilter('HTMLPurifier');
   }

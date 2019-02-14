@@ -243,27 +243,19 @@ abstract class Api_Data_Accessor
   public function updateObjectWithData($object, $data)
   {
     $attributes = $this->getUpdateAttributes($object);
-
-    $errors = array();
     $form = $object->getForm($this->_user, $this->_acl);
-
     $data = array_merge($form->populateFromDatabaseData($object->toArray()), $data);
-
     if (!$form->isValid($data)) {
-      $rawErrors = $form->getErrors();
-      foreach ($rawErrors as $name => $err) {
-        if (!empty($err)) {
-          $errors[$name] = $err;
-        }
-      }
-    } else {
-      $formattedData = $form->getFormattedValuesForDatabase();
-      foreach ($attributes as $attrFormName => $attrDBName) {
-        $this->_updateKey($object, $attrFormName, $attrDBName, $data, $formattedData);
-      }
-      $object->save();
+      $errors = $form->getNonEmptyErrors();
+      return $errors;
     }
-    return $errors;
+
+    $formattedData = $form->getFormattedValuesForDatabase();
+    foreach ($attributes as $attrFormName => $attrDBName) {
+      $this->_updateKey($object, $attrFormName, $attrDBName, $data, $formattedData);
+    }
+    $object->save();
+    return array();
   }
 
   public function deleteObject($object)

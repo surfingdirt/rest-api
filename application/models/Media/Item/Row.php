@@ -1,12 +1,12 @@
 <?php
 
 class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
-  Data_Row_MediaItemInterface,
-  Data_Row_SpotInterface,
-  Data_Row_TrickInterface,
-  Data_Row_LocationInterface,
-  Data_Row_DocumentInterface,
-  Data_Row_DptInterface
+  Data_Row_MediaItemInterface
+//  Data_Row_SpotInterface,
+//  Data_Row_TrickInterface,
+//  Data_Row_LocationInterface,
+//  Data_Row_DocumentInterface,
+//  Data_Row_DptInterface
 {
   /**
    * Location of the spot
