@@ -811,7 +811,7 @@ describe('Media tests', () => {
 
     });
 
-    describe.skip('Failing PUT', () => {
+    describe('Failing PUT', () => {
       test('Cannot change mediaType', async () => {
         await mediaClient.setUser(plainUser);
         mediaClient.setDebugBackend();
@@ -819,10 +819,28 @@ describe('Media tests', () => {
           mediaType: VIDEO,
         });
         expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual([]);
+        expect(body.errors).toEqual({'mediaType': 'immutable'});
       });
 
+      test('Cannot change mediaSubType', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setDebugBackend();
+        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+          mediaSubType: 'toto',
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'mediaSubType': 'immutable'});
+      });
 
+      test('Cannot change storageType', async () => {
+        await mediaClient.setUser(plainUser);
+        mediaClient.setDebugBackend();
+        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+          storageType: 27,
+        });
+        expect(statusCode).toEqual(400);
+        expect(body.errors).toEqual({'storageType': 'immutable'});
+      });
     });
   });
 

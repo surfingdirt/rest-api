@@ -18,6 +18,8 @@ abstract class Api_Data_Accessor
   public $memberWriteAttributes = array();
   public $ownWriteAttributes = array();
   public $adminWriteAttributes = array();
+  public $forbiddenWriteAttributes = array();
+
 
   public function __construct(User_Row $user, Lib_Acl $acl)
   {

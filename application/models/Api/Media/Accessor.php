@@ -88,20 +88,21 @@ class Api_Media_Accessor extends Api_Data_Accessor
   public $adminWriteAttributes = array(
     'status' => 'status',
     'albumId' => 'albumId',
-    'mediaType' => 'mediaType',
     'vendorKey' => 'vendorKey',
+  );
+
+  public $forbiddenWriteAttributes = array(
+    'mediaType' => 'mediaType',
+    'mediaSubType' => 'mediaSubType',
+    'storageType' => 'storageType',
   );
 
   public function getUpdateAttributes($object)
   {
     $attrs = parent::getUpdateAttributes($object);
-    if ($object->mediaType == Media_Item::TYPE_PHOTO) {
-      // TODO: faire que les attrs ne contiennent que ce qui est necessaire pour les photos
-    } else {
-      // TODO: faire que les attrs ne contiennent que ce qui est necessaire pour les videos
+    if ($object->mediaType == Media_Item::TYPE_VIDEO) {
       $attrs['vendorKey'] = 'vendorKey';
     }
-
     return $attrs;
   }
 
@@ -166,35 +167,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
     return array($object->getId(), null);
   }
-
-  /**
-   * Updates an object for a PUT operations
-   */
-//  public function updateObjectWithData($object, $data)
-//  {
-//    $form = $object->getForm($this->_user, $this->_acl, null, $data);
-//    // TODO: go over allowed update attributes
-//    if (!$form->isValid($data)) {
-//      $errors = $form->getNonEmptyErrors();
-//    } else {
-//      $attributes = $this->getUpdateAttributes($object);
-//      $formattedData = array_merge($object->toArray(), $data);
-//      if ($object->mediaType == Media_Item::TYPE_PHOTO) {
-//        $data = array_merge($data, $this->_getPhotoData($object));
-//      } else {
-//        $data = array_merge($data, $this->_getVideoData($object, $form->media));
-//      }
-//      /*
-//      $formattedData = $form->getFormattedValuesForDatabase();
-//      foreach($attributes as $attrFormName => $attrDBName){
-//        $this->_updateKey($object, $attrFormName, $attrDBName, $data, $formattedData);
-//      }
-//      */
-//      //error_log($log);
-//      $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
-//    }
-//    return $errors;
-//  }
 
   /**
    * Saves a Data_Row in database, setting its data from the submitted form

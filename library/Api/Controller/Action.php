@@ -3,6 +3,11 @@
 abstract class Api_Controller_Action extends Zend_Controller_Action
 {
   /**
+   * The error string for when an immutable field is being updated.
+   */
+  const IMMUTABLE = 'immutable';
+
+  /**
    * Name of the resource
    * @var string
    */
@@ -211,8 +216,10 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       throw new Api_Exception_Unauthorised();
     }
 
-    $this->_preObjectUpdate($object, $data);
-    $errors = $this->_accessor->updateObjectWithData($object, $data);
+    $errors = $this->_preObjectUpdate($object, $data);
+    if (!$errors) {
+      $errors = $this->_accessor->updateObjectWithData($object, $data);
+    }
     if (empty($errors)) {
       $this->_postObjectUpdate($object, $data);
       $this->view->output = $this->_accessor->getObjectData(
@@ -222,13 +229,20 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       );
 
     } else {
-      $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
+      $this->_badRequest();
       $this->view->output = array('errors' => $errors);
     }
   }
 
   protected function _preObjectUpdate($object, $data)
   {
+    $errors = array();
+    foreach ($this->_accessor->forbiddenWriteAttributes as $formKey => $dbKey) {
+      if (isset($data[$formKey]) && $object->$dbKey != $data[$formKey]) {
+        $errors[$formKey] = self::IMMUTABLE;
+      }
+    }
+    return $errors;
   }
 
   protected function _postObjectUpdate($object, $data)

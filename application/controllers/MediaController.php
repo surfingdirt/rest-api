@@ -33,11 +33,16 @@ class MediaController extends Api_Controller_Action
   public function putAction()
   {
     $id = $this->_request->getParam('id');
+    if (!$id) {
+      throw new Api_Exception_BadRequest();
+    }
     $data = $this->_getBodyParams();
     $object = Api_Media_Factory::buildItemById($id);
 
-    $this->_preObjectUpdate($object, $data);
-    $errors = $this->_accessor->updateObjectWithData($object, $data);
+    $errors = $this->_preObjectUpdate($object, $data);
+    if (!$errors) {
+      $errors = $this->_accessor->updateObjectWithData($object, $data);
+    }
     if ($errors) {
       $this->_badRequest();
       $this->view->output = array('errors' => $errors);
