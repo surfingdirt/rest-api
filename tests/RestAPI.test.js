@@ -658,7 +658,6 @@ describe('Media tests', () => {
         expect(looksLikeUUID(body.id)).toBeTruthy();
 
         // Can't post the same image twice
-        mediaClient.setDebugBackend();
         const { statusCode: statusCodeDupe, body: bodyDupe } = await mediaClient.post({
           mediaType: PHOTO,
           albumId: plainUser.albumId,
@@ -782,6 +781,7 @@ describe('Media tests', () => {
       test('Owner can PUT', async () => {
         await mediaClient.setUser(plainUser);
         mediaClient.setDebugBackend();
+        await mediaClient.get(invalidPhoto.id);
         const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
           title: 'Modified title',
         });
@@ -840,8 +840,7 @@ describe('Media tests', () => {
         expect(body.errors).toEqual({'storageType': 'immutable'});
       });
 
-      test.only('Cannot use an existing imageId', async () => {
-        mediaClient.setDebugBackend(false);
+      test('Cannot use an existing imageId', async () => {
         const postImage = async () => {
           const imageClient = new ResourceClient(client, IMAGE);
           await imageClient.setUser(plainUser);
@@ -872,7 +871,6 @@ describe('Media tests', () => {
         const secondPhoto = await postPhoto(secondImageId);
 
         await mediaClient.setUser(plainUser);
-        mediaClient.setDebugBackend();
         const { statusCode, body } = await mediaClient.put(secondPhoto.id, {
           imageId: initialImageId,
         });

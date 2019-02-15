@@ -112,25 +112,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
    */
   public function getObjectData($neutralObject, $action = 'list')
   {
-    /**
-     * This is a shitty architecture:
-     * you need to know the type of media (photo/video) in order
-     * to instantiate it correctly (Media_Item_Photo_Row vs
-     * Media_Item_Video_Row). But you don't know the type
-     * until after it is instantiated.
-     *
-     * Workaround: load the object normally in the controller,
-     * and once we get it here, fork depending on the albumType to
-     * instantiate the correct object, in order to read it.
-     */
-    if ($neutralObject->mediaType == Media_Item::TYPE_PHOTO) {
-      $table = new Media_Item_Photo();
-    } else {
-      $table = new Media_Item_Video();
-    }
-
-    $object = $table->find($neutralObject->getId())->current();
-
+    $object = Api_Media_Factory::buildItemByIdAndMediaType($neutralObject->getId(), $neutralObject->getMediaType());
     $attributes = $this->getReadAttributes($object);
 
     $ret = array();
