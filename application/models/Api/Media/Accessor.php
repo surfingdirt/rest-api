@@ -94,7 +94,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
 
   public $forbiddenWriteAttributes = array(
     'mediaType' => 'mediaType',
-    'mediaSubType' => 'mediaSubType',
     'storageType' => 'storageType',
   );
 
@@ -103,6 +102,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
     $attrs = parent::getUpdateAttributes($object);
     if ($object->mediaType == Media_Item::TYPE_VIDEO) {
       $attrs['vendorKey'] = 'vendorKey';
+      $attrs['mediaSubType'] = 'mediaSubType';
     }
     return $attrs;
   }

@@ -552,7 +552,7 @@ describe('Image tests', () => {
 describe('Media tests', () => {
   const mediaClient = new ResourceClient(client, MEDIA);
 
-  describe('Media GET ACLs', () => {
+  describe('GET ACLs', () => {
     const media0PublicInfo =
       '["album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
       '"mediaSubType","mediaType","status","submitter","title","vendorKey","width"]';
@@ -624,140 +624,188 @@ describe('Media tests', () => {
     });
   });
 
+  describe('PUT ACLs', () => {
+    test('Guest can\'t PUT', async () => {
+      await mediaClient.setToken(null);
+      const { statusCode } = await mediaClient.put(invalidPhoto.id, {
+        title: 'Modified title',
+      });
+      expect(statusCode).toEqual(403);
+    });
+
+    test('Writer can\'t PUT', async () => {
+      await mediaClient.setUser(writerUser);
+      const { statusCode } = await mediaClient.put(invalidPhoto.id, {
+        title: 'Modified title',
+      });
+      expect(statusCode).toEqual(403);
+    });
+
+    test('Owner can PUT', async () => {
+      await mediaClient.setUser(plainUser);
+      await mediaClient.get(invalidPhoto.id);
+      const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+        title: 'Modified title',
+      });
+      expect(statusCode).toEqual(200);
+      expect(body.title).toEqual('Modified title');
+    });
+
+    test('Editor can PUT', async () => {
+      await mediaClient.setUser(editorUser);
+      const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+        title: 'Modified title2',
+      });
+      expect(statusCode).toEqual(200);
+      expect(body.title).toEqual('Modified title2');
+    });
+
+    test('Admin can PUT', async () => {
+      await mediaClient.setUser(adminUser);
+      const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+        title: 'Modified title3',
+      });
+      expect(statusCode).toEqual(200);
+      expect(body.title).toEqual('Modified title3');
+    });
+  });
+
   describe('Photo tests', () => {
     const existingImageId = images[2].id;
     const secondExistingImageId = images[3].id;
 
-    describe('POST ACLs', () => {
-      test('Guest cannot POST', async () => {
-        await mediaClient.setToken(null);
-        const { statusCode } = await mediaClient.post({
-          mediaType: PHOTO,
-          albumId: plainUser.albumId,
-          title: 'A new photo title',
-          description: 'A new photo description',
-          imageId: existingImageId,
-          storageType: 0,
+    describe('POST', () => {
+      describe('ACLs', () => {
+        test('Guest cannot POST', async () => {
+          await mediaClient.setToken(null);
+          const { statusCode } = await mediaClient.post({
+            mediaType: PHOTO,
+            albumId: plainUser.albumId,
+            title: 'A new photo title',
+            description: 'A new photo description',
+            imageId: existingImageId,
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(403);
         });
-        expect(statusCode).toEqual(403);
-      });
-    });
-
-    describe('Successful POST', () => {
-      test('Plain user can POST', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: PHOTO,
-          albumId: plainUser.albumId,
-          title: 'A new photo title',
-          description: 'A new photo description',
-          imageId: existingImageId,
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(200);
-        expect(looksLikeUUID(body.id)).toBeTruthy();
-
-        // Can't post the same image twice
-        const { statusCode: statusCodeDupe, body: bodyDupe } = await mediaClient.post({
-          mediaType: PHOTO,
-          albumId: plainUser.albumId,
-          title: 'A new photo title',
-          description: 'A new photo description',
-          imageId: existingImageId,
-          storageType: 0,
-        });
-
-        expect(statusCodeDupe).toEqual(400);
-        expect(bodyDupe.errors).toEqual({'imageId': ["duplicatedImageId"]});
       });
 
-      test('Plain user can post to their own static album', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: PHOTO,
-          albumId: plainUserStaticAlbum.id,
-          title: 'A new photo title',
-          description: 'A new photo description',
-          imageId: secondExistingImageId,
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(200);
-        expect(looksLikeUUID(body.id)).toBeTruthy();
-        expect(body.album.id).toEqual(plainUserStaticAlbum.id);
-      });
-    });
+      describe('Successes', () => {
+        test('Plain user can POST', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: PHOTO,
+            albumId: plainUser.albumId,
+            title: 'A new photo title',
+            description: 'A new photo description',
+            imageId: existingImageId,
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(200);
+          expect(looksLikeUUID(body.id)).toBeTruthy();
 
-    describe('Failing POST', () => {
-      const notPostedImageId = images[4].id;
+          // Can't post the same image twice
+          const { statusCode: statusCodeDupe, body: bodyDupe } = await mediaClient.post({
+            mediaType: PHOTO,
+            albumId: plainUser.albumId,
+            title: 'A new photo title',
+            description: 'A new photo description',
+            imageId: existingImageId,
+            storageType: 0,
+          });
 
-      test('Invalid imageId fails', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: PHOTO,
-          imageId: 'badImageId',
-          albumId: plainUser.albumId,
-          title: 'A failing photo title',
-          description: 'A failing photo description',
-          storageType: 0,
+          expect(statusCodeDupe).toEqual(400);
+          expect(bodyDupe.errors).toEqual({ 'imageId': ["duplicatedImageId"] });
         });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'imageId': ["doesNotExist"]});
-      });
 
-      test('Aggregate albumId fails', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: PHOTO,
-          imageId: notPostedImageId,
-          albumId: aggregateAlbum.id,
-          title: 'A failing photo title',
-          description: 'A failing photo description',
-          storageType: 0,
+        test('Plain user can post to their own static album', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: PHOTO,
+            albumId: plainUserStaticAlbum.id,
+            title: 'A new photo title',
+            description: 'A new photo description',
+            imageId: secondExistingImageId,
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(200);
+          expect(looksLikeUUID(body.id)).toBeTruthy();
+          expect(body.album.id).toEqual(plainUserStaticAlbum.id);
         });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'albumId': ["albumTypeNotAllowed"]});
       });
 
-      test('Plain user cannot post to another user\'s album', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: PHOTO,
-          imageId: notPostedImageId,
-          albumId: editorUserStaticAlbum.id,
-          title: 'A failing photo title',
-          description: 'A failing photo description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'albumId': ["albumNotWritable"]});
-      });
+      describe('Failures', () => {
+        const notPostedImageId = images[4].id;
 
-      test('Plain user cannot post to non-existing album', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: PHOTO,
-          imageId: notPostedImageId,
-          albumId: 'nachoAlbum',
-          title: 'A failing photo title',
-          description: 'A failing photo description',
-          storageType: 0,
+        test('Invalid imageId fails', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: PHOTO,
+            imageId: 'badImageId',
+            albumId: plainUser.albumId,
+            title: 'A failing photo title',
+            description: 'A failing photo description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({ 'imageId': ["doesNotExist"] });
         });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'albumId': ["doesNotExist"]});
-      });
 
-      test('Bad storageType fails', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: PHOTO,
-          imageId: notPostedImageId,
-          albumId: plainUser.albumId,
-          title: 'A failing photo title',
-          description: 'A failing photo description',
-          storageType: 27,
+        test('Aggregate albumId fails', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: PHOTO,
+            imageId: notPostedImageId,
+            albumId: aggregateAlbum.id,
+            title: 'A failing photo title',
+            description: 'A failing photo description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({ 'albumId': ["albumTypeNotAllowed"] });
         });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'storageType': ["invalidType"]});
+
+        test('Plain user cannot post to another user\'s album', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: PHOTO,
+            imageId: notPostedImageId,
+            albumId: editorUserStaticAlbum.id,
+            title: 'A failing photo title',
+            description: 'A failing photo description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({ 'albumId': ["albumNotWritable"] });
+        });
+
+        test('Plain user cannot post to non-existing album', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: PHOTO,
+            imageId: notPostedImageId,
+            albumId: 'nachoAlbum',
+            title: 'A failing photo title',
+            description: 'A failing photo description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({ 'albumId': ["doesNotExist"] });
+        });
+
+        test('Bad storageType fails', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: PHOTO,
+            imageId: notPostedImageId,
+            albumId: plainUser.albumId,
+            title: 'A failing photo title',
+            description: 'A failing photo description',
+            storageType: 27,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({ 'storageType': ["invalidType"] });
+        });
       });
     });
 
@@ -776,7 +824,7 @@ describe('Media tests', () => {
         await mediaClient.setUser(user);
         const { statusCode, body } = await mediaClient.post({
           mediaType: PHOTO,
-          albumId: plainUserStaticAlbum.id,
+          albumId: user.albumId,
           title: 'A new photo title',
           description: 'A new photo description',
           imageId: imageId,
@@ -786,53 +834,7 @@ describe('Media tests', () => {
         return body;
       };
 
-      describe('PUT ACLs', () => {
-        test('Guest can\'t PUT', async () => {
-          await mediaClient.setToken(null);
-          const { statusCode } = await mediaClient.put(invalidPhoto.id, {
-            title: 'Modified title',
-          });
-          expect(statusCode).toEqual(403);
-        });
-
-        test('Writer can\'t PUT', async () => {
-          await mediaClient.setUser(writerUser);
-          const { statusCode } = await mediaClient.put(invalidPhoto.id, {
-            title: 'Modified title',
-          });
-          expect(statusCode).toEqual(403);
-        });
-
-        test('Owner can PUT', async () => {
-          await mediaClient.setUser(plainUser);
-          await mediaClient.get(invalidPhoto.id);
-          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-            title: 'Modified title',
-          });
-          expect(statusCode).toEqual(200);
-          expect(body.title).toEqual('Modified title');
-        });
-
-        test('Editor can PUT', async () => {
-          await mediaClient.setUser(editorUser);
-          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-            title: 'Modified title2',
-          });
-          expect(statusCode).toEqual(200);
-          expect(body.title).toEqual('Modified title2');
-        });
-
-        test('Admin can PUT', async () => {
-          await mediaClient.setUser(adminUser);
-          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-            title: 'Modified title3',
-          });
-          expect(statusCode).toEqual(200);
-          expect(body.title).toEqual('Modified title3');
-        });
-      });
-
-      describe('Successful PUT', () => {
+      describe('Successes', () => {
         test('Update imageId', async() => {
           const initialImageId = await postImageAs(plainUser);
           const photo = await postPhotoAs(plainUser, initialImageId);
@@ -860,7 +862,7 @@ describe('Media tests', () => {
         });
       });
 
-      describe('Failing PUT', () => {
+      describe('Failures', () => {
         test('Cannot change mediaType', async () => {
           await mediaClient.setUser(plainUser);
           const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
@@ -868,15 +870,6 @@ describe('Media tests', () => {
           });
           expect(statusCode).toEqual(400);
           expect(body.errors).toEqual({'mediaType': ['immutable']});
-        });
-
-        test('Cannot change mediaSubType', async () => {
-          await mediaClient.setUser(plainUser);
-          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-            mediaSubType: 'toto',
-          });
-          expect(statusCode).toEqual(400);
-          expect(body.errors).toEqual({'mediaSubType': ['immutable']});
         });
 
         test('Cannot change storageType', async () => {
@@ -888,7 +881,7 @@ describe('Media tests', () => {
           expect(body.errors).toEqual({'storageType': ['immutable']});
         });
 
-        test('Cannot use an inexisting imageId', async () => {
+        test('Cannot use an non-existing imageId', async () => {
           await mediaClient.setUser(plainUser);
           const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
             imageId: 'not-an-id',
@@ -920,256 +913,293 @@ describe('Media tests', () => {
       '"mediaSubType","mediaType","status","submitter","title","vendorKey","width"]';
     // TODO: rajouter author
 
-    describe('POST ACLs', () => {
-      test('Guest cannot POST', async () => {
-        await mediaClient.setToken(null);
-        const { statusCode } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: YOUTUBE,
-          vendorKey: '1PcGJIjhQjg',
-          albumId: plainUser.albumId,
-          title: 'A new YouTube video title',
-          description: 'A new YouTube video description',
-          storageType: 0,
+    describe('POST', () => {
+      describe('ACLs', () => {
+        test('Guest cannot POST', async () => {
+          await mediaClient.setToken(null);
+          const { statusCode } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: '1PcGJIjhQjg',
+            albumId: plainUser.albumId,
+            title: 'A new YouTube video title',
+            description: 'A new YouTube video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(403);
         });
-        expect(statusCode).toEqual(403);
       });
-    });
 
-    describe('Successful POST', () => {
-      test('YouTube video', async () => {
+      describe('Successes', () => {
+        test('YouTube video', async () => {
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: '1PcGJIjhQjg',
+            albumId: plainUser.albumId,
+            title: 'A new YouTube video title',
+            description: 'A new YouTube video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(200);
+          expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+          expect(looksLikeUUID(body.id)).toBeTruthy();
+        });
+
+        test('Vimeo video', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: VIMEO,
+            vendorKey: '16567910',
+            albumId: plainUser.albumId,
+            title: 'A new Vimeo video title',
+            description: 'A new Vimeo video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(200);
+          expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+          expect(looksLikeUUID(body.id)).toBeTruthy();
+        });
+
+        test('Facebook video', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: FACEBOOK,
+            vendorKey: 'showhey.miyata/videos/1854604844577137',
+            albumId: plainUser.albumId,
+            title: 'A new Facebook video title',
+            description: 'A new Facebook video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(200);
+          expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+          expect(looksLikeUUID(body.id)).toBeTruthy();
+        });
+
+        test('Dailymotion video', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: DAILYMOTION,
+            vendorKey: 'x1buew',
+            albumId: plainUser.albumId,
+            title: 'A new Dailymotion video title',
+            description: 'A new Dailymotion video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(200);
+          expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+          expect(looksLikeUUID(body.id)).toBeTruthy();
+        });
+
+        test('Instagram video', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: INSTAGRAM,
+            vendorKey: 'Bks-3LhgiDQ',
+            albumId: plainUser.albumId,
+            title: 'A new Instagram video title',
+            description: 'A new Instagram video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(200);
+          expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+          expect(looksLikeUUID(body.id)).toBeTruthy();
+        });
+
+        test('Plain user can post to their own static album', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: 'RoAV-FSDGlA',
+            albumId: plainUserStaticAlbum.id,
+            title: 'A failing YouTube video title',
+            description: 'A failing YouTube video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(200);
+          expect(statusCode).toEqual(200);
+          expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+          expect(looksLikeUUID(body.id)).toBeTruthy();
+          expect(body.album.id).toEqual(plainUserStaticAlbum.id);
+        });
+      });
+
+      describe('Failures', () => {
+        test('Invalid mediaSubType fails', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: 'sds',
+            albumId: plainUser.albumId,
+            title: 'A new video title',
+            description: 'A new video description',
+            vendorKey: '1PcGJIjhQjg',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({"mediaSubType": ["invalidType"]});
+        });
+
+        test('Invalid vendorKey fails because thumbnail is invalid', async () => {
+          mediaClient.setLocalVideoThumb(LOCAL_BAD_THUMB_PATH);
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: 'badKey',
+            albumId: plainUser.albumId,
+            title: 'A failing YouTube video title',
+            description: 'A failing YouTube video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors.topLevelError.code).toEqual(10011);
+        });
+
+        test('Invalid storageType fails', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: '1PcGJIjhQjg',
+            albumId: plainUser.albumId,
+            title: 'A failing YouTube video title',
+            description: 'A failing YouTube video description',
+            storageType: 27,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'storageType': ["invalidType"]});
+        });
+
+        test('Aggregate albumId fails', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: '1PcGJIjhQjg',
+            albumId: aggregateAlbum.id,
+            title: 'A failing YouTube video title',
+            description: 'A failing YouTube video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'albumId': ["albumTypeNotAllowed"]});
+        });
+
+        test('Plain user cannot post to another user\'s album', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: '1PcGJIjhQjg',
+            albumId: editorUserStaticAlbum.id,
+            title: 'A failing YouTube video title',
+            description: 'A failing YouTube video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'albumId': ["albumNotWritable"]});
+        });
+
+        test('Plain user cannot post to non-existing album', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: '1PcGJIjhQjg',
+            albumId: 'nachoalbum',
+            title: 'A failing YouTube video title',
+            description: 'A failing YouTube video description',
+            storageType: 0,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'albumId': ["doesNotExist"]});
+        });
+
+        test('Bad storageType fails', async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const { statusCode, body } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: '1PcGJIjhQjg',
+            albumId: plainUser.albumId,
+            title: 'A failing YouTube video title',
+            description: 'A failing YouTube video description',
+            storageType: 27,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'storageType': ["invalidType"]});
+        });
+      });
+    })
+
+    describe('PUT', () => {
+      const postVideoAs = async (user, vendorKey) => {
+        await mediaClient.setUser(user);
         mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        await mediaClient.setUser(plainUser);
         const { statusCode, body } = await mediaClient.post({
           mediaType: VIDEO,
           mediaSubType: YOUTUBE,
-          vendorKey: '1PcGJIjhQjg',
-          albumId: plainUser.albumId,
-          title: 'A new YouTube video title',
-          description: 'A new YouTube video description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(200);
-        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
-        expect(looksLikeUUID(body.id)).toBeTruthy();
-      });
-
-      test('Vimeo video', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: VIMEO,
-          vendorKey: '16567910',
-          albumId: plainUser.albumId,
-          title: 'A new Vimeo video title',
-          description: 'A new Vimeo video description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(200);
-        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
-        expect(looksLikeUUID(body.id)).toBeTruthy();
-      });
-
-      test('Facebook video', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: FACEBOOK,
-          vendorKey: 'showhey.miyata/videos/1854604844577137',
-          albumId: plainUser.albumId,
-          title: 'A new Facebook video title',
-          description: 'A new Facebook video description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(200);
-        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
-        expect(looksLikeUUID(body.id)).toBeTruthy();
-      });
-
-      test('Dailymotion video', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: DAILYMOTION,
-          vendorKey: 'x1buew',
-          albumId: plainUser.albumId,
-          title: 'A new Dailymotion video title',
-          description: 'A new Dailymotion video description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(200);
-        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
-        expect(looksLikeUUID(body.id)).toBeTruthy();
-      });
-
-      test('Instagram video', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: INSTAGRAM,
-          vendorKey: 'Bks-3LhgiDQ',
-          albumId: plainUser.albumId,
-          title: 'A new Instagram video title',
-          description: 'A new Instagram video description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(200);
-        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
-        expect(looksLikeUUID(body.id)).toBeTruthy();
-      });
-
-      test('Plain user can post to their own static album', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: YOUTUBE,
-          vendorKey: 'RoAV-FSDGlA',
-          albumId: plainUserStaticAlbum.id,
-          title: 'A failing YouTube video title',
-          description: 'A failing YouTube video description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(200);
-        expect(statusCode).toEqual(200);
-        expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
-        expect(looksLikeUUID(body.id)).toBeTruthy();
-        expect(body.album.id).toEqual(plainUserStaticAlbum.id);
-      });
-    });
-
-    describe('Failing POST', () => {
-      test('Invalid mediaSubType fails', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: 'sds',
-          albumId: plainUser.albumId,
+          albumId: user.albumId,
           title: 'A new video title',
           description: 'A new video description',
-          vendorKey: '1PcGJIjhQjg',
+          vendorKey,
           storageType: 0,
         });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({"mediaSubType": ["invalidType"]});
-      });
+        expect(statusCode).toEqual(200);
+        return body;
+      };
 
-      test('Invalid vendorKey fails because thumbnail is invalid', async () => {
-        mediaClient.setLocalVideoThumb(LOCAL_BAD_THUMB_PATH);
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: YOUTUBE,
-          vendorKey: 'badKey',
-          albumId: plainUser.albumId,
-          title: 'A failing YouTube video title',
-          description: 'A failing YouTube video description',
-          storageType: 0,
+      describe('Successes', () => {
+        test('Update vendorKey', async() => {
+          const video = await postVideoAs(plainUser, '9cTG0U6IMHU');
+
+          await mediaClient.setUser(plainUser);
+          const newVendorKey = 'kZ75GzTL27o';
+          const { statusCode, body } = await mediaClient.put(video.id, {
+            vendorKey: newVendorKey,
+          });
+          expect(statusCode).toEqual(200);
+          expect(body.vendorKey).toEqual(newVendorKey);
         });
-        expect(statusCode).toEqual(400);
-        expect(body.errors.topLevelError.code).toEqual(10011);
-      });
 
-      test('Invalid storageType fails', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: YOUTUBE,
-          vendorKey: '1PcGJIjhQjg',
-          albumId: plainUser.albumId,
-          title: 'A failing YouTube video title',
-          description: 'A failing YouTube video description',
-          storageType: 27,
+        test('Update mediaSubType', async() => {
+          const video = await postVideoAs(plainUser, '_k8G0DaAPMk');
+
+          await mediaClient.setUser(plainUser);
+          mediaClient.setDebugBackend();
+          const newVendorKey = '15697415';
+          const { statusCode, body } = await mediaClient.put(video.id, {
+            vendorKey: newVendorKey,
+            mediaSubType: VIMEO
+          });
+          expect(statusCode).toEqual(200);
+          expect(body.vendorKey).toEqual(newVendorKey);
+          expect(body.mediaSubType).toEqual(VIMEO);
         });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'storageType': ["invalidType"]});
       });
 
-      test('Aggregate albumId fails', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: YOUTUBE,
-          vendorKey: '1PcGJIjhQjg',
-          albumId: aggregateAlbum.id,
-          title: 'A failing YouTube video title',
-          description: 'A failing YouTube video description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'albumId': ["albumTypeNotAllowed"]});
+      describe('Failure', () => {
+
       });
-
-      test('Plain user cannot post to another user\'s album', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: YOUTUBE,
-          vendorKey: '1PcGJIjhQjg',
-          albumId: editorUserStaticAlbum.id,
-          title: 'A failing YouTube video title',
-          description: 'A failing YouTube video description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'albumId': ["albumNotWritable"]});
-      });
-
-      test('Plain user cannot post to non-existing album', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: YOUTUBE,
-          vendorKey: '1PcGJIjhQjg',
-          albumId: 'nachoalbum',
-          title: 'A failing YouTube video title',
-          description: 'A failing YouTube video description',
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'albumId': ["doesNotExist"]});
-      });
-
-      test('Bad storageType fails', async () => {
-        await mediaClient.setUser(plainUser);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: YOUTUBE,
-          vendorKey: '1PcGJIjhQjg',
-          albumId: plainUser.albumId,
-          title: 'A failing YouTube video title',
-          description: 'A failing YouTube video description',
-          storageType: 27,
-        });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'storageType': ["invalidType"]});
-      });
-    });
-
-    describe('PUT ACLs', () => {
-      // Guest can't PUT
-      // Owner can PUT
-      // Writer can't PUT
-      // Editor can PUT
-      // Admin can PUT
-    });
-
-    describe('Successful PUT', () => {
-
-    });
-
-    describe('Failing PUT', () => {
-
     });
   });
 });

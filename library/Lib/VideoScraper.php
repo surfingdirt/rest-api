@@ -12,6 +12,8 @@ class Lib_VideoScraper
 
   protected function _getThumbUrl()
   {
+    $thumbUrl = null;
+
     if (APPLICATION_ENV == 'test') {
       $headers = apache_request_headers();
       if (isset($headers['X-localVideoThumb'])) {
