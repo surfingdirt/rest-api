@@ -1207,7 +1207,7 @@ describe('Media tests', () => {
 
     describe('PUT', () => {
       describe('Successes', () => {
-        test('Update vendorKey', async () => {
+        test('Switch video', async () => {
           const video = await postVideoAs(plainUser, '9cTG0U6IMHU');
 
           await mediaClient.setUser(plainUser);
@@ -1219,7 +1219,7 @@ describe('Media tests', () => {
           expect(body.vendorKey).toEqual(newVendorKey);
         });
 
-        test('Update mediaSubType', async () => {
+        test('Switch video and mediaSubType', async () => {
           const video = await postVideoAs(plainUser, '_k8G0DaAPMk');
 
           await mediaClient.setUser(plainUser);
@@ -1314,7 +1314,6 @@ describe('Media tests', () => {
         const video = await postVideoAs(plainUser, '_k8G0DaAPMk');
 
         mediaClient.setUser(plainUser);
-        mediaClient.setDebugBackend();
         const {statusCode} = await mediaClient.delete(video.id);
         expect(statusCode).toEqual(200);
       });

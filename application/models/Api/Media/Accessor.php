@@ -142,26 +142,61 @@ class Api_Media_Accessor extends Api_Data_Accessor
     if ($object->mediaType == Media_Item::TYPE_PHOTO) {
       $data = array_merge($data, $this->_getPhotoData($data['imageId']));
     } else {
-
       $scraper = new Lib_VideoScraper($data['mediaSubType'], $data['vendorKey']);
-      $thumbRow = $this->_saveVideoThumbs($scraper, $object->id);
+      $imageId = Utils::uuidV4();
+      $thumbRow = $this->_saveVideoThumbs($scraper, $imageId);
       $data = array_merge($data, $this->_getVideoData($thumbRow));
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
     return array($object->getId(), null);
   }
 
-  /**
-   * Saves a Data_Row in database, setting its data from the submitted form
-   *
-   * @param Data_Row $data
-   * @param Data_Form $form
-   * @param User_Row $user
-   * @param Lib_Acl $acl
-   * @param array $disregardUpdates
-   * @return int
-   * @throws Lib_Exception
-   */
+  public function updateObjectWithData($object, $data)
+  {
+    $attributes = $this->getUpdateAttributes($object);
+    $form = $object->getForm($this->_user, $this->_acl);
+    $data = array_merge($form->populateFromDatabaseData($object->toArray()), $data);
+    if (!$form->isValid($data)) {
+      $errors = $form->getNonEmptyErrors();
+      return $errors;
+    }
+// TODO:
+    if ($this->_shouldUpdateImage($object, $data)) {
+      // Remove the old image
+      Api_Image::cleanupById($object->storageType, $object->imageId);
+
+      if ($object->mediaType == Media_Item::TYPE_PHOTO) {
+        $data = array_merge($data, $this->_getPhotoData($data['imageId']));
+      } else {
+        $scraper = new Lib_VideoScraper($data['mediaSubType'], $data['vendorKey']);
+        $imageId = Utils::uuidV4();
+        $thumbRow = $this->_saveVideoThumbs($scraper, $imageId);
+        $data = array_merge($data, $this->_getVideoData($thumbRow));
+      }
+    }
+
+    $formattedData = $form->getFormattedValuesForDatabase();
+    foreach ($attributes as $attrFormName => $attrDBName) {
+      $this->_updateKey($object, $attrFormName, $attrDBName, $data, $formattedData);
+    }
+    $object->save();
+    return array();
+  }
+
+  protected function _shouldUpdateImage($object, $data)
+  {
+    if ($object->getMediaType() == Media_Item::TYPE_PHOTO) {
+      if ($object->imageId != $data['imageId']) {
+        return true;
+      }
+    } else {
+      if ($object->vendorKey != $data['vendorKey']) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   protected function _save(Data_Row $dataRow, Data_Form $form, array $data, User_Row $user, Lib_Acl $acl, array $disregardUpdates = array())
   {
     if (empty($data['status'])) {
@@ -207,14 +242,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
     return $imageRow;
   }
 
-  /**
-   * Returns information about the video uri, thumbnail dimensions in order to save to database
-   *
-   * @param Media_Item_Video_Row $video
-   * @param Lib_Form_Element_Video $videoElement
-   * @return array
-   * @throws Lib_Exception_Media
-   */
   protected function _getVideoData($imageRow)
   {
     return array(

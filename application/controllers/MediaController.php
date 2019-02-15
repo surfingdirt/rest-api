@@ -56,6 +56,41 @@ class MediaController extends Api_Controller_Action
     }
   }
 
+//  protected function _preObjectUpdate($object, $data)
+//  {
+//    parent::_preObjectUpdate($object, $data);
+//
+//    $this->_oldImageId = null;
+//    if ($this->_shouldDeleteOldImage($object, $data)) {
+//      $this->_oldImageId = $object->imageId;
+//    }
+//  }
+//
+//  protected function _postObjectUpdate($object, $data)
+//  {
+//    parent::_postObjectUpdate($object, $data);
+//
+//    if ($this->_oldImageId) {
+//      Lib_Storage::cleanUpFiles($object->storageType, $this->_oldImageId);
+//    }
+//  }
+
+  protected function _shouldDeleteOldImage($object, $data)
+  {
+    if ($object->getMediaType() == Media_Item::TYPE_PHOTO) {
+      if ($object->imageId != $data['imageId']) {
+        // We need to delete the old images
+        return true;
+      }
+    } else {
+      if ($object->vendorKey != $data['vendorKey']) {
+        // Images are already overwritten, return false
+        return false;
+      }
+    }
+    return false;
+  }
+
   public function deleteAction()
   {
     $id = $this->_request->getParam('id');
