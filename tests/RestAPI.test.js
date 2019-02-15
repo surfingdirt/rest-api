@@ -761,121 +761,131 @@ describe('Media tests', () => {
       });
     });
 
-    describe('PUT ACLs', () => {
-      test('Guest can\'t PUT', async () => {
-        await mediaClient.setToken(null);
-        const { statusCode } = await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title',
-        });
-        expect(statusCode).toEqual(403);
-      });
-
-      test('Writer can\'t PUT', async () => {
-        await mediaClient.setUser(writerUser);
-        const { statusCode } = await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title',
-        });
-        expect(statusCode).toEqual(403);
-      });
-
-      test('Owner can PUT', async () => {
+    describe('PUT', () => {
+      const postImage = async () => {
+        const imageClient = new ResourceClient(client, IMAGE);
+        await imageClient.setUser(plainUser);
+        const {
+          statusCode,
+          body,
+        } = await imageClient.postFormData({ type: 0 }, [img640]);
+        expect(statusCode).toEqual(200);
+        return body[0].key;
+      };
+      const postPhoto = async (imageId) => {
         await mediaClient.setUser(plainUser);
-        mediaClient.setDebugBackend();
-        await mediaClient.get(invalidPhoto.id);
-        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title',
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: PHOTO,
+          albumId: plainUserStaticAlbum.id,
+          title: 'A new photo title',
+          description: 'A new photo description',
+          imageId: imageId,
+          storageType: 0,
         });
         expect(statusCode).toEqual(200);
-        expect(body.title).toEqual('Modified title');
-      });
+        return body;
+      };
 
-      test('Editor can PUT', async () => {
-        await mediaClient.setUser(editorUser);
-        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title2',
+      describe('PUT ACLs', () => {
+        test('Guest can\'t PUT', async () => {
+          await mediaClient.setToken(null);
+          const { statusCode } = await mediaClient.put(invalidPhoto.id, {
+            title: 'Modified title',
+          });
+          expect(statusCode).toEqual(403);
         });
-        expect(statusCode).toEqual(200);
-        expect(body.title).toEqual('Modified title2');
-      });
 
-      test('Admin can PUT', async () => {
-        await mediaClient.setUser(adminUser);
-        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title3',
+        test('Writer can\'t PUT', async () => {
+          await mediaClient.setUser(writerUser);
+          const { statusCode } = await mediaClient.put(invalidPhoto.id, {
+            title: 'Modified title',
+          });
+          expect(statusCode).toEqual(403);
         });
-        expect(statusCode).toEqual(200);
-        expect(body.title).toEqual('Modified title3');
-      });
-    });
 
-    describe('Successful PUT', () => {
-
-    });
-
-    describe('Failing PUT', () => {
-      test('Cannot change mediaType', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-          mediaType: VIDEO,
-        });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'mediaType': 'immutable'});
-      });
-
-      test('Cannot change mediaSubType', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-          mediaSubType: 'toto',
-        });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'mediaSubType': 'immutable'});
-      });
-
-      test('Cannot change storageType', async () => {
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
-          storageType: 27,
-        });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'storageType': 'immutable'});
-      });
-
-      test('Cannot use an existing imageId', async () => {
-        const postImage = async () => {
-          const imageClient = new ResourceClient(client, IMAGE);
-          await imageClient.setUser(plainUser);
-          const {
-            statusCode,
-            body,
-          } = await imageClient.postFormData({ type: 0 }, [img640]);
-          expect(statusCode).toEqual(200);
-          return body[0].key;
-        };
-        const postPhoto = async (imageId) => {
+        test('Owner can PUT', async () => {
           await mediaClient.setUser(plainUser);
-          const { statusCode, body } = await mediaClient.post({
-            mediaType: PHOTO,
-            albumId: plainUserStaticAlbum.id,
-            title: 'A new photo title',
-            description: 'A new photo description',
-            imageId: imageId,
-            storageType: 0,
+          await mediaClient.get(invalidPhoto.id);
+          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+            title: 'Modified title',
           });
           expect(statusCode).toEqual(200);
-          return body;
-        };
-
-        const initialImageId = await postImage();
-        await postPhoto(initialImageId);
-        const secondImageId = await postImage();
-        const secondPhoto = await postPhoto(secondImageId);
-
-        await mediaClient.setUser(plainUser);
-        const { statusCode, body } = await mediaClient.put(secondPhoto.id, {
-          imageId: initialImageId,
+          expect(body.title).toEqual('Modified title');
         });
-        expect(statusCode).toEqual(400);
-        expect(body.errors).toEqual({'imageId': ['duplicatedImageId']});
+
+        test('Editor can PUT', async () => {
+          await mediaClient.setUser(editorUser);
+          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+            title: 'Modified title2',
+          });
+          expect(statusCode).toEqual(200);
+          expect(body.title).toEqual('Modified title2');
+        });
+
+        test('Admin can PUT', async () => {
+          await mediaClient.setUser(adminUser);
+          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+            title: 'Modified title3',
+          });
+          expect(statusCode).toEqual(200);
+          expect(body.title).toEqual('Modified title3');
+        });
+      });
+
+      describe('Successful PUT', () => {
+
+      });
+
+      describe('Failing PUT', () => {
+        test('Cannot change mediaType', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+            mediaType: VIDEO,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'mediaType': ['immutable']});
+        });
+
+        test('Cannot change mediaSubType', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+            mediaSubType: 'toto',
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'mediaSubType': ['immutable']});
+        });
+
+        test('Cannot change storageType', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+            storageType: 27,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'storageType': ['immutable']});
+        });
+
+        test('Cannot use an inexisting imageId', async () => {
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
+            imageId: 'not-an-id',
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'imageId': ['doesNotExist']});
+        });
+
+        test('Cannot use an imageId already used by an other photo', async () => {
+          const initialImageId = await postImage();
+          await postPhoto(initialImageId);
+          const secondImageId = await postImage();
+          const secondPhoto = await postPhoto(secondImageId);
+
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.put(secondPhoto.id, {
+            imageId: initialImageId,
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'imageId': ['duplicatedImageId']});
+        });
       });
     });
   });

@@ -239,7 +239,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     $errors = array();
     foreach ($this->_accessor->forbiddenWriteAttributes as $formKey => $dbKey) {
       if (isset($data[$formKey]) && $object->$dbKey != $data[$formKey]) {
-        $errors[$formKey] = self::IMMUTABLE;
+        $errors[$formKey] = array(self::IMMUTABLE);
       }
     }
     return $errors;
