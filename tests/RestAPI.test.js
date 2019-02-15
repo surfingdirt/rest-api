@@ -762,9 +762,9 @@ describe('Media tests', () => {
     });
 
     describe('PUT', () => {
-      const postImage = async () => {
+      const postImageAs = async (user) => {
         const imageClient = new ResourceClient(client, IMAGE);
-        await imageClient.setUser(plainUser);
+        await imageClient.setUser(user);
         const {
           statusCode,
           body,
@@ -772,8 +772,8 @@ describe('Media tests', () => {
         expect(statusCode).toEqual(200);
         return body[0].key;
       };
-      const postPhoto = async (imageId) => {
-        await mediaClient.setUser(plainUser);
+      const postPhotoAs = async (user, imageId) => {
+        await mediaClient.setUser(user);
         const { statusCode, body } = await mediaClient.post({
           mediaType: PHOTO,
           albumId: plainUserStaticAlbum.id,
@@ -833,7 +833,31 @@ describe('Media tests', () => {
       });
 
       describe('Successful PUT', () => {
+        test('Update imageId', async() => {
+          const initialImageId = await postImageAs(plainUser);
+          const photo = await postPhotoAs(plainUser, initialImageId);
+          const secondImageId = await postImageAs(plainUser);
 
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.put(photo.id, {
+            imageId: secondImageId,
+          });
+          expect(statusCode).toEqual(200);
+          expect(body.imageId).toEqual(secondImageId);
+        });
+
+        test('Update title and description', async() => {
+          const initialImageId = await postImageAs(plainUser);
+          const photo = await postPhotoAs(plainUser, initialImageId);
+          await mediaClient.setUser(plainUser);
+          const { statusCode, body } = await mediaClient.put(photo.id, {
+            title: 'a new title',
+            description: 'a new description',
+          });
+          expect(statusCode).toEqual(200);
+          expect(body.title).toEqual('a new title');
+          expect(body.description).toEqual('a new description');
+        });
       });
 
       describe('Failing PUT', () => {
@@ -874,10 +898,10 @@ describe('Media tests', () => {
         });
 
         test('Cannot use an imageId already used by an other photo', async () => {
-          const initialImageId = await postImage();
-          await postPhoto(initialImageId);
-          const secondImageId = await postImage();
-          const secondPhoto = await postPhoto(secondImageId);
+          const initialImageId = await postImageAs(plainUser);
+          await postPhotoAs(plainUser, initialImageId);
+          const secondImageId = await postImageAs(plainUser);
+          const secondPhoto = await postPhotoAs(plainUser, secondImageId);
 
           await mediaClient.setUser(plainUser);
           const { statusCode, body } = await mediaClient.put(secondPhoto.id, {
