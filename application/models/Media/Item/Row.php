@@ -18,9 +18,10 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
   protected function _postDelete()
   {
     parent::_postDelete();
-    // Users tag deletion
+
     $table = new Media_Item_Users();
-    $table->delete("mediaId = $this->id");
+    $where = $table->getAdapter()->quoteInto("mediaId = ?", $this->id);
+    $table->delete($where);
   }
 
   /**

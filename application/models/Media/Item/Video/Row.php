@@ -44,22 +44,6 @@ class Media_Item_Video_Row extends Media_Item_Row
    */
   protected $_formClass = 'Media_Item_Video_Form';
 
-  protected function _postDelete()
-  {
-    parent::_postDelete();
-
-    if (in_array($this->thumbnailSubType, array(Media_Item_Photo::SUBTYPE_JPG, Media_Item_Photo::SUBTYPE_GIF, Media_Item_Photo::SUBTYPE_PNG))) {
-      try {
-        $path = $this->getThumbnailURI(false);
-        $thumbnail = new File($path);
-        $thumbnail->delete();
-        Globals::getLogger()->deletes("Deleted video thumbnail file '$path'", Zend_Log::INFO);
-      } catch (Exception $e) {
-        Globals::getLogger()->deletes("Could not find video thumbnail file for deletion: '$path'", Zend_Log::INFO);
-      }
-    }
-  }
-
   public function getMediaSubType()
   {
     if (!in_array($this->mediaSubType, Media_Item_Video::$allowedMediaSubTypes)) {

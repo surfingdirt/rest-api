@@ -10,4 +10,10 @@ class Api_Media_Photo_Row extends Media_Item_Photo_Row
 
     $this->mediaType = Media_Item::TYPE_PHOTO;
   }
+
+  protected function _postDelete()
+  {
+    Api_Image::cleanupById($this->storageType, $this->imageId);
+    parent::_postDelete();
+  }
 }

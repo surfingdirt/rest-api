@@ -44,37 +44,6 @@ class Media_Item_Photo_Row extends Media_Item_Row
    */
   protected $_formClass = 'Media_Item_Photo_Form';
 
-  /**
-   * Deletes photo files if they exist
-   *
-   */
-  protected function _postDelete()
-  {
-    parent::_postDelete();
-
-    if (in_array($this->thumbnailSubType, array(Media_Item_Photo::SUBTYPE_JPG, Media_Item_Photo::SUBTYPE_GIF, Media_Item_Photo::SUBTYPE_PNG))) {
-      try {
-        $path = $this->getThumbnailURI(false);
-        $thumbnail = new File($path);
-        $thumbnail->delete();
-        Globals::getLogger()->deletes("Deleted photo thumbnail file '$path'", Zend_Log::INFO);
-      } catch (Exception $e) {
-        Globals::getLogger()->deletes("Could not find photo thumbnail file for deletion: '$path'", Zend_Log::INFO);
-      }
-    }
-
-    if (in_array($this->mediaSubType, array(Media_Item_Photo::SUBTYPE_JPG, Media_Item_Photo::SUBTYPE_GIF, Media_Item_Photo::SUBTYPE_PNG))) {
-      try {
-        $path = $this->getURI(false);
-        $file = new File($path);
-        $file->delete();
-        Globals::getLogger()->deletes("Deleted photo file '$path'", Zend_Log::INFO);
-      } catch (Exception $e) {
-        Globals::getLogger()->deletes("Could not find photo file for deletion: '$path'", Zend_Log::INFO);
-      }
-    }
-  }
-
   public function getMediaType()
   {
     return Media_Item::TYPE_PHOTO;

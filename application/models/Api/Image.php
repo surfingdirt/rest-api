@@ -14,4 +14,19 @@ class Api_Image extends Api_Data
   {
     return 'image';
   }
+
+  public static function cleanupById($storageType, $id)
+  {
+    // Find the folder, and delete it
+    Lib_Storage::cleanUpFiles($storageType, $id);
+
+    $table = new self();
+    $result = $table->find($id);
+    if (empty($result) || !$imageRow = $result->current()) {
+      // All done
+      return;
+    }
+
+    $imageRow->delete();
+  }
 }

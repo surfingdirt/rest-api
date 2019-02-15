@@ -55,4 +55,23 @@ class MediaController extends Api_Controller_Action
       );
     }
   }
+
+  public function deleteAction()
+  {
+    $id = $this->_request->getParam('id');
+    if (!$id) {
+      throw new Api_Exception_BadRequest();
+    }
+    $object = Api_Media_Factory::buildItemById($id);
+
+    if (!$object->isDeletableBy($this->_user, $this->_acl)) {
+      throw new Api_Exception_Unauthorised();
+    }
+
+    $this->_preObjectDelete($object);
+    if ($status = $this->_accessor->deleteObject($object)) {
+      $this->_postObjectDelete($object);
+    }
+    $this->view->output = array('status' => $status);
+  }
 }

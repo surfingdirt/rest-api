@@ -1357,12 +1357,12 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    */
   protected function _postDelete()
   {
+    $adapter = $this->_table->getAdapter();
     $itemType = $this->_table->getItemType();
+    $where = $adapter->quoteInto("itemType = '$itemType' AND itemId = ?", $this->id);
 
-    $where = "itemType = '$itemType' AND itemId = $this->id";
-
-    $tagsTable = new Tag();
-    $tagsTable->delete($where);
+//    $tagsTable = new Tag();
+//    $tagsTable->delete($where);
 
     $itemTable = new Item();
     $itemTable->delete($where);
@@ -1371,7 +1371,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     $viewsTable->delete($where);
 
     $table = new Data_TranslatedText();
-    $where = "id = $this->id AND itemType='$itemType' and type IN('" . Data_Form_Element::TITLE . "', '" . Data_Form_Element::DESCRIPTION . "')";
+    $where = $adapter->quoteInto("itemType = '$itemType' AND id = ? AND type IN ('".Data_Form_Element::TITLE."', '".Data_Form_Element::DESCRIPTION."')", $this->id);
     $table->delete($where);
 
     // Album deletion
