@@ -948,6 +948,41 @@ describe('Media tests', () => {
           expect(looksLikeUUID(body.id)).toBeTruthy();
         });
 
+        test('Duplicated videos are allowed', async() => {
+          // The reasoning is that videos may be posted to different albums, and we'd need to
+          // check who can see what, otherwise videos may be hidden from certain people forever.
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          await mediaClient.setUser(plainUser);
+
+          const { statusCode: status1, body: body1 } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: 'kmWSGtyfDbA',
+            albumId: plainUser.albumId,
+            title: 'A new YouTube video title',
+            description: 'A new YouTube video description',
+            storageType: 0,
+          });
+          expect(status1).toEqual(200);
+          expect(getSortedKeysAsString(body1)).toEqual(createdVideoKeys);
+          expect(looksLikeUUID(body1.id)).toBeTruthy();
+
+          const { statusCode: status2, body: body2 } = await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: 'kmWSGtyfDbA',
+            albumId: plainUser.albumId,
+            title: 'A dupe YouTube video title',
+            description: 'A dupe YouTube video description',
+            storageType: 0,
+          });
+          expect(status2).toEqual(200);
+          expect(getSortedKeysAsString(body2)).toEqual(createdVideoKeys);
+          expect(looksLikeUUID(body2.id)).toBeTruthy();
+        });
+
+        });
+
         test('Vimeo video', async () => {
           await mediaClient.setUser(plainUser);
           mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
@@ -1185,7 +1220,6 @@ describe('Media tests', () => {
           const video = await postVideoAs(plainUser, '_k8G0DaAPMk');
 
           await mediaClient.setUser(plainUser);
-          mediaClient.setDebugBackend();
           const newVendorKey = '15697415';
           const { statusCode, body } = await mediaClient.put(video.id, {
             vendorKey: newVendorKey,
@@ -1198,8 +1232,21 @@ describe('Media tests', () => {
       });
 
       describe('Failure', () => {
+        let video1;
+        beforeAll( async () => {
+          video1 = await postVideoAs(plainUser, '1Mxxqi2AuRU');
+        });
 
-      });
+        test('Bad mediaSubType fails', async() => {
+          await mediaClient.setUser(plainUser);
+          const newVendorKey = '15697415';
+          const { statusCode, body } = await mediaClient.put(video1.id, {
+            vendorKey: newVendorKey,
+            mediaSubType: 'notgood'
+          });
+          expect(statusCode).toEqual(400);
+          expect(body.errors).toEqual({'mediaSubType': ['invalidType']});
+        });
     });
   });
 });
