@@ -988,6 +988,7 @@ describe('Media tests', () => {
           expect(getSortedKeysAsString(body1)).toEqual(createdVideoKeys);
           expect(looksLikeUUID(body1.id)).toBeTruthy();
 
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
           const { statusCode: status2, body: body2 } = await mediaClient.post({
             mediaType: VIDEO,
             mediaSubType: YOUTUBE,
@@ -1212,6 +1213,7 @@ describe('Media tests', () => {
 
           await mediaClient.setUser(plainUser);
           const newVendorKey = 'kZ75GzTL27o';
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
           const { statusCode, body } = await mediaClient.put(video.id, {
             vendorKey: newVendorKey,
           });
@@ -1224,6 +1226,7 @@ describe('Media tests', () => {
 
           await mediaClient.setUser(plainUser);
           const newVendorKey = '15697415';
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
           const { statusCode, body } = await mediaClient.put(video.id, {
             vendorKey: newVendorKey,
             mediaSubType: VIMEO,
