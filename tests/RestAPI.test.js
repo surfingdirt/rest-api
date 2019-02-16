@@ -1341,7 +1341,55 @@ describe('Media tests', () => {
 });
 
 describe.skip('Album tests', () => {
-  /*
-   * Tous les utilisateurs ont un album public associe
-   */
+  const createAlbum = ({user, title,}) => {
+
+  };
+
+  describe('POST', () => {
+    test('For each user, a new aggregate album is created', async () => {});
+
+    test('Guest user cannot create static album', async () => {});
+
+    test('Logged in user can create static album', async () => {});
+  });
+
+  describe('GET', () => {
+    test('Aggregate album contains user media', async () => {});
+
+    test('Static album contains user media', async () => {});
+
+    test('Album content can be sorted', async () => {});
+
+    test('Album content can be paginated', async () => {});
+
+    test('Album content can be sorted and paginated', async () => {});
+  });
+
+  describe('PUT', () => {
+    test('Guest cannot update album title and description', async () => {});
+
+    test('Writer cannot update title and description are updated', async () => {});
+
+    test('Owner can update album title and description', async () => {});
+
+    test('Editor can update album title and description', async () => {});
+
+    test('Admin can update album title and description', async () => {});
+  });
+
+  describe('DELETE', () => {
+    test('Aggregate album cannot be deleted', async () => {});
+
+    test('Non-empty static album cannot be deleted', async () => {});
+
+    test('Guest cannot delete empty static album', async () => {});
+
+    test('Writer cannot delete empty static album', async () => {});
+
+    test('Owner can delete empty static album', async () => {});
+
+    test('Editor can delete empty static album', async () => {});
+
+    test('Admin can delete empty static album', async () => {});
+  });
 });
