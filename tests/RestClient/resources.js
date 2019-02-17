@@ -1,3 +1,4 @@
+export const ALBUM = 'album';
 export const IMAGE = 'image';
 export const MEDIA = 'media';
 export const TOKEN = 'token';

@@ -3,6 +3,7 @@ import { default as StatelessClient, getResourcePath } from './RestClient/Statel
 import { clearCacheFiles } from './RestClient/cache';
 import { hostUrl, JWT_TTL, LOCAL_BAD_THUMB_PATH, LOCAL_THUMB_PATH } from './RestClient/constants';
 import {
+  ALBUM,
   IMAGE,
   MEDIA,
   MEDIA_SUBTYPES_VIDEO,
@@ -1340,17 +1341,55 @@ describe('Media tests', () => {
   });
 });
 
-describe.skip('Album tests', () => {
-  const createAlbum = ({user, title,}) => {
+describe.only('Album tests', () => {
+  const albumClient = new ResourceClient(client, ALBUM);
+  const userClient = new ResourceClient(client, USER);
 
+  const createStaticAlbum = async (user, data) => {
+    await albumClient.setUser(user);
+    const { statusCode, body } = await albumClient.postFormData(data);
+    expect(statusCode).toEqual(200);
+    return body;
   };
 
-  describe('POST', () => {
-    test('For each user, a new aggregate album is created', async () => {});
+  const createUser = async (username, email) => {
+    await userClient.setToken(null);
+    const password = '1234567';
+    const { statusCode, body } = await userClient.post({
+      username,
+      userP: password,
+      userPC: password,
+      email,
+    });
+    expect(statusCode).toEqual(200);
+    return body;
+  };
 
-    test('Guest user cannot create static album', async () => {});
+  describe.only('POST', () => {
+    test('For each user, a new aggregate album is created', async () => {
+      const newUser = createUser('albumTest1', 'albumTest1@email.com');
+      albumClient.setToken(null);
+      const {statusCode} = await albumClient.get(newUser.album.id);
+      expect(statusCode).toEqual(200);
+    });
 
-    test('Logged in user can create static album', async () => {});
+    test('Guest user cannot create static album', async () => {
+      albumClient.setToken(null);
+      const {statusCode} = await albumClient.post({title: 'will not work'});
+      expect(statusCode).toEqual(403);
+    });
+
+    test.only('Logged in user can create static album', async () => {
+      albumClient.setUser(plainUser);
+      const {statusCode} = await albumClient.post({title: 'will work', 'description': 'ok'});
+      expect(statusCode).toEqual(200);
+    });
+
+    test('Title and description are not mandatory', async () => {
+      albumClient.setUser(plainUser);
+      const {statusCode} = await albumClient.post({});
+      expect(statusCode).toEqual(200);
+    });
   });
 
   describe('GET', () => {

@@ -1,11 +1,12 @@
 <?php
 
-class AlbumsController extends Api_Controller_Action
+class AlbumController extends Api_Controller_Action
 {
   public $listCount = 20;
 
   protected function _preObjectCreation($object, $data)
   {
+    $object->id = Utils::uuidV4();
     $object->albumType = Media_Album::TYPE_SIMPLE;
     $object->albumAccess = Media_Album::ACCESS_PUBLIC;
     $object->albumCreation = Media_Album::CREATION_USER;
