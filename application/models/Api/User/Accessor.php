@@ -12,6 +12,7 @@ class Api_User_Accessor extends Api_Data_Accessor
     'site',
     'userId',
     'username',
+    'album',
   );
   public $memberReadAttributes = array();
   public $ownReadAttributes = array(

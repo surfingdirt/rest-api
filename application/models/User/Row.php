@@ -214,7 +214,7 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
    * @return Media_Album
    * @throws Lib_Exception_User
    */
-  public function getProfileAlbum()
+  public function getAlbum()
   {
     $album = Media_Album_Factory::buildAggregateUserAlbum($this);
     return $album;

@@ -53,7 +53,7 @@ abstract class Data_Form extends Lib_Form implements Data_Form_DataInterface
     $elements = array(
       'title' => $this->getTitle(),
       'description' => $this->getDescription(),
-      'tags' => $this->getTags()
+//      'tags' => $this->getTags()
     );
 
     $isAllowedToEditAll = $this->_acl->isAllowed($this->_user, Lib_Acl::PUBLIC_EDIT_RESOURCE);

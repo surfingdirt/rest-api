@@ -49,10 +49,9 @@ beforeEach(() => {
 describe('Token tests', () => {
   test('logged-out request results in 200', async () => {
     const path = plainUserPath;
-    const response = await client.get({ path });
-
-    expect(response.statusCode).toBe(200);
-    expect(Object.keys(response.body).length > 0).toBeTruthy();
+    const {statusCode, body} = await client.get({ path });
+    expect(statusCode).toBe(200);
+    expect(Object.keys(body).length > 0).toBeTruthy();
   });
 
   test('banned user login request results in 403', async () => {
@@ -139,14 +138,14 @@ describe('User tests', () => {
 
   describe('User GET', () => {
     const plainUserPublicInfo =
-      '["avatar","city","date","firstName","lang","lastName","site","userId","username"]';
+      '["album","avatar","city","date","firstName","lang","lastName","site","userId","username"]';
 
     const plainUserSelfInfo =
-      '["avatar","city","date","email","firstName","lang","lastName",' +
+      '["album","avatar","city","date","email","firstName","lang","lastName",' +
       '"site","status","userId","username"]';
 
     const plainUserAdminInfo =
-      '["avatar","city","date","email","firstName","lang","lastLogin","lastName",' +
+      '["album","avatar","city","date","email","firstName","lang","lastLogin","lastName",' +
       '"site","status","userId","username"]';
 
     test("Retrieve plainuser's data as guest", async () => {
@@ -241,7 +240,7 @@ describe('User tests', () => {
 
   describe('User POST', () => {
     const createdUserKeys =
-      '["avatar","city","date","email","firstName","lang","lastName",' +
+      '["album","avatar","city","date","email","firstName","lang","lastName",' +
       '"site","status","userId","username"]';
 
     test('Logged-in user cannot create a new user', async () => {
@@ -1341,7 +1340,7 @@ describe('Media tests', () => {
   });
 });
 
-describe.only('Album tests', () => {
+describe.skip('Album tests', () => {
   const albumClient = new ResourceClient(client, ALBUM);
   const userClient = new ResourceClient(client, USER);
 
@@ -1365,10 +1364,11 @@ describe.only('Album tests', () => {
     return body;
   };
 
-  describe.only('POST', () => {
+  describe('POST', () => {
     test('For each user, a new aggregate album is created', async () => {
-      const newUser = createUser('albumTest1', 'albumTest1@email.com');
+      const newUser = await createUser('albumTest1', 'albumTest1@email.com');
       albumClient.setToken(null);
+      albumClient.setDebugBackend();
       const {statusCode} = await albumClient.get(newUser.album.id);
       expect(statusCode).toEqual(200);
     });
@@ -1379,7 +1379,7 @@ describe.only('Album tests', () => {
       expect(statusCode).toEqual(403);
     });
 
-    test.only('Logged in user can create static album', async () => {
+    test('Logged in user can create static album', async () => {
       albumClient.setUser(plainUser);
       const {statusCode} = await albumClient.post({title: 'will work', 'description': 'ok'});
       expect(statusCode).toEqual(200);

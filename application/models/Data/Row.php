@@ -743,6 +743,8 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    */
   public function getTags()
   {
+    return array();
+
     if (!is_array($this->_arrTags)) {
       if (ALLOW_CACHE) {
         $cacheId = $this->_getTagsCacheId();

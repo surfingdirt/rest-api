@@ -77,7 +77,9 @@ class Media_Album_Factory
     		WHERE agg.keyName = 'user'
     		AND a.albumType = '" . Media_Album::TYPE_AGGREGATE . "'
     		AND a.albumCreation = '" . Media_Album::CREATION_AUTOMATIC . "'
-    		AND agg.keyValue = '" . $user->getId() . "'";
+    		AND agg.keyValue = ?";
+
+    $sql = $db->quoteInto($sql, $user->getId());
     $stmt = $db->query($sql);
     $data = $stmt->fetch();
 
@@ -86,7 +88,15 @@ class Media_Album_Factory
     }
 
     $table = new Media_Album_Aggregate_User();
-    $album = new Media_Album_Aggregate_User_Row(array('data' => $data, 'table' => $table, 'stored' => true, 'user' => $user, 'page' => $page));
+    $album = new Media_Album_Aggregate_User_Row(
+      array(
+        'data' => $data,
+        'table' => $table,
+        'stored' => true,
+        'user' => $user,
+        'page' => $page,
+      )
+    );
     return $album;
   }
 
