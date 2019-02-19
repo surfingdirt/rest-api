@@ -43,14 +43,6 @@ class Article_Form extends Document_Form implements Data_Form_ArticleInterface,
     }
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title', 'description', 'author', 'content', 'tags', 'status'), 'articleGroup');
-    if ($isAdmin) {
-      $this->addDisplayGroup(array('skipAutoFields', 'submitter', 'date', 'lastEditionDate', 'lastEditor'), 'autoFieldsGroup');
-    }
-
-    $this->addElements(array($this->getSubmit()));
-
   }
 
   protected function _setOwnDecorators()

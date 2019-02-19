@@ -43,13 +43,6 @@ class Test_Form extends Article_Form
     }
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title', 'description', 'category', 'author', 'content', 'tags', 'status'), 'articleGroup');
-    if ($isAdmin) {
-      $this->addDisplayGroup(array('skipAutoFields', 'submitter', 'date', 'lastEditionDate', 'lastEditor'), 'autoFieldsGroup');
-    }
-
-    $this->addElements(array($this->getSubmit()));
   }
 
   public function getTestCategory()

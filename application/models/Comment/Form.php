@@ -114,11 +114,4 @@ class Comment_Form extends Data_Form
     }
 
     $this->addElements($elements);
-
-    if ($isAdmin && !empty($this->_object->id)) {
-      $this->addDisplayGroup(array('skipAutoFields', 'status', 'submitter', 'date', 'lastEditionDate', 'lastEditor'), 'autoFieldsGroup');
-    }
-
-    $this->addElements(array($this->getSubmit()));
-  }
 }

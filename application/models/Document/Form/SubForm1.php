@@ -14,11 +14,7 @@ class Document_Form_SubForm1 extends Data_Form
     );
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title'), 'documentGroup');
-
-    $this->addElements(array($this->getSubmit()));
-  }
+    }
 
   /**
    * Factory for the author element

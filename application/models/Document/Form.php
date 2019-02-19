@@ -41,13 +41,6 @@ abstract class Document_Form extends Data_Form implements Data_Form_DocumentInte
     }
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title', 'description', 'author', 'tags', 'status'), 'documentGroup');
-    if ($isAdmin) {
-      $this->addDisplayGroup(array('skipAutoFields', 'submitter', 'date', 'lastEditionDate', 'lastEditor'), 'autoFieldsGroup');
-    }
-
-    $this->addElements(array($this->getSubmit()));
   }
 
   /**

@@ -33,15 +33,6 @@ class Forum_Post_Form extends Data_Form
     }
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('content'), 'postGroup');
-    if ($isAdmin) {
-      $this->addDisplayGroup(array('skipAutoFields', 'submitter', 'date', 'lastEditionDate', 'lastEditor', 'status'), 'autoFieldsGroup');
-    } elseif ($isAllowedToEditAll) {
-      $this->addDisplayGroup(array('status'), 'statusGroup');
-    }
-
-    $this->addElements(array($this->getSubmit()));
   }
 
   /**

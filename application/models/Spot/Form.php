@@ -73,15 +73,6 @@ class Spot_Form extends Data_Form
     }
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title', 'description', 'spotType', 'groundType', 'difficulty'), 'spotGroup');
-    $this->addDisplayGroup(array('locationFlag', 'longitude', 'latitude', 'zoom', 'yaw', 'pitch', 'mapType'), 'locationGroup');
-    $this->addDisplayGroup(array('tags', 'status'), 'miscGroup');
-    if ($isAdmin && !empty($this->_object->id)) {
-      $this->addDisplayGroup(array('skipAutoFields', 'submitter', 'date', 'lastEditionDate', 'lastEditor'), 'autoFieldsGroup');
-    }
-
-    $this->addElements(array($this->getSubmit()));
   }
 
   /**

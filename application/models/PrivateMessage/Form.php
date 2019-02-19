@@ -14,8 +14,6 @@ class PrivateMessage_Form extends Data_Form
       'content' => new Data_Form_Element_Content($this),
     );
     $this->addElements($elements);
-    $this->addDisplayGroup(array('toUser', 'content'), 'mainGroup');
-    $this->addElements(array($this->getSubmit()));
   }
 
   /**

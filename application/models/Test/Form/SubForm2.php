@@ -19,9 +19,6 @@ class Test_Form_SubForm2 extends Article_Form_SubForm2
     );
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title', 'description', 'category', 'author', 'content', 'tags', 'status'), 'articleGroup');
-    $this->addElements(array($this->getSubmit()));
   }
 
   public function getTestCategory()

@@ -42,13 +42,6 @@ class Trick_Form extends Data_Form
     }
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title', 'description', 'trickTip', 'difficulty', 'tags', 'status'), 'trickGroup');
-    if ($isAdmin && !empty($this->_object->id)) {
-      $this->addDisplayGroup(array('skipAutoFields', 'submitter', 'date', 'lastEditionDate', 'lastEditor'), 'autoFieldsGroup');
-    }
-
-    $this->addElements(array($this->getSubmit()));
   }
 
   /**

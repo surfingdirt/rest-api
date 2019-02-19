@@ -48,15 +48,6 @@ class Event_Form extends Article_Form
     }
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title', 'description'), 'documentGroup');
-    $this->addDisplayGroup(array('author', 'startDate', 'endDate', 'spot', 'type', 'compContent', 'compLevel', 'content'), 'eventGroup');
-    if ($isAdmin && !empty($this->_object->id)) {
-      $this->addDisplayGroup(array('skipAutoFields', 'submitter', 'date', 'lastEditionDate', 'lastEditor'), 'autoFieldsGroup');
-    }
-    $this->addDisplayGroup(array('tags', 'status'), 'miscGroup');
-
-    $this->addElements(array($this->getSubmit()));
   }
 
   /**

@@ -32,13 +32,6 @@ class News_Form_SubForm2 extends Article_Form_SubForm2 implements Data_Form_Docu
     }
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title', 'description', 'author', 'content'), 'articleGroup');
-    $this->addDisplayGroup(array('spot'), 'whereGroup');
-    $this->addDisplayGroup(array('locationFlag', 'longitude', 'latitude', 'zoom', 'yaw', 'pitch', 'mapType'), 'locationGroup');
-    $this->addDisplayGroup(array('tags'), 'miscGroup');
-
-    $this->addElements(array($this->getSubmit()));
   }
 
   /**

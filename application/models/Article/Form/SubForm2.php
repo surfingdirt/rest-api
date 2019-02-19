@@ -18,9 +18,6 @@ class Article_Form_SubForm2 extends Document_Form implements Data_Form_ArticleIn
     );
 
     $this->addElements($elements);
-    $this->addDisplayGroup(array('title', 'description', 'author', 'content', 'tags'), 'articleGroup');
-    $this->addElements(array($this->getSubmit()));
-
   }
 
   protected function _setOwnDecorators()
