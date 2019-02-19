@@ -81,24 +81,6 @@ abstract class Data_Form extends Lib_Form implements Data_Form_DataInterface
     }
 
     $this->addElements($elements);
-
-    $this->addDisplayGroup(array('title', 'description'), 'documentGroup');
-    if ($isAdmin && !empty($this->_object->id)) {
-      $this->addDisplayGroup(array('skipAutoFields', 'submitter', 'date', 'lastEditionDate', 'lastEditor'), 'autoFieldsGroup');
-    }
-    $this->addDisplayGroup(array('tags', 'status'), 'miscGroup');
-
-    $this->addElements(array($this->getSubmit()));
-  }
-
-  protected function _setOwnDecorators()
-  {
-    parent::_setOwnDecorators();
-
-    $reflection = new ReflectionClass($this->_object);
-    if ($reflection->implementsInterface('Data_Row_LocationInterface')) {
-      $this->addDecorator('JsMap');
-    }
   }
 
   /**
@@ -215,19 +197,6 @@ abstract class Data_Form extends Lib_Form implements Data_Form_DataInterface
     $element = new Lib_Form_Element_Username('lastEditor', true, true);
     $element->setLabel(ucfirst(Globals::getTranslate()->_('lastEditor')))
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter');
-
-    return $element;
-  }
-
-  /**
-   * Factory for the submit element
-   *
-   * @return Zend_Form_Element_Submit
-   */
-  public function getSubmit($label = 'submit')
-  {
-    $element = new Zend_Form_Element_Submit('submit');
-    $element->setLabel(ucfirst(Globals::getTranslate()->_($label)));
 
     return $element;
   }

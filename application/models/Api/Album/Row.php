@@ -159,12 +159,13 @@ class Api_Album_Row extends Media_Album_Row
   protected function _getUserAggregationItems($userId)
   {
     // Build the list of media where the user $userId appears
-    $select = new Zend_Db_Select(Globals::getMainDatabase());
+    $db = Globals::getMainDatabase();
+    $select = new Zend_Db_Select($db);
     $select->from(Constants_TableNames::MEDIAITEMUSERS)
       ->distinct()
       ->columns('mediaId')
-      ->where('userId = ' . $userId);
-    $rowset = Globals::getMainDatabase()->query($select);
+      ->where($db->quoteInto('userId = ?', $userId));
+    $rowset = $db->query($select);
     if (empty($rowset)) {
       return null;
     }
@@ -179,7 +180,7 @@ class Api_Album_Row extends Media_Album_Row
 
     // Get the rowset of medias with the list we just built
     $itemsTable = new Media_Item();
-    $where = 'id IN (' . implode(', ', $mediaIds) . ')';
+    $where = 'id IN (' . implode("', '", $mediaIds) . ')';
     $rawItems = $itemsTable->fetchAll($where);
     return $rawItems;
   }

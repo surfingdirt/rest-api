@@ -2,7 +2,9 @@
 
 class Media_Album_Form extends Data_Form
 {
-  /**
-   * @todo: implementer un formulaire avec les champs habituels, la location, le type, l'acces
-   */
+  public function getDescription()
+  {
+    $element = new Data_Form_Element_Description($this, null, false);
+    return $element;
+  }
 }

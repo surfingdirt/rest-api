@@ -14,9 +14,7 @@ interface Data_Form_DataInterface
 
   public function getLastEditor();
 
-  public function getSubmit();
-
   public function getStatus();
 
-  public function getTags();
+//  public function getTags();
 }

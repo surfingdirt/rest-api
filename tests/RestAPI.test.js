@@ -49,7 +49,7 @@ beforeEach(() => {
 describe('Token tests', () => {
   test('logged-out request results in 200', async () => {
     const path = plainUserPath;
-    const {statusCode, body} = await client.get({ path });
+    const { statusCode, body } = await client.get({ path });
     expect(statusCode).toBe(200);
     expect(Object.keys(body).length > 0).toBeTruthy();
   });
@@ -1259,88 +1259,88 @@ describe('Media tests', () => {
 
   describe('DELETE', () => {
     describe('Photo ACLs', () => {
-      test('Guest and writer cannot delete', async() => {
+      test('Guest and writer cannot delete', async () => {
         const imageId = await postImageAs(plainUser);
         const photo = await postPhotoAs(plainUser, imageId);
 
         mediaClient.setToken(null);
-        const {statusCode} = await mediaClient.delete(photo.id);
+        const { statusCode } = await mediaClient.delete(photo.id);
         expect(statusCode).toEqual(403);
 
         mediaClient.setUser(writerUser);
-        const {statusCode: statusCodeWriter} = await mediaClient.delete(photo.id);
+        const { statusCode: statusCodeWriter } = await mediaClient.delete(photo.id);
         expect(statusCodeWriter).toEqual(403);
       });
 
-      test('Owner can delete', async() => {
+      test('Owner can delete', async () => {
         const imageId = await postImageAs(plainUser);
         const photo = await postPhotoAs(plainUser, imageId);
 
         mediaClient.setUser(plainUser);
-        const {statusCode} = await mediaClient.delete(photo.id);
+        const { statusCode } = await mediaClient.delete(photo.id);
         expect(statusCode).toEqual(200);
       });
 
-      test('Editor can delete', async() => {
+      test('Editor can delete', async () => {
         const imageId = await postImageAs(plainUser);
         const photo = await postPhotoAs(plainUser, imageId);
 
         mediaClient.setUser(editorUser);
-        const {statusCode} = await mediaClient.delete(photo.id);
+        const { statusCode } = await mediaClient.delete(photo.id);
         expect(statusCode).toEqual(200);
       });
 
-      test('Admin can delete', async() => {
+      test('Admin can delete', async () => {
         const imageId = await postImageAs(plainUser);
         const photo = await postPhotoAs(plainUser, imageId);
 
         mediaClient.setUser(adminUser);
-        const {statusCode} = await mediaClient.delete(photo.id);
+        const { statusCode } = await mediaClient.delete(photo.id);
         expect(statusCode).toEqual(200);
       });
     });
 
     describe('Video ACLs', () => {
-      test('Guest and writer cannot delete', async() => {
+      test('Guest and writer cannot delete', async () => {
         const video = await postVideoAs(plainUser, '_k8G0DaAPMk');
 
         mediaClient.setToken(null);
-        const {statusCode} = await mediaClient.delete(video.id);
+        const { statusCode } = await mediaClient.delete(video.id);
         expect(statusCode).toEqual(403);
 
         mediaClient.setUser(writerUser);
-        const {statusCode: statusCodeWriter} = await mediaClient.delete(video.id);
+        const { statusCode: statusCodeWriter } = await mediaClient.delete(video.id);
         expect(statusCodeWriter).toEqual(403);
       });
 
-      test('Owner can delete', async() => {
+      test('Owner can delete', async () => {
         const video = await postVideoAs(plainUser, '_k8G0DaAPMk');
 
         mediaClient.setUser(plainUser);
-        const {statusCode} = await mediaClient.delete(video.id);
+        const { statusCode } = await mediaClient.delete(video.id);
         expect(statusCode).toEqual(200);
       });
 
-      test('Editor can delete', async() => {
+      test('Editor can delete', async () => {
         const video = await postVideoAs(plainUser, '_k8G0DaAPMk');
 
         mediaClient.setUser(editorUser);
-        const {statusCode} = await mediaClient.delete(video.id);
+        const { statusCode } = await mediaClient.delete(video.id);
         expect(statusCode).toEqual(200);
       });
 
-      test('Admin can delete', async() => {
+      test('Admin can delete', async () => {
         const video = await postVideoAs(plainUser, '_k8G0DaAPMk');
 
         mediaClient.setUser(adminUser);
-        const {statusCode} = await mediaClient.delete(video.id);
+        const { statusCode } = await mediaClient.delete(video.id);
         expect(statusCode).toEqual(200);
       });
     });
   });
 });
 
-describe.skip('Album tests', () => {
+describe('Album tests', () => {
   const albumClient = new ResourceClient(client, ALBUM);
   const userClient = new ResourceClient(client, USER);
 
@@ -1368,27 +1368,27 @@ describe.skip('Album tests', () => {
     test('For each user, a new aggregate album is created', async () => {
       const newUser = await createUser('albumTest1', 'albumTest1@email.com');
       albumClient.setToken(null);
-      albumClient.setDebugBackend();
-      const {statusCode} = await albumClient.get(newUser.album.id);
+      const { statusCode } = await albumClient.get(newUser.album.id);
       expect(statusCode).toEqual(200);
     });
 
     test('Guest user cannot create static album', async () => {
       albumClient.setToken(null);
-      const {statusCode} = await albumClient.post({title: 'will not work'});
+      const { statusCode } = await albumClient.post({ title: 'will not work' });
       expect(statusCode).toEqual(403);
     });
 
     test('Logged in user can create static album', async () => {
       albumClient.setUser(plainUser);
-      const {statusCode} = await albumClient.post({title: 'will work', 'description': 'ok'});
+      const { statusCode } = await albumClient.post({ title: 'will work', description: 'ok' });
       expect(statusCode).toEqual(200);
     });
 
-    test('Title and description are not mandatory', async () => {
+    test('Title is mandatory but not description', async () => {
       albumClient.setUser(plainUser);
-      const {statusCode} = await albumClient.post({});
-      expect(statusCode).toEqual(200);
+      const { statusCode, body } = await albumClient.post({ });
+      expect(statusCode).toEqual(400);
+      expect(body.errors).toEqual({ title: ['isEmpty'] });
     });
   });
 
