@@ -118,7 +118,7 @@ class Api_Album_Row extends Media_Album_Row
       $where = $aggregationTable->getAdapter()->quoteInto('albumId = ?', $this->id);
       $aggregationRow = $aggregationTable->fetchRow($where);
       if (empty($aggregationRow)) {
-        return;
+        return array();
       }
 
       if ($aggregationRow->keyName == Media_Album_Aggregation::KEYNAME_USER) {
@@ -130,7 +130,7 @@ class Api_Album_Row extends Media_Album_Row
         $rawItems = $this->_getSimpleAggregationItems($aggregationRow);
       }
       if (empty($rawItems)) {
-        return;
+        return array();
       }
 
       $this->_parentItem = $parentTable->find($aggregationRow->keyValue)->current();
@@ -180,7 +180,11 @@ class Api_Album_Row extends Media_Album_Row
 
     // Get the rowset of medias with the list we just built
     $itemsTable = new Media_Item();
-    $where = 'id IN (' . implode("', '", $mediaIds) . ')';
+    $quoted = array();
+    foreach($mediaIds as $mediaId) {
+      $quoted[] = $db->quoteInto('?', $mediaIds);
+    }
+    $where = 'id IN (' . implode("', '", $quoted) . ')';
     $rawItems = $itemsTable->fetchAll($where);
     return $rawItems;
   }

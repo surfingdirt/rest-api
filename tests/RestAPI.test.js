@@ -1368,8 +1368,9 @@ describe('Album tests', () => {
     test('For each user, a new aggregate album is created', async () => {
       const newUser = await createUser('albumTest1', 'albumTest1@email.com');
       albumClient.setToken(null);
-      const { statusCode } = await albumClient.get(newUser.album.id);
+      const { statusCode, body } = await albumClient.get(newUser.album.id);
       expect(statusCode).toEqual(200);
+      expect(body.media).toEqual([]);
     });
 
     test('Guest user cannot create static album', async () => {
@@ -1386,14 +1387,53 @@ describe('Album tests', () => {
 
     test('Title is mandatory but not description', async () => {
       albumClient.setUser(plainUser);
-      const { statusCode, body } = await albumClient.post({ });
+      const { statusCode, body } = await albumClient.post({});
       expect(statusCode).toEqual(400);
       expect(body.errors).toEqual({ title: ['isEmpty'] });
     });
   });
 
   describe('GET', () => {
-    test('Aggregate album contains user media', async () => {});
+    const mediaClient = new ResourceClient(client, MEDIA);
+    const postVideoWithUserAs = async (submitter, vendorKey, userId) => {
+      await mediaClient.setUser(submitter);
+      mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+      const { statusCode, body } = await mediaClient.post({
+        mediaType: VIDEO,
+        mediaSubType: YOUTUBE,
+        albumId: submitter.albumId,
+        title: 'A new video title',
+        description: 'A new video description',
+        vendorKey,
+        users: [userId],
+        storageType: 0,
+      });
+      expect(statusCode).toEqual(200);
+      return body;
+    };
+
+    test.only('Aggregate album contains user media', async () => {
+      const videoKey = '9cTG0U6IMHU';
+      const userBody = await createUser('albumGetTest1', 'albumGetTest1@email.com');
+      const {
+        userId: newUserId,
+        album: { id: newAlbumId },
+      } = userBody;
+      const videoBody = await postVideoWithUserAs(plainUser, videoKey, newUserId);
+      const { id: newVideoId } = videoBody;
+
+      albumClient.setDebugBackend();
+      const {statusCode, body: { media }} = await albumClient.get(newAlbumId);
+      expect(statusCode).toEqual(200);
+      const mediaCount = media.length;
+
+      const mediaIds = media.map(m => m.id);
+      expect(mediaIds).toEqual([newVideoId]);
+      const users = media.filter(({users}) => {
+        return users.includes(newUserId);
+      });
+      expect(users.length).toEqual(mediaCount);
+    });
 
     test('Static album contains user media', async () => {});
 

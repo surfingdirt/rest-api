@@ -8,25 +8,17 @@ class Media_Item_Users extends Zend_Db_Table_Abstract
 
   public function insertUsers($mediaId, array $users)
   {
-    foreach ($users as $username => $userId) {
-      if ($userId) {
-        $this->insert(array(
-          'mediaId' => $mediaId,
-          'userId' => $userId,
-        ));
-      } else {
-        $this->insert(array(
-          'mediaId' => $mediaId,
-          'userId' => 0,
-          'userName' => $username
-        ));
-      }
+    foreach ($users as $userId) {
+      $this->insert(array(
+        'mediaId' => $mediaId,
+        'userId' => $userId,
+      ));
     }
   }
 
   public function updateUsers($mediaId, array $users)
   {
-    $this->delete("mediaId = $mediaId");
+    $this->delete($this->getAdapter()->quoteInto('mediaId = ?', $mediaId));
     $this->insertUsers($mediaId, $users);
   }
 }

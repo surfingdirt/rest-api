@@ -64,6 +64,7 @@ abstract class Media_Item_Form extends Data_Form
       'description' => $this->getDescription(),
       'storageType' => $this->getStorageType(),
       'mediaSubType' => $this->getMediaSubType(),
+      'users' => $this->getUsers(),
     );
     if (!$this->_object->id || $isEditor && $this->_object->id && self::ALLOW_ALBUM_CHANGE) {
       // Editors can move a media to a different album

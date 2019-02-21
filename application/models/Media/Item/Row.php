@@ -55,7 +55,7 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
 
     $users = $this->getUsersInMedia();
     foreach ($users['byId'] as $user) {
-      if ($user && ($album = $user->getProfileAlbum())) {
+      if ($user && ($album = $user->getAlbum())) {
         $return[] = $album->getItemsCacheId();
       }
     }
@@ -551,6 +551,16 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
     }
 
     return $users;
+  }
+
+  public function getUserIdsInMedia()
+  {
+    $list = $this->getUsersInMedia();
+    $userIds = array();
+    foreach ($list['byId'] as $user) {
+      $userIds[] = $user->getId();
+    }
+    return $userIds;
   }
 
   protected function _getUsersInMediaCacheId()

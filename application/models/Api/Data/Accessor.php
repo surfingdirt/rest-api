@@ -78,13 +78,26 @@ abstract class Api_Data_Accessor
    */
   protected function _addEntriesForAttribute($attr, $object, $ret)
   {
+    $nameOrIdAttrs = array(
+      'submitter',
+      'lastEditor',
+      'dpt',
+      'spot',
+      'trick',
+      'album',
+      'author',
+      'toUser',
+      'country',
+      'region',
+    );
+
     if (in_array($attr, array('longitude', 'latitude'))) {
       if ($location = $object->getLocation()) {
         $ret[$attr] = $location->$attr;
       } else {
         $ret[$attr] = null;
       }
-    } elseif (in_array($attr, array('submitter', 'lastEditor', 'dpt', 'spot', 'trick', 'album', 'author', 'toUser', 'country', 'region'))) {
+    } elseif (in_array($attr, $nameOrIdAttrs)) {
       switch ($attr) {
         case 'submitter':
           $otherObject = $object->getSubmitter();
@@ -142,6 +155,8 @@ abstract class Api_Data_Accessor
         'title' => $name
       );
 
+    } elseif ($attr == 'users') {
+      $ret[$attr] = $object->getUserIdsInMedia();
     } elseif ($attr == 'bounds') {
       $ret[$attr] = $object->getBounds();
     } elseif ($attr == 'title') {

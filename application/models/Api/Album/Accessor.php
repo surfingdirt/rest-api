@@ -49,7 +49,7 @@ class Api_Album_Accessor extends Api_Data_Accessor
       $mediaAccessor = new Api_Media_Accessor($this->_user, $this->_acl);
       foreach ($itemSet as $item) {
         $media = Media_Item_Factory::buildItem($item['id'], $item['mediaType']);
-        $mediaItems[$media->getId()] = $mediaAccessor->getObjectData($media);
+        $mediaItems[$media->getDate()] = $mediaAccessor->getObjectData($media);
       }
       $ret['media'] = $this->_restrictMediaItems($mediaItems, $requestParams);
     }

@@ -4,7 +4,7 @@ TRUNCATE media_album_aggregations;
 TRUNCATE media_albums;
 TRUNCATE media_albums_items;
 TRUNCATE media_items;
-TRUNCATE media_items_riders;
+TRUNCATE media_items_users;
 TRUNCATE translated_texts;
 TRUNCATE user_notifications;
 TRUNCATE users;
