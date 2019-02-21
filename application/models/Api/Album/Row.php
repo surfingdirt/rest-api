@@ -91,11 +91,11 @@ class Api_Album_Row extends Media_Album_Row
     if (ALLOW_CACHE || !($albumItems = $cache->load($cacheId))) {
 
       $db = Globals::getMainDatabase();
-
+      $where = $db->quoteInto('WHERE m.albumId = ?', $this->id);
       $sql = "
 				SELECT m.id, m.mediaType
 				FROM " . Constants_TableNames::MEDIA . " m
-				WHERE m.albumId = $this->id
+				$where
 				ORDER BY m.id DESC
 			";
       $albumItems = $db->query($sql)->fetchAll();
@@ -201,13 +201,15 @@ class Api_Album_Row extends Media_Album_Row
    */
   protected function _getSimpleAggregationItems(Media_Album_Aggregation_Row $aggregationRow)
   {
+    $itemsTable = new Media_Item();
+
+
     if (in_array($aggregationRow->keyName, self::$allowedSimpleAggregations)) {
-      $where = "`{$aggregationRow->keyName}` = {$aggregationRow->keyValue}";
+      $where = $itemsTable->getAdapter()->quoteInto("`{$aggregationRow->keyName}` = ?", $aggregationRow->keyValue);
     } else {
-      $where = "`id` = {$aggregationRow->keyValue}";
+      $where = $itemsTable->getAdapter()->quoteInto("`id` = ?", $aggregationRow->keyValue);
     }
 
-    $itemsTable = new Media_Item();
     $rawItems = $itemsTable->fetchAll($where);
     return $rawItems;
   }

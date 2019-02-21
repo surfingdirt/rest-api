@@ -1395,7 +1395,7 @@ describe('Album tests', () => {
 
   describe('GET', () => {
     const mediaClient = new ResourceClient(client, MEDIA);
-    const postVideoWithUserAs = async (submitter, vendorKey, userId) => {
+    const postVideoWithUserAs = async (submitter, vendorKey, users = []) => {
       await mediaClient.setUser(submitter);
       mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
       const { statusCode, body } = await mediaClient.post({
@@ -1405,36 +1405,69 @@ describe('Album tests', () => {
         title: 'A new video title',
         description: 'A new video description',
         vendorKey,
-        users: [userId],
+        users: users,
         storageType: 0,
       });
       expect(statusCode).toEqual(200);
       return body;
     };
 
-    test('Aggregate album contains user media', async () => {
+    test('Aggregate album contains containing tagged users', async () => {
       const videoKey = '9cTG0U6IMHU';
-      const userBody = await createUser('albumGetTest1', 'albumGetTest1@email.com');
+      const newUser = await createUser('albumGetTest1', 'albumGetTest1@email.com');
       const {
         userId: newUserId,
-        album: { id: newAlbumId },
-      } = userBody;
-      const videoBody = await postVideoWithUserAs(plainUser, videoKey, newUserId);
+        album: { id: newAggAlbumId },
+      } = newUser;
+      const videoBody = await postVideoWithUserAs(plainUser, videoKey, [newUserId]);
       const { id: newVideoId } = videoBody;
 
-      const {statusCode, body: { media }} = await albumClient.get(newAlbumId);
+      const {
+        statusCode,
+        body: { media },
+      } = await albumClient.get(newAggAlbumId);
       expect(statusCode).toEqual(200);
       const mediaCount = media.length;
 
-      const mediaIds = media.map(m => m.id);
+      const mediaIds = media.map((m) => m.id);
       expect(mediaIds).toEqual([newVideoId]);
-      const users = media.filter(({users}) => {
+      const users = media.filter(({ users }) => {
         return users.includes(newUserId);
       });
       expect(users.length).toEqual(mediaCount);
     });
 
-    test('Static album contains user media', async () => {});
+    test('Static album contains user media', async () => {
+      const postVideoWithToStaticAlbum = async (submitter, vendorKey, albumId) => {
+        await mediaClient.setUser(submitter);
+        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+        const { statusCode, body } = await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          vendorKey,
+          albumId,
+          title: 'A new video title',
+          description: 'A new video description',
+          users: [],
+          storageType: 0,
+        });
+        expect(statusCode).toEqual(200);
+        return body;
+      };
+
+      const { statusCode: initialStatusCode, body: initialBody } = await albumClient.get(plainUserStaticAlbum.id);
+      const { media: initialAlbumContent } = initialBody;
+      expect(initialStatusCode).toEqual(200);
+
+      const videoKey = '9cTG0U6IMHU';
+      const { id: newVideoId } = await postVideoWithToStaticAlbum(plainUser, videoKey, plainUserStaticAlbum.id);
+
+      const { statusCode: secondStatusCode, body: { media: secondAlbumContent} } = await albumClient.get(plainUserStaticAlbum.id);
+      expect(secondStatusCode).toEqual(200);
+
+      expect(secondAlbumContent.length).toEqual(initialAlbumContent.length + 1);
+      expect(secondAlbumContent.map(m => m.id).includes(newVideoId)).toBeTruthy();
+    });
 
     test('Album content can be sorted', async () => {});
 
