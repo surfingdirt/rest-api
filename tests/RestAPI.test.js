@@ -600,7 +600,7 @@ describe('Media tests', () => {
   describe('GET ACLs', () => {
     const media0PublicInfo =
       '["album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
-      '"mediaSubType","mediaType","status","submitter","title","vendorKey","width"]';
+      '"mediaSubType","mediaType","status","submitter","title","users","vendorKey","width"]';
     // TODO: rajouter author
 
     describe('Valid photo', () => {
@@ -931,7 +931,7 @@ describe('Media tests', () => {
   describe('Video tests', () => {
     const createdVideoKeys =
       '["album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
-      '"mediaSubType","mediaType","status","submitter","title","vendorKey","width"]';
+      '"mediaSubType","mediaType","status","submitter","title","users","vendorKey","width"]';
     // TODO: rajouter author
 
     describe('POST', () => {
@@ -1412,7 +1412,7 @@ describe('Album tests', () => {
       return body;
     };
 
-    test.only('Aggregate album contains user media', async () => {
+    test('Aggregate album contains user media', async () => {
       const videoKey = '9cTG0U6IMHU';
       const userBody = await createUser('albumGetTest1', 'albumGetTest1@email.com');
       const {
@@ -1422,7 +1422,6 @@ describe('Album tests', () => {
       const videoBody = await postVideoWithUserAs(plainUser, videoKey, newUserId);
       const { id: newVideoId } = videoBody;
 
-      albumClient.setDebugBackend();
       const {statusCode, body: { media }} = await albumClient.get(newAlbumId);
       expect(statusCode).toEqual(200);
       const mediaCount = media.length;

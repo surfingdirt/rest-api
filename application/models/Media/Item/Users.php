@@ -16,8 +16,12 @@ class Media_Item_Users extends Zend_Db_Table_Abstract
     }
   }
 
-  public function updateUsers($mediaId, array $users)
+  public function updateUsers($mediaId, $users)
   {
+    if (!$users || sizeof($users) == 0) {
+      return;
+    }
+
     $this->delete($this->getAdapter()->quoteInto('mediaId = ?', $mediaId));
     $this->insertUsers($mediaId, $users);
   }
