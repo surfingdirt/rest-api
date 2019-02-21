@@ -34,8 +34,11 @@ class Api_Album_Accessor extends Api_Data_Accessor
   /**
    * Performs a read operation
    */
-  public function getObjectData($object, $action = 'list', array $requestParams = array())
+  public function getObjectData($object, $action = 'list', $requestParams = null)
   {
+    if (!$requestParams) {
+      $requestParams = array();
+    }
     $attributes = $this->getReadAttributes($object);
     $ret = array();
     foreach ($attributes as $attr) {
@@ -49,7 +52,7 @@ class Api_Album_Accessor extends Api_Data_Accessor
       $mediaAccessor = new Api_Media_Accessor($this->_user, $this->_acl);
       foreach ($itemSet as $item) {
         $media = Media_Item_Factory::buildItem($item['id'], $item['mediaType']);
-        $mediaItems[$media->getDate()] = $mediaAccessor->getObjectData($media);
+        $mediaItems[] = $mediaAccessor->getObjectData($media);
       }
       $ret['media'] = $this->_restrictMediaItems($mediaItems, $requestParams);
     }
@@ -64,9 +67,9 @@ class Api_Album_Accessor extends Api_Data_Accessor
     $count = isset($params['count']) ? (int)$params['count'] : MEDIA_PER_PAGE;
 
     if ($dir == 'ASC') {
-      ksort($mediaItems);
+      uasort($mediaItems, array($this, '_sortByDateAsc'));
     } else {
-      krsort($mediaItems);
+      uasort($mediaItems, array($this, '_sortByDateDesc'));
     }
 
     if ($start > 0 && $start - 1 <= count($mediaItems)) {
@@ -82,5 +85,33 @@ class Api_Album_Accessor extends Api_Data_Accessor
       $return[] = $v;
     }
     return $return;
+  }
+
+  static protected function _getComparableDate($date)
+  {
+    $parts = explode('.', $date);
+    return 1000 * strtotime($parts[0]) + (int)($parts[1]);
+  }
+
+  protected function _sortByDateDesc($a, $b)
+  {
+    $a = self::_getComparableDate($a['date']);
+    $b = self::_getComparableDate($b['date']);
+
+    if ($a == $b) {
+      return 0;
+    }
+    return ($a < $b) ? 1 : -1;
+  }
+
+  protected function _sortByDateAsc($a, $b)
+  {
+    $a = self::_getComparableDate($a['date']);
+    $b = self::_getComparableDate($b['date']);
+
+    if ($a == $b) {
+      return 0;
+    }
+    return ($a < $b) ? -1 : 1;
   }
 }

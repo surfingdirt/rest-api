@@ -1212,7 +1212,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
 
     if ($this->onePassSubmit()) {
       if (empty($this->date)) {
-        $this->date = Utils::date("Y-m-d H:i:s");
+        $this->date = Utils::date("Y-m-d H:i:s.v");
       }
       $this->status = ($setInValid) ? Data::INVALID : Data::VALID;
       $item->date = $this->date;

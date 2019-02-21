@@ -1395,6 +1395,7 @@ describe('Album tests', () => {
 
   describe('GET', () => {
     const mediaClient = new ResourceClient(client, MEDIA);
+
     const postVideoWithUserAs = async (submitter, vendorKey, users = []) => {
       await mediaClient.setUser(submitter);
       mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
@@ -1406,6 +1407,23 @@ describe('Album tests', () => {
         description: 'A new video description',
         vendorKey,
         users: users,
+        storageType: 0,
+      });
+      expect(statusCode).toEqual(200);
+      return body;
+    };
+
+    const postVideoWithToStaticAlbum = async (submitter, vendorKey, albumId) => {
+      await mediaClient.setUser(submitter);
+      mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+      const { statusCode, body } = await mediaClient.post({
+        mediaType: VIDEO,
+        mediaSubType: YOUTUBE,
+        vendorKey,
+        albumId,
+        title: 'A new video title',
+        description: 'A new video description',
+        users: [],
         storageType: 0,
       });
       expect(statusCode).toEqual(200);
@@ -1438,38 +1456,62 @@ describe('Album tests', () => {
     });
 
     test('Static album contains user media', async () => {
-      const postVideoWithToStaticAlbum = async (submitter, vendorKey, albumId) => {
-        await mediaClient.setUser(submitter);
-        mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-        const { statusCode, body } = await mediaClient.post({
-          mediaType: VIDEO,
-          mediaSubType: YOUTUBE,
-          vendorKey,
-          albumId,
-          title: 'A new video title',
-          description: 'A new video description',
-          users: [],
-          storageType: 0,
-        });
-        expect(statusCode).toEqual(200);
-        return body;
-      };
-
-      const { statusCode: initialStatusCode, body: initialBody } = await albumClient.get(plainUserStaticAlbum.id);
+      const { statusCode: initialStatusCode, body: initialBody } = await albumClient.get(
+        plainUserStaticAlbum.id,
+      );
       const { media: initialAlbumContent } = initialBody;
       expect(initialStatusCode).toEqual(200);
 
       const videoKey = '9cTG0U6IMHU';
-      const { id: newVideoId } = await postVideoWithToStaticAlbum(plainUser, videoKey, plainUserStaticAlbum.id);
+      const { id: newVideoId } = await postVideoWithToStaticAlbum(
+        plainUser,
+        videoKey,
+        plainUserStaticAlbum.id,
+      );
 
-      const { statusCode: secondStatusCode, body: { media: secondAlbumContent} } = await albumClient.get(plainUserStaticAlbum.id);
+      const {
+        statusCode: secondStatusCode,
+        body: { media: secondAlbumContent },
+      } = await albumClient.get(plainUserStaticAlbum.id);
       expect(secondStatusCode).toEqual(200);
 
       expect(secondAlbumContent.length).toEqual(initialAlbumContent.length + 1);
-      expect(secondAlbumContent.map(m => m.id).includes(newVideoId)).toBeTruthy();
+      expect(secondAlbumContent.map((m) => m.id).includes(newVideoId)).toBeTruthy();
     });
 
-    test('Album content can be sorted', async () => {});
+    test.only('Album content can be sorted', async () => {
+      albumClient.setDebugBackend();
+
+      const album = await createStaticAlbum(plainUser, { title: 'Album for sorting' });
+      await postVideoWithToStaticAlbum(plainUser, '123', album.id);
+      await postVideoWithToStaticAlbum(plainUser, '456', album.id);
+      await postVideoWithToStaticAlbum(plainUser, '789', album.id);
+
+      const {
+        body: { media: mediaDefault },
+      } = await albumClient.get(album.id);
+      const {
+        body: { media: mediaAsc },
+      } = await albumClient.get(album.id, { dir: 'ASC' });
+      const {
+        body: { media: mediaDesc },
+      } = await albumClient.get(album.id, { dir: 'DESC' });
+
+      const listDefault = mediaDefault.map(m => m.vendorKey);
+      const listAsc = mediaAsc.map(m => m.vendorKey);
+      const listDesc = mediaDesc.map(m => m.vendorKey);
+
+      expect(mediaDefault.length).toEqual(3);
+      expect(listDefault).toEqual(['789', '456', '123']);
+
+      expect(mediaAsc.length).toEqual(3);
+      expect(listAsc).toEqual(['123', '456', '789']);
+
+      expect(mediaDesc.length).toEqual(3);
+      expect(listDesc).toEqual(['789', '456', '123']);
+
+      const toto = 1;
+    });
 
     test('Album content can be paginated', async () => {});
 

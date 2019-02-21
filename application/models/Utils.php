@@ -286,7 +286,7 @@ class Utils
     if (APPLICATION_ENV == 'test') {
       $cache = Globals::getGlobalCache();
 
-      if ($format == "Y-m-d H:i:s") {
+      if ($format == "Y-m-d H:i:s.v") {
         if ($date = $cache->load('datetime')) {
           return $date;
         }
@@ -307,7 +307,8 @@ class Utils
       return time();
     }
 
-    $date = date($format);
+    $d = date_create();
+    $date = date_format($d, $format);
     //error_log('direct '.$date);
     return $date;
   }

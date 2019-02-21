@@ -56,25 +56,6 @@ class MediaController extends Api_Controller_Action
     }
   }
 
-//  protected function _preObjectUpdate($object, $data)
-//  {
-//    parent::_preObjectUpdate($object, $data);
-//
-//    $this->_oldImageId = null;
-//    if ($this->_shouldDeleteOldImage($object, $data)) {
-//      $this->_oldImageId = $object->imageId;
-//    }
-//  }
-//
-//  protected function _postObjectUpdate($object, $data)
-//  {
-//    parent::_postObjectUpdate($object, $data);
-//
-//    if ($this->_oldImageId) {
-//      Lib_Storage::cleanUpFiles($object->storageType, $this->_oldImageId);
-//    }
-//  }
-
   protected function _shouldDeleteOldImage($object, $data)
   {
     if ($object->getMediaType() == Media_Item::TYPE_PHOTO) {
