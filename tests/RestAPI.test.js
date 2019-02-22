@@ -706,6 +706,7 @@ describe('Media tests', () => {
     });
 
     test('Admin can PUT', async () => {
+      mediaClient.setDebugBackend();
       await mediaClient.setUser(adminUser);
       const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
         title: 'Modified title3',
@@ -1479,9 +1480,7 @@ describe('Album tests', () => {
       expect(secondAlbumContent.map((m) => m.id).includes(newVideoId)).toBeTruthy();
     });
 
-    test.only('Album content can be sorted', async () => {
-      albumClient.setDebugBackend();
-
+    test('Album content can be sorted', async () => {
       const album = await createStaticAlbum(plainUser, { title: 'Album for sorting' });
       await postVideoWithToStaticAlbum(plainUser, '123', album.id);
       await postVideoWithToStaticAlbum(plainUser, '456', album.id);
@@ -1509,8 +1508,6 @@ describe('Album tests', () => {
 
       expect(mediaDesc.length).toEqual(3);
       expect(listDesc).toEqual(['789', '456', '123']);
-
-      const toto = 1;
     });
 
     test('Album content can be paginated', async () => {});

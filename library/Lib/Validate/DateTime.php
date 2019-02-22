@@ -16,7 +16,7 @@ class Lib_Validate_DateTime extends Zend_Validate_Abstract
     switch (Zend_Registry::get('Zend_Locale')) {
       case 'fr':
       default:
-        $preg = '/^\d{2}(\-|\/|\.)\d{2}(\-|\/|\.)\d{4} \d{2}:\d{2}:\d{2}$/';
+        $preg = '/^\d{2}(\-|\/|\.)\d{2}(\-|\/|\.)\d{4} \d{2}:\d{2}:\d{2}\.\d{3}$/';
         break;
     }
 
