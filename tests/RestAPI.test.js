@@ -706,7 +706,6 @@ describe('Media tests', () => {
     });
 
     test('Admin can PUT', async () => {
-      mediaClient.setDebugBackend();
       await mediaClient.setUser(adminUser);
       const { statusCode, body } = await mediaClient.put(invalidPhoto.id, {
         title: 'Modified title3',
@@ -1480,7 +1479,7 @@ describe('Album tests', () => {
       expect(secondAlbumContent.map((m) => m.id).includes(newVideoId)).toBeTruthy();
     });
 
-    test('Album content can be sorted', async () => {
+    test('Album content can be sorted and/or paginated', async () => {
       const album = await createStaticAlbum(plainUser, { title: 'Album for sorting' });
       await postVideoWithToStaticAlbum(plainUser, '123', album.id);
       await postVideoWithToStaticAlbum(plainUser, '456', album.id);
@@ -1495,10 +1494,18 @@ describe('Album tests', () => {
       const {
         body: { media: mediaDesc },
       } = await albumClient.get(album.id, { dir: 'DESC' });
+      const {
+        body: { media: mediaPageAsc },
+      } = await albumClient.get(album.id, { dir: 'ASC', count: 1, start: 2 });
+      const {
+        body: { media: mediaPageDesc },
+      } = await albumClient.get(album.id, { dir: 'DESC', count: 1, start: 2 });
 
       const listDefault = mediaDefault.map(m => m.vendorKey);
       const listAsc = mediaAsc.map(m => m.vendorKey);
       const listDesc = mediaDesc.map(m => m.vendorKey);
+      const listPageAsc = mediaPageAsc.map(m => m.vendorKey);
+      const listPageDesc = mediaPageDesc.map(m => m.vendorKey);
 
       expect(mediaDefault.length).toEqual(3);
       expect(listDefault).toEqual(['789', '456', '123']);
@@ -1508,11 +1515,13 @@ describe('Album tests', () => {
 
       expect(mediaDesc.length).toEqual(3);
       expect(listDesc).toEqual(['789', '456', '123']);
+
+      expect(mediaPageAsc.length).toEqual(1);
+      expect(listPageAsc).toEqual(['789']);
+
+      expect(mediaPageDesc.length).toEqual(1);
+      expect(listPageDesc).toEqual(['123']);
     });
-
-    test('Album content can be paginated', async () => {});
-
-    test('Album content can be sorted and paginated', async () => {});
   });
 
   describe('PUT', () => {

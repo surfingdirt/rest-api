@@ -62,27 +62,25 @@ class Api_Album_Accessor extends Api_Data_Accessor
 
   protected function _restrictMediaItems(array $mediaItems, array $params)
   {
-    $dir = (isset($params['dir']) && $params['dir'] == 'ASC') ? 'ASC' : 'DESC';
     $start = isset($params['start']) ? (int)$params['start'] : 0;
+    $start = max($start, 0);
+
     $count = isset($params['count']) ? (int)$params['count'] : MEDIA_PER_PAGE;
+    $count = max($count, 0);
 
+    $dir = (isset($params['dir']) && $params['dir'] == 'ASC') ? 'ASC' : 'DESC';
     if ($dir == 'ASC') {
-      uasort($mediaItems, array($this, '_sortByDateAsc'));
+      usort($mediaItems, array($this, '_sortByDateAsc'));
     } else {
-      uasort($mediaItems, array($this, '_sortByDateDesc'));
+      usort($mediaItems, array($this, '_sortByDateDesc'));
     }
 
-    if ($start > 0 && $start - 1 <= count($mediaItems)) {
-      array_splice($mediaItems, 0, $start - 1);
-    }
-
-    if ($count > 0 && $count <= count($mediaItems)) {
-      array_splice($mediaItems, $count);
-    }
-
-    $return = array();
-    foreach ($mediaItems as $k => $v) {
-      $return[] = $v;
+    $return = [];
+    for($i = $start; $i <= $start + $count; $i++) {
+      if ($i >= sizeof($mediaItems)) {
+        break;
+      }
+      $return[] = $mediaItems[$i];
     }
     return $return;
   }
