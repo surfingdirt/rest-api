@@ -369,44 +369,38 @@ describe('Image tests', () => {
   describe('POST error cases', () => {
     test('Plain user POST fails when no file is sent', async () => {
       await imageClient.setUser(plainUser);
-      const { statusCode, body } = await imageClient.postFormData({ type }, []);
-      expect(statusCode).toEqual(400);
+      const body = checkBadRequest(await imageClient.postFormData({ type }, []));
       expect(body.errors.topLevelError.code).toEqual(10010);
     });
 
     test('Plain user POST fails because file is not actually an image', async () => {
       await imageClient.setUser(plainUser);
-      const { statusCode, body } = await imageClient.postFormData({ type }, [textFileAsJPEG]);
-      expect(statusCode).toEqual(400);
+      const body = checkBadRequest(await imageClient.postFormData({ type }, [textFileAsJPEG]));
       expect(body.errors.topLevelError.code).toEqual(10011);
     });
 
     test('Plain user POST fails because file is a text file', async () => {
       await imageClient.setUser(plainUser);
-      const { statusCode, body } = await imageClient.postFormData({ type }, [textFileAsTxt]);
-      expect(statusCode).toEqual(400);
+      const body = checkBadRequest(await imageClient.postFormData({ type }, [textFileAsTxt]));
       expect(body.errors.topLevelError.code).toEqual(10011);
     });
 
     test('Plain user POST fails because image file size is too big', async () => {
       await imageClient.setUser(plainUser);
-      const { statusCode, body } = await imageClient.postFormData({ type }, [imgHeavy]);
-      expect(statusCode).toEqual(400);
+      const body = checkBadRequest(await imageClient.postFormData({ type }, [imgHeavy]));
       expect(body.errors.topLevelError.code).toEqual(10002);
     });
 
     test('Plain user POST fails because storage type is not supported', async () => {
       await imageClient.setUser(plainUser);
-      const { statusCode, body } = await imageClient.postFormData({ type: 1 }, [img640]);
-      expect(statusCode).toEqual(400);
+      const body = checkBadRequest(await imageClient.postFormData({ type: 1 }, [img640]));
       expect(body.errors.topLevelError.code).toEqual(10001);
     });
 
     test('Plain user POST fails because uuid already exists', async () => {
       await imageClient.setUser(plainUser);
       imageClient.setUUIDs([images[0].id]);
-      const { statusCode, body } = await imageClient.postFormData({ type }, [img640]);
-      expect(statusCode).toEqual(400);
+      const body = checkBadRequest(await imageClient.postFormData({ type }, [img640]));
       expect(body.errors.topLevelError.code).toEqual(10008);
     });
   });
@@ -414,11 +408,7 @@ describe('Image tests', () => {
   describe('POST success cases', () => {
     test('Plain user POST succeeds and returns the right dimensions', async () => {
       await imageClient.setUser(plainUser);
-      const {
-        statusCode,
-        body: [{ key, width, height }],
-      } = await imageClient.postFormData({ type }, [img640]);
-      expect(statusCode).toEqual(200);
+      const [{ key, width, height }] = checkSuccess(await imageClient.postFormData({ type }, [img640]));
       expect(looksLikeUUID(key)).toBeTruthy();
       expect(parseInt(width, 10)).toEqual(img640.width);
       expect(parseInt(height, 10)).toEqual(img640.height);
@@ -426,11 +416,7 @@ describe('Image tests', () => {
 
     test('Plain user POST succeeds even when image dimensions are brought down', async () => {
       await imageClient.setUser(plainUser);
-      const {
-        statusCode,
-        body: [{ key, width, height }],
-      } = await imageClient.postFormData({ type }, [img3000]);
-      expect(statusCode).toEqual(200);
+      const [{ key, width, height }] = checkSuccess(await imageClient.postFormData({ type }, [img3000]));
       expect(looksLikeUUID(key)).toBeTruthy();
       expect(parseInt(width, 10)).toEqual(MAX_WIDTH);
       expect(parseInt(height, 10)).toEqual(MAX_HEIGHT);
@@ -440,44 +426,37 @@ describe('Image tests', () => {
   describe('POST ACLS: all and only bad users get a 403', () => {
     test('Guest cannot POST', async () => {
       await imageClient.setToken(null);
-      const { statusCode } = await imageClient.postFormData({});
-      expect(statusCode).toEqual(403);
+      checkUnauthorised(await imageClient.postFormData({}));
     });
 
     test('Pending user cannot POST', async () => {
       await imageClient.setUser(pendingUser);
-      const { statusCode } = await imageClient.postFormData({});
-      expect(statusCode).toEqual(403);
+      checkUnauthorised(await imageClient.postFormData({}));
     });
 
     test('Banned user cannot POST', async () => {
       await imageClient.setUser(bannedUser);
-      const { statusCode } = await imageClient.postFormData({});
-      expect(statusCode).toEqual(403);
+      checkUnauthorised(await imageClient.postFormData({}));
     });
 
     test('Plain user can POST', async () => {
       await imageClient.setUser(plainUser);
-      const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
-      expect(statusCode).toEqual(200);
+      checkSuccess(await imageClient.postFormData({ type: 0 }, [img640]));
     });
 
     test('Writer user can POST', async () => {
       await imageClient.setUser(writerUser);
-      const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
-      expect(statusCode).toEqual(200);
+      checkSuccess(await imageClient.postFormData({ type: 0 }, [img640]));
     });
 
     test('Editor user can POST', async () => {
       await imageClient.setUser(editorUser);
-      const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
-      expect(statusCode).toEqual(200);
+      checkSuccess(await imageClient.postFormData({ type: 0 }, [img640]));
     });
 
     test('Admin can POST', async () => {
       await imageClient.setUser(adminUser);
-      const { statusCode } = await imageClient.postFormData({ type: 0 }, [img640]);
-      expect(statusCode).toEqual(200);
+      checkSuccess(await imageClient.postFormData({ type: 0 }, [img640]));
     });
   });
 
