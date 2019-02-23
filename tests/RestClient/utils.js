@@ -24,3 +24,23 @@ export const looksLikeUUID = (str) => {
   const regexp = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
   return !!str.match(regexp);
 };
+
+export const checkResponse = ({statusCode, body}, expectedStatusCode) => {
+  if (statusCode != expectedStatusCode) {
+    console.error('Response status code:', statusCode);
+    console.error('Response body:', JSON.stringify(body, null, 2));
+    if (!body) {
+      throw new Error('No response body');
+    }
+    if (body.error) {
+      throw new Error('Stopped because of unexpected error in body');
+    } else {
+      throw new Error(`Unexpected HTTP response code: ${statusCode} - expected: ${expectedStatusCode}`);
+    }
+  }
+  return body;
+};
+export const checkSuccess = (response) => checkResponse(response, 200);
+export const checkBadRequest = (response) => checkResponse(response, 400);
+export const checkUnauthorised = (response) => checkResponse(response, 403);
+export const checkNotFound = (response) => checkResponse(response, 404);

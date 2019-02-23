@@ -26,7 +26,16 @@ import {
 } from './data/users';
 import { img3000, img640, imgHeavy, textFileAsJPEG, textFileAsTxt } from './data/files';
 import { cleanupTestDatabase } from './RestClient/database';
-import { getDateForBackend, getSortedKeysAsString, looksLikeUUID } from './RestClient/utils';
+import {
+  getDateForBackend,
+  getSortedKeysAsString,
+  looksLikeUUID,
+  checkResponse,
+  checkSuccess,
+  checkBadRequest,
+  checkUnauthorised,
+  checkNotFound,
+} from './RestClient/utils';
 
 const { PHOTO, VIDEO } = MEDIA_TYPES;
 const { DAILYMOTION, FACEBOOK, INSTAGRAM, VIMEO, YOUTUBE } = MEDIA_SUBTYPES_VIDEO;
@@ -49,26 +58,24 @@ beforeEach(() => {
 describe('Token tests', () => {
   test('logged-out request results in 200', async () => {
     const path = plainUserPath;
-    const { statusCode, body } = await client.get({ path });
-    expect(statusCode).toBe(200);
+    const body = checkSuccess(await client.get({ path }));
     expect(Object.keys(body).length > 0).toBeTruthy();
   });
 
   test('banned user login request results in 403', async () => {
     const { username, password } = bannedUser;
-    const loginResponse = await client.post({
-      path: tokenPath,
-      data: { userP: password, username: username },
-    });
-    expect(loginResponse.statusCode).toBe(403);
+    checkUnauthorised(
+      await client.post({
+        path: tokenPath,
+        data: { userP: password, username: username },
+      }),
+    );
   });
 
   test('invalid token results in 403', async () => {
     const path = plainUserPath;
     const token = 'no-way-this-is-gonna-work';
-
-    const response = await client.get({ path, token });
-    expect(response.statusCode).toBe(403);
+    checkUnauthorised(await client.get({ path, token }));
   });
 
   test('token management is working properly', async () => {
@@ -77,12 +84,12 @@ describe('Token tests', () => {
     const { username, password } = plainUser;
 
     // Login request as user 1
-    const loginResponse = await client.post({
-      path: tokenPath,
-      data: { userP: password, username: username },
-    });
-    expect(loginResponse.statusCode).toBe(200);
-    const loginResponseBody = loginResponse.body;
+    const loginResponseBody = checkSuccess(
+      await client.post({
+        path: tokenPath,
+        data: { userP: password, username: username },
+      }),
+    );
     expect(loginResponseBody.token).toBeDefined();
     user1Token = loginResponseBody.token;
 
@@ -90,29 +97,30 @@ describe('Token tests', () => {
     await client.setDate(getDateForBackend(JWT_TTL + 2));
 
     // Request user 1 with user1Token while server thinks it's the future
-    const futureResponse = await client.get({
-      path: plainUserPath,
-      token: user1Token,
-    });
-    expect(futureResponse.statusCode).toBe(403);
+    checkUnauthorised(
+      await client.get({
+        path: plainUserPath,
+        token: user1Token,
+      }),
+      403,
+    );
 
     // Sets time back
     await client.setDate();
 
     // Request user 1 with user1Token while server thinks it's the present again
-    const loginNowResponse = await client.get({ path: plainUserPath, token: user1Token });
-    expect(loginNowResponse.statusCode).toBe(200);
+    checkSuccess(await client.get({ path: plainUserPath, token: user1Token }));
 
     // Delete token as self (ie, logout)
-    const deleteResponse = await client.delete({
-      path: getResourcePath(TOKEN),
-      token: user1Token,
-    });
-    expect(deleteResponse.statusCode).toBe(200);
+    checkSuccess(
+      await client.delete({
+        path: getResourcePath(TOKEN),
+        token: user1Token,
+      }),
+    );
 
     // Request user 1 with blacklisted user1Token
-    const loginAgainResponse = await client.get({ path: plainUserPath, token: user1Token });
-    expect(loginAgainResponse.statusCode).toBe(403);
+    checkUnauthorised(await client.get({ path: plainUserPath, token: user1Token }), 403);
   });
 });
 
@@ -121,18 +129,15 @@ describe('User tests', () => {
 
   describe('Error cases', () => {
     test('Missing user request should return a 404', async () => {
-      const { statusCode } = await userClient.get(2500);
-      expect(statusCode).toEqual(404);
+      checkNotFound(await userClient.get(2500), 404);
     });
 
     test('Banned user request should return a 403', async () => {
-      const { statusCode } = await userClient.get(bannedUser.id);
-      expect(statusCode).toEqual(403);
+      checkUnauthorised(await userClient.get(bannedUser.id), 403);
     });
 
     test('Pending user request should return a 403', async () => {
-      const { statusCode } = await userClient.get(pendingUser.id);
-      expect(statusCode).toEqual(403);
+      checkUnauthorised(await userClient.get(pendingUser.id));
     });
   });
 
@@ -150,37 +155,37 @@ describe('User tests', () => {
 
     test("Retrieve plainuser's data as guest", async () => {
       userClient.setToken(null);
-      const { body } = await userClient.get(plainUser.id);
+      const body = checkSuccess(await userClient.get(plainUser.id));
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as other user", async () => {
       await userClient.setUser(otherUser);
-      const { body } = await userClient.get(plainUser.id);
+      const body = checkSuccess(await userClient.get(plainUser.id));
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as writer user", async () => {
       await userClient.setUser(writerUser);
-      const { body } = await userClient.get(plainUser.id);
+      const body = checkSuccess(await userClient.get(plainUser.id));
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as editor", async () => {
       await userClient.setUser(editorUser);
-      const { body } = await userClient.get(plainUser.id);
+      const body = checkSuccess(await userClient.get(plainUser.id));
       expect(getSortedKeysAsString(body)).toEqual(plainUserPublicInfo);
     });
 
     test("Retrieve plainuser's data as admin", async () => {
       await userClient.setUser(adminUser);
-      const { body } = await userClient.get(plainUser.id);
+      const body = checkSuccess(await userClient.get(plainUser.id));
       expect(getSortedKeysAsString(body)).toEqual(plainUserAdminInfo);
     });
 
     test("Retrieve plainuser's data as self", async () => {
       await userClient.setUser(plainUser);
-      const { body } = await userClient.get(plainUser.id);
+      const body = checkSuccess(await userClient.get(plainUser.id));
       expect(getSortedKeysAsString(body)).toEqual(plainUserSelfInfo);
     });
   });
@@ -188,7 +193,7 @@ describe('User tests', () => {
   describe('User list GET', () => {
     test('Retrieve all valid users as guest', async () => {
       userClient.setToken(null);
-      const { body } = await userClient.list();
+      const body = checkSuccess(await userClient.list());
       const userIds = body.map((u) => u.userId);
       const expectedUserIds = [
         plainUser.id,
@@ -202,7 +207,7 @@ describe('User tests', () => {
 
     test('Retrieve all users in the database as admin', async () => {
       await userClient.setUser(adminUser);
-      const { body } = await userClient.list();
+      const body = checkSuccess(await userClient.list());
       const userIds = body.map((u) => u.userId);
       const expectedUserIds = [
         plainUser.id,
@@ -218,21 +223,21 @@ describe('User tests', () => {
 
     test('Retrieve 3rd and 4th valid users as guest', async () => {
       userClient.setToken(null);
-      const { body } = await userClient.list({ start: 2, count: 2 });
+      const body = checkSuccess(await userClient.list({ start: 2, count: 2 }));
       const userIds = body.map((u) => u.userId);
       expect(userIds).toEqual([editorUser.id, writerUser.id]);
     });
 
     test('Retrieve 2nd and 3rd valid users sorted by username ascending as guest', async () => {
       userClient.setToken(null);
-      const { body } = await userClient.list({ start: 1, count: 2, sort: 'username' });
+      const body = checkSuccess(await userClient.list({ start: 1, count: 2, sort: 'username' }));
       const userIds = body.map((u) => u.userId);
       expect(userIds).toEqual([editorUser.id, otherUser.id]);
     });
 
     test('Retrieve 2nd and 3rd valid users sorted by username descending as guest', async () => {
       userClient.setToken(null);
-      const { body } = await userClient.list({ start: 1, count: 2, sort: 'username', dir: 'desc' });
+      const body = checkSuccess(await userClient.list({ start: 1, count: 2, sort: 'username', dir: 'desc' }));
       const userIds = body.map((u) => u.userId);
       expect(userIds).toEqual([plainUser.id, otherUser.id]);
     });
@@ -245,26 +250,23 @@ describe('User tests', () => {
 
     test('Logged-in user cannot create a new user', async () => {
       await userClient.setUser(plainUser);
-      const { statusCode } = await userClient.post({});
-      expect(statusCode).toEqual(403);
+      checkUnauthorised(await userClient.post({}));
     });
 
     test('Guest user cannot create a new user with invalid data', async () => {
       await userClient.setToken(null);
-      const { statusCode } = await userClient.post({});
-      expect(statusCode).toEqual(400);
+      checkBadRequest(await userClient.post({}));
     });
 
     test('Successful user creation should return an id', async () => {
       await userClient.setToken(null);
       userClient.setUUIDs([createdUser.id]);
-      const { statusCode, body } = await userClient.post({
+      const body = checkSuccess(await userClient.post({
         username: createdUser.username,
         userP: createdUser.password,
         userPC: createdUser.password,
         email: createdUser.email,
-      });
-      expect(statusCode).toEqual(200);
+      }));
       expect(getSortedKeysAsString(body)).toEqual(createdUserKeys);
       expect(looksLikeUUID(body.userId)).toBeTruthy();
       expect(body.userId).toEqual(createdUser.id);
@@ -274,31 +276,27 @@ describe('User tests', () => {
   describe('User PUT', () => {
     test('Admin can change user status', async () => {
       await userClient.setUser(adminUser);
-      const { statusCode, body } = await userClient.put(createdUser.id, { status: 'member' });
-      expect(statusCode).toEqual(200);
+      const body = checkSuccess(await userClient.put(createdUser.id, { status: 'member' }));
       expect(body.status).toEqual('member');
     });
 
     test('Plain user cannot update new user', async () => {
       await userClient.setUser(plainUser);
-      const { statusCode } = await userClient.put(createdUser.id, { firstName: 'nope' });
-      expect(statusCode).toEqual(403);
+      checkUnauthorised(await userClient.put(createdUser.id, { firstName: 'nope' }));
     });
 
     test('Plain user can update their account', async () => {
       await userClient.setUser({ id: createdUser.id });
-      const { statusCode, body } = await userClient.put(createdUser.id, { firstName: 'yes' });
-      expect(statusCode).toEqual(200);
+      const body = checkSuccess(await userClient.put(createdUser.id, { firstName: 'yes' }));
       expect(body.firstName).toEqual('yes');
     });
 
     test('Requests with password mismatch are rejected', async () => {
       await userClient.setUser({ id: createdUser.id });
-      const { statusCode, body } = await userClient.put(createdUser.id, {
+      const body = checkBadRequest(await userClient.put(createdUser.id, {
         userP: '123',
         userPC: '345',
-      });
-      expect(statusCode).toEqual(400);
+      }));
       expect(body).toEqual({ errors: { userPC: ['notSame'] } });
     });
 
@@ -306,11 +304,10 @@ describe('User tests', () => {
       const newPassword = '345';
 
       await userClient.setUser({ id: createdUser.id });
-      const { statusCode } = await userClient.put(createdUser.id, {
+      checkSuccess(await userClient.put(createdUser.id, {
         userP: newPassword,
         userPC: newPassword,
-      });
-      expect(statusCode).toEqual(200);
+      }));
 
       userClient.setToken(null);
       try {
@@ -330,38 +327,34 @@ describe('User tests', () => {
 
     beforeAll(async () => {
       await userClient.setToken(null);
-      const { body } = await userClient.post({
+      const body = checkSuccess(await userClient.post({
         username: userToDelete.username,
         userP: userToDelete.password,
         userPC: userToDelete.password,
         email: 'deleteme@gmail.com',
-      });
+      }));
       userIdToDelete = body.userId;
 
       await userClient.setUser(adminUser);
-      await userClient.put(userIdToDelete, { status: 'member' });
+      checkSuccess(await userClient.put(userIdToDelete, { status: 'member' }));
     });
 
     test('Guest cannot delete a user', async () => {
       userClient.setToken(null);
-      const { statusCode } = await userClient.delete(userIdToDelete);
-      expect(statusCode).toEqual(403);
+      checkUnauthorised(await userClient.delete(userIdToDelete));
     });
 
     test('User cannot delete their account', async () => {
       await userClient.setUser(userToDelete);
-      const { statusCode } = await userClient.delete(userIdToDelete);
-      expect(statusCode).toEqual(403);
+      checkUnauthorised(await userClient.delete(userIdToDelete));
     });
 
     test('Admin can delete an account', async () => {
       await userClient.setUser(adminUser);
-      const { statusCode } = await userClient.delete(userIdToDelete);
-      expect(statusCode).toEqual(200);
+      checkSuccess(await userClient.delete(userIdToDelete));
 
       userClient.setToken(null);
-      const { statusCode: notFoundStatusCode } = await userClient.get(userIdToDelete);
-      expect(notFoundStatusCode).toEqual(404);
+      checkNotFound(await userClient.delete(userIdToDelete));
     });
   });
 });
@@ -1501,11 +1494,11 @@ describe('Album tests', () => {
         body: { media: mediaPageDesc },
       } = await albumClient.get(album.id, { dir: 'DESC', count: 1, start: 2 });
 
-      const listDefault = mediaDefault.map(m => m.vendorKey);
-      const listAsc = mediaAsc.map(m => m.vendorKey);
-      const listDesc = mediaDesc.map(m => m.vendorKey);
-      const listPageAsc = mediaPageAsc.map(m => m.vendorKey);
-      const listPageDesc = mediaPageDesc.map(m => m.vendorKey);
+      const listDefault = mediaDefault.map((m) => m.vendorKey);
+      const listAsc = mediaAsc.map((m) => m.vendorKey);
+      const listDesc = mediaDesc.map((m) => m.vendorKey);
+      const listPageAsc = mediaPageAsc.map((m) => m.vendorKey);
+      const listPageDesc = mediaPageDesc.map((m) => m.vendorKey);
 
       expect(mediaDefault.length).toEqual(3);
       expect(listDefault).toEqual(['789', '456', '123']);
