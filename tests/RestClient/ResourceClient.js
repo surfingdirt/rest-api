@@ -112,4 +112,8 @@ export default class ResourceClient {
   setToken(token) {
     this.token = token;
   }
+
+  clearToken() {
+    this.token = null;
+  }
 }
