@@ -1523,10 +1523,12 @@ describe('Album tests', () => {
 
     test('Owner can update album title and description', async () => {
       albumClient.setUser(plainUser);
-      const {title, description} = checkSuccess(await albumClient.put(updatableAlbumId, {
-        title: 'ownerTitle',
-        description: 'ownerDescription',
-      }));
+      const { title, description } = checkSuccess(
+        await albumClient.put(updatableAlbumId, {
+          title: 'ownerTitle',
+          description: 'ownerDescription',
+        }),
+      );
 
       expect(title).toEqual('ownerTitle');
       expect(description).toEqual('ownerDescription');
@@ -1534,10 +1536,12 @@ describe('Album tests', () => {
 
     test('Editor can update album title and description', async () => {
       albumClient.setUser(editorUser);
-      const {title, description} = checkSuccess(await albumClient.put(updatableAlbumId, {
-        title: 'editorTitle',
-        description: 'editorDescription',
-      }));
+      const { title, description } = checkSuccess(
+        await albumClient.put(updatableAlbumId, {
+          title: 'editorTitle',
+          description: 'editorDescription',
+        }),
+      );
 
       expect(title).toEqual('editorTitle');
       expect(description).toEqual('editorDescription');
@@ -1545,32 +1549,93 @@ describe('Album tests', () => {
 
     test('Admin can update album title and description', async () => {
       albumClient.setUser(adminUser);
-      const {title, description} = checkSuccess(await albumClient.put(updatableAlbumId, {
-        title: 'adminTitle',
-        description: 'adminDescription',
-      }));
+      const { title, description } = checkSuccess(
+        await albumClient.put(updatableAlbumId, {
+          title: 'adminTitle',
+          description: 'adminDescription',
+        }),
+      );
 
       expect(title).toEqual('adminTitle');
       expect(description).toEqual('adminDescription');
     });
   });
 
-  describe('DELETE', () => {
-    test('Aggregate album cannot be deleted', async () => {
+  describe.only('DELETE', () => {
+    test.only('Aggregate album cannot be deleted', async () => {
       albumClient.setUser(adminUser);
-      checkUnauthorised(await albumClient.delete(aggregateAlbum.id));
+      // albumClient.setDebugBackend();
+      const body = checkBadRequest(await albumClient.delete(aggregateAlbum.id));
+      expect(body.errors.topLevelError.code).toEqual(12001);
     });
 
-    test('Non-empty static album cannot be deleted', async () => {});
+    test('Non-empty static album cannot be deleted', async () => {
+      const { id: albumId } = await createStaticAlbum(plainUser, {
+        title: 'Static album for delete',
+      });
 
-    test('Guest cannot delete empty static album', async () => {});
+      const mediaClient = new ResourceClient(client, MEDIA);
+      await mediaClient.setUser(plainUser);
+      mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+      checkSuccess(
+        await mediaClient.post({
+          mediaType: VIDEO,
+          mediaSubType: YOUTUBE,
+          albumId: albumId,
+          title: 'A new video title',
+          description: 'A new video description',
+          vendorKey: '1PcGJIjhQjg',
+          storageType: 0,
+        }),
+      );
 
-    test('Writer cannot delete empty static album', async () => {});
+      // TODO: il faut construire des api_album_row, pas des media_album_simple_row.
+      // l'accessor veut les bons objets, mais il y a un pb dans le cache, et on renvoie un media_album_simple_row
 
-    test('Owner can delete empty static album', async () => {});
+      albumClient.setDebugBackend();
+      albumClient.setUser(adminUser);
+      const body = checkBadRequest(await albumClient.delete(albumId));
+      expect(body.errors.topLevelError.code).toEqual(12002);
 
-    test('Editor can delete empty static album', async () => {});
+    });
 
-    test('Admin can delete empty static album', async () => {});
+    test('Guest and writer cannot delete empty static album', async () => {
+      const {id: deletableAlbumId} = await createStaticAlbum(plainUser, {
+        title: 'Album for delete',
+      });
+
+      albumClient.clearToken();
+      checkUnauthorised(await albumClient.delete(deletableAlbumId));
+
+      albumClient.setUser(writerUser);
+      checkUnauthorised(await albumClient.delete(deletableAlbumId));
+    });
+
+    test('Owner can delete empty static album', async () => {
+      const {id: deletableAlbumId} = await createStaticAlbum(plainUser, {
+        title: 'Album for delete',
+      });
+
+      albumClient.setUser(plainUser);
+      checkSuccess(await albumClient.delete(deletableAlbumId));
+    });
+
+    test('Editor can delete empty static album', async () => {
+      const {id: deletableAlbumId} = await createStaticAlbum(plainUser, {
+        title: 'Album for delete',
+      });
+
+      albumClient.setUser(editorUser);
+      checkSuccess(await albumClient.delete(deletableAlbumId));
+    });
+
+    test('Admin can delete empty static album', async () => {
+      const {id: deletableAlbumId} = await createStaticAlbum(plainUser, {
+        title: 'Album for delete',
+      });
+
+      albumClient.setUser(adminUser);
+      checkSuccess(await albumClient.delete(deletableAlbumId));
+    });
   });
 });

@@ -34,28 +34,6 @@ class Api_Album_Row extends Media_Album_Row
     return $ret;
   }
 
-  public function isDeletableBy(User_Row $user, Lib_Acl $acl)
-  {
-    if ($this->albumType != Media_Album::TYPE_SIMPLE) {
-      return false;
-    }
-
-    $itemSet = $this->getItemSet();
-    if (!$itemSet || count($itemSet) > 0) {
-      return false;
-    }
-
-    if ($this->submitter == $user->getId()) {
-      return true;
-    }
-
-    if ($user->isAdmin() || $user->isEditor()) {
-      return true;
-    }
-
-    return false;
-  }
-
   protected function _getItems()
   {
     if ($this->albumType == Media_Album::TYPE_SIMPLE) {

@@ -22,4 +22,10 @@ class Api_ErrorCodes
    */
   const MEDIA_BAD_MEDIA_TYPE = 11001;
   const MEDIA_BAD_ALBUM_FOR_POST = 11002;
+
+  /*
+   * ALBUMS
+   */
+  const STATIC_ALBUM_NOT_EMPTY = 12001;
+  const NON_STATIC_ALBUM_CANNOT_BE_DELETED = 12002;
 }

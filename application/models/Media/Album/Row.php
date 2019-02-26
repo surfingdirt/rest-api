@@ -166,14 +166,6 @@ abstract class Media_Album_Row extends Data_Row
           'albumId' => $this->id,
         );
         $link = Globals::getRouter()->assemble($params, $this->_route, true);
-
-        /*
-    $params = array(
-            'albumName' => $this->getCleanTitle(),
-            'albumId' => $this->id,
-        );
-        $link = Globals::getRouter()->assemble($params, $this->_route, true);
-*/
         break;
     }
     return $link;
@@ -221,7 +213,24 @@ abstract class Media_Album_Row extends Data_Row
 
   public function isDeletableBy(User_Row $user, Lib_Acl $acl)
   {
-    throw new Lib_Exception("Album deletion rights not checked yet: @todo");
+    if ($this->albumType != Media_Album::TYPE_SIMPLE) {
+      throw new Api_Exception_BadRequest('Album not deletable', Api_ErrorCodes::NON_STATIC_ALBUM_CANNOT_BE_DELETED);
+    }
+
+    $itemSet = $this->getItemSet();
+    if (!$itemSet || count($itemSet) > 0) {
+      throw new Api_Exception_BadRequest('Album not empty', Api_ErrorCodes::STATIC_ALBUM_NOT_EMPTY);
+    }
+
+    if ($this->submitter == $user->getId()) {
+      return true;
+    }
+
+    if ($user->isAdmin() || $user->isEditor()) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
