@@ -1561,12 +1561,11 @@ describe('Album tests', () => {
     });
   });
 
-  describe.only('DELETE', () => {
-    test.only('Aggregate album cannot be deleted', async () => {
+  describe('DELETE', () => {
+    test('Aggregate album cannot be deleted', async () => {
       albumClient.setUser(adminUser);
-      // albumClient.setDebugBackend();
       const body = checkBadRequest(await albumClient.delete(aggregateAlbum.id));
-      expect(body.errors.topLevelError.code).toEqual(12001);
+      expect(body.errors.topLevelError.code).toEqual(12002);
     });
 
     test('Non-empty static album cannot be deleted', async () => {
@@ -1589,13 +1588,9 @@ describe('Album tests', () => {
         }),
       );
 
-      // TODO: il faut construire des api_album_row, pas des media_album_simple_row.
-      // l'accessor veut les bons objets, mais il y a un pb dans le cache, et on renvoie un media_album_simple_row
-
-      albumClient.setDebugBackend();
       albumClient.setUser(adminUser);
       const body = checkBadRequest(await albumClient.delete(albumId));
-      expect(body.errors.topLevelError.code).toEqual(12002);
+      expect(body.errors.topLevelError.code).toEqual(12001);
 
     });
 

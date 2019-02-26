@@ -158,6 +158,7 @@ export default class StatelessClient {
   async delete({ path, token = null, debugBackend = false }) {
     const options = {
       method: 'DELETE',
+      json: true,
       uri: this.getFullUri({ path, debugBackend }),
       headers: this.getHeaders(token),
       simple: SIMPLE_REQUESTS,
