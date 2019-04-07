@@ -5,7 +5,6 @@ class TokenController extends Lib_Rest_Controller
   const MISSING_VALUE = 'missingValue';
   const FAILED_TO_LOGIN = 'failedToLogin';
   const LOGIN_SYSTEM_ERROR = 'loginSystemError';
-  const LOGOUT_SYSTEM_ERROR = 'logoutSystemError';
   const EXISTING_TOKEN = 'existingToken';
 
   /**
@@ -15,7 +14,7 @@ class TokenController extends Lib_Rest_Controller
   {
     $token = Globals::getJWT();
     if ($token) {
-      return $this->_unauthorised(self::EXISTING_TOKEN);
+      return $this->_unauthorised(self::EXISTING_TOKEN, Api_ErrorCodes::TOKEN_EXISTING);
     }
 
     $db = Globals::getMainDatabase();
@@ -23,23 +22,23 @@ class TokenController extends Lib_Rest_Controller
     $password = $this->getRequest()->getParam(User::INPUT_PASSWORD);
 
     if (empty($username) || empty($password)) {
-      return $this->_unauthorised(self::MISSING_VALUE);
+      return $this->_unauthorised(self::MISSING_VALUE, Api_ErrorCodes::TOKEN_MISSING_VALUE);
     }
     $authAdapter = new Lib_Auth_Adapter($db, $username, $password);
     $result = $authAdapter->authenticate();
     if (!$result->isValid()) {
-      return $this->_unauthorised(self::FAILED_TO_LOGIN);
+      return $this->_unauthorised(self::FAILED_TO_LOGIN, Api_ErrorCodes::TOKEN_FAILED_TO_LOGIN);
     }
 
     $userRow = $authAdapter->getResultRowObject(array(User::COLUMN_USERID));
     $userTable = new Api_User();
     $results = $userTable->find($userRow->{User::COLUMN_USERID});
     if (!$results) {
-      return $this->_unauthorised(self::LOGIN_SYSTEM_ERROR);
+      return $this->_unauthorised(self::LOGIN_SYSTEM_ERROR, Api_ErrorCodes::TOKEN_LOGIN_SYSTEM_ERROR);
     }
     $user = $results->current();
     if (!$user) {
-      return $this->_unauthorised(self::LOGIN_SYSTEM_ERROR);
+      return $this->_unauthorised(self::LOGIN_SYSTEM_ERROR, Api_ErrorCodes::TOKEN_LOGIN_SYSTEM_ERROR);
     }
     $user->{User::COLUMN_LAST_LOGIN} = Utils::date("Y-m-d H:i:s");
     $user->save();

@@ -129,6 +129,7 @@ describe('User tests', () => {
 
   describe('Error cases', () => {
     test('Missing user request should return a 404', async () => {
+      userClient.setDebugBackend(true);
       checkNotFound(await userClient.get(2500), 404);
     });
 
@@ -1420,7 +1421,7 @@ describe('Album tests', () => {
       return body;
     };
 
-    test('Aggregate album contains containing tagged users', async () => {
+    test('Aggregate album contains media items containing tagged users', async () => {
       const videoKey = '9cTG0U6IMHU';
       const newUser = await createUser('albumGetTest1', 'albumGetTest1@email.com');
       const {

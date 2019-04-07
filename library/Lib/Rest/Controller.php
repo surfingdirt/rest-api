@@ -17,8 +17,8 @@ abstract class Lib_Rest_Controller extends Zend_Rest_Controller
     $this->getResponse()->setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, DELETE');
   }
 
-  protected function _unauthorised($errorId = null)
+  protected function _unauthorised($errorId = null, $code = null)
   {
-    throw new Api_Exception_Unauthorised($errorId);
+    throw new Api_Exception_Unauthorised($errorId, $code);
   }
 }
