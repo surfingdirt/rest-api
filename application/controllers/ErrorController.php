@@ -87,17 +87,14 @@ class ErrorController extends Zend_Controller_Action
     $this->getResponse()->setRawHeader($rawHeader);
   }
 
-  protected function _errorBody($e, $type = null) {
+  protected function _errorBody($e) {
+    $error = array(
+      'code' => $e->getCode(),
+      'message' => $e->getMessage(),
+    );
     if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
-      $typeAsString = $type ? $type . ' - ' . get_class($e) : get_class($e);
-      $error = array(
-        'type' => $typeAsString,
-        'code' => $e->getCode(),
-        'trace' => $e->getTrace(),
-        'message' => $e->getMessage()
-      );
-    } else {
-      $error = array('code' => $e->getCode());
+      $error['type'] = get_class($e);
+      $error['trace'] = $e->getTrace();
     }
     $this->view->output = array('errors' => array('topLevelError' => $error));
   }
