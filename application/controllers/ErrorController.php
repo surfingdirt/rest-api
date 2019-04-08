@@ -94,7 +94,7 @@ class ErrorController extends Zend_Controller_Action
     );
     if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
       $error['type'] = get_class($e);
-      $error['trace'] = $e->getTrace();
+      $error['backendStacktrace'] = $e->getTrace();
     }
     $this->view->output = array('errors' => array('topLevelError' => $error));
   }
