@@ -129,7 +129,6 @@ describe('User tests', () => {
 
   describe('Error cases', () => {
     test('Missing user request should return a 404', async () => {
-      userClient.setDebugBackend(true);
       checkNotFound(await userClient.get(2500), 404);
     });
 

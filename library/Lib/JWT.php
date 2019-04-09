@@ -90,6 +90,9 @@ class Lib_JWT
   static public function isBlacklistable($tokenAsString, $secret)
   {
     try {
+      if (Lib_JWT_Blacklist::isBlacklisted($tokenAsString)) {
+        return false;
+      }
       self::getParsedToken($tokenAsString, $secret);
       return true;
     } catch (Lib_JWT_Exception $e) {
