@@ -44,4 +44,9 @@ class Api_ErrorCodes
   const TOKEN_LOGOUT_SYSTEM_ERROR = 14004;
   const TOKEN_EXISTING = 14005;
 
+  /*
+   * FORBIDDEN
+   */
+  const FORBIDDEN_BAD_TOKEN = 15001;
+  const FORBIDDEN_RESTRICTED_ACCESS = 15002;
 }

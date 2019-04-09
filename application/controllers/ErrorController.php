@@ -27,8 +27,10 @@ class ErrorController extends Zend_Controller_Action
         return $this->_badRequest($e);
 
       case 'Lib_JWT_Exception':
+        return $this->_forbidden($e, Api_ErrorCodes::FORBIDDEN_BAD_TOKEN);
+
       case 'Api_Exception_Unauthorised':
-        return $this->_forbidden($e);
+        return $this->_forbidden($e, Api_ErrorCodes::FORBIDDEN_RESTRICTED_ACCESS);
 
       case 'Api_Exception_NotFound':
         return $this->_resourceNotFound($e);
@@ -64,10 +66,21 @@ class ErrorController extends Zend_Controller_Action
     $this->_notFound($e, Api_ErrorCodes::RESOURCE_NOT_FOUND);
   }
 
-  protected function _forbidden($e)
+  protected function _forbidden($e, $code)
   {
     $this->_errorHeader('HTTP/1.1 403 Forbidden');
-    $this->_errorBody($e);
+    if (APPLICATION_ENV == "test" || APPLICATION_ENV == 'development') {
+      $error = array(
+        'type' => get_class($e),
+        'code' => $code,
+        'trace' => $e->getTrace(),
+        'message' => $e->getMessage()
+      );
+    } else {
+      $error = array('code' => $code);
+    }
+    $this->view->output = array('errors' => array('topLevelError' => $error));
+
   }
 
   protected function _badRequest($e)
