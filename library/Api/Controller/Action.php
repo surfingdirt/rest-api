@@ -168,7 +168,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     }
     if ($errors) {
       $this->getResponse()->setRawHeader('HTTP/1.1 400 Bad Request');
-      $this->view->output = array('errors' => $errors);
+      $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::FORM_BAD_INPUT);
     } else {
       $this->view->output = $this->_accessor->getObjectData(
         $object,
@@ -230,7 +230,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 
     } else {
       $this->_badRequest();
-      $this->view->output = array('errors' => $errors);
+      $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::FORM_BAD_INPUT);
     }
   }
 

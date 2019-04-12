@@ -49,4 +49,11 @@ class Api_ErrorCodes
    */
   const FORBIDDEN_BAD_TOKEN = 15001;
   const FORBIDDEN_RESTRICTED_ACCESS = 15002;
+
+  /*
+   * FORMS
+   */
+  const FORM_BAD_INPUT = 16001;
+
+
 }

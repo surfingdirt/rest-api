@@ -16,7 +16,7 @@ class MediaController extends Api_Controller_Action
 
     if ($errors) {
       $this->_badRequest();
-      $this->view->output = array('errors' => $errors);
+      $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::FORM_BAD_INPUT);
     } else if ($id) {
       $this->_postObjectCreation($object, $data);
       $this->view->output = $this->_accessor->getObjectData(
@@ -45,7 +45,7 @@ class MediaController extends Api_Controller_Action
     }
     if ($errors) {
       $this->_badRequest();
-      $this->view->output = array('errors' => $errors);
+      $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::FORM_BAD_INPUT);
     } else {
       $this->_postObjectUpdate($object, $data);
       $this->view->output = $this->_accessor->getObjectData(
