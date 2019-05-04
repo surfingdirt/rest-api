@@ -36,6 +36,16 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
     }
   }
 
+  public function isReadableBy(User_Row $user, Lib_Acl $acl)
+  {
+    if (in_array($this->status, array(User::STATUS_BANNED, User::STATUS_PENDING, User::STATUS_GUEST))) {
+      return in_array($user->status, array(User::STATUS_ADMIN, User::STATUS_EDITOR));
+    }
+
+    return true;
+  }
+
+
   protected function _doUpdate()
   {
     $return = parent::_doUpdate();

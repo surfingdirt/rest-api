@@ -115,4 +115,34 @@ class Api_User_Accessor extends Api_Data_Accessor
     }
     $object->$attrDBName = $target;
   }
+
+  /**
+   * Gets the list of attributes that can be read by
+   * the given user.
+   */
+  public function getReadAttributes($object)
+  {
+    if (!$object->isReadableBy($this->_user, $this->_acl)) {
+      throw new Api_Exception_Unauthorised('Access unauthorised for user ' . $this->_user->getId());
+    }
+
+    $attr = $this->publicReadAttributes;
+    if ($this->_user->isLoggedIn()) {
+      $attr = array_merge($attr, $this->memberReadAttributes);
+    }
+    if ($this->_user->getId() == $object->getId()) {
+      $attr = array_merge($attr, $this->ownReadAttributes);
+    }
+    if ($this->_user->isAdmin()) {
+      $attr = array_merge($attr, $this->ownReadAttributes);
+      $attr = array_merge($attr, $this->adminReadAttributes);
+    }
+
+    if (empty($attr)) {
+      throw new Api_Exception_Unauthorised('No readable attributes for user ' . $this->_user->getId());
+    }
+
+    return $attr;
+  }
+
 }

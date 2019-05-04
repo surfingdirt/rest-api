@@ -175,7 +175,7 @@ class User extends Cache_Object
   {
     $user = new stdClass();
     $user->{User::COLUMN_USERID} = 0;
-    $user->username = "Invité";
+    $user->username = "Guest";
     return $user;
   }
 }
