@@ -303,7 +303,7 @@ describe('User tests', () => {
           userPC: '345',
         }),
       );
-      expect(body).toEqual({ errors: { userPC: ['notSame'] } });
+      expect(body).toEqual({code: 16001,  errors: { userPC: ['notSame'] } });
     });
 
     test('Requests with matching passwords are successful, and old password is made invalid', async () => {
