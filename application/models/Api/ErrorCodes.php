@@ -55,5 +55,10 @@ class Api_ErrorCodes
    */
   const FORM_BAD_INPUT = 16001;
 
+  /*
+   * GENERAL
+   */
+  const CONNECTION_REFUSED = 17001;
+
 
 }
