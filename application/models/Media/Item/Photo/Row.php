@@ -57,15 +57,6 @@ class Media_Item_Photo_Row extends Media_Item_Row
     return $this->mediaSubType;
   }
 
-  public function getURI($absolute = true)
-  {
-    $url = APP_MEDIA_DIR . '/' . $this->uri;
-    if ($absolute) {
-      $url = APP_URL . '/' . $url;
-    }
-    return $url;
-  }
-
   /**
    * Performs a rotation of the photo and its thumbnail
    *

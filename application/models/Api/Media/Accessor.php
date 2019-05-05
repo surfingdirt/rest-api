@@ -46,7 +46,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
 //    'trick',
 //    'longitude',
 //    'latitude',
-    'uri',
+    'storageType',
     'width',
     'height',
 //    'author',
