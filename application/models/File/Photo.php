@@ -31,6 +31,9 @@ class File_Photo extends File_Media
      * Mimetype construction
      */
     $imageInfo = getimagesize($fullPath);
+    if (!$imageInfo) {
+      throw new Lib_Exception_Media_Photo_Mime("Unable to extract mime type");
+    }
     switch ($imageInfo["mime"]) {
       case Media_Item_Photo::MIME_JPEG:
       case Media_Item_Photo::MIME_JPG:
