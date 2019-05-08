@@ -22,6 +22,7 @@ class Api_ErrorCodes
    */
   const MEDIA_BAD_MEDIA_TYPE = 11001;
   const MEDIA_BAD_ALBUM_FOR_POST = 11002;
+  const MEDIA_BAD_MEDIA_SUBTYPE = 11003;
 
   /*
    * ALBUMS

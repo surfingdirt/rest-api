@@ -53,4 +53,27 @@ class UserController extends Api_Controller_Action
     $where = $this->_table->getAdapter()->quoteInto(User::COLUMN_USERID . ' = ?', $object->getId());
     $this->_table->delete($where);
   }
+
+  public function meAction()
+  {
+    if ($this->_user->status == User::STATUS_GUEST) {
+      $user = new stdClass();
+      $user->avatar = null;
+      $user->email = null;
+      $user->firstName = null;
+      $user->lang = null;
+      $user->status = User::STATUS_GUEST;
+      $user->userId = null;
+      $user->username = null;
+
+      $this->view->output = $user;
+      return;
+    }
+
+    $this->view->output = $this->_accessor->getObjectData(
+      $this->_user,
+      $this->_request->getActionName(),
+      $this->_request->getParams()
+    );
+  }
 }

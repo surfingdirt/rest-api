@@ -15,6 +15,8 @@ class Routes {
       'lostPassword' => new Zend_Controller_Router_Route('/lost-password/', array('controller' => 'custom', 'action' => 'lost-password')),
       'activateNewPassword' => new Zend_Controller_Router_Route('/users/:id/activate-new-password/', array('controller' => 'custom', 'action' => 'activate-new-password')),
 
+      'me' => new Zend_Controller_Router_Route('/user/me/', array('controller' => 'user', 'action' => 'me')),
+
       'userAlbums' => new Zend_Controller_Router_Route('/users/:id/albums/', array('controller' => 'users-albums', 'action' => 'list')),
       'comments' => new Zend_Controller_Router_Route('/:itemType/:itemId/comments/', array('controller' => 'comments')),
       'countryRegions' => new Zend_Controller_Router_Route('/countries/:countryId/regions/', array('controller' => 'regions', 'action' => 'list')),
