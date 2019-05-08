@@ -57,23 +57,16 @@ class UserController extends Api_Controller_Action
   public function meAction()
   {
     if ($this->_user->status == User::STATUS_GUEST) {
+      $attributes = $this->_accessor->getReadAttributes($this->_user);
       $user = new stdClass();
-      $user->avatar = null;
-      $user->email = null;
-      $user->firstName = null;
-      $user->lang = null;
+      foreach ($attributes as $key) {
+        $user->$key = null;
+      }
       $user->status = User::STATUS_GUEST;
-      $user->userId = null;
-      $user->username = null;
-
       $this->view->output = $user;
       return;
     }
 
-    $this->view->output = $this->_accessor->getObjectData(
-      $this->_user,
-      $this->_request->getActionName(),
-      $this->_request->getParams()
-    );
+    $this->view->output = $this->_accessor->getObjectData($this->_user);
   }
 }

@@ -42,6 +42,8 @@ const { DAILYMOTION, FACEBOOK, INSTAGRAM, VIMEO, YOUTUBE } = MEDIA_SUBTYPES_VIDE
 const plainUserPath = getResourcePath(USER, plainUser.id);
 const tokenPath = getResourcePath(TOKEN);
 
+const ME = 'me';
+
 const client = new StatelessClient(hostUrl);
 
 beforeAll(async (done) => {
@@ -187,6 +189,26 @@ describe('User tests', () => {
       await userClient.setUser(plainUser);
       const body = checkSuccess(await userClient.get(plainUser.id));
       expect(getSortedKeysAsString(body)).toEqual(plainUserSelfInfo);
+    });
+  });
+
+  describe('User GET /me', () => {
+    const meKeys = '["album","avatar","city","date","email","firstName","lang","lastName","site",' +
+      '"status","userId","username"]';
+
+    test("Retrieve /user/me as guest", async () => {
+      userClient.clearToken();
+      const body = checkSuccess(await userClient.get(ME));
+      expect(getSortedKeysAsString(body)).toEqual(meKeys);
+      expect(body.album).toEqual(null);
+      expect(body.status).toEqual("guest");
+    });
+
+    test("Retrieve /user/me as plainuser", async () => {
+      await userClient.setUser(plainUser);
+      const body = checkSuccess(await userClient.get(ME));
+      expect(getSortedKeysAsString(body)).toEqual(meKeys);
+      expect(body.status).toEqual("member");
     });
   });
 
