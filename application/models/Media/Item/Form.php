@@ -74,6 +74,12 @@ abstract class Media_Item_Form extends Data_Form
     return $elements;
   }
 
+  public function getDescription()
+  {
+    $element = new Data_Form_Element_Description($this, null, false);
+    return $element;
+  }
+
   public function getUsers()
   {
     $element = new Lib_Form_Element_Users('users', $this->_object);
