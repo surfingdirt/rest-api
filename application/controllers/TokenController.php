@@ -68,9 +68,6 @@ class TokenController extends Lib_Rest_Controller
       Lib_JWT_Blacklist::cleanupInvalidAndExpiredTokens(JWT_SECRET);
     }
     Globals::clearJWT();
-    $this->view->output = array(
-      'logout' => 'success',
-    );
   }
 
   /**
