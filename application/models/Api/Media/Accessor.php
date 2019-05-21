@@ -50,6 +50,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'width',
     'height',
 //    'author',
+    'actions',
   );
 
   public $memberCreateAttributes = array(

@@ -155,6 +155,8 @@ abstract class Api_Data_Accessor
         'title' => $name
       );
 
+    } elseif ($attr == 'actions') {
+      $ret[$attr] = $this->getActions($object);
     } elseif ($attr == 'users') {
       $ret[$attr] = $object->getUserIdsInMedia();
     } elseif ($attr == 'bounds') {
@@ -167,6 +169,14 @@ abstract class Api_Data_Accessor
       $ret[$attr] = $object->$attr;
     }
     return $ret;
+  }
+
+  public function getActions($object)
+  {
+    $actions = array();
+    $actions['edit'] = $object->isEditableBy($this->_user, $this->_acl);
+    $actions['delete'] = $object->isDeletableBy($this->_user, $this->_acl);
+    return $actions;
   }
 
   /**

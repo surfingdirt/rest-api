@@ -214,12 +214,14 @@ abstract class Media_Album_Row extends Data_Row
   public function isDeletableBy(User_Row $user, Lib_Acl $acl)
   {
     if ($this->albumType != Media_Album::TYPE_SIMPLE) {
-      throw new Api_Exception_BadRequest('Album not deletable', Api_ErrorCodes::NON_STATIC_ALBUM_CANNOT_BE_DELETED);
+//      throw new Api_Exception_BadRequest('Album not deletable', Api_ErrorCodes::NON_STATIC_ALBUM_CANNOT_BE_DELETED);
+      return false;
     }
 
     $itemSet = $this->getItemSet();
     if (!$itemSet || count($itemSet) > 0) {
-      throw new Api_Exception_BadRequest('Album not empty', Api_ErrorCodes::STATIC_ALBUM_NOT_EMPTY);
+//      throw new Api_Exception_BadRequest('Album not empty', Api_ErrorCodes::STATIC_ALBUM_NOT_EMPTY);
+      return false;
     }
 
     if ($this->submitter == $user->getId()) {

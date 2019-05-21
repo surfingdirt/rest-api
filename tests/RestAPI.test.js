@@ -30,7 +30,6 @@ import {
   getDateForBackend,
   getSortedKeysAsString,
   looksLikeUUID,
-  checkResponse,
   checkSuccess,
   checkBadRequest,
   checkUnauthorised,
@@ -145,14 +144,14 @@ describe('User tests', () => {
 
   describe('User GET', () => {
     const plainUserPublicInfo =
-      '["album","avatar","city","date","firstName","lang","lastName","site","userId","username"]';
+      '["actions","album","avatar","city","date","firstName","lang","lastName","site","userId","username"]';
 
     const plainUserSelfInfo =
-      '["album","avatar","city","date","email","firstName","lang","lastName",' +
+      '["actions","album","avatar","city","date","email","firstName","lang","lastName",' +
       '"site","status","userId","username"]';
 
     const plainUserAdminInfo =
-      '["album","avatar","city","date","email","firstName","lang","lastLogin","lastName",' +
+      '["actions","album","avatar","city","date","email","firstName","lang","lastLogin","lastName",' +
       '"site","status","userId","username"]';
 
     test("Retrieve plainuser's data as guest", async () => {
@@ -193,7 +192,7 @@ describe('User tests', () => {
   });
 
   describe('User GET /me', () => {
-    const meKeys = '["album","avatar","city","date","email","firstName","lang","lastName","site",' +
+    const meKeys = '["actions","album","avatar","city","date","email","firstName","lang","lastName","site",' +
       '"status","userId","username"]';
 
     test("Retrieve /user/me as guest", async () => {
@@ -269,7 +268,7 @@ describe('User tests', () => {
 
   describe('User POST', () => {
     const createdUserKeys =
-      '["album","avatar","city","date","email","firstName","lang","lastName",' +
+      '["actions","album","avatar","city","date","email","firstName","lang","lastName",' +
       '"site","status","userId","username"]';
 
     test('Logged-in user cannot create a new user', async () => {
@@ -595,39 +594,49 @@ describe('Media tests', () => {
 
   describe('GET ACLs', () => {
     const media0PublicInfo =
-      '["album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
-      '"mediaSubType","mediaType","status","submitter","title","users","vendorKey","width"]';
+      '["actions","album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
+      '"mediaSubType","mediaType","status","storageType","submitter","title","users","vendorKey","width"]';
     // TODO: rajouter author
 
     describe('Valid photo', () => {
       test('Guest can see public info', async () => {
         await mediaClient.clearToken();
+        mediaClient.setDebugBackend(true);
         const body = checkSuccess(await mediaClient.get(validPhoto.id));
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+        expect(body.actions.edit).toEqual(false);
+        expect(body.actions.delete).toEqual(false);
       });
 
       test('Owner can see public info', async () => {
         await mediaClient.setUser(writerUser);
         const body = checkSuccess(await mediaClient.get(validPhoto.id));
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+        expect(body.actions.edit).toEqual(true);
+        expect(body.actions.delete).toEqual(true);
       });
 
       test('Editor can see public info', async () => {
         await mediaClient.setUser(editorUser);
         const body = checkSuccess(await mediaClient.get(validPhoto.id));
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+        expect(body.actions.edit).toEqual(true);
+        expect(body.actions.delete).toEqual(true);
       });
 
       test('Admin can see public info', async () => {
         await mediaClient.setUser(adminUser);
         const body = checkSuccess(await mediaClient.get(validPhoto.id));
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+        expect(body.actions.edit).toEqual(true);
+        expect(body.actions.delete).toEqual(true);
       });
     });
 
     describe('Invalid photo', () => {
       test('Guest cannot see invalid photo', async () => {
         await mediaClient.clearToken();
+        mediaClient.setDebugBackend(true);
         checkUnauthorised(await mediaClient.get(invalidPhoto.id));
       });
 
@@ -635,6 +644,8 @@ describe('Media tests', () => {
         await mediaClient.setUser(plainUser);
         const body = checkSuccess(await mediaClient.get(invalidPhoto.id));
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+        expect(body.actions.edit).toEqual(true);
+        expect(body.actions.delete).toEqual(true);
       });
 
       test('Writer cannot see invalid photo', async () => {
@@ -646,12 +657,16 @@ describe('Media tests', () => {
         await mediaClient.setUser(editorUser);
         const body = checkSuccess(await mediaClient.get(invalidPhoto.id));
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+        expect(body.actions.edit).toEqual(true);
+        expect(body.actions.delete).toEqual(true);
       });
 
       test('Admin can see invalid photo', async () => {
         await mediaClient.setUser(adminUser);
         const body = checkSuccess(await mediaClient.get(invalidPhoto.id));
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
+        expect(body.actions.edit).toEqual(true);
+        expect(body.actions.delete).toEqual(true);
       });
     });
   });
@@ -936,8 +951,8 @@ describe('Media tests', () => {
 
   describe('Video tests', () => {
     const createdVideoKeys =
-      '["album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
-      '"mediaSubType","mediaType","status","submitter","title","users","vendorKey","width"]';
+      '["actions","album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
+      '"mediaSubType","mediaType","status","storageType","submitter","title","users","vendorKey","width"]';
     // TODO: rajouter author
 
     describe('POST', () => {

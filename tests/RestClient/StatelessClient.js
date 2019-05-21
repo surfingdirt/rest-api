@@ -125,7 +125,7 @@ export default class StatelessClient {
     const fileData = [];
     files.forEach(({ filePath, contentType }) => {
       const filename = basename(filePath);
-      const value = fs.createReadStream(`./data/files/${filePath}`);
+      const value = fs.createReadStream(fs.realpathSync(__dirname + `/../data/files/${filePath}`));
       fileData.push({
         value,
         options: {

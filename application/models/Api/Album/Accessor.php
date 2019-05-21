@@ -13,7 +13,8 @@ class Api_Album_Accessor extends Api_Data_Accessor
     'status',
     'albumType',
     'albumAccess',
-    'albumCreation'
+    'albumCreation',
+    'actions',
   );
 
   public $memberCreateAttributes = array(
