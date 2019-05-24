@@ -602,7 +602,6 @@ describe('Media tests', () => {
     describe('Valid photo', () => {
       test('Guest can see public info', async () => {
         await mediaClient.clearToken();
-        mediaClient.setDebugBackend(true);
         const body = checkSuccess(await mediaClient.get(validPhoto.id));
         expect(getSortedKeysAsString(body)).toEqual(media0PublicInfo);
         expect(body.actions.edit).toEqual(false);
@@ -637,7 +636,6 @@ describe('Media tests', () => {
     describe('Invalid photo', () => {
       test('Guest cannot see invalid photo', async () => {
         await mediaClient.clearToken();
-        mediaClient.setDebugBackend(true);
         checkUnauthorised(await mediaClient.get(invalidPhoto.id));
       });
 

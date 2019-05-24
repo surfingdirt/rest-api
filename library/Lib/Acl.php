@@ -118,6 +118,7 @@ class Lib_Acl extends Zend_Acl
       $this->allow($ownerRole, self::PRIVATE_READ_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID});
       $this->allow($ownerRole, self::PRIVATE_CREATE_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID});
       $this->allow($ownerRole, self::PRIVATE_EDIT_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID});
+      $this->allow($ownerRole, self::PRIVATE_ADD_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID});
     }
   }
 
