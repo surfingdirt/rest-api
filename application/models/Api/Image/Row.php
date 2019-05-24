@@ -8,7 +8,7 @@ class Api_Image_Row extends Api_Data_Row
       return true;
     }
 
-    return $acl->isAllowed($user, Lib_Acl::PUBLIC_EDIT_RESOURCE);
+    return $user->isAdmin() || $user->isEditor();
   }
 
   // No need for that
