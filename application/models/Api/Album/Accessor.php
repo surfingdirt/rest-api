@@ -19,7 +19,9 @@ class Api_Album_Accessor extends Api_Data_Accessor
 
   public $memberCreateAttributes = array(
     'title' => 'title',
-    'description' => 'description');
+    'description' => 'description',
+    'albumAccess' => 'albumAccess',
+    );
 
   public $adminCreateAttributes = array(
     'albumCreation' => 'albumCreation',
@@ -59,6 +61,13 @@ class Api_Album_Accessor extends Api_Data_Accessor
     }
 
     return $ret;
+  }
+
+  public function getActions($object)
+  {
+    $actions = parent::getActions($object);
+    $actions['add'] = $object->canBeAddedToBy($this->_user, $this->_acl);
+    return $actions;
   }
 
   protected function _restrictMediaItems(array $mediaItems, array $params)

@@ -89,6 +89,40 @@ abstract class Media_Album_Row extends Data_Row
     return $string;
   }
 
+  protected function _getAdditionResourceId()
+  {
+    switch ($this->albumAccess) {
+      case Media_Album::ACCESS_PRIVATE:
+        $string = Lib_Acl::PRIVATE_ADD_RESOURCE . '_' . $this->submitter;
+        break;
+      case Media_Album::ACCESS_PUBLIC:
+        $string = Lib_Acl::PUBLIC_ADD_RESOURCE;
+        break;
+    }
+
+    return $string;
+  }
+
+  public function canBeAddedToBy(User_Row $user, Lib_Acl $acl)
+  {
+    if ($this->albumType != Media_Album::TYPE_SIMPLE) {
+      return false;
+    }
+
+    if (in_array($user->status, array(User::STATUS_ADMIN, User::STATUS_EDITOR))) {
+      return true;
+    }
+
+    $resource = $this->_getAdditionResourceId();
+    if (!$acl->has($resource)) {
+      return false;
+    }
+
+    $role = $user->getOwnerRole();
+    $status = $acl->isAllowed($role, $resource);
+    return $status;
+  }
+
   public function getItemSet()
   {
     if ($this->_itemRowset === null) {
@@ -202,7 +236,14 @@ abstract class Media_Album_Row extends Data_Row
     }
     if ($this->albumType == Media_Album::TYPE_AGGREGATE && $this->albumCreation = Media_Album::CREATION_AUTOMATIC) {
       $aggTable = new Media_Album_Aggregation();
-      $where = "albumId = $this->id AND keyValue = " . $user->{User::COLUMN_USERID} . " AND keyName = 'user'";
+      $db = $this->getTable()->getAdapter();
+      $whereParts = array(
+        $db->quoteInto('albumId = ?', $this->id),
+        $db->quoteInto('AND keyValue = ?', $user->{User::COLUMN_USERID}),
+        "AND keyName = 'user'",
+      );
+      $where = implode(' ', $whereParts);
+
       $exists = $aggTable->fetchRow($where);
       if ($exists) {
         return true;
@@ -239,4 +280,5 @@ abstract class Media_Album_Row extends Data_Row
   public function getFolderPath()
   {
   }
+
 }

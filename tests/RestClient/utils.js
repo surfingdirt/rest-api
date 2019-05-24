@@ -25,22 +25,22 @@ export const looksLikeUUID = (str) => {
   return !!str.match(regexp);
 };
 
-export const checkResponse = ({statusCode, body}, expectedStatusCode) => {
+export const checkResponse = ({statusCode, body}, expectedStatusCode, msg = '') => {
   if (statusCode != expectedStatusCode) {
     console.error('Response status code:', statusCode);
     console.error('Response body:', JSON.stringify(body, null, 2));
     if (!body) {
-      throw new Error('No response body');
+      throw new Error('No response body ' + msg);
     }
     if (body.error) {
-      throw new Error('Stopped because of unexpected error in body');
+      throw new Error('Stopped because of unexpected error in body ' + msg);
     } else {
-      throw new Error(`Unexpected HTTP response code: ${statusCode} - expected: ${expectedStatusCode}`);
+      throw new Error(`Unexpected HTTP response code: ${statusCode} - expected: ${expectedStatusCode} ` + msg);
     }
   }
   return body;
 };
-export const checkSuccess = (response) => checkResponse(response, 200);
-export const checkBadRequest = (response) => checkResponse(response, 400);
-export const checkUnauthorised = (response) => checkResponse(response, 403);
-export const checkNotFound = (response) => checkResponse(response, 404);
+export const checkSuccess = (response, msg) => checkResponse(response, 200, msg);
+export const checkBadRequest = (response, msg) => checkResponse(response, 400, msg);
+export const checkUnauthorised = (response, msg) => checkResponse(response, 403, msg);
+export const checkNotFound = (response, msg) => checkResponse(response, 404, msg);

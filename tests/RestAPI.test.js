@@ -192,22 +192,23 @@ describe('User tests', () => {
   });
 
   describe('User GET /me', () => {
-    const meKeys = '["actions","album","avatar","city","date","email","firstName","lang","lastName","site",' +
+    const meKeys =
+      '["actions","album","avatar","city","date","email","firstName","lang","lastName","site",' +
       '"status","userId","username"]';
 
-    test("Retrieve /user/me as guest", async () => {
+    test('Retrieve /user/me as guest', async () => {
       userClient.clearToken();
       const body = checkSuccess(await userClient.get(ME));
       expect(getSortedKeysAsString(body)).toEqual(meKeys);
       expect(body.album).toEqual(null);
-      expect(body.status).toEqual("guest");
+      expect(body.status).toEqual('guest');
     });
 
-    test("Retrieve /user/me as plainuser", async () => {
+    test('Retrieve /user/me as plainuser', async () => {
       await userClient.setUser(plainUser);
       const body = checkSuccess(await userClient.get(ME));
       expect(getSortedKeysAsString(body)).toEqual(meKeys);
-      expect(body.status).toEqual("member");
+      expect(body.status).toEqual('member');
     });
   });
 
@@ -324,7 +325,7 @@ describe('User tests', () => {
           userPC: '345',
         }),
       );
-      expect(body).toEqual({code: 16001,  errors: { userPC: ['notSame'] } });
+      expect(body).toEqual({ code: 16001, errors: { userPC: ['notSame'] } });
     });
 
     test('Requests with matching passwords are successful, and old password is made invalid', async () => {
@@ -1416,6 +1417,16 @@ describe('Album tests', () => {
       const body = checkBadRequest(await albumClient.post({}));
       expect(body.errors).toEqual({ title: ['isEmpty'] });
     });
+
+    test('Plain user can create private albums', async () => {
+      albumClient.setUser(plainUser);
+      const { albumAccess, albumType } = checkSuccess(
+        await albumClient.post({ title: 'Album for actions', albumAccess: 'private' }),
+      );
+
+      expect(albumAccess).toEqual('private');
+      expect(albumType).toEqual('simple');
+    });
   });
 
   describe('GET', () => {
@@ -1535,6 +1546,91 @@ describe('Album tests', () => {
       expect(mediaPageDesc.length).toEqual(1);
       expect(listPageDesc).toEqual(['123']);
     });
+
+    test("Aggregate album can't be added to", async () => {
+      const newUser = await createUser('albumAddTest1', 'albumAddTest1@email.com');
+      const {
+        userId: newUserId,
+        album: { id: newAggAlbumId },
+      } = newUser;
+      await userClient.setUser(adminUser);
+      checkSuccess(await userClient.put(newUserId, { status: 'member' }));
+
+      let response;
+
+      await albumClient.setUser({ id: newUserId });
+      response = checkSuccess(await albumClient.get(newAggAlbumId));
+      expect(response.actions.add).toEqual(false);
+
+      await albumClient.setUser(adminUser);
+      response = checkSuccess(await albumClient.get(newAggAlbumId));
+      expect(response.actions.add).toEqual(false);
+    });
+
+    test("Private simple album can't be added to (except by owner and admin/editor)", async () => {
+      albumClient.setUser(plainUser);
+      const { id: albumId, albumAccess, albumType } = checkSuccess(
+        await albumClient.post({ title: 'Album for actions', albumAccess: 'private' }),
+      );
+
+      expect(albumAccess).toEqual('private');
+      expect(albumType).toEqual('simple');
+      let response;
+
+      await albumClient.clearToken();
+      checkUnauthorised(await albumClient.get(albumId));
+
+      await albumClient.setUser(plainUser);
+      response = checkSuccess(await albumClient.get(albumId));
+      expect(response.actions.add).toEqual(true);
+
+      await albumClient.setUser(otherUser);
+      checkUnauthorised(await albumClient.get(albumId));
+
+      await albumClient.setUser(writerUser);
+      checkUnauthorised(await albumClient.get(albumId));
+
+      await albumClient.setUser(editorUser);
+      response = checkSuccess(await albumClient.get(albumId));
+      expect(response.actions.add).toEqual(true);
+
+      await albumClient.setUser(adminUser);
+      response = checkSuccess(await albumClient.get(albumId));
+      expect(response.actions.add).toEqual(true);
+    });
+
+    test('Public simple album can be added to (except by guest)', async () => {
+      const { id: albumId } = await createStaticAlbum(plainUser, {
+        title: 'Album for actions',
+        albumAccess: 'public',
+      });
+
+      let response;
+
+      await albumClient.clearToken();
+      response = checkSuccess(await albumClient.get(albumId));
+      expect(response.actions.add).toEqual(false);
+
+      await albumClient.setUser(plainUser);
+      response = checkSuccess(await albumClient.get(albumId));
+      expect(response.actions.add).toEqual(true);
+
+      await albumClient.setUser(otherUser);
+      response = checkSuccess(await albumClient.get(albumId));
+      expect(response.actions.add).toEqual(true);
+
+      await albumClient.setUser(writerUser);
+      response = checkSuccess(await albumClient.get(albumId));
+      expect(response.actions.add).toEqual(true);
+
+      await albumClient.setUser(editorUser);
+      response = checkSuccess(await albumClient.get(albumId));
+      expect(response.actions.add).toEqual(true);
+
+      await albumClient.setUser(adminUser);
+      response = checkSuccess(await albumClient.get(albumId));
+      expect(response.actions.add).toEqual(true);
+    });
   });
 
   describe('PUT', () => {
@@ -1628,11 +1724,10 @@ describe('Album tests', () => {
       albumClient.setUser(adminUser);
       const body = checkBadRequest(await albumClient.delete(albumId));
       expect(body.errors.topLevelError.code).toEqual(12001);
-
     });
 
     test('Guest and writer cannot delete empty static album', async () => {
-      const {id: deletableAlbumId} = await createStaticAlbum(plainUser, {
+      const { id: deletableAlbumId } = await createStaticAlbum(plainUser, {
         title: 'Album for delete',
       });
 
@@ -1644,7 +1739,7 @@ describe('Album tests', () => {
     });
 
     test('Owner can delete empty static album', async () => {
-      const {id: deletableAlbumId} = await createStaticAlbum(plainUser, {
+      const { id: deletableAlbumId } = await createStaticAlbum(plainUser, {
         title: 'Album for delete',
       });
 
@@ -1653,7 +1748,7 @@ describe('Album tests', () => {
     });
 
     test('Editor can delete empty static album', async () => {
-      const {id: deletableAlbumId} = await createStaticAlbum(plainUser, {
+      const { id: deletableAlbumId } = await createStaticAlbum(plainUser, {
         title: 'Album for delete',
       });
 
@@ -1662,7 +1757,7 @@ describe('Album tests', () => {
     });
 
     test('Admin can delete empty static album', async () => {
-      const {id: deletableAlbumId} = await createStaticAlbum(plainUser, {
+      const { id: deletableAlbumId } = await createStaticAlbum(plainUser, {
         title: 'Album for delete',
       });
 

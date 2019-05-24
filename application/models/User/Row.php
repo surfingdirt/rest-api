@@ -214,6 +214,10 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
    */
   public function getOwnerRole()
   {
+    if (!$this->isLoggedIn()) {
+      return new Zend_Acl_Role(User::STATUS_GUEST);
+    }
+
     $role = new Zend_Acl_Role(Lib_Acl::OWNER_ROLE . '_' . $this->{User::COLUMN_USERID});
     return $role;
   }

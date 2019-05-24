@@ -21,10 +21,12 @@ class Lib_Acl extends Zend_Acl
   const PUBLIC_READ_RESOURCE = 'publicReadResource';
   const PUBLIC_CREATE_RESOURCE = 'publicCreateResource';
   const PUBLIC_EDIT_RESOURCE = 'publicEditResource';
+  const PUBLIC_ADD_RESOURCE = 'publicAddResource';
 
   const PRIVATE_READ_RESOURCE = 'privateReadResource';
   const PRIVATE_CREATE_RESOURCE = 'privateCreateResource';
   const PRIVATE_EDIT_RESOURCE = 'privateEditResource';
+  const PRIVATE_ADD_RESOURCE = 'privateAddResource';
 
   const FORUM_PRIVATE_READ_RESOURCE = 'forumPrivateReadResource';
   const FORUM_PRIVATE_POST_RESOURCE = 'forumPrivatePostResource';
@@ -69,7 +71,6 @@ class Lib_Acl extends Zend_Acl
      * PERMISSIONS AND DENIALS
      */
     $this->deny();
-    //return;
 
     // Banned users
     $this->deny(User::STATUS_BANNED);
@@ -93,6 +94,7 @@ class Lib_Acl extends Zend_Acl
     $this->allow(User::STATUS_MEMBER, self::PUBLIC_CREATE_RESOURCE);
     $this->allow(User::STATUS_MEMBER, self::FORUM_PUBLIC_READ_RESOURCE);
     $this->allow(User::STATUS_MEMBER, self::FORUM_PUBLIC_POST_RESOURCE);
+    $this->allow(User::STATUS_MEMBER, self::PUBLIC_ADD_RESOURCE);
 
     // Writers
     $this->allow(User::STATUS_WRITER, self::WRITER_RESOURCE);
@@ -107,8 +109,9 @@ class Lib_Acl extends Zend_Acl
     // Admins
     $this->allow(User::STATUS_ADMIN, self::ADMIN_RESOURCE);
 
+    // Owner roles
     // Current user can edit their own public resources and have all access to their private resources
-    if ($this->_user->{User::COLUMN_USERID} > 0) {
+    if ($this->_user->isLoggedIn()) {
       $ownerRole = $this->_user->getOwnerRole();
       $this->allow($ownerRole, self::PUBLIC_READ_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID});
       $this->allow($ownerRole, self::PUBLIC_EDIT_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID});
@@ -116,7 +119,6 @@ class Lib_Acl extends Zend_Acl
       $this->allow($ownerRole, self::PRIVATE_CREATE_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID});
       $this->allow($ownerRole, self::PRIVATE_EDIT_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID});
     }
-
   }
 
   protected function _setupRoles()
@@ -130,7 +132,9 @@ class Lib_Acl extends Zend_Acl
     $this->addRole(new Zend_Acl_Role(User::STATUS_EDITOR), User::STATUS_WRITER);
     $this->addRole(new Zend_Acl_Role(User::STATUS_ADMIN), User::STATUS_EDITOR);
 
-    $this->addRole($this->_user->getOwnerRole());
+    if ($this->_user->isLoggedIn()) {
+      $this->addRole($this->_user->getOwnerRole(), User::STATUS_MEMBER);
+    }
 
     $this->addRole(new Zend_Acl_Role(self::FORUM_PUBLIC_READ_ROLE));
     $this->addRole(new Zend_Acl_Role(self::FORUM_PUBLIC_POST_ROLE), self::FORUM_PUBLIC_READ_ROLE);
@@ -146,50 +150,55 @@ class Lib_Acl extends Zend_Acl
     /**
      * GENERAL RESOURCES
      */
-    $this->add(new Zend_Acl_Resource(self::LOGGEDOUT_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::LOGGEDOUTONLY_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::PENDING_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::PENDINGONLY_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::REGULAR_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::REGISTERED_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::WRITER_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::EDITOR_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::ADMIN_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::LOGGEDOUT_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::LOGGEDOUTONLY_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::PENDING_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::PENDINGONLY_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::REGULAR_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::REGISTERED_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::WRITER_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::EDITOR_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::ADMIN_RESOURCE));
 
     /**
      * PUBLIC RESOURCES
      */
-    $this->add(new Zend_Acl_Resource(self::PUBLIC_READ_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::PUBLIC_CREATE_RESOURCE, self::PUBLIC_READ_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::PUBLIC_EDIT_RESOURCE, self::PUBLIC_CREATE_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::PUBLIC_READ_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::PUBLIC_CREATE_RESOURCE), self::PUBLIC_READ_RESOURCE);
+    $this->addResource(new Zend_Acl_Resource(self::PUBLIC_EDIT_RESOURCE), self::PUBLIC_CREATE_RESOURCE);
+    $this->addResource(new Zend_Acl_Resource(self::PUBLIC_ADD_RESOURCE));
 
     /**
      * PRIVATE RESOURCES
      */
-    $this->add(new Zend_Acl_Resource(self::PRIVATE_READ_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::PRIVATE_CREATE_RESOURCE, self::PRIVATE_READ_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::PRIVATE_EDIT_RESOURCE, self::PRIVATE_CREATE_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::PRIVATE_READ_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::PRIVATE_CREATE_RESOURCE), self::PRIVATE_READ_RESOURCE);
+    $this->addResource(new Zend_Acl_Resource(self::PRIVATE_EDIT_RESOURCE), self::PRIVATE_CREATE_RESOURCE);
+    $this->addResource(new Zend_Acl_Resource(self::PRIVATE_ADD_RESOURCE), self::PRIVATE_READ_RESOURCE);
 
     /**
      * OWNER RESOURCES
      */
-    $this->add(new Zend_Acl_Resource(self::PUBLIC_READ_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
-    $this->add(new Zend_Acl_Resource(self::PUBLIC_EDIT_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
-    $this->add(new Zend_Acl_Resource(self::PRIVATE_READ_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
-    $this->add(new Zend_Acl_Resource(self::PRIVATE_CREATE_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
-    $this->add(new Zend_Acl_Resource(self::PRIVATE_EDIT_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
+    $this->addResource(new Zend_Acl_Resource(self::PUBLIC_READ_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
+    $this->addResource(new Zend_Acl_Resource(self::PUBLIC_EDIT_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
+
+    $this->addResource(new Zend_Acl_Resource(self::PRIVATE_READ_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
+    $this->addResource(new Zend_Acl_Resource(self::PRIVATE_CREATE_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
+
+    $this->addResource(new Zend_Acl_Resource(self::PRIVATE_EDIT_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
+    $this->addResource(new Zend_Acl_Resource(self::PRIVATE_ADD_RESOURCE . '_' . $this->_user->{User::COLUMN_USERID}));
 
 
     /**
      * FORUM RESOURCES
      */
-    $this->add(new Zend_Acl_Resource(self::FORUM_PRIVATE_READ_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::FORUM_PRIVATE_POST_RESOURCE, self::FORUM_PRIVATE_READ_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::FORUM_PRIVATE_READ_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::FORUM_PRIVATE_POST_RESOURCE, self::FORUM_PRIVATE_READ_RESOURCE));
 
-    $this->add(new Zend_Acl_Resource(self::FORUM_PUBLIC_READ_RESOURCE));
-    $this->add(new Zend_Acl_Resource(self::FORUM_PUBLIC_POST_RESOURCE, self::FORUM_PUBLIC_READ_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::FORUM_PUBLIC_READ_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::FORUM_PUBLIC_POST_RESOURCE, self::FORUM_PUBLIC_READ_RESOURCE));
 
-    $this->add(new Zend_Acl_Resource(self::FORUM_MODERATE_RESOURCE));
+    $this->addResource(new Zend_Acl_Resource(self::FORUM_MODERATE_RESOURCE));
   }
 
   /**
@@ -249,6 +258,19 @@ class Lib_Acl extends Zend_Acl
     }
 
     $this->_handleError($route, $params);
+  }
+
+  /**
+   * Redirect to error page
+   *
+   * @param string $route
+   * @param array $params
+   * @return void
+   */
+  protected function _handleError($route, $params = array())
+  {
+    $redirector = new Lib_Controller_Helper_RedirectToRoute();
+    $redirector->direct($route, $params, true);
   }
 
   /**
@@ -314,19 +336,6 @@ class Lib_Acl extends Zend_Acl
     }
 
     $this->_handleError($route, $params);
-  }
-
-  /**
-   * Redirect to error page
-   *
-   * @param string $route
-   * @param array $params
-   * @return void
-   */
-  protected function _handleError($route, $params = array())
-  {
-    $redirector = new Lib_Controller_Helper_RedirectToRoute();
-    $redirector->direct($route, $params, true);
   }
 
 }
