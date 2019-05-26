@@ -529,7 +529,6 @@ describe('Image tests', () => {
   });
 
   describe('DELETE ACLS: owner and editor/admins can delete writer image', () => {
-    imageClient.setDebugBackend(true);
     test('Guest cannot DELETE', async () => {
       imageClient.clearToken();
       checkUnauthorised(await imageClient.delete(defaultImageId));

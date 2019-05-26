@@ -1,0 +1,23 @@
+# ./docker-compose.yml
+
+version: '3'
+
+services:
+  memcached:
+    image: memcached:1.4
+    ports:
+      - "11212:11211"
+  web:
+    # Decommenter cette ligne pour forcer a recompiler l'image (et recopier les changements de conf)
+    build: .
+    # References image with tag php:7.2.2-apache, built with docker build -t php:7.2.2-apache .
+    image: php:7.2.2-apache
+    container_name: php_web
+    volumes:
+      - /Library/WebServer/Documents/www.local.wrk:/var/www/html/
+      # voir pour "monter" le fichier de conf
+      # faire un start/stop apres chaque modif
+    ports:
+      - "80:80"
+    stdin_open: true
+    tty: true
