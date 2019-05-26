@@ -4,7 +4,9 @@
   "description": "The REST API for SurfingDirt",
   "scripts": {
     "test": "jest",
+    "installdevdb": "mysql surfingdirtcom_dev -uroot < data/sql/structure.sql",
     "installtestdb": "mysql ridedb_test -uroot < data/sql/structure.sql",
+    "resetdevdb": "mysql surfingdirtcom_dev -uroot < data/sql/dev_fixtures.sql",
     "resettestdb": "mysql ridedb_test -uroot < data/sql/test_fixtures.sql"
   },
   "repository": {
