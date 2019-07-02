@@ -10,7 +10,6 @@ public/files/*
 todo.txt
 package-lock.json
 _tmp
-logs
 node_modules
 .idea
 library/vendor
