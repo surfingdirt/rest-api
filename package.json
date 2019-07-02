@@ -1,7 +1,7 @@
 {
-  "name": "ridedb",
+  "name": "surfingdirt/rest-api",
   "version": "0.0.1",
-  "description": "The REST API for SurfingDirt",
+  "description": "The underlying REST API for the site ",
   "scripts": {
     "test": "jest",
     "installdevdb": "mysql surfingdirtcom_dev -uroot < data/sql/structure.sql",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mikaelgramont/RideDB.git"
+    "url": "git+https://github.com/surfingdirt/rest-api.git"
   },
   "dependencies": {
     "@babel/core": "^7.2.2",
