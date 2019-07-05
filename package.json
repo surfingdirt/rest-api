@@ -1,5 +1,5 @@
 {
-  "name": "surfingdirt/rest-api",
+  "name": "surfingdirt-api",
   "version": "0.0.1",
   "description": "The underlying REST API for the site ",
   "scripts": {
