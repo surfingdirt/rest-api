@@ -4,7 +4,7 @@ class TestController extends Zend_Controller_Action
 {
   public function init()
   {
-    if (APPLICATION_ENV != 'test') {
+    if (APPLICATION_ENV != 'test' && $this->_user->status != User::STATUS_ADMIN) {
       throw new Api_Exception_Unauthorised();
     }
 
