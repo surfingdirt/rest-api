@@ -534,7 +534,7 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
         }
       }
 
-      $table = new User();
+      $table = new Api_User();
       if ($userIdList) {
         $where = User::COLUMN_USERID . " IN ('" . implode("', '", $userIdList) . "')";
         $userList = $table->fetchAll($where);

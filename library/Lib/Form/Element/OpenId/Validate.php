@@ -36,9 +36,8 @@ class Lib_Form_Element_OpenId_Validate extends Zend_Validate_Abstract implements
    */
   public function isValid($value)
   {
-    $table = new User();
     try {
-      $result = $this->_exists($value);
+      $existsResult = $this->_exists($value);
     } catch (Exception $e) {
       $logMessage = "Type: " . $errors->type . ' - ' . get_class($e) . PHP_EOL;
       $logMessage .= "Code: " . $e->getCode() . PHP_EOL;
@@ -47,7 +46,6 @@ class Lib_Form_Element_OpenId_Validate extends Zend_Validate_Abstract implements
       Globals::getLogger()->error($logMessage);
     }
 
-    $existsResult = $this->_exists($value);
     if ($existsResult && $existsResult->{User::COLUMN_USERID} != $this->_currentUserId) {
       $this->_error(self::OPENID_EXISTS);
       return false;
@@ -57,7 +55,7 @@ class Lib_Form_Element_OpenId_Validate extends Zend_Validate_Abstract implements
 
   protected function _exists($value)
   {
-    $table = new User();
+    $table = new Api_User();
     $where = $table->getAdapter()->quoteInto('LOWER(`' . User::COLUMN_OPENID_IDENTITY . '`) = ?', $value);
     $where .= " AND " . User::COLUMN_STATUS . " >= " . User::STATUS_MEMBER;
     $result = $table->fetchRow($where);

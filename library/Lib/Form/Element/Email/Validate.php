@@ -66,7 +66,7 @@ class Lib_Form_Element_Email_Validate extends Zend_Validate_EmailAddress impleme
 
   protected function _exists($value)
   {
-    $table = new User();
+    $table = new Api_User();
     $where = $table->getAdapter()->quoteInto(User::COLUMN_EMAIL . ' = ?', $value);
     $where .= "AND (" . User::COLUMN_STATUS . " = '" . User::STATUS_MEMBER
       . "' OR " . User::COLUMN_STATUS . " = '" . User::STATUS_BANNED . "')";

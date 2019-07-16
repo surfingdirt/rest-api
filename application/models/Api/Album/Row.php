@@ -101,7 +101,7 @@ class Api_Album_Row extends Media_Album_Row
 
       if ($aggregationRow->keyName == Media_Album_Aggregation::KEYNAME_USER) {
         $rawItems = $this->_getUserAggregationItems($aggregationRow->keyValue);
-        $parentTable = new User();
+        $parentTable = new Api_User();
       } else {
         $parentType = Data::mapDataType($aggregationRow->keyName);
         $parentTable = new $parentType();

@@ -95,7 +95,7 @@ class PrivateMessage_Row extends Data_Row
 
   public function getRecipient()
   {
-    $table = new User();
+    $table = new Api_User();
     $recipient = $table->find($this->toUser)->current();
     return $recipient;
   }

@@ -47,7 +47,7 @@ class Lib_Form_Element_Users extends Zend_Form_Element_Text
     }
 
     $where = User::COLUMN_USERNAME . " IN ('" . implode("','", $list) . "')";
-    $table = new User();
+    $table = new Api_User();
     $users = $table->fetchAll($where);
     foreach ($users as $user) {
       $username = $user->{User::COLUMN_USERNAME};
@@ -75,7 +75,7 @@ class Lib_Form_Element_Users extends Zend_Form_Element_Text
     }
     if (ALLOW_CACHE || !($list = $cache->load($cacheId))) {
 
-      $table = new User();
+      $table = new Api_User();
       $statusList = array(
         User::STATUS_ADMIN,
         User::STATUS_EDITOR,

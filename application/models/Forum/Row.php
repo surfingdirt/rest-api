@@ -132,7 +132,7 @@ class Forum_Row extends Data_Row
    */
   public function getModerators()
   {
-    $userTable = new User();
+    $userTable = new Api_User();
 
     $moderatorList = $this->getAccessList('access = ' . Forum_Access::MODERATE);
     $userIdList = array();

@@ -685,7 +685,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     if (empty($this->lastEditor)) {
       return null;
     }
-    $table = new User();
+    $table = new Api_User();
     $results = $table->find($this->lastEditor);
     if ($results) {
       $lastEditor = $results->current();

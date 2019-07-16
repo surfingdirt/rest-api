@@ -63,7 +63,7 @@ class CustomController extends Zend_Controller_Action
   public function lostPasswordAction()
   {
     // Update user with a new password and a new activation key
-    $userTable = new User();
+    $userTable = new Api_User();
     $where = $userTable->getAdapter()->quoteInto(User::COLUMN_USERNAME . ' = ?', $this->_request->getParam(User::INPUT_USERNAME));
     $user = $userTable->fetchRow($where);
 
@@ -138,7 +138,7 @@ class CustomController extends Zend_Controller_Action
    */
   private function _getUserFromIdAndKey($userId, $activationKey)
   {
-    $table = new User();
+    $table = new Api_User();
     $where = $table->getAdapter()->quoteInto(User::COLUMN_USERID . ' = ?', $userId);
     $where2 = $table->getAdapter()->quoteInto(' AND activationKey = ?', $activationKey);
     $user = $table->fetchRow($where . $where2);

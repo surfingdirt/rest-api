@@ -239,7 +239,7 @@ class Lib_Plugin_Init_User extends Zend_Controller_Plugin_Abstract
   private function _setUser()
   {
     $identity = Zend_Auth::getInstance()->getIdentity();
-    $userTable = new User();
+    $userTable = new Api_User();
     $column = User::COLUMN_USERID;
     if (!isset($identity->$column)) {
       $user = User::getDefaultUser();
