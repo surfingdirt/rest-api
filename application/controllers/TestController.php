@@ -13,6 +13,10 @@ class TestController extends Api_Controller_Action
     $this->getResponse()->setRawHeader('Content-Type: application/json');
   }
 
+  protected function _mapResource($key) {
+    // Do nothing!
+  }
+
   public function clearPublicFilesAction()
   {
     Utils::clearPublicFiles();
