@@ -180,4 +180,13 @@ CREATE TABLE `users` (
   PRIMARY KEY (`userId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+/*Table structure for table `migrations` */
+
+DROP TABLE IF EXISTS `migrations`;
+
+CREATE TABLE `migrations` (
+  `id` varchar(255) NOT NULL,
+  `date` datetime(3) NOT NULL
+);
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

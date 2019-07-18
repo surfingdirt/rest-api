@@ -107,7 +107,8 @@ class User extends Cache_Object
     'level',
     'gear',
     'otherSports',
-    'avatar'
+    'avatar',
+    'cover',
   );
 
   /**

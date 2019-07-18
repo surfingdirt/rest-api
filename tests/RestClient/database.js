@@ -23,6 +23,7 @@ export const cleanupTestDatabase = async () => {
   });
   await runSQL('structure.sql', connection);
   await runSQL('test_fixtures.sql', connection);
+  await runSQL('migrations/001-user-images.sql', connection);
   connection.end();
 };
 
