@@ -44,6 +44,10 @@ class ImageController extends Lib_Rest_Controller
       throw new Api_Exception_BadRequest('No files found', Api_ErrorCodes::IMAGE_NO_FILE);
     }
 
+    if (!is_array($_FILES[self::FILE_KEY]['tmp_name'])) {
+      throw new Api_Exception_BadRequest('Files must be an array', Api_ErrorCodes::IMAGE_FILES_NOT_AN_ARRAY);
+    }
+
     $output = array();
     foreach ($_FILES[self::FILE_KEY]['tmp_name'] as $i => $tmpFile) {
       $thisFileOutput = array();
@@ -163,6 +167,12 @@ class ImageController extends Lib_Rest_Controller
       throw new Api_Exception_NotFound();
     }
 
-    $this->_unauthorised();
+    $this->view->output = array(
+      "height" => $object->height,
+      "imageId" => $object->id,
+      "type" => $object->imageType,
+      "storageType" => $object->storageType,
+      "width" => $object->width,
+    );
   }
 }

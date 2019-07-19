@@ -497,33 +497,54 @@ describe('Image tests', () => {
     });
   });
 
-  describe('GET/PUT ACLS: everyone gets a 403', () => {
-    test('Guest cannot GET/PUT', async () => {
+  describe('GET ACLS: listing is forbidden but individual requests are ok', () => {
+    const defaultImageInfo = '["height","imageId","storageType","type","width"]';
+
+    test('Guest cannot list but can see individual images', async () => {
       imageClient.clearToken();
 
       checkUnauthorised(await imageClient.get());
 
-      checkUnauthorised(await imageClient.get(defaultImageId));
+      const body = checkSuccess(await imageClient.get(defaultImageId));
+      expect(getSortedKeysAsString(body)).toEqual(defaultImageInfo);
+    });
+
+    test('Plain user cannot list but can see individual images', async () => {
+      imageClient.clearToken();
+
+      checkUnauthorised(await imageClient.get());
+
+      const body = checkSuccess(await imageClient.get(defaultImageId));
+      expect(getSortedKeysAsString(body)).toEqual(defaultImageInfo);
+    });
+
+    test('Admin user cannot list but can see individual images', async () => {
+      imageClient.clearToken();
+
+      checkUnauthorised(await imageClient.get());
+
+      const body = checkSuccess(await imageClient.get(defaultImageId));
+      expect(getSortedKeysAsString(body)).toEqual(defaultImageInfo);
+    });
+  });
+
+  describe('PUT ACLS: everyone gets a 403', () => {
+    test('Guest cannot PUT', async () => {
+      imageClient.clearToken();
 
       checkUnauthorised(await imageClient.put(defaultImageId, {}));
     });
 
-    test('Plain user cannot GET/PUT', async () => {
+    test('Plain user cannot PUT', async () => {
       await imageClient.setUser(plainUser);
 
       checkUnauthorised(await imageClient.get());
 
-      checkUnauthorised(await imageClient.get(defaultImageId));
-
       checkUnauthorised(await imageClient.put(defaultImageId, {}));
     });
 
-    test('Admin user cannot GET/PUT', async () => {
+    test('Admin user cannot PUT', async () => {
       await imageClient.setUser(adminUser);
-
-      checkUnauthorised(await imageClient.get());
-
-      checkUnauthorised(await imageClient.get(defaultImageId));
 
       checkUnauthorised(await imageClient.put(defaultImageId, {}));
     });
