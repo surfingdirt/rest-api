@@ -342,6 +342,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       'album' => 'Album',
       'media' => 'Media',
       'user' => 'User',
+      'useralbum' => 'Album',
     );
 
     if (!isset($resources[$key])) {

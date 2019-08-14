@@ -48,7 +48,7 @@ class Api_Album_Accessor extends Api_Data_Accessor
       $ret = $this->_addEntriesForAttribute($attr, $object, $ret);
     }
 
-    if ($action == 'get') {
+    if ($action == 'get' || $action == 'list') {
       // Add media info for get operations
       $mediaItems = array();
       $itemSet = $object->getItemSet();

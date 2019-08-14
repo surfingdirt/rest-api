@@ -1,6 +1,6 @@
 <?php
 
-class UsersAlbumsController extends Api_Controller_Action
+class UseralbumController extends Api_Controller_Action
 {
   public function getAction()
   {
@@ -39,23 +39,35 @@ class UsersAlbumsController extends Api_Controller_Action
       $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName(), $this->_request->getParams());
     }
 
-    $this->view->resources = $resources;
+    $this->view->output = $resources;
   }
 
   protected function _getWhereClause(User_Row $user)
   {
+
     $userId = $this->_request->getParam('id');
-    if (in_array($user->status, array(User::STATUS_EDITOR, User::STATUS_ADMIN)) || $user->getId() == $userId) {
-      $return = '1';
-    } else {
-      $return = $this->_table->getAdapter()->quoteInto('status = ?', Data::VALID);
+    $isSubmitter = $user->getId() == $userId;
+
+    $where = '1';
+    $where .= $this->_table->getAdapter()->quoteInto(' AND submitter = ?', $userId);
+    $where .= $this->_table->getAdapter()->quoteInto(' AND albumType = ?', Media_Album::TYPE_SIMPLE);
+
+    if (!$isSubmitter && !in_array($user->status, array(User::STATUS_EDITOR, User::STATUS_ADMIN)))  {
+      $where .= $this->_table->getAdapter()->quoteInto(' AND status = ?', Data::VALID);
     }
 
-    $return .= $this->_table->getAdapter()->quoteInto(' AND submitter = ?', $userId);
+    if (!$isSubmitter) {
+      $where .= $this->_table->getAdapter()->quoteInto(' AND albumAccess = ?', Media_Album::ACCESS_PUBLIC);
+    }
 
-    $mainAlbums = implode(', ', Media_Album::$mainAlbumIds);
-    $return .= " AND id NOT IN($mainAlbums)";
+    $list = [];
+    foreach (Media_Album::$mainAlbumIds as $id) {
+      $list[] =  $this->_table->getAdapter()->quoteInto('?', $id);
+    }
 
-    return $return;
+    $list = implode(',', $list);
+    $where .= " AND id NOT IN ($list)";
+
+    return $where;
   }
 }

@@ -51,7 +51,7 @@ foreach ($constants as $name => $value) {
 /*
  * PHP SETTINGS
  */
-ini_set('html_errors', 0); // Make sure JSON is always valid
+//ini_set('html_errors', 0); // Make sure JSON is always valid
 ini_set('upload_max_filesize', GLOBAL_UPLOAD_MAXSIZE);
 ini_set('upload_tmp_dir', GLOBAL_UPLOAD_TMPDIR);
 ini_set('display_startup_errors', $config->$env->phpSettings->display_startup_errors);

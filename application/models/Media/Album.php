@@ -39,7 +39,7 @@ class Media_Album extends Data
     1 => self::ALBUM_VIDEO,
   );
 
-  public static $mainAlbumIds = array(1, 2, 3);
+  public static $mainAlbumIds = array('a3833b1c-1db0-4a93-9efc-b6659400ce9f');
 
   protected $_itemType = 'mediaAlbum';
 
