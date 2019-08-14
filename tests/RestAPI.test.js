@@ -1447,6 +1447,16 @@ describe('Album tests', () => {
       expect(albumAccess).toEqual('private');
       expect(albumType).toEqual('simple');
     });
+
+    test('Plain user can create public albums', async () => {
+      albumClient.setUser(plainUser);
+      const { albumAccess, albumType } = checkSuccess(
+        await albumClient.post({ title: 'Album for actions - public', albumAccess: 'public' }),
+      );
+
+      expect(albumAccess).toEqual('public');
+      expect(albumType).toEqual('simple');
+    });
   });
 
   describe('GET', () => {
