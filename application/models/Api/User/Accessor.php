@@ -4,6 +4,7 @@ class Api_User_Accessor extends Api_Data_Accessor
 {
   public $publicReadAttributes = array(
     'avatar',
+    'bio',
     'city',
     'cover',
     'date',
@@ -38,6 +39,7 @@ class Api_User_Accessor extends Api_Data_Accessor
   public $memberWriteAttributes = array();
   public $ownWriteAttributes = array(
     'avatar' => 'avatar',
+    'bio' => 'bio',
     'cover' => 'cover',
     'email' => 'email',
     'firstName' => 'firstName',

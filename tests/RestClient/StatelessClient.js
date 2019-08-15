@@ -210,6 +210,6 @@ export default class StatelessClient {
   }
 
   async clearPublicFiles() {
-    await this.get({ path: '/test/clear-public-files', debugBackend: true });
+    await this.get({ path: '/test/clear-public-files' });
   }
 }

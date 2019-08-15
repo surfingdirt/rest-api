@@ -47,7 +47,7 @@ const client = new StatelessClient(hostUrl);
 
 beforeAll(async (done) => {
   await cleanupTestDatabase();
-  await client.clearPublicFiles();
+  // await client.clearPublicFiles();
   done();
 });
 
@@ -144,16 +144,13 @@ describe('User tests', () => {
 
   describe('User GET', () => {
     const plainUserPublicInfo =
-      '["actions","album","avatar","city","cover","date","firstName","lang","lastName","site",' +
-      '"userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","firstName","lang","lastName","site","userId","username"]';
 
     const plainUserSelfInfo =
-      '["actions","album","avatar","city","cover","date","email","firstName","lang","lastName",' +
-      '"site","status","userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","email","firstName","lang","lastName","site","status","userId","username"]';
 
     const plainUserAdminInfo =
-      '["actions","album","avatar","city","cover","date","email","firstName","lang","lastLogin",' +
-      '"lastName","site","status","userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","email","firstName","lang","lastLogin","lastName","site","status","userId","username"]';
 
     test("Retrieve plainuser's data as guest", async () => {
       userClient.clearToken();
@@ -194,8 +191,7 @@ describe('User tests', () => {
 
   describe('User GET /me', () => {
     const meKeys =
-      '["actions","album","avatar","city","cover","date","email","firstName","lang","lastName",' +
-      '"site","status","userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","email","firstName","lang","lastName","site","status","userId","username"]';
 
     test('Retrieve /user/me as guest', async () => {
       userClient.clearToken();
@@ -270,8 +266,7 @@ describe('User tests', () => {
 
   describe('User POST', () => {
     const createdUserKeys =
-      '["actions","album","avatar","city","cover","date","email","firstName","lang","lastName",' +
-      '"site","status","userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","email","firstName","lang","lastName","site","status","userId","username"]';
 
     test('Logged-in user cannot create a new user', async () => {
       await userClient.setUser(plainUser);
