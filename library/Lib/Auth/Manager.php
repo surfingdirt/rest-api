@@ -13,11 +13,6 @@ class Lib_Auth_Manager
     ));
   }
 
-  public function getResultRowObject($username, $password)
-  {
-
-  }
-
   public function verifyLogin($username, $password)
   {
     $userIdColumn = User::COLUMN_USERID;
@@ -35,17 +30,25 @@ SQL;
     $stmt = $this->_db->query($sql);
     $data = $stmt->fetch();
     if (empty($data)) {
-     return false;
+      return false;
     }
-
-    $isValid = $data['hash'] === $this->makeSaltedHash($password, $data['salt']);
+    $saltedPassword = $this->_getSaltedPassword($password, $data['salt']);
+    $isValid = password_verify($saltedPassword, $data['hash']);
 
     return $isValid ? $data['userId'] : null;
   }
 
   public function makeSaltedHash($password, $salt)
   {
-    return crypt($password, $salt);
+    $options = [
+      'cost' => 12,
+    ];
+    $saltedPassword = $this->_getSaltedPassword($password, $salt);
+    return password_hash($saltedPassword, PASSWORD_BCRYPT, $options);
   }
 
+  protected function _getSaltedPassword($password, $salt)
+  {
+    return "$password.$salt";
+  }
 }
