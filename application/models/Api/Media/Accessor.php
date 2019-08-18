@@ -249,8 +249,8 @@ class Api_Media_Accessor extends Api_Data_Accessor
     return array(
       'imageId' => $imageRow->getId(),
       // width and height are irrelevant to video embeds.
-      'width' => 0,
-      'height' => 0,
+      'width' => $imageRow->width,
+      'height' => $imageRow->height,
     );
   }
 
