@@ -2,6 +2,10 @@
 
 class UseralbumController extends Api_Controller_Action
 {
+  public $listCount = 5;
+
+  public $listDir = 'desc';
+
   public function getAction()
   {
     throw new Api_Exception_Unauthorised();
@@ -24,15 +28,8 @@ class UseralbumController extends Api_Controller_Action
 
   public function listAction()
   {
-    $id = $this->_request->getParam('id');
-
     $where = $this->_getWhereClause($this->_user);
-
-    $results = $this->_getAllObjects($where);
-
-    if (empty($results)) {
-      throw new Api_Exception_NotFound();
-    }
+    $results = $this->_getAllObjects($where, $this->_getSort(), $this->_getDir());
 
     $resources = array();
     foreach ($results as $object) {

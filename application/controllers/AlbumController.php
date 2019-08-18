@@ -2,7 +2,9 @@
 
 class AlbumController extends Api_Controller_Action
 {
-  public $listCount = 20;
+  public $listCount = 5;
+
+  public $listDir = 'desc';
 
   protected function _preObjectCreation($object, $data)
   {

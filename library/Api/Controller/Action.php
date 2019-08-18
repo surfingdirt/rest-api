@@ -94,12 +94,8 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     $count = $this->getRequest()->getParam('count', $this->listCount);
     $start = $this->getRequest()->getParam('start', $this->listStart);
 
-    $dir = $this->getRequest()->getParam('dir', $this->listDir);
-    $dir = ($dir == 'desc') ? 'DESC' : 'ASC';
-
-    $sort = $this->getRequest()->getParam('sort', $this->listKey);
-    $sort = in_array($sort, array('userId', 'username')) ? $sort : $this->listKey;
-
+    $dir = $this->_getDir();
+    $sort = $this->_getSort();
     $where = $this->_getWhereClause($this->_user);
 
     $results = $this->_getAllObjects($where, $sort, $dir, $count, $start);
@@ -387,4 +383,20 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 
     return $return;
   }
+
+  protected function _getDir()
+  {
+    $dir = $this->getRequest()->getParam('dir', $this->listDir);
+    $dir = ($dir == 'desc') ? 'DESC' : 'ASC';
+    return $dir;
+  }
+
+  protected function _getSort()
+  {
+    $sort = $this->getRequest()->getParam('sort', $this->listKey);
+    $sort = in_array($sort, array('userId', 'username')) ? $sort : $this->listKey;
+    return $sort;
+  }
+
+
 }
