@@ -45,7 +45,7 @@ SQL;
 
   public function makeSaltedHash($password, $salt)
   {
-    return md5("$password.$salt");
+    return crypt($password, $salt);
   }
 
 }
