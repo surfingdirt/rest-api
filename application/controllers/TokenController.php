@@ -24,15 +24,14 @@ class TokenController extends Lib_Rest_Controller
     if (empty($username) || empty($password)) {
       return $this->_unauthorised(self::MISSING_VALUE, Api_ErrorCodes::TOKEN_MISSING_VALUE);
     }
-    $authAdapter = new Lib_Auth_Adapter($db, $username, $password);
-    $result = $authAdapter->authenticate();
-    if (!$result->isValid()) {
+    $authManager = new Lib_Auth_Manager($db);
+    $userId = $authManager->verifyLogin($username, $password);
+    if (!$userId) {
       return $this->_unauthorised(self::FAILED_TO_LOGIN, Api_ErrorCodes::TOKEN_FAILED_TO_LOGIN);
     }
 
-    $userRow = $authAdapter->getResultRowObject(array(User::COLUMN_USERID));
     $userTable = new Api_User();
-    $results = $userTable->find($userRow->{User::COLUMN_USERID});
+    $results = $userTable->find($userId);
     if (!$results) {
       return $this->_unauthorised(self::LOGIN_SYSTEM_ERROR, Api_ErrorCodes::TOKEN_LOGIN_SYSTEM_ERROR);
     }

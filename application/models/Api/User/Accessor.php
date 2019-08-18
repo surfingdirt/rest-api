@@ -56,6 +56,9 @@ class Api_User_Accessor extends Api_Data_Accessor
 
   public function createObjectWithData($object, $data)
   {
+    $salt = Utils::uuidV4();
+    $authManager = new Lib_Auth_Manager(Globals::getMainDatabase());
+
     $attributes = $this->getCreateAttributes($object);
 
     $errors = array();
@@ -74,7 +77,7 @@ class Api_User_Accessor extends Api_Data_Accessor
         }
 
         if ($attrFormName == User::INPUT_PASSWORD) {
-          $target = md5($data[$attrFormName]);
+          $target = $authManager->makeSaltedHash($data[$attrFormName], $salt);
         } else {
           $target = $data[$attrFormName];
         }
@@ -82,6 +85,7 @@ class Api_User_Accessor extends Api_Data_Accessor
         $object->$attrDBName = $target;
       }
 
+      $object->salt = $salt;
       $object->{User::COLUMN_USERID} = Utils::uuidV4();
       $object->status = User::STATUS_PENDING;
       $object->date = Utils::date('Y-m-d H:i:s');
