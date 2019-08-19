@@ -1,0 +1,1 @@
+UPDATE `users` set password = '$2y$12$yRIPb1O8JAM5B1NmGSGDG.GQKVMTryO9SXcj1A/t6nqeAGhqbsCre', salt = 'b3833b1c-1db0-4a93-9efc-b6659400ce9f' WHERE userId = '60bfb8a7-5754-4186-acd2-44b20ef32399';
