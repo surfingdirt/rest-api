@@ -61,6 +61,9 @@ abstract class Api_Data_Accessor
    */
   public function getObjectData($object, $action = 'list')
   {
+    if (!$object) {
+      throw new Api_Exception_NotFound();
+    }
     $attributes = $this->getReadAttributes($object);
     $ret = array();
     foreach ($attributes as $attr) {

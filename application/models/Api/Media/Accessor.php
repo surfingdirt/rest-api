@@ -115,6 +115,10 @@ class Api_Media_Accessor extends Api_Data_Accessor
   public function getObjectData($neutralObject, $action = 'list')
   {
     $object = Api_Media_Factory::buildItemByIdAndMediaType($neutralObject->getId(), $neutralObject->getMediaType());
+    if (!$object) {
+      throw new Api_Exception_NotFound();
+    }
+
     $attributes = $this->getReadAttributes($object);
 
     $ret = array();

@@ -29,16 +29,22 @@ class Lib_VideoScraper
           break;
         default:
           $graph = Lib_OG::fetch($this->_videoUrl);
-          $thumbUrl = $graph->image;
+          if ($graph->image) {
+            $thumbUrl = $graph->image;
+          }
           break;
       }
     }
+
     return $thumbUrl;
   }
 
   public function saveThumbs($storageType, $objectId)
   {
     $thumbUrl = $this->_getThumbUrl();
+    if (!$thumbUrl) {
+      $thumbUrl = BASE_PATH.DEFAULT_VIDEO_THUMB_PATH;
+    }
     $tmpFile = tempnam(GLOBAL_UPLOAD_TMPDIR, 'thumb');
     $this->_writeFileToDisk($tmpFile, $thumbUrl);
 
