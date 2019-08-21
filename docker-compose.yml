@@ -10,7 +10,7 @@ services:
   api:
     environment:
             - APPLICATION_ENV=beta
-    image: surfingdirt/api:2
+    image: surfingdirt/rest-api:3
     container_name: api
     volumes:
       - /home/mikael/www/beta/api/:/var/www/html/
