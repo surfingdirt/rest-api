@@ -1,11 +1,7 @@
 <?php
 
-class UseralbumController extends Api_Controller_Action
+class UseralbumController extends AlbumController
 {
-  public $listCount = 5;
-
-  public $listDir = 'desc';
-
   public function getAction()
   {
     throw new Api_Exception_Unauthorised();
@@ -24,19 +20,6 @@ class UseralbumController extends Api_Controller_Action
   public function deleteAction()
   {
     throw new Api_Exception_Unauthorised();
-  }
-
-  public function listAction()
-  {
-    $where = $this->_getWhereClause($this->_user);
-    $results = $this->_getAllObjects($where, $this->_getSort(), $this->_getDir());
-
-    $resources = array();
-    foreach ($results as $object) {
-      $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName(), $this->_request->getParams());
-    }
-
-    $this->view->output = $resources;
   }
 
   protected function _getWhereClause(User_Row $user)

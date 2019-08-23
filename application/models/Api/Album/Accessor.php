@@ -72,13 +72,13 @@ class Api_Album_Accessor extends Api_Data_Accessor
 
   protected function _restrictMediaItems(array $mediaItems, array $params)
   {
-    $start = isset($params['start']) ? (int)$params['start'] : 0;
+    $start = isset($params['startItems']) ? (int)$params['startItems'] : 0;
     $start = max($start, 0);
 
-    $count = isset($params['count']) ? (int)$params['count'] : MEDIA_PER_PAGE;
+    $count = isset($params['countItems']) ? (int)$params['countItems'] : MEDIA_PER_PAGE;
     $count = max($count, 0);
 
-    $dir = (isset($params['dir']) && $params['dir'] == 'ASC') ? 'ASC' : 'DESC';
+    $dir = (isset($params['dirItems']) && $params['dirItems'] == 'ASC') ? 'ASC' : 'DESC';
     if ($dir == 'ASC') {
       usort($mediaItems, array($this, '_sortByDateAsc'));
     } else {
@@ -86,7 +86,7 @@ class Api_Album_Accessor extends Api_Data_Accessor
     }
 
     $return = [];
-    for($i = $start; $i <= $start + $count; $i++) {
+    for($i = $start; $i < $start + $count; $i++) {
       if ($i >= sizeof($mediaItems)) {
         break;
       }

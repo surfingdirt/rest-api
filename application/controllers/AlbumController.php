@@ -2,7 +2,7 @@
 
 class AlbumController extends Api_Controller_Action
 {
-  public $listCount = 5;
+  public $listCount = 10;
 
   public $listDir = 'desc';
 
@@ -45,6 +45,26 @@ class AlbumController extends Api_Controller_Action
     }
     $this->view->output = array('status' => $status);
   }
+
+  public function listAction()
+  {
+    $count = $this->getRequest()->getParam('count', $this->listCount);
+    $start = $this->getRequest()->getParam('start', $this->listStart);
+    $dir = $this->_getDir();
+    $sort = $this->_getSort();
+
+    $where = $this->_getWhereClause($this->_user);
+
+    $results = $this->_getAllObjects($where, $sort, $dir, $count, $start);
+
+    $resources = array();
+    foreach ($results as $object) {
+      $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName(), $this->_request->getParams());
+    }
+
+    $this->view->output = $resources;
+  }
+
 
   protected function _getWhereClause(User_Row $user)
   {

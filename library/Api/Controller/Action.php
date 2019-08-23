@@ -102,7 +102,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
 
     $resources = array();
     foreach ($results as $object) {
-      $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName());
+      $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName(), $this->_request->getParams());
     }
 
     $this->view->output = $resources;
