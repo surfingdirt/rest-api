@@ -25,16 +25,15 @@ class UserController extends Api_Controller_Action
    */
   protected function _postObjectCreation($object, $data)
   {
-    if (APPLICATION_ENV != 'production') {
-      return true;
-    }
-    // send email for password and confirmation
-    $params['activationKey'] = $object->activationKey;
-    $params['link'] = APP_URL . Globals::getRouter()->assemble(array(), 'userconfirmation');
-    $params['link'] .= '?' . User::COLUMN_USERID . '=' . $object->getId() . '&' . self::ACTIVATION_KEY_PARAMNAME . "={$object->activationKey}";
-    $params['site'] = APP_NAME;
-
     try {
+      if (APPLICATION_ENV === 'test') {
+        return true;
+      }
+
+      // send email for password and confirmation
+      $params['activationKey'] = $object->activationKey;
+      $params['userId'] = $object->getId();
+
       // Send Email
       $emailer = new Lib_Controller_Helper_Emailer();
       $emailStatus = $emailer->sendEmail($object->{User::COLUMN_EMAIL}, $params);

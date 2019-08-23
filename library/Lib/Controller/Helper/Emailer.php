@@ -47,11 +47,26 @@ class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstra
         break;
     }
 
-    $emailContent = $view->render($fileName);
-    $emailContentTxt = $view->render($fileNameTxt);
+
+    // TODO: recreate view scripts for all stages
+    // TODO: replace Zend_Mail with a call to Mailgun
+//    $emailContent = $view->render($fileName);
+//    $emailContentTxt = $view->render($fileNameTxt);
+    $emailContent = <<<HTML
+    <ul>
+      <li>userId: {$params['userId']}</li>
+      <li>activationKey: {$params['activationKey']}</li>
+    </ul>
+HTML;
+
+    $emailContentTxt = <<<TXT
+      userId: {$params['userId']}
+      activationKey: {$params['activationKey']}
+TXT;
+
 
     if (APPLICATION_ENV == 'development') {
-      return true;
+//      return true;
     }
 
     try {
