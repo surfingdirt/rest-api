@@ -23,57 +23,47 @@ class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstra
    */
   public function sendEmail($to, $params = array(), $type = self::REGISTRATION_EMAIL)
   {
-    $view = new Zend_View();
-    $view->addHelperPath('../library/Lib/View/Helper/', 'Lib_View_Helper');
     $appName = Globals::getAppName();
-    $view->setScriptPath("../application/views/scripts/");
-
-    foreach ($params as $name => $value) {
-      $view->$name = $value;
-    }
-
-    switch ($type) {
-      case self::LOST_PASSWORD_EMAIL:
-        $fileName = 'users/email/lostPassword.phtml';
-        $fileNameTxt = 'users/email/lostPasswordTxt.phtml';
-        $subject = ucfirst(Globals::getTranslate()->_('lostPasswordEmailTitle'));
-        break;
-      case self::REGISTRATION_EMAIL:
-        $fileName = 'users/email/creationConfirmation.phtml';
-        $fileNameTxt = 'users/email/creationConfirmationTxt.phtml';
-        $subject = ucfirst(Globals::getTranslate()->_('subscriptionEmailTitle'));
-        break;
-      default:
-        throw new Lib_Exception('Unknown email type - "' . $type . '"');
-        break;
-    }
-
-
-    // TODO: recreate view scripts for all stages
-    // TODO: replace Zend_Mail with a call to Mailgun
-//    $emailContent = $view->render($fileName);
-//    $emailContentTxt = $view->render($fileNameTxt);
-    $emailContent = <<<HTML
-    <ul>
-      <li>userId: {$params['userId']}</li>
-      <li>activationKey: {$params['activationKey']}</li>
-    </ul>
-HTML;
-
-    $emailContentTxt = <<<TXT
-    Welcome blabla bla
-      userId: {$params['userId']}
-      activationKey: {$params['activationKey']}
-TXT;
 
     try {
       $mail = Mailgun::create(MAILER_API_KEY, MAILER_API_DOMAIN);
-      // TODO: figure out how to set the HTML content - maybe use swift mailer, see https://github.com/mailgun/mailgun-php/blob/master/doc/index.md
-      $mail->messages()->send(MAILER_DOMAIN, [
+
+      switch ($type) {
+        case self::LOST_PASSWORD_EMAIL:
+          $subject = ucfirst(Globals::getTranslate()->_('lostPasswordEmailTitle'));
+          $template = 'lost-password';
+          $variables = json_encode(array(
+          ));
+          break;
+        case self::REGISTRATION_EMAIL:
+          $subject = ucfirst(Globals::getTranslate()->_('subscriptionEmailTitle'));
+          $template = 'confirm-email';
+          // TODO: translate variables
+          $variables = json_encode(array(
+            "title" => "Confirm your email address",
+            "hello" => "Hello",
+            "username" => $params['username'],
+            "confirmEmail" => "Welcome to the site! Before you can continue, please confirm your email address by clicking the link below:",
+            "destination" => APP_URL.'/confirm-email?key='.$params['activationKey'],
+            "confirmButtonLabel" => "Confirm my email address",
+            "senderSignature" => $appName,
+            "siteUrl" => APP_URL,
+          ));
+          break;
+        default:
+          throw new Lib_Exception('Unknown email type - "' . $type . '"');
+          break;
+      }
+
+      @$mail->messages()->send(MAILER_DOMAIN, [
         'from'    => EMAIL_FROM_STRING,
         'to'      => strtolower($to),
         'subject' => $subject,
-        'text'    => $emailContentTxt,
+        'template' => $template,
+        'inline' => [
+          array('filePath' => BASE_PATH . EMAIL_LOGO_IMAGE, 'filename' => 'email-logo.png'),
+        ],
+        'h:X-Mailgun-Variables' => $variables,
       ]);
     } catch (Exception $e) {
       $msg = "Email error" . PHP_EOL . $e->getMessage();

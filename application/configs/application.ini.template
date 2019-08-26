@@ -31,6 +31,8 @@ constants.JWT_TTL = 84600;
 constants.MAILER_API_KEY = ''
 constants.MAILER_API_DOMAIN = ''
 constants.MAILER_DOMAIN = ''
+constants.EMAIL_LOGO_IMAGE = ''
+
 constants.EMAIL_FROM = 'no-reply@ridedb.org'
 constants.EMAIL_FROM_STRING = 'no-reply@ridedb.org'
 constants.APP_EMAIL_FROM_STRING = 'ridedb.org'
@@ -67,6 +69,7 @@ constants.GLOBAL_DEFAULT_IMG_MEDIUM_THUMB_HEIGHT = 400
 constants.GLOBAL_DEFAULT_IMG_LARGE_THUMB_WIDTH = 600
 constants.GLOBAL_DEFAULT_IMG_LARGE_THUMB_HEIGHT = 600
 
+constants.CURRENT_SITE_NAME = 'rideDB'
 constants.CURRENT_SITE = 'ridedb.org'
 constants.GLOBAL_DOMAIN = 'ridedb'
 constants.GLOBAL_EXTENSION = 'org'

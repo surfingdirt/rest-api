@@ -33,6 +33,7 @@ class UserController extends Api_Controller_Action
       // send email for password and confirmation
       $params['activationKey'] = $object->activationKey;
       $params['userId'] = $object->getId();
+      $params['username'] = $object->getTitle();
 
       // Send Email
       $emailer = new Lib_Controller_Helper_Emailer();
