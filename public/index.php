@@ -22,7 +22,8 @@ defined("CURRENT_DIR") || define("CURRENT_DIR", getcwd());
 
 set_include_path(
   BASE_PATH . '/library'
-  . PATH_SEPARATOR . BASE_PATH . '/application'
+  . PATH_SEPARATOR . BASE_PATH . '/application/'
+  . PATH_SEPARATOR . BASE_PATH . '/application/controllers'
   . PATH_SEPARATOR . BASE_PATH . '/application/models'
   . PATH_SEPARATOR . BASE_PATH . '/library/HTMLPurifier'
 );
