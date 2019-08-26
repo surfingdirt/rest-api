@@ -34,6 +34,7 @@ class UserController extends Api_Controller_Action
       $params['activationKey'] = $object->activationKey;
       $params['userId'] = $object->getId();
       $params['username'] = $object->getTitle();
+      $params['userP'] = $data[User::INPUT_PASSWORD];
 
       // Send Email
       $emailer = new Lib_Controller_Helper_Emailer();
