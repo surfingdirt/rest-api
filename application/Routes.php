@@ -11,7 +11,7 @@ class Routes {
       'default' => new Zend_Rest_Route($frontController),
       'test' => new Zend_Controller_Router_Route('test/:action', array('controller' => 'test', 'action' => 'freeze-timer')),
 
-      'userConfirmation' => new Zend_Controller_Router_Route('/users/:id/confirmation/', array('controller' => 'custom', 'action' => 'user-confirmation')),
+      'userConfirmation' => new Zend_Controller_Router_Route('/user/:id/confirmation/', array('controller' => 'custom', 'action' => 'user-confirmation')),
       'lostPassword' => new Zend_Controller_Router_Route('/lost-password/', array('controller' => 'custom', 'action' => 'lost-password')),
       'activateNewPassword' => new Zend_Controller_Router_Route('/users/:id/activate-new-password/', array('controller' => 'custom', 'action' => 'activate-new-password')),
 
