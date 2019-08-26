@@ -7,8 +7,9 @@ class CustomController extends Zend_Controller_Action
   public function init()
   {
     $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-    $viewRenderer->setViewScriptPathSpec(':controller/:action.json');
+    $viewRenderer->setViewScriptPathSpec('view.phtml');
     $this->getResponse()->setRawHeader('Content-Type: application/json');
+
   }
 
   /**
@@ -24,8 +25,6 @@ class CustomController extends Zend_Controller_Action
    */
   public function userConfirmationAction()
   {
-    return;
-
     $id = $this->_request->getParam('id');
     $data = $this->_getPut();
     if (!isset($data[self::ACTIVATION_KEY_PARAMNAME])) {
@@ -46,12 +45,16 @@ class CustomController extends Zend_Controller_Action
         throw new Api_Exception('Activation failed');
       }
 
-      $this->view->status = true;
-      $this->view->alreadyDone = false;
+      $this->view->output = array(
+        'status' => true,
+        'alreadyDone' => false
+      );
       $this->_savePendingUserIdentity($userId);
     } else {
-      $this->view->status = true;
-      $this->view->alreadyDone = true;
+      $this->view->output = array(
+        'status' => true,
+        'alreadyDone' => true,
+      );
     }
   }
 

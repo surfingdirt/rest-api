@@ -44,7 +44,7 @@ class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstra
             "hello" => "Hello",
             "username" => $params['username'],
             "confirmEmail" => "Welcome to the site! Before you can continue, please confirm your email address by clicking the link below:",
-            "destination" => APP_URL.'/confirm-email?key='.$params['activationKey'],
+            "destination" => APP_URL.'/confirm-email?id='. $params['userId'] . '&key='.$params['activationKey'],
             "confirmButtonLabel" => "Confirm my email address",
             "senderSignature" => $appName,
             "siteUrl" => APP_URL,
