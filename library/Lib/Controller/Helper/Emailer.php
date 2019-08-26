@@ -1,4 +1,5 @@
 <?php
+use Mailgun\Mailgun;
 
 class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstract
 {
@@ -60,24 +61,21 @@ class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstra
 HTML;
 
     $emailContentTxt = <<<TXT
+    Welcome blabla bla
       userId: {$params['userId']}
       activationKey: {$params['activationKey']}
 TXT;
 
-
-    if (APPLICATION_ENV == 'development') {
-//      return true;
-    }
-
     try {
-      $mail = new Zend_Mail(APP_PAGE_ENCODING);
-      $mail->setFrom(EMAIL_FROM, APP_EMAIL_FROM_STRING);
-      $mail->setSubject($subject);
-      $mail->addTo(strtolower($to));
-      $mail->setBodyHtml($emailContent);
-      $mail->setBodyText($emailContentTxt);
-      $emailStatus = $mail->send();
-    } catch (Zend_Mail_Transport_Exception $e) {
+      $mail = Mailgun::create(MAILER_API_KEY, MAILER_API_DOMAIN);
+      // TODO: figure out how to set the HTML content - maybe use swift mailer, see https://github.com/mailgun/mailgun-php/blob/master/doc/index.md
+      $mail->messages()->send(MAILER_DOMAIN, [
+        'from'    => EMAIL_FROM_STRING,
+        'to'      => strtolower($to),
+        'subject' => $subject,
+        'text'    => $emailContentTxt,
+      ]);
+    } catch (Exception $e) {
       $msg = "Email error" . PHP_EOL . $e->getMessage();
       Globals::getLogger()->emailError($msg);
       $emailStatus = false;

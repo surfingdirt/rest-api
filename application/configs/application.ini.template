@@ -24,10 +24,13 @@ constants.MAINTENANCE = false
 constants.DEBUG = false
 constants.PROFILE = false
 constants.CHAT_ENABLED = false;
-constants.JWT_SECRET = 'something';
+constants.JWT_SECRET = 'something'
 constants.JWT_TTL = 84600;
 
 ; Email and contact
+constants.MAILER_API_KEY = ''
+constants.MAILER_API_DOMAIN = ''
+constants.MAILER_DOMAIN = ''
 constants.EMAIL_FROM = 'no-reply@ridedb.org'
 constants.EMAIL_FROM_STRING = 'no-reply@ridedb.org'
 constants.APP_EMAIL_FROM_STRING = 'ridedb.org'
