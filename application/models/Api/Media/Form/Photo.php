@@ -8,6 +8,15 @@ class Api_Media_Form_Photo extends Media_Item_Form
     return $element;
   }
 
+  public function getTitle()
+  {
+    $element = parent::getTitle();
+    // In order to allow batch uploads, titles are not mandatory
+    $element->setRequired(false);
+    return $element;
+  }
+
+
   protected function _buildElements()
   {
     $elements = parent::_buildElements();

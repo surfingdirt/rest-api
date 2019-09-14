@@ -741,6 +741,7 @@ describe('Media tests', () => {
   describe('Photo tests', () => {
     const existingImageId = images[2].id;
     const secondExistingImageId = images[3].id;
+    const thirdExistingImageId = images[4].id;
 
     describe('POST', () => {
       describe('ACLs', () => {
@@ -786,6 +787,20 @@ describe('Media tests', () => {
             }),
           );
           expect(bodyDupe.errors).toEqual({ imageId: ['duplicatedImageId'] });
+        });
+
+        test('Title and description are not mandatory', async () => {
+          await mediaClient.setUser(plainUser);
+          const body = checkSuccess(
+            await mediaClient.post({
+              mediaType: PHOTO,
+              albumId: plainUserStaticAlbum.id,
+              imageId: thirdExistingImageId,
+              storageType: 0,
+            }),
+          );
+          expect(looksLikeUUID(body.id)).toBeTruthy();
+          expect(body.album.id).toEqual(plainUserStaticAlbum.id);
         });
 
         test('Plain user can post to their own static album', async () => {
