@@ -37,7 +37,7 @@ class UseralbumController extends AlbumController
     }
 
     if (!$isSubmitter) {
-      $where .= $this->_table->getAdapter()->quoteInto(' AND albumContributions = ?', Media_Album::CONTRIBUTIONS_PUBLIC);
+      $where .= $this->_table->getAdapter()->quoteInto(' AND albumVisibility = ?', Media_Album::VISIBILITY_VISIBLE);
     }
 
     $list = [];
