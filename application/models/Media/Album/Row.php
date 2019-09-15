@@ -77,11 +77,12 @@ abstract class Media_Album_Row extends Data_Row
    */
   protected function _getReadResourceId()
   {
-    switch ($this->albumAccess) {
-      case Media_Album::ACCESS_PRIVATE:
+    switch ($this->albumVisibility) {
+      case Media_Album::VISIBILITY_PRIVATE:
         $string = Lib_Acl::PRIVATE_READ_RESOURCE . '_' . $this->submitter;
         break;
-      case Media_Album::ACCESS_PUBLIC:
+      case Media_Album::VISIBILITY_UNLISTED:
+      case Media_Album::VISIBILITY_VISIBLE:
         $string = Lib_Acl::PUBLIC_READ_RESOURCE;
         break;
     }
@@ -91,11 +92,11 @@ abstract class Media_Album_Row extends Data_Row
 
   protected function _getAdditionResourceId()
   {
-    switch ($this->albumAccess) {
-      case Media_Album::ACCESS_PRIVATE:
+    switch ($this->albumContributions) {
+      case Media_Album::CONTRIBUTIONS_PRIVATE:
         $string = Lib_Acl::PRIVATE_ADD_RESOURCE . '_' . $this->submitter;
         break;
-      case Media_Album::ACCESS_PUBLIC:
+      case Media_Album::CONTRIBUTIONS_PUBLIC:
         $string = Lib_Acl::PUBLIC_ADD_RESOURCE;
         break;
     }

@@ -12,26 +12,31 @@ class Api_Album_Accessor extends Api_Data_Accessor
     'lastEditionDate',
     'status',
     'albumType',
-    'albumAccess',
+    'albumContributions',
     'albumCreation',
+    'albumVisibility',
     'actions',
   );
 
   public $memberCreateAttributes = array(
     'title' => 'title',
     'description' => 'description',
-    'albumAccess' => 'albumAccess',
+    'albumContributions' => 'albumContributions',
+    'albumVisibility' => 'albumVisibility',
     );
 
   public $adminCreateAttributes = array(
     'albumCreation' => 'albumCreation',
-    'albumAccess' => 'albumAccess',
+    'albumContributions' => 'albumContributions',
+    'albumVisibility' => 'albumVisibility',
     'albumType' => 'albumType'
   );
 
   public $ownWriteAttributes = array(
     'title' => 'title',
-    'description' => 'description'
+    'description' => 'description',
+    'albumContributions' => 'albumContributions',
+    'albumVisibility' => 'albumVisibility',
   );
 
   /**

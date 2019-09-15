@@ -8,8 +8,12 @@ class Media_Album extends Data
   const TYPE_SIMPLE = 'simple';
   const TYPE_AGGREGATE = 'aggregate';
 
-  const ACCESS_PUBLIC = 'public';
-  const ACCESS_PRIVATE = 'private';
+  const CONTRIBUTIONS_PUBLIC = 'public';
+  const CONTRIBUTIONS_PRIVATE = 'private';
+
+  const VISIBILITY_PRIVATE = 'private';
+  const VISIBILITY_UNLISTED = 'unlisted';
+  const VISIBILITY_VISIBLE = 'visible';
 
   const CREATION_STATIC = 'static';
   const CREATION_AUTOMATIC = 'automatic';
@@ -23,9 +27,9 @@ class Media_Album extends Data
     1 => self::TYPE_AGGREGATE,
   );
 
-  public static $albumAccesses = array(
-    0 => self::ACCESS_PUBLIC,
-    1 => self::ACCESS_PRIVATE,
+  public static $albumContributions = array(
+    0 => self::CONTRIBUTIONS_PUBLIC,
+    1 => self::CONTRIBUTIONS_PRIVATE,
   );
 
   public static $albumCreations = array(
@@ -75,7 +79,7 @@ class Media_Album extends Data
 
     $album->albumType = self::TYPE_AGGREGATE;
     $album->albumCreation = self::CREATION_AUTOMATIC;
-    $album->albumAccess = self::ACCESS_PUBLIC;
+    $album->albumContributions = self::CONTRIBUTIONS_PUBLIC;
 
     if ($data instanceof Spot_Row) {
       $album->spot = $data->id;
@@ -110,7 +114,7 @@ class Media_Album extends Data
 
     $album->albumType = self::TYPE_AGGREGATE;
     $album->albumCreation = self::CREATION_AUTOMATIC;
-    $album->albumAccess = self::ACCESS_PUBLIC;
+    $album->albumContributions = self::CONTRIBUTIONS_PUBLIC;
 
     if (!$album->save()) {
       return false;
@@ -154,7 +158,7 @@ class Media_Album extends Data
     $album->userId = $user->{User::COLUMN_USERID};
     $album->albumType = self::TYPE_AGGREGATE;
     $album->albumCreation = self::CREATION_AUTOMATIC;
-    $album->albumAccess = self::ACCESS_PUBLIC;
+    $album->albumContributions = self::CONTRIBUTIONS_PUBLIC;
 
     if (!$album->save()) {
       return false;
@@ -186,10 +190,10 @@ class Media_Album extends Data
   public static function createSimpleAlbumFor(Data_Row $data, $access = null)
   {
     if (empty($access)) {
-      $access = Media_Album::ACCESS_PUBLIC;
+      $access = Media_Album::CONTRIBUTIONS_PUBLIC;
     }
-    if ($access != Media_Album::ACCESS_PUBLIC) {
-      $access = Media_Album::ACCESS_PRIVATE;
+    if ($access != Media_Album::CONTRIBUTIONS_PUBLIC) {
+      $access = Media_Album::CONTRIBUTIONS_PRIVATE;
     }
 
     $albumTable = new Media_Album_Simple();
@@ -201,7 +205,7 @@ class Media_Album extends Data
     $album->title = 'album for ' . $data->getTitle();
     $album->description = 'album for ' . $data->getTitle();
     $album->albumCreation = self::CREATION_AUTOMATIC;
-    $album->albumAccess = $access;
+    $album->albumContributions = $access;
 
     if (!$album->save()) {
       return false;

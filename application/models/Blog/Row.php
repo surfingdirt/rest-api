@@ -46,7 +46,7 @@ class Blog_Row extends Data_Row
    *
    * @var string
    */
-  protected $_albumAccess = Media_Album::ACCESS_PUBLIC;
+  protected $_albumContributions = Media_Album::CONTRIBUTIONS_PUBLIC;
 
   /**
    * Name of the class of form used to edit this object

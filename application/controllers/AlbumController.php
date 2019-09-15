@@ -10,7 +10,8 @@ class AlbumController extends Api_Controller_Action
   {
     $object->id = Utils::uuidV4();
     $object->albumType = Media_Album::TYPE_SIMPLE;
-    $object->albumAccess = Media_Album::ACCESS_PUBLIC;
+    $object->albumContributions = Media_Album::CONTRIBUTIONS_PUBLIC;
+    $object->albumVisibility = Media_Album::CONTRIBUTIONS_VISIBLE;
     $object->albumCreation = Media_Album::CREATION_USER;
     $object->setNotification(true);
   }
@@ -75,7 +76,7 @@ class AlbumController extends Api_Controller_Action
     }
 
     $return .= $this->_table->getAdapter()->quoteInto(' AND albumType = ?', Media_Album::TYPE_SIMPLE);
-    $return .= $this->_table->getAdapter()->quoteInto(' AND albumAccess = ?', Media_Album::ACCESS_PUBLIC);
+    $return .= $this->_table->getAdapter()->quoteInto(' AND albumContributions = ?', Media_Album::CONTRIBUTIONS_PUBLIC);
 
     return $return;
   }

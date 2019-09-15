@@ -17,9 +17,9 @@ insert into `items`(`id`,`itemId`,`itemType`,`date`,`status`,`parentItemId`,`sub
 insert into `media_album_aggregations`(`id`,`keyName`,`keyValue`,`albumId`) values
 (4,'user','60bfb8a7-5754-4186-acd2-44b20ef32399','f2d94b87-3c94-4bd1-9bdd-950393ac1aa5');
 
-insert into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEditor`,`status`,`albumType`,`albumAccess`,`albumCreation`) values
-('a3833b1c-1db0-4a93-9efc-b6659400ce9f', '2019-05-26 14:00:00','60bfb8a7-5754-4186-acd2-44b20ef32399',NULL,NULL,'valid','simple','public','static'),
-('f2d94b87-3c94-4bd1-9bdd-950393ac1aa5', '2019-05-26 14:00:00','60bfb8a7-5754-4186-acd2-44b20ef32399',NULL,NULL,'valid','aggregate','public','automatic');
+insert into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEditor`,`status`,`albumType`,`albumContributions`,`albumCreation`,`albumVisibility`) values
+('a3833b1c-1db0-4a93-9efc-b6659400ce9f', '2019-05-26 14:00:00','60bfb8a7-5754-4186-acd2-44b20ef32399',NULL,NULL,'valid','simple','public','static','visible'),
+('f2d94b87-3c94-4bd1-9bdd-950393ac1aa5', '2019-05-26 14:00:00','60bfb8a7-5754-4186-acd2-44b20ef32399',NULL,NULL,'valid','aggregate','public','automatic','visible');
 
 insert into `translated_texts`(`id`,`itemType`,`lang`,`type`,`text`) values
 ('a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','en','title','Gallery'),

@@ -1450,21 +1450,21 @@ describe('Album tests', () => {
 
     test('Plain user can create private albums', async () => {
       albumClient.setUser(plainUser);
-      const { albumAccess, albumType } = checkSuccess(
-        await albumClient.post({ title: 'Album for actions', albumAccess: 'private' }),
+      const { albumContributions, albumType } = checkSuccess(
+        await albumClient.post({ title: 'Album for actions', albumContributions: 'private' }),
       );
 
-      expect(albumAccess).toEqual('private');
+      expect(albumContributions).toEqual('private');
       expect(albumType).toEqual('simple');
     });
 
     test('Plain user can create public albums', async () => {
       albumClient.setUser(plainUser);
-      const { albumAccess, albumType } = checkSuccess(
-        await albumClient.post({ title: 'Album for actions - public', albumAccess: 'public' }),
+      const { albumContributions, albumType } = checkSuccess(
+        await albumClient.post({ title: 'Album for actions - public', albumContributions: 'public' }),
       );
 
-      expect(albumAccess).toEqual('public');
+      expect(albumContributions).toEqual('public');
       expect(albumType).toEqual('simple');
     });
   });
@@ -1609,11 +1609,11 @@ describe('Album tests', () => {
 
     test("Private simple album can't be added to (except by owner and admin/editor)", async () => {
       albumClient.setUser(plainUser);
-      const { id: albumId, albumAccess, albumType } = checkSuccess(
-        await albumClient.post({ title: 'Album for actions', albumAccess: 'private' }),
+      const { id: albumId, albumContributions, albumType } = checkSuccess(
+        await albumClient.post({ title: 'Album for actions', albumContributions: 'private' }),
       );
 
-      expect(albumAccess).toEqual('private');
+      expect(albumContributions).toEqual('private');
       expect(albumType).toEqual('simple');
       let response;
 
@@ -1642,7 +1642,7 @@ describe('Album tests', () => {
     test('Public simple album can be added to (except by guest)', async () => {
       const { id: albumId } = await createStaticAlbum(plainUser, {
         title: 'Album for actions',
-        albumAccess: 'public',
+        albumContributions: 'public',
       });
 
       let response;

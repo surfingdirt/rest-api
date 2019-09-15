@@ -131,7 +131,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    *
    * @var string
    */
-  protected $_albumAccess = Media_Album::ACCESS_PUBLIC;
+  protected $_albumContributions = Media_Album::CONTRIBUTIONS_PUBLIC;
 
   /**
    * Whether or not we should create a folder when this
@@ -1250,7 +1250,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
       if ($this->_albumType == Media_Album::TYPE_AGGREGATE) {
         Media_Album::createAggregateAlbumFor($this);
       } else {
-        Media_Album::createSimpleAlbumFor($this, $this->_albumAccess);
+        Media_Album::createSimpleAlbumFor($this, $this->_albumContributions);
       }
     }
 
