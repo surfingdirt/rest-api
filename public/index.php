@@ -98,6 +98,8 @@ if (APPLICATION_ENV === TEST) {
   // Log auth header
 }
 
+//Globals::getGlobalCache()->clean();
+
 $frontController->dispatch();
 
 //$t2 = microtime(true);
