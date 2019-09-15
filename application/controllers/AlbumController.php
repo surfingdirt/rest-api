@@ -76,7 +76,7 @@ class AlbumController extends Api_Controller_Action
     }
 
     $return .= $this->_table->getAdapter()->quoteInto(' AND albumType = ?', Media_Album::TYPE_SIMPLE);
-    $return .= $this->_table->getAdapter()->quoteInto(' AND albumContributions = ?', Media_Album::CONTRIBUTIONS_PUBLIC);
+    $return .= $this->_table->getAdapter()->quoteInto(' AND albumVisibility = ?', Media_Album::VISIBILITY_VISIBLE);
 
     return $return;
   }
