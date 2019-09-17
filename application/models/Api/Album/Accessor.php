@@ -63,6 +63,7 @@ class Api_Album_Accessor extends Api_Data_Accessor
         $mediaItems[] = $mediaAccessor->getObjectData($media);
       }
       $ret['media'] = $this->_restrictMediaItems($mediaItems, $requestParams);
+      $ret['itemCount'] = sizeof($itemSet);
     }
 
     return $ret;
