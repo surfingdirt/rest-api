@@ -11,7 +11,7 @@ class AlbumController extends Api_Controller_Action
     $object->id = Utils::uuidV4();
     $object->albumType = Media_Album::TYPE_SIMPLE;
     $object->albumContributions = Media_Album::CONTRIBUTIONS_PUBLIC;
-    $object->albumVisibility = Media_Album::CONTRIBUTIONS_VISIBLE;
+    $object->albumVisibility = Media_Album::VISIBILITY_VISIBLE;
     $object->albumCreation = Media_Album::CREATION_USER;
     $object->setNotification(true);
   }
