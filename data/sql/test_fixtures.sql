@@ -18,7 +18,8 @@ insert into `images`(`id`,`imageType`,`storageType`, `status`, `submitter`, `dat
 ('b5c1429b-f492-4d71-892d-38dd33deffda', 0, 0, 'invalid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:05', null, null, 720, 540),
 ('325edced-b174-4479-8d6f-fea7a4d5e84b', 0, 0, 'valid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:07', null, null, 720, 540),
 ('00e08c00-42a1-474c-a0a1-ae0c2dee68f8', 0, 0, 'valid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:07', null, null, 720, 540),
-('bc560af4-8039-43f7-8f07-2c22c53e1954', 0, 0, 'valid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:07', null, null, 720, 540);
+('bc560af4-8039-43f7-8f07-2c22c53e1954', 0, 0, 'valid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:07', null, null, 720, 540),
+('2c22c53e1954-8039-43f7-8f07-bc560af4', 0, 0, 'valid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:07', null, null, 720, 540);
 
 insert  into `items`(`id`,`itemId`,`itemType`,`date`,`status`,`parentItemId`,`submitter`,`notification`) values
 (1,'a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','2002-02-18 14:00:00','valid',NULL,'60bfb8a7-5754-4186-acd2-44b20ef32399','silent'),

@@ -56,6 +56,7 @@ class Api_User_Accessor extends Api_Data_Accessor
 
   public function createObjectWithData($object, $data)
   {
+    $userId = Utils::uuidV4();
     $salt = Utils::uuidV4();
     $authManager = new Lib_Auth_Manager(Globals::getMainDatabase());
 
@@ -86,7 +87,7 @@ class Api_User_Accessor extends Api_Data_Accessor
       }
 
       $object->salt = $salt;
-      $object->{User::COLUMN_USERID} = Utils::uuidV4();
+      $object->{User::COLUMN_USERID} = $userId;
       $object->status = User::STATUS_PENDING;
       $object->date = Utils::date('Y-m-d H:i:s');
       $object->lang = Globals::getTranslate()->getLocale();

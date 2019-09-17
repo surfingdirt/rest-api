@@ -821,7 +821,7 @@ describe('Media tests', () => {
       });
 
       describe('Failures', () => {
-        const notPostedImageId = images[4].id;
+        const notPostedImageId = images[5].id;
 
         test('Invalid imageId fails', async () => {
           await mediaClient.setUser(plainUser);
