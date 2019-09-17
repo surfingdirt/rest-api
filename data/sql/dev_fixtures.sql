@@ -31,7 +31,7 @@ insert into `translated_texts`(`id`,`itemType`,`lang`,`type`,`text`) values
 ('a5682d96-fc1b-4b76-b306-485631a5f26d','mediaalbum','en','title','Photos and videos of Surfing Dirt'),
 ('a5682d96-fc1b-4b76-b306-485631a5f26d','mediaalbum','en','description','Where Surfing Dirt was tagged');
 
-insert into `users`(`userId`,`username`,`password`,`email`,`status`,`date`,`lastLogin`,`lang`,`firstName`,`lastName`,`city`,`activationKey`,`newPassword`,`avatar`) values
-('0230ec1d-dc7b-42e6-89d3-3707ee5ade71','guest','empty','','guest',NULL,'2011-01-01 00:00:08',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-('60bfb8a7-5754-4186-acd2-44b20ef32399','Surfing Dirt','25f9e794323b453885f5181f1b624d0b','info@surfingdirt.com','admin','2019-05-26 14:00:00','2019-05-26 14:00:00','en','','','',NULL,NULL,NULL);
+insert into `users`(`userId`,`username`,`password`,`salt`,`email`,`status`,`date`,`lastLogin`,`lang`,`firstName`,`lastName`,`city`,`activationKey`,`newPassword`,`avatar`) values
+('0230ec1d-dc7b-42e6-89d3-3707ee5ade71','guest','empty','b3833b1c-1db0-4a93-9efc-b6659400ce9f','guest',NULL,'2011-01-01 00:00:08',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+('60bfb8a7-5754-4186-acd2-44b20ef32399','Surfing Dirt','$2y$12$yRIPb1O8JAM5B1NmGSGDG.GQKVMTryO9SXcj1A/t6nqeAGhqbsCre','b3833b1c-1db0-4a93-9efc-b6659400ce9f','info@surfingdirt.com','admin','2019-05-26 14:00:00','2019-05-26 14:00:00','en','','','',NULL,NULL,NULL);
 

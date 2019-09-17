@@ -52,7 +52,7 @@ insert  into `media_album_aggregations`(`id`,`keyName`,`keyValue`,`albumId`) val
 (8,'user','941b2ac5-2519-44de-84f9-ea9980e4631f','210ae999-f7e3-4b39-915d-033dbc8d965c'),
 (9,'user','cc834ce6-58df-4381-aed3-8fe4c2923434','a8a7b0fd-e0f2-49d9-8974-e6292d7e667b');
 
-insert  into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEditor`,`status`,`albumType`,`albumContributions`,`albumCreation`,`albumVisiblity`) values
+insert  into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEditor`,`status`,`albumType`,`albumContributions`,`albumCreation`,`albumVisibility`) values
 ('a3833b1c-1db0-4a93-9efc-b6659400ce9f', '2002-02-18 14:00:00','60bfb8a7-5754-4186-acd2-44b20ef32399',NULL,NULL,'valid','simple','public','static','visible'),
 ('40763a20-5aa0-49d2-85f7-292c95cb3643', '2002-02-18 14:00:00','60bfb8a7-5754-4186-acd2-44b20ef32399',NULL,NULL,'valid','simple','public','static','visible'),
 ('40c38ab9-cb77-49a7-a296-0805237d2710', '2002-02-18 14:00:00','60bfb8a7-5754-4186-acd2-44b20ef32399',NULL,NULL,'valid','simple','public','static','visible'),
@@ -164,13 +164,13 @@ insert  into `user_notifications`(`userId`,`itemType`,`medium`,`notify`) values
 ('941b2ac5-2519-44de-84f9-ea9980e4631f','user','homePage',1),
 ('941b2ac5-2519-44de-84f9-ea9980e4631f','video','homePage',1);
 
-insert  into `users`(`userId`,`username`,`password`,`email`,`status`,`date`,`lastLogin`,`lang`,`firstName`,`lastName`,`city`,`activationKey`,`newPassword`,`avatar`) values
-('85193083-ce22-43a5-993b-1c7aba53d13c','plainuser','25f9e794323b453885f5181f1b624d0b','user1@example.org','member','2011-01-01 00:00:01','2011-08-14 08:12:20','fr','prenom','nom','toulouse',NULL,NULL,'/media/avatars/1.jpg'),
-('b1786ac1-5cc8-4156-8471-8a80a87efe17','banneduser','25f9e794323b453885f5181f1b624d0b','banned@mountainboard.fr','banned','2011-01-01 00:00:02','2010-01-11 09:04:37','fr','','','',NULL,NULL,NULL),
-('60bfb8a7-5754-4186-acd2-44b20ef32399','adminuser','25f9e794323b453885f5181f1b624d0b','admin@mountainboard.fr','admin','2011-01-01 00:00:03','2010-01-11 09:04:37','en','','','oakland',NULL,NULL,NULL),
-('102e6ed9-cdac-4c9c-9483-a3309970db59','editoruser','25f9e794323b453885f5181f1b624d0b','editor@mountainboard.fr','editor','2011-01-01 00:00:04','2010-01-11 09:04:37','en','','','madrid',NULL,NULL,NULL),
-('6750ff62-7195-49f5-bf81-e3d395e6cdcf','writeruser','25f9e794323b453885f5181f1b624d0b','writer@mountainboard.fr','writer','2011-01-01 00:00:05','2010-01-11 09:04:37','fr','','',NULL,NULL,NULL,NULL),
-('941b2ac5-2519-44de-84f9-ea9980e4631f','otheruser','25f9e794323b453885f5181f1b624d0b','member@mountainboard.fr','member','2011-01-01 00:00:06','2010-01-11 09:04:37','en','','',NULL,NULL,NULL,NULL),
-('cc834ce6-58df-4381-aed3-8fe4c2923434','pendinguser','25f9e794323b453885f5181f1b624d0b','pending@mountainboard.fr','pending','2011-01-01 00:00:07','2010-01-11 09:04:37','fr','','','','art85dnh2obrozxtqo830shfcmsp4acl',NULL,NULL),
-('0230ec1d-dc7b-42e6-89d3-3707ee5ade71','guest','empty','','guest',NULL,'2011-01-01 00:00:08',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+insert  into `users`(`userId`,`username`,`password`,`salt`,`email`,`status`,`date`,`lastLogin`,`lang`,`firstName`,`lastName`,`city`,`activationKey`,`newPassword`,`avatar`) values
+('85193083-ce22-43a5-993b-1c7aba53d13c','plainuser','$2y$12$yRIPb1O8JAM5B1NmGSGDG.GQKVMTryO9SXcj1A/t6nqeAGhqbsCre','b3833b1c-1db0-4a93-9efc-b6659400ce9f','user1@example.org','member','2011-01-01 00:00:01','2011-08-14 08:12:20','fr','prenom','nom','toulouse',NULL,NULL,'/media/avatars/1.jpg'),
+('b1786ac1-5cc8-4156-8471-8a80a87efe17','banneduser','$2y$12$yRIPb1O8JAM5B1NmGSGDG.GQKVMTryO9SXcj1A/t6nqeAGhqbsCre','b3833b1c-1db0-4a93-9efc-b6659400ce9f','banned@mountainboard.fr','banned','2011-01-01 00:00:02','2010-01-11 09:04:37','fr','','','',NULL,NULL,NULL),
+('60bfb8a7-5754-4186-acd2-44b20ef32399','adminuser','$2y$12$yRIPb1O8JAM5B1NmGSGDG.GQKVMTryO9SXcj1A/t6nqeAGhqbsCre','b3833b1c-1db0-4a93-9efc-b6659400ce9f','admin@mountainboard.fr','admin','2011-01-01 00:00:03','2010-01-11 09:04:37','en','','','oakland',NULL,NULL,NULL),
+('102e6ed9-cdac-4c9c-9483-a3309970db59','editoruser','$2y$12$yRIPb1O8JAM5B1NmGSGDG.GQKVMTryO9SXcj1A/t6nqeAGhqbsCre','b3833b1c-1db0-4a93-9efc-b6659400ce9f','editor@mountainboard.fr','editor','2011-01-01 00:00:04','2010-01-11 09:04:37','en','','','madrid',NULL,NULL,NULL),
+('6750ff62-7195-49f5-bf81-e3d395e6cdcf','writeruser','$2y$12$yRIPb1O8JAM5B1NmGSGDG.GQKVMTryO9SXcj1A/t6nqeAGhqbsCre','b3833b1c-1db0-4a93-9efc-b6659400ce9f','writer@mountainboard.fr','writer','2011-01-01 00:00:05','2010-01-11 09:04:37','fr','','',NULL,NULL,NULL,NULL),
+('941b2ac5-2519-44de-84f9-ea9980e4631f','otheruser','$2y$12$yRIPb1O8JAM5B1NmGSGDG.GQKVMTryO9SXcj1A/t6nqeAGhqbsCre','b3833b1c-1db0-4a93-9efc-b6659400ce9f','member@mountainboard.fr','member','2011-01-01 00:00:06','2010-01-11 09:04:37','en','','',NULL,NULL,NULL,NULL),
+('cc834ce6-58df-4381-aed3-8fe4c2923434','pendinguser','$2y$12$yRIPb1O8JAM5B1NmGSGDG.GQKVMTryO9SXcj1A/t6nqeAGhqbsCre','b3833b1c-1db0-4a93-9efc-b6659400ce9f','pending@mountainboard.fr','pending','2011-01-01 00:00:07','2010-01-11 09:04:37','fr','','','','art85dnh2obrozxtqo830shfcmsp4acl',NULL,NULL),
+('0230ec1d-dc7b-42e6-89d3-3707ee5ade71','guest','empty','b3833b1c-1db0-4a93-9efc-b6659400ce9f','','guest',NULL,'2011-01-01 00:00:08',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 

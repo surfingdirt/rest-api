@@ -78,8 +78,9 @@ CREATE TABLE `media_albums` (
   `lastEditor` varchar(36) DEFAULT NULL,
   `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
   `albumType` enum('simple','aggregate') NOT NULL DEFAULT 'simple' COMMENT 'Simple or aggregated',
-  `albumAccess` enum('public','private') NOT NULL DEFAULT 'public',
+  `albumContributions` enum('private','public') NOT NULL DEFAULT 'private',
   `albumCreation` enum('static','automatic','user') NOT NULL DEFAULT 'automatic',
+  `albumVisibility` enum('private','unlisted','visible') NOT NULL DEFAULT 'visible',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -164,7 +165,8 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `userId` varchar(36) NOT NULL,
   `username` varchar(64) NOT NULL,
-  `password` varchar(32) NOT NULL,
+  `password` varchar(128) DEFAULT NULL,
+  `salt` varchar(36) NOT NULL DEFAULT '',
   `email` varchar(128) NOT NULL,
   `status` enum('banned','guest','pending','member','writer','editor','admin') NOT NULL DEFAULT 'guest',
   `date` datetime(3) DEFAULT NULL,
@@ -176,7 +178,9 @@ CREATE TABLE `users` (
   `site` varchar(255) DEFAULT NULL,
   `activationKey` varchar(32) DEFAULT NULL,
   `newPassword` varchar(32) DEFAULT NULL,
-  `avatar` varchar(512) DEFAULT NULL,
+  `avatar` varchar(36) DEFAULT NULL,
+  `cover` varchar(36) DEFAULT NULL,
+  `bio` varchar(1024) DEFAULT NULL,
   PRIMARY KEY (`userId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

@@ -5,12 +5,8 @@ import path  from 'path';
 export const cleanupTestDatabase = async () => {
   const runSQL = async (filename, connection) => {
     const queryFile = path.normalize(`${__dirname}/../../data/sql/${filename}`);
-    try {
-      const queries = fs.readFileSync(queryFile).toString();
-      return connection.query(queries);
-    } catch (e) {
-      console.log(e);
-    }
+    const queries = fs.readFileSync(queryFile).toString();
+    return connection.query(queries);
   }
 
   // TODO: read application.ini in the test section to get this info
@@ -21,9 +17,13 @@ export const cleanupTestDatabase = async () => {
     database : 'ridedb_test',
     multipleStatements: true,
   });
-  await runSQL('structure.sql', connection);
-  await runSQL('test_fixtures.sql', connection);
-  await runSQL('migrations/001-user-images.sql', connection);
+  try {
+    await runSQL('structure.sql', connection);
+    await runSQL('test_fixtures.sql', connection);
+  } catch (e) {
+    console.error('Failed to clear DB', e);
+    throw e;
+  }
   connection.end();
 };
 
