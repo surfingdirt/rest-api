@@ -15,19 +15,26 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
    */
   protected $_location;
 
-  protected function _postDelete()
+  public function getTitle()
   {
-    parent::_postDelete();
+      /* Media item title may be empty */
+      $title = $this->{$this->_titleColumn};
+      return $title;
+    }
 
-    $table = new Media_Item_Users();
-    $where = $table->getAdapter()->quoteInto("mediaId = ?", $this->id);
-    $table->delete($where);
-  }
+    protected function _postDelete()
+    {
+      parent::_postDelete();
 
-  /**
-   * Returns a list of all cache id's that must be emptied
-   * when saving/deleting this object.
-   */
+      $table = new Media_Item_Users();
+      $where = $table->getAdapter()->quoteInto("mediaId = ?", $this->id);
+      $table->delete($where);
+    }
+
+    /**
+     * Returns a list of all cache id's that must be emptied
+     * when saving/deleting this object.
+     */
   protected function _getCacheIdsForClear()
   {
     $return = parent::_getCacheIdsForClear();
