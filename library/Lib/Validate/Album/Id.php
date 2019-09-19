@@ -10,10 +10,10 @@ class Lib_Validate_Album_Id extends Lib_Validate_Album
       return false;
     }
 
-    if (!$this->_album->isEditableBy(Globals::getUser(), Globals::getAcl())) {
-      $this->_error(parent::ALBUMNOTWRITABLE);
-      return false;
-    }
+//    if (!$this->_album->isEditableBy(Globals::getUser(), Globals::getAcl())) {
+//      $this->_error(parent::ALBUMNOTWRITABLE);
+//      return false;
+//    }
 
     return true;
   }
