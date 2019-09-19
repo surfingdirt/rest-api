@@ -17,14 +17,18 @@ class Lib_Auth_Manager
   {
     $userIdColumn = User::COLUMN_USERID;
     $passwordColumn = User::COLUMN_PASSWORD;
+    $emailColumn = User::COLUMN_EMAIL;
     $usernameColumn = User::COLUMN_USERNAME;
     $statusColumn = User::COLUMN_STATUS;
     $table = Constants_TableNames::USER;
 
+    $quote  = $this->_db->quoteInto("($usernameColumn = ? ", $username);
+    $quote .= $this->_db->quoteInto("OR $emailColumn = ?)", $username);
+
     $sql = <<<SQL
       SELECT {$passwordColumn} as hash, salt, {$userIdColumn} as userId
       FROM {$table}
-      WHERE {$usernameColumn} = '{$username}'
+      WHERE {$quote}
       AND {$statusColumn} IN ({$this->_authorizedLevels});  
 SQL;
     $stmt = $this->_db->query($sql);
