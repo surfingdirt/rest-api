@@ -50,6 +50,11 @@ class Lib_Validate_Album extends Lib_Validate_Data
         break;
     }
 
+    if (!$found->canBeAddedToBy(Globals::getUser(), Globals::getAcl())) {
+      $this->_error(self::ALBUMNOTWRITABLE);
+      return false;
+    }
+
     return true;
   }
 }

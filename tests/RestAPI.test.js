@@ -13,7 +13,12 @@ import {
 } from './RestClient/resources';
 import { images } from './data/images';
 import { invalidPhoto, validPhoto } from './data/media';
-import { aggregateAlbum, editorUserStaticAlbum, plainUserStaticAlbum } from './data/albums';
+import {
+  aggregateAlbum,
+  editorUserStaticPrivateAlbum,
+  editorUserStaticPublicAlbum,
+  plainUserStaticAlbum,
+} from './data/albums';
 import {
   adminUser,
   bannedUser,
@@ -860,7 +865,7 @@ describe('Media tests', () => {
             await mediaClient.post({
               mediaType: PHOTO,
               imageId: notPostedImageId,
-              albumId: editorUserStaticAlbum.id,
+              albumId: editorUserStaticPrivateAlbum.id,
               title: 'A failing photo title',
               description: 'A failing photo description',
               storageType: 0,
@@ -1150,6 +1155,22 @@ describe('Media tests', () => {
           expect(looksLikeUUID(body.id)).toBeTruthy();
           expect(body.album.id).toEqual(plainUserStaticAlbum.id);
         });
+
+        test("Plain user can post to another user's public album", async () => {
+          await mediaClient.setUser(plainUser);
+          mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          const body = checkSuccess(
+            await mediaClient.post({
+              mediaType: VIDEO,
+              mediaSubType: YOUTUBE,
+              vendorKey: '1PcGJIjhQjg',
+              albumId: editorUserStaticPublicAlbum.id,
+              title: 'A successful YouTube video title',
+              description: 'A successful YouTube video description',
+              storageType: 0,
+            }),
+          );
+        });
       });
 
       describe('Failures', () => {
@@ -1221,15 +1242,16 @@ describe('Media tests', () => {
           expect(body.errors).toEqual({ albumId: ['albumTypeNotAllowed'] });
         });
 
-        test("Plain user cannot post to another user's album", async () => {
+        test("Plain user cannot post to another user's private album", async () => {
           await mediaClient.setUser(plainUser);
           mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
+          mediaClient.setDebugBackend(true);
           const body = checkBadRequest(
             await mediaClient.post({
               mediaType: VIDEO,
               mediaSubType: YOUTUBE,
               vendorKey: '1PcGJIjhQjg',
-              albumId: editorUserStaticAlbum.id,
+              albumId: editorUserStaticPrivateAlbum.id,
               title: 'A failing YouTube video title',
               description: 'A failing YouTube video description',
               storageType: 0,
@@ -1462,7 +1484,10 @@ describe('Album tests', () => {
     test('Plain user can create public albums', async () => {
       albumClient.setUser(plainUser);
       const { albumContributions, albumType } = checkSuccess(
-        await albumClient.post({ title: 'Album for actions - public', albumContributions: 'public' }),
+        await albumClient.post({
+          title: 'Album for actions - public',
+          albumContributions: 'public',
+        }),
       );
 
       expect(albumContributions).toEqual('public');
@@ -1557,8 +1582,12 @@ describe('Album tests', () => {
       await postVideoWithToStaticAlbum(plainUser, '789', album.id);
 
       const { media: mediaDefault } = checkSuccess(await albumClient.get(album.id));
-      const { media: mediaAsc } = checkSuccess(await albumClient.get(album.id, { dirItems: 'ASC' }));
-      const { media: mediaDesc } = checkSuccess(await albumClient.get(album.id, { dirItems: 'DESC' }));
+      const { media: mediaAsc } = checkSuccess(
+        await albumClient.get(album.id, { dirItems: 'ASC' }),
+      );
+      const { media: mediaDesc } = checkSuccess(
+        await albumClient.get(album.id, { dirItems: 'DESC' }),
+      );
       const { media: mediaPageAsc } = checkSuccess(
         await albumClient.get(album.id, { dirItems: 'ASC', countItems: 1, startItems: 2 }),
       );
