@@ -336,6 +336,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   {
     $resources = array(
       'album' => 'Album',
+      'comments' => 'Comment',
       'media' => 'Media',
       'user' => 'User',
       'useralbum' => 'Album',

@@ -19,7 +19,7 @@ class Routes {
 
       'userAlbums' => new Zend_Controller_Router_Route('/user/:id/albums/', array('controller' => 'useralbum', 'action' => 'list')),
 
-      'comments' => new Zend_Controller_Router_Route('/:itemType/:itemId/comments/', array('controller' => 'comments')),
+      'comments' => new Zend_Controller_Router_Route('/:itemType/:itemId/comments/', array('controller' => 'comments', 'action' => 'list')),
       'countryRegions' => new Zend_Controller_Router_Route('/countries/:countryId/regions/', array('controller' => 'regions', 'action' => 'list')),
 
       'countryLocations' => new Zend_Controller_Router_Route('/countries/:countryId/locations/', array('controller' => 'locations', 'action' => 'list')),
