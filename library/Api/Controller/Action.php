@@ -29,6 +29,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
    * @var string
    */
   public $listKey = 'date';
+  public $allowedListKeys = array('userId', 'username');
 
   public function init()
   {
@@ -395,7 +396,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   protected function _getSort()
   {
     $sort = $this->getRequest()->getParam('sort', $this->listKey);
-    $sort = in_array($sort, array('userId', 'username')) ? $sort : $this->listKey;
+    $sort = in_array($sort, $this->allowedListKeys) ? $sort : $this->listKey;
     return $sort;
   }
 
