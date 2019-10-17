@@ -1,4 +1,5 @@
 module.exports = {
   verbose: true,
-  setupTestFrameworkScriptFile: './tests/setup.js',
+  setupFilesAfterEnv: ['./tests/setup.js'],
+  cacheDirectory: '/tmp/babel-cache',
 };

@@ -100,7 +100,8 @@ describe('Token tests', () => {
     user1Token = loginResponseBody.token;
 
     // Tweak server time to be seconds after the expiration date
-    await client.setDate(getDateForBackend(JWT_TTL + 2));
+    const afterExpirationDate = getDateForBackend(JWT_TTL + 2);
+    await client.setDate(afterExpirationDate);
 
     // Request user 1 with user1Token while server thinks it's the future
     checkUnauthorised(
@@ -110,9 +111,8 @@ describe('Token tests', () => {
       }),
       403,
     );
-
     // Sets time back
-    await client.setDate();
+    await client.setDate(null);
 
     // Request user 1 with user1Token while server thinks it's the present again
     checkSuccess(await client.get({ path: plainUserPath, token: user1Token }));
@@ -845,9 +845,7 @@ describe('Media tests', () => {
           await mediaClient.setDate();
 
           const albumClient = new ResourceClient(client, ALBUM);
-          const { lastEditionDate } = checkSuccess(
-            await albumClient.get(plainUserStaticAlbum.id),
-          );
+          const { lastEditionDate } = checkSuccess(await albumClient.get(plainUserStaticAlbum.id));
           expect(lastEditionDate).toEqual(date);
         });
       });

@@ -27,15 +27,15 @@ class TestController extends Api_Controller_Action
   {
     $datetime = $this->_request->getParam('datetime');
     if ($datetime === 'NOW') {
-      $datetime = date("Y-m-d H:i:s");
+      $datetime = date("Y-m-d H:i:s.v");
     }
 
     if (!preg_match("/^\d{4}-\d{2}-\d{2} [0-2][0-9]:[0-5][0-9]:[0-5][0-9].\d{3}$/", $datetime, $matches)) {
       $this->view->output = array(
-        status => false,
-        datetime => null,
-        date => null,
-        timestamp => null,
+        "status" => false,
+        "datetime" => null,
+        "date" => null,
+        "timestamp" => null,
       );
       return;
     }

@@ -40,7 +40,6 @@ export default class StatelessClient {
     if (argString) {
       fullUri = `${fullUri}?${argString}`;
     }
-
     return fullUri;
   }
 
@@ -197,11 +196,12 @@ export default class StatelessClient {
     }
   }
 
-  async setDate(date = null) {
-    const usp = new URLSearchParams();
-    usp.append(dateSetter.arg, date || 'NOW');
-
-    return await this.get({ path: `${dateSetter.path}?${usp.toString()}` });
+  async setDate(date = null, debugBackend = false) {
+    return await this.get({
+      path: dateSetter.path,
+      urlParams: { [dateSetter.arg]: date || 'NOW' },
+      debugBackend,
+    });
   }
 
   async clearCache() {
