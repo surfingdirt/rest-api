@@ -227,6 +227,9 @@ class Api_Media_Accessor extends Api_Data_Accessor
       $table->updateUsers($dataRow->id, $data['users']);
     }
 
+    // Update album last edition date;
+    $dataRow->getAlbum()->save();
+
     $dataRow->clearCache();
     return $dataRow->id;
   }

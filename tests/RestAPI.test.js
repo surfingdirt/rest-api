@@ -824,6 +824,33 @@ describe('Media tests', () => {
           expect(looksLikeUUID(body.id)).toBeTruthy();
           expect(body.album.id).toEqual(plainUserStaticAlbum.id);
         });
+
+        test('Photo post results in album lastEditionDate update', async () => {
+          // Tweak server time to be seconds after the expiration date
+          const date = getDateForBackend();
+          await mediaClient.setDebugBackend(true);
+          await mediaClient.setDate(date);
+          await mediaClient.setUser(plainUser);
+
+          checkSuccess(
+            await mediaClient.post({
+              mediaType: PHOTO,
+              albumId: plainUserStaticAlbum.id,
+              title: 'A new photo title',
+              description: 'A new photo description',
+              imageId: secondExistingImageId,
+              storageType: 0,
+            }),
+          );
+          // Sets time back
+          await mediaClient.setDate();
+
+          const albumClient = new ResourceClient(client, ALBUM);
+          const { lastEditionDate } = checkSuccess(
+            await albumClient.get(plainUserStaticAlbum.id),
+          );
+          expect(lastEditionDate).toEqual(date);
+        });
       });
 
       describe('Failures', () => {

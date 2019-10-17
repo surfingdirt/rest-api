@@ -30,7 +30,7 @@ class TestController extends Api_Controller_Action
       $datetime = date("Y-m-d H:i:s");
     }
 
-    if (!preg_match("/^\d{4}-\d{2}-\d{2} [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$/", $datetime, $matches)) {
+    if (!preg_match("/^\d{4}-\d{2}-\d{2} [0-2][0-9]:[0-5][0-9]:[0-5][0-9].\d{3}$/", $datetime, $matches)) {
       $this->view->output = array(
         status => false,
         datetime => null,

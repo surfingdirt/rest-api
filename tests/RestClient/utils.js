@@ -16,8 +16,10 @@ export const getDateForBackend = (offsetAsSeconds = 0) => {
   i = i < 10 ? `0${i}` : i;
   let s = newDate.getSeconds();
   s = s < 10 ? `0${s}` : s;
+  let v = newDate.getMilliseconds();
+  v = v < 10 ? `0${v}` : v;
 
-  return `${Y}-${M}-${D} ${h}:${i}:${s}`;
+  return `${Y}-${M}-${D} ${h}:${i}:${s}.${v}`;
 }
 
 export const looksLikeUUID = (str) => {

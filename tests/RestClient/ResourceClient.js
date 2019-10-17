@@ -116,4 +116,8 @@ export default class ResourceClient {
   clearToken() {
     this.token = null;
   }
+
+  async setDate(date = null) {
+    return await this.client.setDate(date);
+  }
 }

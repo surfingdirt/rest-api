@@ -1299,7 +1299,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     } else {
       if (!$skipAutomaticEditionFields) {
         $this->lastEditor = Globals::getUser()->{User::COLUMN_USERID};
-        $this->lastEditionDate = Utils::date("Y-m-d H:i:s");
+        $this->lastEditionDate = Utils::date("Y-m-d H:i:s.v");
       }
     }
 
