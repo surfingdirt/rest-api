@@ -5,6 +5,7 @@ class AlbumController extends Api_Controller_Action
   public $listCount = 10;
 
   public $listDir = 'desc';
+  public $listKey = 'lastEditionDate';
   public $allowedListKeys = array('id', 'date', 'lastEditionDate');
 
   protected function _preObjectCreation($object, $data)

@@ -154,6 +154,13 @@ class Api_Media_Accessor extends Api_Data_Accessor
       $data = array_merge($data, $this->_getVideoData($thumbRow));
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
+
+    // Update album last edition date;
+    $album = $object->getAlbum();
+    $album->lastEditionDate = Utils::date("Y-m-d H:i:s.v");
+    $album->save();
+
+
     return array($object->getId(), null);
   }
 
@@ -226,9 +233,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
       $table = new Media_Item_Users();
       $table->updateUsers($dataRow->id, $data['users']);
     }
-
-    // Update album last edition date;
-    $dataRow->getAlbum()->save();
 
     $dataRow->clearCache();
     return $dataRow->id;

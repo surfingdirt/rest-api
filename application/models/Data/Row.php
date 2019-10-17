@@ -1213,6 +1213,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     if ($this->onePassSubmit()) {
       if (empty($this->date)) {
         $this->date = Utils::date("Y-m-d H:i:s.v");
+        $this->lastEditionDate = Utils::date("Y-m-d H:i:s.v");
       }
       $this->status = ($setInValid) ? Data::INVALID : Data::VALID;
       $item->date = $this->date;
@@ -1226,6 +1227,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     if (empty($this->submitter)) {
       $this->submitter = Globals::getUser()->{User::COLUMN_USERID};
     }
+
     $return = parent::_doInsert();
     $this->_saveTranslatedTexts();
 

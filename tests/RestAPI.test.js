@@ -828,7 +828,6 @@ describe('Media tests', () => {
         test('Photo post results in album lastEditionDate update', async () => {
           // Tweak server time to be seconds after the expiration date
           const date = getDateForBackend();
-          await mediaClient.setDebugBackend(true);
           await mediaClient.setDate(date);
           await mediaClient.setUser(plainUser);
 
@@ -1272,7 +1271,6 @@ describe('Media tests', () => {
         test("Plain user cannot post to another user's private album", async () => {
           await mediaClient.setUser(plainUser);
           mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-          mediaClient.setDebugBackend(true);
           const body = checkBadRequest(
             await mediaClient.post({
               mediaType: VIDEO,
