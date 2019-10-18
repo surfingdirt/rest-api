@@ -159,7 +159,7 @@ class Api_Album_Row extends Media_Album_Row
     // Get the rowset of medias with the list we just built
     $itemsTable = new Media_Item();
     $quoted = array();
-    foreach($mediaIds as $mediaId) {
+    foreach ($mediaIds as $mediaId) {
       $quoted[] = $db->quoteInto('?', $mediaIds);
     }
     $where = 'id IN (' . implode("', '", $quoted) . ')';

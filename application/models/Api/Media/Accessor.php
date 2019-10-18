@@ -155,11 +155,8 @@ class Api_Media_Accessor extends Api_Data_Accessor
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
 
-    // Update album last edition date;
     $album = $object->getAlbum();
-    $album->lastEditionDate = Utils::date("Y-m-d H:i:s.v");
-    $album->save();
-
+    $album->updateLastEdition();
 
     return array($object->getId(), null);
   }

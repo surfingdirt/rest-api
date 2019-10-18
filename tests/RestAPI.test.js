@@ -748,6 +748,7 @@ describe('Media tests', () => {
     const existingImageId = images[2].id;
     const secondExistingImageId = images[3].id;
     const thirdExistingImageId = images[4].id;
+    const fourthExistingImageId = images[6].id;
 
     describe('POST', () => {
       describe('ACLs', () => {
@@ -826,7 +827,6 @@ describe('Media tests', () => {
         });
 
         test('Photo post results in album lastEditionDate update', async () => {
-          // Tweak server time to be seconds after the expiration date
           const date = getDateForBackend();
           await mediaClient.setDate(date);
           await mediaClient.setUser(plainUser);
@@ -837,16 +837,17 @@ describe('Media tests', () => {
               albumId: plainUserStaticAlbum.id,
               title: 'A new photo title',
               description: 'A new photo description',
-              imageId: secondExistingImageId,
+              imageId: fourthExistingImageId,
               storageType: 0,
             }),
           );
-          // Sets time back
-          await mediaClient.setDate();
 
           const albumClient = new ResourceClient(client, ALBUM);
           const { lastEditionDate } = checkSuccess(await albumClient.get(plainUserStaticAlbum.id));
           expect(lastEditionDate).toEqual(date);
+
+          // Sets time back
+          await mediaClient.setDate();
         });
       });
 
@@ -1058,7 +1059,6 @@ describe('Media tests', () => {
           // check who can see what, otherwise videos may be hidden from certain people forever.
           mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
           await mediaClient.setUser(plainUser);
-
           const body1 = checkSuccess(
             await mediaClient.post({
               mediaType: VIDEO,
@@ -1072,19 +1072,16 @@ describe('Media tests', () => {
           );
           expect(getSortedKeysAsString(body1)).toEqual(createdVideoKeys);
           expect(looksLikeUUID(body1.id)).toBeTruthy();
-
           mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-          const body2 = checkSuccess(
-            await mediaClient.post({
-              mediaType: VIDEO,
-              mediaSubType: YOUTUBE,
-              vendorKey: 'kmWSGtyfDbA',
-              albumId: plainUser.albumId,
-              title: 'A dupe YouTube video title',
-              description: 'A dupe YouTube video description',
-              storageType: 0,
-            }),
-          );
+          const body2 = checkSuccess( await mediaClient.post({
+            mediaType: VIDEO,
+            mediaSubType: YOUTUBE,
+            vendorKey: 'kmWSGtyfDbA',
+            albumId: plainUser.albumId,
+            title: 'A dupe YouTube video title',
+            description: 'A dupe YouTube video description',
+            storageType: 0,
+          }));
           expect(getSortedKeysAsString(body2)).toEqual(createdVideoKeys);
           expect(looksLikeUUID(body2.id)).toBeTruthy();
         });

@@ -446,11 +446,12 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
    *
    * @return Media_Album_Row
    */
-  public function getAlbum()
+  public function getAlbum($skipCache = false)
   {
     $cache = $this->getCache();
     $cacheId = $this->_getAlbumCacheId();
-    if (!$albums = $cache->load($cacheId)) {
+    $albums = $cache->load($cacheId);
+    if (!$albums || $skipCache) {
       $album = Media_Album_Factory::buildAlbumById($this->albumId);
       $rowset = new Zend_Db_Table_Rowset(array(
         'data' => array($album->toArray()),

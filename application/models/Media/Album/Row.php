@@ -282,4 +282,15 @@ abstract class Media_Album_Row extends Data_Row
   {
   }
 
+  public function updateLastEdition()
+  {
+    $table = Constants_TableNames::ALBUM;
+    $date = Utils::date("Y-m-d H:i:s.v");
+
+    $sql = "UPDATE $table SET lastEditionDate='$date' WHERE id='$this->id'";
+    $db = $this->getTable()->getAdapter();
+    $db->query($sql);
+
+    $this->clearCache();
+  }
 }
