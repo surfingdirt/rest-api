@@ -71,14 +71,28 @@ class AlbumController extends Api_Controller_Action
 
   protected function _getWhereClause(User_Row $user)
   {
+    $skipAlbums = $this->getRequest()->getParam('skipAlbums', array());
+
+    $adapter = $this->_table->getAdapter();
+
     if (in_array($user->status, array(User::STATUS_EDITOR, User::STATUS_ADMIN))) {
       $return = '1';
     } else {
-      $return = $this->_table->getAdapter()->quoteInto('status = ?', Data::VALID);
+      $return = $adapter->quoteInto('status = ?', Data::VALID);
     }
 
-    $return .= $this->_table->getAdapter()->quoteInto(' AND albumType = ?', Media_Album::TYPE_SIMPLE);
-    $return .= $this->_table->getAdapter()->quoteInto(' AND albumVisibility = ?', Media_Album::VISIBILITY_VISIBLE);
+    $return .= $adapter->quoteInto(' AND albumType = ?', Media_Album::TYPE_SIMPLE);
+    $return .= $adapter->quoteInto(' AND albumVisibility = ?', Media_Album::VISIBILITY_VISIBLE);
+
+    if (sizeof($skipAlbums) > 0) {
+      $list = implode(', ', array_map(function($item) use ($adapter) {
+        return $adapter->quoteInto('?', $item);
+      }, $skipAlbums));
+
+      if ($list) {
+        $return .= " AND id NOT IN ($list)";
+      }
+    }
 
     return $return;
   }
