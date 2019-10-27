@@ -78,7 +78,7 @@ class Api_Album_Accessor extends Api_Data_Accessor
 
   protected function _restrictMediaItems(array $mediaItems, array $params)
   {
-    $start = isset($params['startItems']) ? (int)$params['startItems'] : 0;
+    $start = isset($params['startItem']) ? (int)$params['startItem'] : 0;
     $start = max($start, 0);
 
     $count = isset($params['countItems']) ? (int)$params['countItems'] : MEDIA_PER_PAGE;
