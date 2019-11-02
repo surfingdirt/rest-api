@@ -168,6 +168,8 @@ abstract class Api_Data_Accessor
       $ret[$attr] = $object->getTitle();
     } elseif ($attr == 'description') {
       $ret[$attr] = $object->getDescription();
+    } elseif ($attr == 'content') {
+      $ret[$attr] = $object->getContent();
     } elseif (isset($object->$attr)) {
       $ret[$attr] = $object->$attr;
     }

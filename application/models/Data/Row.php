@@ -409,12 +409,15 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
   public function getComments(User_Row $user, Lib_Acl $acl)
   {
     $parentType = strtolower($this->getItemType());
-    $where = "parentId = $this->id AND parentType = '$parentType'";
+    $adapter = $this->getTable()->getAdapter();
+    $where = $adapter->quoteInto('parentId = ?', $this->id);
+    $where .= $adapter->quoteInto(' AND parentType = ?', $parentType);
+
     $result = Data_Utils::getList($user, $acl, 'comment', $where, null, true, false);
     $select = $result['select'];
     $table = $select->getTable();
 
-    if (!ALLOW_CACHE) {
+    if (!ALLOW_CACHE || true) {
       $comments = $table->fetchAll($select);
       return $comments;
     }
@@ -1306,7 +1309,10 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     }
 
     $itemTable = new Item();
-    $where = $itemTable->getAdapter()->quoteInto('itemType = ? AND itemId = ?', $this->_table->getItemType(), $this->id);
+    $adapter = $itemTable->getAdapter();
+    $where = $adapter->quoteInto('itemType = ?',$this->_table->getItemType());
+    $where .= $adapter->quoteInto(' AND itemId = ?', $this->id);
+
     $item = $itemTable->fetchRow($where);
     if ($item) {
       $item->status = $this->status;

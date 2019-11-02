@@ -114,4 +114,5 @@ class Comment_Form extends Data_Form
     }
 
     $this->addElements($elements);
+  }
 }

@@ -130,12 +130,12 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
     $parentRow = $this->getParentItemfromDatabase();
 
     $itemTable = new Item();
-    $select = $itemTable->select();
-    $select->where('itemId = ' . $parentRow->id)
-      ->where('itemType = "' . $parentRow->getItemType() . '"');
 
+    $adapter = $itemTable->getAdapter();
+    $where = $adapter->quoteInto('itemType = ?', $parentRow->getItemType());
+    $where .= $adapter->quoteInto(' AND itemId = ?', $parentRow->id);
 
-    $parentItem = $itemTable->fetchRow($select);
+    $parentItem = $itemTable->fetchRow($where);
     return $parentItem;
   }
 
@@ -147,14 +147,14 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
   }
 
   /**
-   * Comments are not translated
+   * Comment content is translated
    *
    * @param string $columnName
    * @return boolean
    */
   protected function _isTranslated($columnName)
   {
-    return false;
+    return ($columnName === 'content');
   }
 
   public function getTone()

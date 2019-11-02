@@ -20,11 +20,12 @@ class CommentsController extends Api_Controller_Action
       $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName());
     }
 
-    $this->view->resources = $resources;
+    $this->view->output = $resources;
   }
 
   protected function _preObjectCreation($object, $data)
   {
+    $object->id = Utils::uuidV4();
     try {
       $object->parentItem = Data::factory(
         $this->_request->getParam('itemId'),
