@@ -1,2 +1,8 @@
 <?php
-echo Zend_Json::encode($this->output);
+/*
+ * Because of limitations on the client, full-security around XSS hinges solely around the API removing < and >
+ * </script><script>alert('xss')</script> becomes &lt;/script&gt;&lt;script&gt;alert('xss')&lt;/script&gt;
+ *
+ * We don't escape quotes because < is what is causing issues.
+ */
+echo htmlspecialchars(Zend_Json::encode($this->output), ENT_NOQUOTES);
