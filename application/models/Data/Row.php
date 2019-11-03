@@ -417,7 +417,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     $select = $result['select'];
     $table = $select->getTable();
 
-    if (!ALLOW_CACHE || true) {
+    if (!ALLOW_CACHE) {
       $comments = $table->fetchAll($select);
       return $comments;
     }
