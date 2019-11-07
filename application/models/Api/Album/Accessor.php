@@ -62,7 +62,7 @@ class Api_Album_Accessor extends Api_Data_Accessor
         $media = Media_Item_Factory::buildItem($item['id'], $item['mediaType']);
         $mediaItems[] = $mediaAccessor->getObjectData($media);
       }
-      $ret['media'] = $this->_restrictMediaItems($mediaItems, $requestParams);
+      $ret['media'] = $this->_restrictAndOrderMediaItems($mediaItems, $requestParams);
       $ret['itemCount'] = sizeof($itemSet);
     }
 
@@ -76,7 +76,7 @@ class Api_Album_Accessor extends Api_Data_Accessor
     return $actions;
   }
 
-  protected function _restrictMediaItems(array $mediaItems, array $params)
+  protected function _restrictAndOrderMediaItems(array $mediaItems, array $params)
   {
     $start = isset($params['startItem']) ? (int)$params['startItem'] : 0;
     $start = max($start, 0);

@@ -4,6 +4,7 @@ import { clearCacheFiles } from './RestClient/cache';
 import { hostUrl, JWT_TTL, LOCAL_BAD_THUMB_PATH, LOCAL_THUMB_PATH } from './RestClient/constants';
 import {
   ALBUM,
+  COMMENT,
   IMAGE,
   MEDIA,
   MEDIA_SUBTYPES_VIDEO,
@@ -1600,7 +1601,6 @@ describe('Album tests', () => {
       await postVideoWithToStaticAlbum(plainUser, '123', album.id);
       await postVideoWithToStaticAlbum(plainUser, '456', album.id);
       await postVideoWithToStaticAlbum(plainUser, '789', album.id);
-
       const { media: mediaDefault } = checkSuccess(await albumClient.get(album.id));
       const { media: mediaAsc } = checkSuccess(
         await albumClient.get(album.id, { dirItems: 'ASC' }),
@@ -1609,10 +1609,10 @@ describe('Album tests', () => {
         await albumClient.get(album.id, { dirItems: 'DESC' }),
       );
       const { media: mediaPageAsc } = checkSuccess(
-        await albumClient.get(album.id, { dirItems: 'ASC', countItems: 1, startItems: 2 }),
+        await albumClient.get(album.id, { dirItems: 'ASC', countItems: 1, startItem: 2 }),
       );
       const { media: mediaPageDesc } = checkSuccess(
-        await albumClient.get(album.id, { dirItems: 'DESC', countItems: 1, startItems: 2 }),
+        await albumClient.get(album.id, { dirItems: 'DESC', countItems: 1, startItem: 2 }),
       );
 
       const listDefault = mediaDefault.map((m) => m.vendorKey);
@@ -1854,5 +1854,38 @@ describe('Album tests', () => {
       albumClient.setUser(adminUser);
       checkSuccess(await albumClient.delete(deletableAlbumId));
     });
+  });
+});
+
+describe('Comment tests', () => {
+  const commentClient = new ResourceClient(client, COMMENT);
+
+  describe('GET', () => {
+    /* TODO:
+    - list existing comments in the database (3 fixtures)
+    - get one single comment (1 fixture)
+    - get one single comment in a specific language (1 fixture)
+    - get one single comment with XSS content (1 fixture)
+    - get one single invalid comment (logged out / logged in / banned/ owner / editor / admin) (1 fixture)
+     */
+  });
+
+  describe('POST', () => {
+    /* TODO:
+    - create one comment (logged out / logged in / banned)
+     */
+  });
+
+  describe('PUT', () => {
+    /* TODO:
+    - update one existing comment (logged out / logged in / banned/ owner / editor / admin) (6 fixtures)
+     */
+  });
+
+  describe('DELETE', () => {
+    /* TODO:
+    - delete one existing comment (logged out / logged in / banned/ owner / editor / admin) (6 fixtures)
+    - delete an item and check that its comments are also deleted (1 media fixture, 1 comment fixture)
+     */
   });
 });
