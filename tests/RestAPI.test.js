@@ -21,6 +21,17 @@ import {
   plainUserStaticAlbum,
 } from './data/albums';
 import {
+  commentsForListing,
+  photoIdForComments,
+  singleComment,
+  translatedComment,
+  XSSComment,
+  invalidComment,
+  commentsForUpdate,
+  commentsForDelete,
+  commentForParentDelete,
+} from './data/comments';
+import {
   adminUser,
   bannedUser,
   createdUser,
@@ -1074,15 +1085,17 @@ describe('Media tests', () => {
           expect(getSortedKeysAsString(body1)).toEqual(createdVideoKeys);
           expect(looksLikeUUID(body1.id)).toBeTruthy();
           mediaClient.setLocalVideoThumb(LOCAL_THUMB_PATH);
-          const body2 = checkSuccess( await mediaClient.post({
-            mediaType: VIDEO,
-            mediaSubType: YOUTUBE,
-            vendorKey: 'kmWSGtyfDbA',
-            albumId: plainUser.albumId,
-            title: 'A dupe YouTube video title',
-            description: 'A dupe YouTube video description',
-            storageType: 0,
-          }));
+          const body2 = checkSuccess(
+            await mediaClient.post({
+              mediaType: VIDEO,
+              mediaSubType: YOUTUBE,
+              vendorKey: 'kmWSGtyfDbA',
+              albumId: plainUser.albumId,
+              title: 'A dupe YouTube video title',
+              description: 'A dupe YouTube video description',
+              storageType: 0,
+            }),
+          );
           expect(getSortedKeysAsString(body2)).toEqual(createdVideoKeys);
           expect(looksLikeUUID(body2.id)).toBeTruthy();
         });
@@ -1859,15 +1872,69 @@ describe('Album tests', () => {
 
 describe('Comment tests', () => {
   const commentClient = new ResourceClient(client, COMMENT);
+  const videoClient = new ResourceClient(client, VIDEO);
 
   describe('GET', () => {
-    /* TODO:
-    - list existing comments in the database (3 fixtures)
-    - get one single comment (1 fixture)
-    - get one single comment in a specific language (1 fixture)
-    - get one single comment with XSS content (1 fixture)
-    - get one single invalid comment (logged out / logged in / banned/ owner / editor / admin) (1 fixture)
-     */
+    const commentInfo =
+      '["content","date","id","lastEditionDate","lastEditor","status","submitter","tone"]';
+
+    test('Retrieve a single comment', async () => {
+      const body = checkSuccess(await commentClient.get(singleComment.id));
+      expect(getSortedKeysAsString(body)).toEqual(commentInfo);
+      expect(body.content).toEqual(singleComment.content);
+      expect(body.date).toEqual(singleComment.date);
+      expect(body.tone).toEqual(singleComment.tone);
+    });
+
+    test('XSS content is escaped', async () => {
+      const body = checkSuccess(await commentClient.get(XSSComment.id));
+      expect(body.content).toEqual(
+        "&lt;/script&gt;&lt;script&gt;alert('this is an XSS')&lt;/script&gt;",
+      );
+    });
+
+    test('Check only allowed users can see invalid comment', async () => {
+      // Logged-out
+      checkUnauthorised(await commentClient.get(invalidComment.id));
+
+      // Logged-in
+      await commentClient.setUser(plainUser);
+      checkUnauthorised(await commentClient.get(invalidComment.id));
+
+      // Banned user
+      await commentClient.setUser(bannedUser);
+      checkUnauthorised(await commentClient.get(invalidComment.id));
+
+      // Owner
+      await commentClient.setUser(writerUser);
+      checkSuccess(await commentClient.get(invalidComment.id));
+
+      // Editor
+      await commentClient.setUser(editorUser);
+      checkSuccess(await commentClient.get(invalidComment.id));
+
+      // Admin
+      await commentClient.setUser(adminUser);
+      checkSuccess(await commentClient.get(invalidComment.id));
+    });
+
+    test('Comments can be translated', async () => {
+      const { content: enContent } = checkSuccess(await commentClient.get(translatedComment.id));
+      expect(enContent).toEqual(translatedComment.enContent);
+
+      commentClient.setLocale('fr-FR');
+      const { content: frContent } = checkSuccess(await commentClient.get(translatedComment.id));
+      expect(frContent).toEqual(translatedComment.frContent);
+    });
+
+    test('List comments on an item', async () => {
+      const body = checkSuccess(await videoClient.getComments(photoIdForComments));
+      expect(body.length).toEqual(3);
+
+      expect(getSortedKeysAsString(body[0])).toEqual(commentInfo);
+      expect(getSortedKeysAsString(body[1])).toEqual(commentInfo);
+      expect(getSortedKeysAsString(body[2])).toEqual(commentInfo);
+    });
   });
 
   describe('POST', () => {

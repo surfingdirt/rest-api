@@ -33,6 +33,16 @@ export default class ResourceClient {
     });
   }
 
+  async getComments(id, urlParams = null) {
+    const path = getResourcePath(this.resource, id) + '/comments';
+    return await this.client.get({
+      path,
+      token: this.token,
+      urlParams,
+      debugBackend: this.debugBackend,
+    });
+  }
+
   async post(data, urlParams = null) {
     const path = getResourcePath(this.resource);
     return await this.client.post({
@@ -119,5 +129,9 @@ export default class ResourceClient {
 
   async setDate(date = null, debugBackend = false) {
     return await this.client.setDate(date, debugBackend);
+  }
+
+  setLocale(locale) {
+    this.client.setLocale(locale);
   }
 }

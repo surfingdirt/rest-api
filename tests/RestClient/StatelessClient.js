@@ -23,6 +23,7 @@ export default class StatelessClient {
   constructor(hostUrl) {
     this.hostUrl = hostUrl;
     this.uuids = [];
+    this.locale = null;
   }
 
   getFullUri({ path, urlParams = null, debugBackend = false }) {
@@ -51,6 +52,10 @@ export default class StatelessClient {
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
+    if (this.locale) {
+      headers['Accept-Language'] = this.locale;
+    }
+
     if (this.uuids.length > 0) {
       headers['X-uuids'] = JSON.stringify(this.uuids);
     }
@@ -58,6 +63,10 @@ export default class StatelessClient {
       headers['X-localVideoThumb'] = this.localVideoThumb;
     }
     return headers;
+  }
+
+  setLocale(locale) {
+    this.locale = locale;
   }
 
   setUUIDs(uuids) {
