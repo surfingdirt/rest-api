@@ -117,7 +117,9 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
   public function getParentItemfromDatabase()
   {
     $dataTableName = Data::mapDataType($this->parentType);
-
+    if ($dataTableName === 'Media_Album') {
+      return Media_Album_Factory::buildAlbumById($this->parentId);
+    }
 
     $dataTable = new $dataTableName();
 

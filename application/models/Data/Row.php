@@ -1242,7 +1242,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     if ($reflection->implementsInterface('Data_Row_MetaDataInterface')) {
       $parentItem = $this->getParentItem();
       if (empty($parentItem)) {
-        $message = "Saving new metadata item of dataType '{$item->itemType}', id '$item->itemId'. Parent could not be found";
+        $message = "Saving new metadata item of dataType '{$item->itemType}', id '$item->itemId'. Parent item could not be found";
         Globals::getLogger()->warning($message, Zend_Log::INFO);
       } else {
         $item->parentItemId = $parentItem->id;
@@ -1376,6 +1376,9 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
 
     $itemTable = new Item();
     $itemTable->delete($where);
+
+    $commentTable = new Comment();
+    $commentTable->delete($adapter->quoteInto("parentType = '$itemType' AND parentId = ?", $this->id));
 
     $viewsTable = new Item_View();
     $viewsTable->delete($where);

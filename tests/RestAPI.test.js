@@ -1871,6 +1871,7 @@ describe('Album tests', () => {
 });
 
 describe('Comment tests', () => {
+  const albumClient = new ResourceClient(client, ALBUM);
   const commentClient = new ResourceClient(client, COMMENT);
   const videoClient = new ResourceClient(client, VIDEO);
 
@@ -1938,21 +1939,117 @@ describe('Comment tests', () => {
   });
 
   describe('POST', () => {
-    /* TODO:
-    - create one comment (logged out / logged in / banned)
-     */
+    test('Create a single comment and retrieve it', async () => {
+      const albumId = 'a8a7b0fd-e0f2-49d9-8974-e6292d7e667b';
+      await commentClient.setUser(plainUser);
+
+      const commentPayload = {
+        content: 'This is a new comment',
+        itemType: 'mediaalbum',
+        itemId: albumId,
+        tone: 'neutral',
+      };
+      const body = checkSuccess(await commentClient.post(commentPayload));
+
+      expect(body.id).toBeDefined();
+      expect(body.content).toEqual(commentPayload.content);
+
+      const comments = checkSuccess(await albumClient.getComments(albumId));
+      expect(comments.length).toEqual(1);
+      expect(comments[0].content).toEqual(commentPayload.content);
+    });
   });
 
   describe('PUT', () => {
-    /* TODO:
-    - update one existing comment (logged out / logged in / banned/ owner / editor / admin) (6 fixtures)
-     */
+    test('Update existing comments', async () => {
+      // All comments were posted by writerUser
+      checkUnauthorised(await commentClient.put(commentsForUpdate[0].id, { content: 'modified' }));
+
+      await commentClient.setUser(bannedUser);
+      checkUnauthorised(await commentClient.put(commentsForUpdate[1].id, { content: 'modified' }));
+
+      await commentClient.setUser(plainUser);
+      checkUnauthorised(await commentClient.put(commentsForUpdate[2].id, { content: 'modified' }));
+
+      await commentClient.setUser(writerUser);
+      const ownerBody = checkSuccess(
+        await commentClient.put(commentsForUpdate[3].id, { content: 'modified' }),
+      );
+      expect(ownerBody.content).toEqual('modified');
+
+      await commentClient.setUser(editorUser);
+      const editorBody = checkSuccess(
+        await commentClient.put(commentsForUpdate[4].id, { content: 'modified' }),
+      );
+      expect(editorBody.content).toEqual('modified');
+
+      await commentClient.setUser(adminUser);
+      commentClient.setDebugBackend(true);
+      const adminBody = checkSuccess(
+        await commentClient.put(commentsForUpdate[5].id, { content: 'modified' }),
+      );
+      expect(adminBody.content).toEqual('modified');
+    });
   });
 
   describe('DELETE', () => {
-    /* TODO:
-    - delete one existing comment (logged out / logged in / banned/ owner / editor / admin) (6 fixtures)
-    - delete an item and check that its comments are also deleted (1 media fixture, 1 comment fixture)
-     */
+    test('Delete existing comments', async () => {
+      // All comments were posted by writerUser
+      commentClient.setDebugBackend(true);
+      checkUnauthorised(await commentClient.delete(commentsForDelete[0].id));
+
+      await commentClient.setUser(bannedUser);
+      checkUnauthorised(await commentClient.delete(commentsForDelete[1].id));
+
+      await commentClient.setUser(plainUser);
+      checkUnauthorised(await commentClient.delete(commentsForDelete[2].id));
+
+      await commentClient.setUser(writerUser);
+      const ownerBody = checkSuccess(await commentClient.delete(commentsForDelete[3].id));
+      expect(ownerBody.status).toBeTruthy();
+
+      await commentClient.setUser(editorUser);
+      const editorBody = checkSuccess(await commentClient.delete(commentsForDelete[4].id));
+      expect(editorBody.status).toBeTruthy();
+
+      await commentClient.setUser(adminUser);
+      const adminBody = checkSuccess(await commentClient.delete(commentsForDelete[5].id));
+      expect(adminBody.status).toBeTruthy();
+    });
+
+    test('Comments are deleted along with their parent', async () => {
+      const imageClient = new ResourceClient(client, IMAGE);
+      await imageClient.setUser(plainUser);
+      const imageResponse = checkSuccess(await imageClient.postFormData({ type: 0 }, [img640]));
+      const imageId = imageResponse[0].key;
+
+      const photoClient = new ResourceClient(client, MEDIA);
+      await photoClient.setUser(plainUser);
+      const newPhoto = checkSuccess(
+        await photoClient.post({
+          mediaType: PHOTO,
+          albumId: plainUserStaticAlbum.id,
+          title: 'A new photo title',
+          description: 'A new photo description',
+          imageId: imageId,
+          storageType: 0,
+        }),
+      );
+
+      await commentClient.setUser(writerUser);
+      const commentPayload = {
+        content: 'This is a new photo comment for deletion',
+        itemType: 'photo',
+        itemId: newPhoto.id,
+        tone: 'neutral',
+      };
+      const newComment = checkSuccess(await commentClient.post(commentPayload));
+
+      photoClient.setDebugBackend(true);
+      const { status } = checkSuccess(await photoClient.delete(newPhoto.id));
+      expect(status).toBeTruthy();
+
+      checkNotFound(await commentClient.get(newComment.id));
+    });
   });
 });

@@ -7,15 +7,11 @@ abstract class Data extends Cache_Object
   const VALID = 'valid';
   const INVALID = 'invalid';
 
-  const TONENEUTRAL = 'toneNeutral';
-  const TONEJOKE = 'toneJoke';
-  const TONEBRITISH = 'toneBritish';
-  const TONELAMEJOKE = 'toneLameJoke';
-  const TONEPEACE = 'tonePeace';
-  const TONEHAPPY = 'toneHappy';
-  const TONEGOTCHA = 'toneGotcha';
-  const TONEUPSET = 'toneUpset';
-  const TONESAD = 'toneSad';
+  const TONE_NEUTRAL = 'neutral';
+  const TONE_JOKING = 'joking';
+  const TONE_ANGRY = 'angry';
+  const TONE_HAPPY = 'happy';
+  const TONE_SAD = 'sad';
 
   const EDITTYPE_FIRST_SAVE = "firstSave";
   const EDITTYPE_NEXT_SAVE = "nextSave";
@@ -59,15 +55,11 @@ abstract class Data extends Cache_Object
   );
 
   public static $tones = array(
-    1 => self::TONENEUTRAL,
-    2 => self::TONEJOKE,
-    3 => self::TONEBRITISH,
-    4 => self::TONELAMEJOKE,
-    5 => self::TONEPEACE,
-    6 => self::TONEHAPPY,
-    7 => self::TONEGOTCHA,
-    8 => self::TONEUPSET,
-    9 => self::TONESAD,
+    self::TONE_NEUTRAL,
+    self::TONE_JOKING,
+    self::TONE_ANGRY,
+    self::TONE_HAPPY,
+    self::TONE_SAD,
   );
 
   /**

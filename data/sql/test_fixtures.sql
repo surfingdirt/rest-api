@@ -69,7 +69,8 @@ insert  into `items`(`id`,`itemId`,`itemType`,`date`,`status`,`parentItemId`,`su
 (15,'6af68e15-276b-42d7-8683-909943b0ae27','video','2002-02-20 10:00:00','valid',NULL,'85193083-ce22-43a5-993b-1c7aba53d13c','announce'),
 (16,'e4e4cb62-4820-4cff-baff-74b2bdcb1993','photo','2002-02-19 10:00:00','valid',NULL,'85193083-ce22-43a5-993b-1c7aba53d13c','announce'),
 (17,'9119c477-1c48-4449-9b8e-9cdb745fc912','photo','2002-02-19 10:00:00','valid',NULL,'6750ff62-7195-49f5-bf81-e3d395e6cdcf','announce'),
-(18,'051cae3a-95f7-4a29-996d-796d4c263a1e','photo','2002-02-19 10:00:00','invalid',NULL,'85193083-ce22-43a5-993b-1c7aba53d13c','announce');
+(18,'051cae3a-95f7-4a29-996d-796d4c263a1e','photo','2002-02-19 10:00:00','invalid',NULL,'85193083-ce22-43a5-993b-1c7aba53d13c','announce'),
+(19,'a8a7b0fd-e0f2-49d9-8974-e6292d7e667b','mediaalbum','2002-02-18 14:00:00','valid',NULL,'cc834ce6-58df-4381-aed3-8fe4c2923434','announce');
 
 insert  into `media_album_aggregations`(`id`,`keyName`,`keyValue`,`albumId`) values
 (1,'user','85193083-ce22-43a5-993b-1c7aba53d13c','ab2121cb-03d6-45de-a1ba-4581dd00d79f'),
