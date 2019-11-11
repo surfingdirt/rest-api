@@ -28,8 +28,8 @@ class CommentsController extends Api_Controller_Action
     $object->id = Utils::uuidV4();
     try {
       $object->parentItem = Data::factory(
-        $this->_request->getParam('itemId'),
-        $this->_request->getParam('itemType')
+        $data['itemId'],
+        $data['itemType']
       );
     } catch (Lib_Exception_NotFound $e) {
       throw new Api_Exception_NotFound();

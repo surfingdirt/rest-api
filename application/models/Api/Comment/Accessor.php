@@ -24,6 +24,8 @@ class Api_Comment_Accessor extends Api_Data_Accessor
     'lastEditionDate',
     'status',
     'tone',
+    'parentType',
+    'parentId',
   );
 
   public $memberCreateAttributes = array(
