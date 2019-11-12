@@ -1,8 +1,3 @@
-export const commentsForListing = [
-  { id: 'c74814e6-89c7-42f1-a9d1-a98567048c17' },
-  { id: 'f3ae1451-b341-4364-80db-2751da4f3537' },
-  { id: '5f7f5e35-52e6-44ad-90c6-e5365eda3469' },
-];
 export const photoIdForComments = '523de4aa-3c06-45c8-8c4f-339a37d2bf83';
 
 export const singleComment = {
@@ -38,5 +33,3 @@ export const commentsForDelete = [
   { id: '7b142ba7-7e00-4e86-bf53-8ef22d10d56c' },
   { id: '0da69559-b156-4da1-b8c1-c85cb11f3cbb' },
 ];
-
-export const commentForParentDelete = { id: 'eca65962-63a9-4928-aecc-3606645a8874' };

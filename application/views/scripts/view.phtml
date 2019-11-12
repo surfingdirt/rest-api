@@ -1,13 +1,13 @@
 <?php
 /*
- * Because of limitations on the client, full-security around XSS hinges solely around the API removing dangerous chars
+ * After much flip-flopping on how to best handle security, here's the decision:
+ * - the API does not escape anything because it's too early to do it at that level (1)
+ * - it's up to the clients to escape data
+ * - React auto-escapes everything unless you choose to shoot yourself in the foot with dangerouslySetInnerHTML
+ * - on the client app's node server, when inlining the Apollo state JSON data, make sure to do this (2):
+ *  window.__APOLLO_STATE__ = JSON.stringify(client.extract()).replace(/</g, '\\u003c');
  *
- * We must escape <, >, &, and ". Why escape quotes? https://www.securitysift.com/quotes-and-xss-planning-your-escape/
- *
- * This is achieved by using json_encode with the poorly documented JSON_HEX_QUOT
- * $string = '{"a": "it cost 20&euros; and a </script><script>alert(\'xss\')</script>)"}';
- * echo json_encode($string, JSON_HEX_QUOT);
- * "{\u0022a\u0022: \u0022it cost 20&euros; and a <\/script><script>alert('xss')<\/script>)\u0022}"
- *
+ * (1) https://edx.readthedocs.io/projects/edx-developer-guide/en/latest/preventing_xss/preventing_xss.html#philosophy-and-general-rules
+ * (2) https://github.com/apollographql/apollo-client/issues/5567
  */
-echo json_encode($this->output, JSON_HEX_QUOT);
+echo json_encode($this->output);
