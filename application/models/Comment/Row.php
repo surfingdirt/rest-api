@@ -38,78 +38,6 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
   protected $_formClass = 'Comment_Form';
 
   /**
-   * Returns the url of the parent, with an anchor to this comment
-   *
-   * @return string
-   */
-  public function getLink()
-  {
-    $parentItem = $this->getParentItemfromDatabase();
-    $link = $parentItem->getLink();
-    $link .= "#commentId" . $this->id;
-    return $link;
-  }
-
-  /**
-   * Returns the url for the submission of a new object
-   *
-   * @return string
-   */
-  public function getCreateLink()
-  {
-    if (empty($this->parentItem)) {
-      throw new Lib_Exception('No parent defined for comment');
-    }
-    $link = Globals::getRouter()->assemble(array('dataType' => $this->parentItem->getItemType(), 'id' => $this->parentItem->id), $this->_createRoute, true);
-    return $link;
-  }
-
-  /**
-   * Returns the url for the edition page of the current object
-   *
-   * @return string
-   */
-  public function getEditLink()
-  {
-    if (empty($this->id)) {
-      return $this->getCreateLink();
-    }
-
-    $params = array(
-      'id' => $this->id,
-    );
-    $link = Globals::getRouter()->assemble($params, $this->_editRoute, true);
-    return $link;
-  }
-
-  /**
-   * Returns the url for deleting an object
-   *
-   * @return string
-   */
-  public function getDeleteLink()
-  {
-    $params = array(
-      'id' => $this->id
-    );
-    $link = Globals::getRouter()->assemble($params, $this->_deleteRoute, true);
-    return $link;
-  }
-
-  /**
-   * Returns the url that the user will be redirected to
-   * upon deletion of this object
-   *
-   * @return string
-   */
-  protected function _getDeleteRedirectUrl($params, User_Row $user)
-  {
-    $parentRow = $this->getParentItemfromDatabase();
-    $parentData = Data::factory($parentRow->id, $parentRow->getItemType());
-    return $parentData->getLink();
-  }
-
-  /**
    * Returns the parent item
    * @return Data_Row
    * @throws Lib_Exception
@@ -130,6 +58,9 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
   public function getParentItem()
   {
     $parentRow = $this->getParentItemfromDatabase();
+    if (!$parentRow) {
+      return null;
+    }
 
     $itemTable = new Item();
 
@@ -139,13 +70,6 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
 
     $parentItem = $itemTable->fetchRow($where);
     return $parentItem;
-  }
-
-  /**
-   * No folders for comments
-   */
-  public function getFolderPath()
-  {
   }
 
   /**
@@ -193,5 +117,12 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
   {
     $content = $this->content;
     return $content;
+  }
+
+  /**
+   * No folders for comments
+   */
+  public function getFolderPath()
+  {
   }
 }

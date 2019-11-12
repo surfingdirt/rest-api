@@ -455,6 +455,13 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     }
   }
 
+  public function clearCommentsCache()
+  {
+    $cacheId = $this->_getCommentsCacheId();
+    $cache = $this->getCache();
+    $cache->remove($cacheId);
+  }
+
   /**
    * Returns a list of all cache id's that must be emptied
    * when saving/deleting this object.

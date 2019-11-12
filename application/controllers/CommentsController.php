@@ -36,6 +36,12 @@ class CommentsController extends Api_Controller_Action
     }
   }
 
+  protected function _postObjectCreation($object, $data)
+  {
+    $parent = $object->parentItem;
+    $parent->clearCommentsCache();
+  }
+
   public function getAction()
   {
     // If itemType or itemId are passed, that's a mistake
