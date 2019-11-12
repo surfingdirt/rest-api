@@ -10,7 +10,6 @@ class Lib_Form_Element_Spot_Type extends Zend_Form_Element_Select
 
     $this->setLabel(ucfirst(Globals::getTranslate()->_('spotType')))
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier')
       ->setMultiOptions(Spot::$spotTypes);
   }
 

@@ -38,7 +38,6 @@ class Lib_Form_GoTo extends Lib_Form
   {
     $element = new Zend_Form_Element_Select('goToParameter');
     $element->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier')
       ->setMultiOptions($selectOptions);
 
     return $element;
@@ -66,8 +65,7 @@ class Lib_Form_GoTo extends Lib_Form
       $element->setImage($src);
     }
 
-    $element->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier');
+    $element->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter');
 
     return $element;
   }

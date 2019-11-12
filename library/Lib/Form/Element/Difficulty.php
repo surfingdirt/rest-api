@@ -10,7 +10,6 @@ class Lib_Form_Element_Difficulty extends Zend_Form_Element_Select
 
     $this->setLabel(ucfirst(Globals::getTranslate()->_('difficulty')))
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier')
       ->setMultiOptions(array(
         1 => '1',
         2 => '2',

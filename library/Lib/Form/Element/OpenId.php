@@ -26,7 +26,6 @@ class Lib_Form_Element_OpenId extends Zend_Form_Element_Text
 
     $this->setLabel(ucfirst(Globals::getTranslate()->_('openIDIdentity')))
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier')
       ->addFilter('HtmlEntities')
       ->addFilter($toLowerFilter);
     if ($required) {

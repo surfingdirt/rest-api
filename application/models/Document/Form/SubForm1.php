@@ -26,8 +26,7 @@ class Document_Form_SubForm1 extends Data_Form
     $element = new Lib_Form_Element_Username('author', true);
     $element->setLabel(ucfirst(Globals::getTranslate()->_('author')))
       ->addValidator('NotEmpty')
-      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier');
+      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter');
     return $element;
   }
 }

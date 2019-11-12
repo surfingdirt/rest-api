@@ -10,7 +10,6 @@ class Lib_Form_Element_Location_Zoom extends Zend_Form_Element_Select
 
     $this->setLabel(ucfirst(Globals::getTranslate()->_('zoom')))
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier')
       ->setMultiOptions(array(
         0 => '0',
         1 => '1',

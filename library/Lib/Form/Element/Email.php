@@ -22,8 +22,7 @@ class Lib_Form_Element_Email extends Zend_Form_Element_Text
     parent::__construct($spec, $options);
 
     $this->setLabel(ucfirst(Globals::getTranslate()->_('email')))
-      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier');
+      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter');
     if ($required) {
       $this->setRequired()
         ->addValidator('NotEmpty', true);

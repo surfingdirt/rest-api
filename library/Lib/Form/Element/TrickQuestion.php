@@ -19,7 +19,6 @@ class Lib_Form_Element_TrickQuestion extends Zend_Form_Element_Text
       ->addValidator('NotEmpty')
       ->addValidator($validator)
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier')
       ->addFilter($toLowerFilter);
   }
 

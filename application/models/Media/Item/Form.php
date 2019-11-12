@@ -84,8 +84,7 @@ abstract class Media_Item_Form extends Data_Form
   {
     $element = new Lib_Form_Element_Users('users', $this->_object);
     $element->setLabel(ucfirst(Globals::getTranslate()->_('users')))
-      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier');
+      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter');
     return $element;
   }
 

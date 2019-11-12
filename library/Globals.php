@@ -68,12 +68,6 @@ class Globals
    */
   private static $_app;
   /**
-   * HTMLPurifier instance
-   *
-   * @var HTMLPurifier
-   */
-  private static $_htmlPurifier;
-  /**
    * List of allowed file extensions for upload
    *
    * @var array
@@ -277,20 +271,6 @@ class Globals
   }
 
   /**
-   * Get the Purifier instance
-   *
-   * @return HTMLPurifier
-   */
-  public static function getHTMLPurifier()
-  {
-    if (empty(self::$_htmlPurifier)) {
-      $config = self::_getHTMLPurifierConfig();
-      self::$_htmlPurifier = new HTMLPurifier($config);
-    }
-    return self::$_htmlPurifier;
-  }
-
-  /**
    * Get the Zend_Translate instance
    * After object has been initialized, it can
    * be updated by passing a locale string
@@ -361,39 +341,6 @@ class Globals
   public static function getDefaultSiteLanguage()
   {
     return self::getDefaultSiteLanguage();
-  }
-
-  private static function _getHTMLPurifierConfig()
-  {
-    require_once 'HTMLPurifier.standalone.php';
-    $config = HTMLPurifier_Config::createDefault();
-    $config->autoFinalize = false;
-
-    $config->set('Core.Encoding', strtoupper(APP_PAGE_ENCODING)); // replace with your encoding
-    $config->set('HTML.Doctype', APP_PAGE_DOCTYPE_AS_STRING); // replace with your doctype
-    if (CACHE_HTMLPURIFIER_ACTIVE) {
-      $config->set('Cache.SerializerPath', CACHE_HTMLPURIFIER_DIR);
-    } else {
-      $config->set('Cache.DefinitionImpl', null);
-    }
-
-    // Allow <a name="foor">bar</a>: allowing id works
-    $config->set('Attr.EnableID', true);
-    /*
-     * How to allow <div bla="">
-      $config->set('HTML.DefinitionID', 'enduser-customize.html tutorial');
-      $config->set('HTML.DefinitionRev', 1);
-      $def = $config->getHTMLDefinition(true);
-      $def->addAttribute('div', 'bla', 'CDATA');
-      */
-    $config->set('Filter.YouTube', true);
-
-    $dailyMotion = new HTMLPurifier_Filter_DailyMotion();
-    $vimeo = new HTMLPurifier_Filter_Vimeo();
-    $config->set('Filter.Custom', array($vimeo, $dailyMotion));
-
-    $config->finalize();
-    return $config;
   }
 
   public static function getFileExtensionUploadWhiteList()

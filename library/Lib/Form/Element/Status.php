@@ -13,7 +13,6 @@ class Lib_Form_Element_Status extends Zend_Form_Element_Select
 
     $this->setLabel(ucfirst(Globals::getTranslate()->_('status')))
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier')
       ->setMultiOptions(array(
         Data::VALID => Data::VALID,
         Data::INVALID => Data::INVALID,

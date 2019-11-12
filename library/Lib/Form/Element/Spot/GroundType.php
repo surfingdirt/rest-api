@@ -10,7 +10,6 @@ class Lib_Form_Element_Spot_GroundType extends Zend_Form_Element_Select
 
     $this->setLabel(ucfirst(Globals::getTranslate()->_('groundType')))
       ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier')
       ->setMultiOptions(Spot::$groundTypes);
   }
 

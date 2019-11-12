@@ -222,8 +222,7 @@ abstract class Data_Form extends Lib_Form implements Data_Form_DataInterface
   {
     $element = new Lib_Form_Element_Tags('tags');
     $element->setLabel(ucfirst(Globals::getTranslate()->_('tags')))
-      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier');
+      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter');
 
     if (!empty($this->_object->id)) {
       // Get tags

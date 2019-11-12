@@ -71,10 +71,7 @@ abstract class Lib_Form_Element_Data extends Zend_Form_Element_Text
       $this->addValidator(new $this->_validator(Lib_Validate_Data::MUST_NOT_EXIST, $this->_table, $this->_titleColumn, $emptyAllowed));
     }
 
-
-    $htmlPurifier = new Lib_Filter_HTMLPurifier();
-    $this->addFilter($htmlPurifier)
-      ->addFilter($toLowerFilter);
+    $this->addFilter($toLowerFilter);
 
     if ($autoComplete) {
       $this->helper = $this->_autoCompleteHelper;

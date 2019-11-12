@@ -53,14 +53,11 @@ class User_Form_Update extends Lib_Form
       ->setAction($action)
       ->setName('loginForm');
 
-    $htmlPurifier = new Lib_Filter_HTMLPurifier();
-
     // These elements are only accessible after account confirmation
     if (!$this->_pending) {
       $languages = $this->_translator->getList();
       $lang = new Zend_Form_Element_Select('lang');
       $lang->setLabel(ucfirst(Globals::getTranslate()->_('language')))
-        ->addFilter($htmlPurifier)
         ->setMultiOptions($languages);
 
       if (!$useOpenId) {
@@ -74,12 +71,10 @@ class User_Form_Update extends Lib_Form
     }
 
     $firstName = new Zend_Form_Element_Text('firstName');
-    $firstName->setLabel(ucfirst(Globals::getTranslate()->_('firstName')))
-      ->addFilter($htmlPurifier);
+    $firstName->setLabel(ucfirst(Globals::getTranslate()->_('firstName')));
 
     $lastName = new Zend_Form_Element_Text('lastName');
-    $lastName->setLabel(ucfirst(Globals::getTranslate()->_('lastName')))
-      ->addFilter($htmlPurifier);
+    $lastName->setLabel(ucfirst(Globals::getTranslate()->_('lastName')));
 
     $gender = new Lib_Form_Element_Gender();
 
@@ -100,12 +95,10 @@ class User_Form_Update extends Lib_Form
       ->addValidator($dateValidator);
 
     $site = new Zend_Form_Element_Text('site');
-    $site->setLabel(ucfirst(Globals::getTranslate()->_('site')))
-      ->addFilter($htmlPurifier);
+    $site->setLabel(ucfirst(Globals::getTranslate()->_('site')));
 
     $occupation = new Zend_Form_Element_Text('occupation');
-    $occupation->setLabel(ucfirst(Globals::getTranslate()->_('occupation')))
-      ->addFilter($htmlPurifier);
+    $occupation->setLabel(ucfirst(Globals::getTranslate()->_('occupation')));
 
     $longitude = $this->getLongitude();
     $latitude = $this->getLatitude();
@@ -119,16 +112,13 @@ class User_Form_Update extends Lib_Form
     $level = new Lib_Form_Element_Level();
 
     $gear = new Zend_Form_Element_Text('gear');
-    $gear->setLabel(ucfirst(Globals::getTranslate()->_('gear')))
-      ->addFilter($htmlPurifier);
+    $gear->setLabel(ucfirst(Globals::getTranslate()->_('gear')));
 
     $otherSports = new Zend_Form_Element_Text('otherSports');
-    $otherSports->setLabel(ucfirst(Globals::getTranslate()->_('otherSports')))
-      ->addFilter($htmlPurifier);
+    $otherSports->setLabel(ucfirst(Globals::getTranslate()->_('otherSports')));
 
     $avatarUrl = new Zend_Form_Element_Text('avatarUrl');
-    $avatarUrl->setLabel(ucfirst(Globals::getTranslate()->_('avatarUrl')))
-      ->addFilter($htmlPurifier);
+    $avatarUrl->setLabel(ucfirst(Globals::getTranslate()->_('avatarUrl')));
 
     $submit = new Zend_Form_Element_Submit('submit');
     $submit->setLabel(ucfirst(Globals::getTranslate()->_('doUpdateProfile')));

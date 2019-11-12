@@ -15,9 +15,8 @@ class Data_Form_Element_Content extends Lib_Form_Element_TinyMce
     $this->setLabel(ucfirst(Globals::getTranslate()->_('content')))
       ->setRequired(true)
       ->addValidator('NotEmpty')
-      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
+      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter');
       //->addFilter('AutoLink');
-      ->addFilter('HTMLPurifier');
 
     $this->_hint = 'contentHint';
   }

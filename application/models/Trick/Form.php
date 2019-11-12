@@ -64,8 +64,7 @@ class Trick_Form extends Data_Form
   {
     $element = new Lib_Form_Element_TinyMce('trickTip');
     $element->setLabel(ucfirst(Globals::getTranslate()->_('trickTip')))
-      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter')
-      ->addFilter('HTMLPurifier');
+      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter');
     return $element;
   }
 }
