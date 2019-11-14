@@ -64,7 +64,7 @@ class CommentsController extends Api_Controller_Action
 
   protected function _postObjectUpdate($object, $data)
   {
-    $parent = $object->parentItem;
+    $parent = $object->getParentItemfromDatabase();
     $parent->clearCommentsCache();
   }
 
