@@ -198,6 +198,8 @@ constants.LOCATION_DIST_MAX_MILES = 200
 
 constants.DEFAULT_CHECKIN_DURATION = 14400
 
+constants.TONES = 'neutral,joking,angry,happy,sad'
+
 [development : production]
 
 [test : production]

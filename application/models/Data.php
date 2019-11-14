@@ -7,12 +7,6 @@ abstract class Data extends Cache_Object
   const VALID = 'valid';
   const INVALID = 'invalid';
 
-  const TONE_NEUTRAL = 'neutral';
-  const TONE_JOKING = 'joking';
-  const TONE_ANGRY = 'angry';
-  const TONE_HAPPY = 'happy';
-  const TONE_SAD = 'sad';
-
   const EDITTYPE_FIRST_SAVE = "firstSave";
   const EDITTYPE_NEXT_SAVE = "nextSave";
   const EDITTYPE_EDIT = "edit";
@@ -52,14 +46,6 @@ abstract class Data extends Cache_Object
       'refTableClass' => 'User',
       'refColumns' => User::COLUMN_USERID
     )
-  );
-
-  public static $tones = array(
-    self::TONE_NEUTRAL,
-    self::TONE_JOKING,
-    self::TONE_ANGRY,
-    self::TONE_HAPPY,
-    self::TONE_SAD,
   );
 
   /**
