@@ -62,6 +62,12 @@ class CommentsController extends Api_Controller_Action
     parent::putAction();
   }
 
+  protected function _postObjectUpdate($object, $data)
+  {
+    $parent = $object->parentItem;
+    $parent->clearCommentsCache();
+  }
+
   public function deleteAction()
   {
     // If itemType or itemId are passed, that's a mistake
