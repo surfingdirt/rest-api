@@ -16,6 +16,7 @@ class Api_Comment_Accessor extends Api_Data_Accessor
   );
 
   public $publicReadAttributes = array(
+    'actions',
     'id',
     'content',
     'date',

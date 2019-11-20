@@ -1878,7 +1878,7 @@ describe('Comment tests', () => {
 
   describe('GET', () => {
     const commentInfo =
-      '["content","date","id","lastEditionDate","lastEditor","parentId","parentType","status","submitter","tone"]';
+      '["actions","content","date","id","lastEditionDate","lastEditor","parentId","parentType","status","submitter","tone"]';
 
     test('Retrieve a single comment', async () => {
       const body = checkSuccess(await commentClient.get(singleComment.id));
