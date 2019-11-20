@@ -74,6 +74,8 @@ class CommentsController extends Api_Controller_Action
     if ($this->_request->getParam('itemType') || $this->_request->getParam('itemId')) {
       throw new Api_Exception_BadRequest();
     }
+
+    parent::deleteAction();
   }
 
   protected function _postObjectDelete($object)
