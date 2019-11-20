@@ -75,7 +75,23 @@ class CommentsController extends Api_Controller_Action
       throw new Api_Exception_BadRequest();
     }
 
-    parent::deleteAction();
+    $id = $this->_request->getParam('id');
+    if (!$id) {
+      throw new Api_Exception_BadRequest();
+    }
+    $result = $this->_table->find($id);
+    if (empty($result) || !$object = $result->current()) {
+      throw new Api_Exception_NotFound();
+    }
+    if (!$object->isDeletableBy($this->_user, $this->_acl)) {
+      throw new Api_Exception_Unauthorised();
+    }
+
+    $parent = $object->getParentItemfromDatabase();
+    if ($status = $this->_accessor->deleteObject($object)) {
+      $parent->clearCommentsCache();
+    }
+    $this->view->output = array('status' => $status);
   }
 
   protected function _postObjectDelete($object)
