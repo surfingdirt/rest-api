@@ -148,10 +148,8 @@ class Api_Media_Accessor extends Api_Data_Accessor
     if ($object->mediaType == Media_Item::TYPE_PHOTO) {
       $data = array_merge($data, $this->_getPhotoData($data['imageId']));
     } else {
-      $scraper = new Lib_VideoScraper($data['mediaSubType'], $data['vendorKey']);
-      $imageId = Utils::uuidV4();
-      $thumbRow = $this->_saveVideoThumbs($scraper, $imageId);
-      $data = array_merge($data, $this->_getVideoData($thumbRow));
+      $videoThumbData = $this->_saveVideoThumb($data);
+      $data = array_merge($data, $videoThumbData);
     }
     $this->_save($object, $form, $data, $this->_user, $this->_acl, $this->_disregardUpdates);
 
@@ -159,6 +157,26 @@ class Api_Media_Accessor extends Api_Data_Accessor
     $album->updateLastEdition();
 
     return array($object->getId(), null);
+  }
+
+  protected function _saveVideoThumb($data)
+  {
+    $thumbData = array();
+    $scraper = new Lib_VideoScraper($data['mediaSubType'], $data['vendorKey']);
+    $imageId = Utils::uuidV4();
+    if (isset($data['thumbUrl'])) {
+      // Use the thumbUrl from the input, otherwise the scraper will fetch it:
+      $scraper->setThumbUrl($data['thumbUrl']);
+    }
+    $thumbRow = $scraper->saveThumbs(Lib_Storage::TYPE_LOCAL, $imageId);
+    $thumbData['imageId'] = $thumbRow->getId();
+
+    if (!isset($data['width']) || !isset($data['height'])) {
+      // In case width and height were not passed in, save them from the thumbnail:
+      $thumbData['width'] = $thumbRow->width;
+      $thumbData['height'] = $thumbRow->height;
+    }
+    return $thumbData;
   }
 
   public function updateObjectWithData($object, $data)
@@ -177,10 +195,8 @@ class Api_Media_Accessor extends Api_Data_Accessor
       if ($object->mediaType == Media_Item::TYPE_PHOTO) {
         $data = array_merge($data, $this->_getPhotoData($data['imageId']));
       } else {
-        $scraper = new Lib_VideoScraper($data['mediaSubType'], $data['vendorKey']);
-        $imageId = Utils::uuidV4();
-        $thumbRow = $this->_saveVideoThumbs($scraper, $imageId);
-        $data = array_merge($data, $this->_getVideoData($thumbRow));
+        $videoThumbData = $this->_saveVideoThumb($data);
+        $data = array_merge($data, $videoThumbData);
       }
     }
 
@@ -243,22 +259,6 @@ class Api_Media_Accessor extends Api_Data_Accessor
       'width' => $image->width,
       'height' => $image->height,
       'mediaSubType' => Media_Item_Photo::SUBTYPE_IMG,
-    );
-  }
-
-  protected function _saveVideoThumbs(Lib_VideoScraper $scraper, $objectId)
-  {
-    $imageRow = $scraper->saveThumbs(Lib_Storage::TYPE_LOCAL, $objectId);
-    return $imageRow;
-  }
-
-  protected function _getVideoData($imageRow)
-  {
-    return array(
-      'imageId' => $imageRow->getId(),
-      // width and height are irrelevant to video embeds.
-      'width' => $imageRow->width,
-      'height' => $imageRow->height,
     );
   }
 

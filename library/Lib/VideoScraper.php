@@ -8,10 +8,15 @@ class Lib_VideoScraper
     $this->_vendorKey = $vendorKey;
     $this->_videoUrl = VideoUrlBuilder::buildUrl($mediaSubType, $vendorKey);
     $this->_table = new Api_Image();
+    $this->_thumbUrl = null;
   }
 
   protected function _getThumbUrl()
   {
+    if ($this->_thumbUrl) {
+      return $this->_thumbUrl;
+    }
+
     $thumbUrl = null;
 
     if (APPLICATION_ENV == 'test') {
@@ -37,6 +42,10 @@ class Lib_VideoScraper
     }
 
     return $thumbUrl;
+  }
+
+  public function setThumbUrl($thumbUrl) {
+    $this->_thumbUrl = $thumbUrl;
   }
 
   public function saveThumbs($storageType, $objectId)
