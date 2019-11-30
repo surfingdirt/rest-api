@@ -1064,6 +1064,28 @@ describe('Media tests', () => {
           expect(looksLikeUUID(body.id)).toBeTruthy();
         });
 
+        test('YouTube video with thumbUrl', async () => {
+          await mediaClient.setUser(plainUser);
+          const body = checkSuccess(
+            await mediaClient.post({
+              mediaType: VIDEO,
+              mediaSubType: YOUTUBE,
+              thumbUrl: LOCAL_THUMB_PATH,
+              width: 123,
+              height: 456,
+              vendorKey: '1PcGJIjhQjg',
+              albumId: plainUser.albumId,
+              title: 'A new YouTube video title',
+              description: 'A new YouTube video description',
+              storageType: 0,
+            }),
+          );
+          expect(getSortedKeysAsString(body)).toEqual(createdVideoKeys);
+          expect(looksLikeUUID(body.id)).toBeTruthy();
+          expect(body.width).toEqual("123");
+          expect(body.height).toEqual("456");
+        });
+
         test('Duplicated videos are allowed', async () => {
           // The reasoning is that videos may be posted to different albums, and we'd need to
           // check who can see what, otherwise videos may be hidden from certain people forever.
