@@ -90,7 +90,8 @@ class Globals
         'username' => GLOBAL_DB_USER,
         'password' => GLOBAL_DB_PASSWORD,
         'dbname' => GLOBAL_DB_NAME,
-        'driver_options' => array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . GLOBAL_DB_ENCODING . ';')
+        'driver_options' => array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . GLOBAL_DB_ENCODING . ';'),
+        'charset' => 'utf8mb4'
       );
       $db = Zend_Db::factory('Pdo_Mysql', $parameters);
       $db->getConnection();
