@@ -339,27 +339,36 @@ describe('User tests', () => {
       expect(body).toEqual({ code: 16001, errors: { userPC: ['notSame'] } });
     });
 
-    test.skip('Requests with matching passwords are successful, and old password is made invalid', async () => {
-      // Password update is currently broken
-      const newPassword = '345';
+    test('Requests with matching passwords are successful, and old password is made invalid', async () => {
+      // Note: this test relies on a user being created and confirmed in previous tests
+      const newPassword = 'thisisthenewpassword';
+      const currentP = createdUser.password;
 
       await userClient.setUser({ id: createdUser.id });
-      checkSuccess(
-        await userClient.put(createdUser.id, {
-          userP: newPassword,
-          userPC: newPassword,
-        }),
-      );
-
-      userClient.clearToken();
       try {
-        await userClient.setUser({ id: createdUser.id });
+        checkSuccess(
+          await userClient.put(createdUser.id, {
+            userPO: currentP,
+            userP: newPassword,
+            userPC: newPassword,
+          })
+        );
       } catch (e) {
-        expect(e.message).toEqual(`Login as '${createdUser.username}' failed`);
+        // TODO remove;
+        console.log('Failed to update user password');
+        throw(e);
       }
 
       userClient.clearToken();
-      await userClient.setUser({ username: createdUser.username, password: newPassword });
+      // checkUnauthorised(await userClient.setUser({ id: createdUser.id }));
+
+      userClient.clearToken();
+      try {
+        await userClient.setUser({ username: createdUser.username, password: newPassword });
+      } catch (e) {
+        console.log('Failed to login with new password');
+        throw(e);
+      }
     });
   });
 

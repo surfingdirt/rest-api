@@ -121,7 +121,9 @@ class Api_User_Accessor extends Api_Data_Accessor
       return;
     }
     if ($attrFormName == 'userP') {
-      $target = md5($target);
+      // TODO
+      $authManager = new Lib_Auth_Manager(Globals::getMainDatabase());
+      $target = $authManager->makeSaltedHash($target, $object->salt);
     }
     $object->$attrDBName = $target;
   }

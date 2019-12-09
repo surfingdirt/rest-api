@@ -9,19 +9,6 @@ class User_Form_Update extends Lib_Form
    */
   protected $_pending;
   /**
-   * Did user pick OpenId as an authentication method ?
-   *
-   * @var boolean
-   */
-  protected $_useOpenId;
-  /**
-   * Flag that indicates whether OpenId can be changed by the user
-   *
-   * @var boolean
-   */
-  protected $_openIdIsEditable = false;
-
-  /**
    * User being edited
    * @var User_Row
    */
@@ -34,181 +21,26 @@ class User_Form_Update extends Lib_Form
    * @param boolean $useOpenId
    * @param booleanarray $options
    */
-  public function __construct(User_Row $user, $pending = false, $useOpenId = false, $options = null)
+  public function __construct(User_Row $user, $pending = false, $options = null)
   {
     $this->_pending = $pending;
-    $this->_useOpenId = $useOpenId;
     $this->_user = $user;
 
     parent::__construct($options);
 
-    if ($this->_pending) {
-      $action = Globals::getRouter()->assemble(array(), 'userpending', true);
-    } else {
-      $action = Globals::getRouter()->assemble(array(), 'userupdate', true);
-    }
-
-    $this->setAttrib('accept-charset', APP_PAGE_ENCODING);
-    $this->setMethod('POST')
-      ->setAction($action)
-      ->setName('loginForm');
-
-    // These elements are only accessible after account confirmation
-    if (!$this->_pending) {
-      $languages = $this->_translator->getList();
-      $lang = new Zend_Form_Element_Select('lang');
-      $lang->setLabel(ucfirst(Globals::getTranslate()->_('language')))
-        ->setMultiOptions($languages);
-
-      if (!$useOpenId) {
-        $passwordOld = new Lib_Form_Element_Password_Old();
-        $password = new Lib_Form_Element_Password();
-        $passwordConfirm = new Lib_Form_Element_Password_Confirm(false, $this, $password->getName());
-      } elseif ($this->_openIdIsEditable) {
-        $identity = new Lib_Form_Element_OpenId(false, true);
-      }
-      $email = new Lib_Form_Element_Email(false, false);
-    }
-
-    $firstName = new Zend_Form_Element_Text('firstName');
-    $firstName->setLabel(ucfirst(Globals::getTranslate()->_('firstName')));
-
-    $lastName = new Zend_Form_Element_Text('lastName');
-    $lastName->setLabel(ucfirst(Globals::getTranslate()->_('lastName')));
-
-    $gender = new Lib_Form_Element_Gender();
-
-    $locale = Zend_Registry::get('Zend_Locale');
-    switch ($locale) {
-      case 'fr':
-        $format = 'dd/mm/YYYY';
-        break;
-      default:
-        $format = 'mm-dd-YYYY';
-        break;
-    }
-
-    $dateValidator = new Zend_Validate_Date($format, $locale);
-    $birthDate = new Lib_Form_Element_Date('birthDate', array());
-    $birthDate->setLabel(ucfirst(Globals::getTranslate()->_('birthDate')))
-      ->setOptions(array('yearRange' => date('Y') - 80 . ':' . date('Y')))
-      ->addValidator($dateValidator);
-
-    $site = new Zend_Form_Element_Text('site');
-    $site->setLabel(ucfirst(Globals::getTranslate()->_('site')));
-
-    $occupation = new Zend_Form_Element_Text('occupation');
-    $occupation->setLabel(ucfirst(Globals::getTranslate()->_('occupation')));
-
-    $longitude = $this->getLongitude();
-    $latitude = $this->getLatitude();
-    $zoom = $this->getZoom();
-    $mapType = $this->getMapType();
-    $yaw = $this->getYaw();
-    $pitch = $this->getPitch();
-
-    $rideType = new Lib_Form_Element_RideType();
-
-    $level = new Lib_Form_Element_Level();
-
-    $gear = new Zend_Form_Element_Text('gear');
-    $gear->setLabel(ucfirst(Globals::getTranslate()->_('gear')));
-
-    $otherSports = new Zend_Form_Element_Text('otherSports');
-    $otherSports->setLabel(ucfirst(Globals::getTranslate()->_('otherSports')));
-
-    $avatarUrl = new Zend_Form_Element_Text('avatarUrl');
-    $avatarUrl->setLabel(ucfirst(Globals::getTranslate()->_('avatarUrl')));
-
-    $submit = new Zend_Form_Element_Submit('submit');
-    $submit->setLabel(ucfirst(Globals::getTranslate()->_('doUpdateProfile')));
+    // TODO: handle language and email updates!
+//    // These elements are only accessible after account confirmation
+//      $languages = $this->_translator->getList();
+//      $lang = new Zend_Form_Element_Select('lang');
+//      $lang->setLabel(ucfirst(Globals::getTranslate()->_('language')))
+//        ->setMultiOptions($languages);
 
     if (!$this->_pending) {
-      $this->addElement($lang);
-
-      $authMembers = array();
-      if (!$this->_useOpenId) {
-        $authMembers[] = $passwordOld;
-        $authMembers[] = $password;
-        $authMembers[] = $passwordConfirm;
-      } elseif ($this->_openIdIsEditable) {
-        $authMembers[] = $identity;
-      }
-      $authMembers[] = $email;
-
-      $this->addElements($authMembers);
+      $passwordOld = new Lib_Form_Element_Password_Old();
+      $password = new Lib_Form_Element_Password();
+      $passwordConfirm = new Lib_Form_Element_Password_Confirm(false, $this, $password->getName());
+      $this->addElements(array($passwordOld, $password, $passwordConfirm));
     }
-
-    $this->addElements(array(
-      $firstName,
-      $lastName,
-      $gender,
-      $birthDate,
-      $site,
-      $occupation,
-      $longitude,
-      $latitude,
-      $latitude,
-      $zoom,
-      $mapType,
-      $yaw,
-      $pitch,
-      $rideType,
-      $level,
-      $gear,
-      $otherSports,
-      $avatarUrl,
-    ));
-
-    if (!$this->_pending) {
-      $authGroupMembers = array();
-      $authGroupMembers[] = $lang->getId();
-      if (!$this->_useOpenId) {
-        $authGroupMembers[] = $passwordOld->getId();
-        $authGroupMembers[] = $password->getId();
-        $authGroupMembers[] = $passwordConfirm->getId();
-      } elseif ($this->_openIdIsEditable) {
-        $authGroupMembers[] = $identity->getId();
-      }
-      $authGroupMembers[] = $email->getId();
-
-      $this->addDisplayGroup($authGroupMembers, 'passwordGroup', array('disableLoadDefaultDecorators' => false));
-    }
-
-    $this->addDisplayGroup(array('firstName', 'lastName', 'gender', 'birthDate', 'site', 'occupation', 'avatarUrl'), 'personGroup');
-
-    $this->addDisplayGroup(array('longitude', 'latitude', 'zoom', 'mapType', 'yaw', 'pitch'), 'locationGroup');
-
-    $this->addDisplayGroup(array('rideType', 'level', 'gear', 'otherSports'), 'rideGroup');
-
-    $this->addElements(array($submit));
-
-
-  }
-
-  protected function _setOwnDecorators()
-  {
-    $this->clearDecorators();
-    $this->addDecorator('FormElements')
-      ->addDecorator('JsForm')
-      ->addDecorator('JsValidation')
-      ->addDecorator('JsHint')
-      ->addDecorator('JsMap');
-
-    $this->setDisplayGroupDecorators(array(
-      'FormElements',
-      'Fieldset'
-    ));
-
-    $this->setElementDecorators(array(
-      array('AjaxValidation'),
-      array('ViewHelper'),
-      array('CustomErrors'),
-      array('Hint'),
-      array('Description'),
-      array('Label', array('separator' => ' ', 'class' => 'form-element-label')),
-      array('HtmlTag', array('tag' => 'p', 'class' => 'element-group')),
-    ));
   }
 
   /**
@@ -271,21 +103,13 @@ class User_Form_Update extends Lib_Form
   {
     $formattedData = $data;
     $elements = $this->getElements();
-    // $location = $this->_user->getLocation();
 
     foreach ($elements as $name => $element) {
       if (method_exists($element, 'getValueFromDatabase')) {
         $rawValue = isset($data[$name]) ? $data[$name] : null;
         $formattedData[$name] = $element->getValueFromDatabase($rawValue);
       }
-
-      // Location elements
-      // if (in_array($name, array('longitude', 'latitude', 'zoom', 'mapType', 'yaw', 'pitch'))) {
-      //  $value = $location ? $location->$name : null;
-      //  $formattedData[$name] = $value;
-      // }
     }
-
 
     $this->populate($formattedData);
     return $formattedData;
