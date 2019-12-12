@@ -276,7 +276,7 @@ abstract class Api_Data_Accessor
   public function updateObjectWithData($object, $data)
   {
     $attributes = $this->getUpdateAttributes($object);
-    $form = $object->getForm($this->_user, $this->_acl);
+    $form = $object->getForm($this->_user, $this->_acl, $data);
     $data = array_merge($form->populateFromDatabaseData($object->toArray()), $data);
     if (!$form->isValid($data)) {
       $errors = $form->getNonEmptyErrors();

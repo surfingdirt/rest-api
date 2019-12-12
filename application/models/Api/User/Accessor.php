@@ -63,7 +63,7 @@ class Api_User_Accessor extends Api_Data_Accessor
     $attributes = $this->getCreateAttributes($object);
 
     $errors = array();
-    $form = $object->getForm($this->_user, $this->_acl);
+    $form = $object->getForm($this->_user, $this->_acl, $data);
     if (!$form->isValid($data)) {
       $rawErrors = $form->getErrors();
       foreach ($rawErrors as $name => $err) {

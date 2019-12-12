@@ -101,10 +101,10 @@ class Api_User_Row extends User_Row
     }
   }
 
-  public function getForm()
+  public function getForm(User_Row $user, Lib_Acl $acl, $data)
   {
     if ($this->getId()) {
-      $form = new User_Form_Update($this);
+      $form = new User_Form_Update($this, false, null, $data);
     } else {
       $form = new User_Form_Register($this);
     }

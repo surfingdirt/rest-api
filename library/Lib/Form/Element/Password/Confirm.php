@@ -17,8 +17,7 @@ class Lib_Form_Element_Password_Confirm extends Zend_Form_Element_Password
 
     if ($required) {
       $this->setRequired()
-        ->addValidator('NotEmpty', true)
-        ->addValidator('StringLength', true, array(6, null));
+        ->addValidator('NotEmpty', true);
     }
   }
 }

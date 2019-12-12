@@ -10,10 +10,11 @@ class Lib_Form_Element_Password extends Zend_Form_Element_Password
   public function __construct($required = false, $options = null)
   {
     parent::__construct($this->name, $options);
-    $this->setLabel(ucfirst(Globals::getTranslate()->_('password')));
     if ($required) {
       $this->setRequired()
-        ->addValidator('NotEmpty', true);
+           ->addValidator('NotEmpty', true)
+           ->addPrefixPath('Lib_Validate', 'Lib/Validate', 'Validate')
+           ->addValidator('Password', true);
     }
   }
 }

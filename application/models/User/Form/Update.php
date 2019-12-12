@@ -21,7 +21,7 @@ class User_Form_Update extends Lib_Form
    * @param boolean $useOpenId
    * @param booleanarray $options
    */
-  public function __construct(User_Row $user, $pending = false, $options = null)
+  public function __construct(User_Row $user, $pending = false, $options = null, $data)
   {
     $this->_pending = $pending;
     $this->_user = $user;
@@ -35,12 +35,20 @@ class User_Form_Update extends Lib_Form
 //      $lang->setLabel(ucfirst(Globals::getTranslate()->_('language')))
 //        ->setMultiOptions($languages);
 
-    if (!$this->_pending) {
-      $passwordOld = new Lib_Form_Element_Password_Old();
-      $password = new Lib_Form_Element_Password();
-      $passwordConfirm = new Lib_Form_Element_Password_Confirm(false, $this, $password->getName());
-      $this->addElements(array($passwordOld, $password, $passwordConfirm));
+    if ($this->_pending) {
+      return;
     }
+
+    $needsAllThreePasswords =
+      isset($data[User::INPUT_PASSWORD]) ||
+      isset($data[User::INPUT_PASSWORD_CONFIRM]) ||
+      isset($data[User::INPUT_PASSWORD_OLD]);
+    $required = $needsAllThreePasswords;
+
+    $passwordOld = new Lib_Form_Element_Password_Old($required);
+    $password = new Lib_Form_Element_Password($required, $this, User::INPUT_PASSWORD_CONFIRM);
+    $passwordConfirm = new Lib_Form_Element_Password_Confirm($required, $this, User::INPUT_PASSWORD);
+    $this->addElements(array($passwordOld, $password, $passwordConfirm));
   }
 
   /**
