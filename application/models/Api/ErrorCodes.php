@@ -62,5 +62,11 @@ class Api_ErrorCodes
    */
   const CONNECTION_REFUSED = 17001;
 
+  /*
+   * USERS
+   */
+  const USER_NEW_PASSWORD_FAILED = 18001;
+  const USER_NEW_PASSWORD_EMAIL_FAILED = 18002;
+  const USER_NEW_PASSWORD_ACTIVATION_FAILED = 18003;
 
 }

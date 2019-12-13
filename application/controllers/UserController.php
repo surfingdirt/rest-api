@@ -38,7 +38,8 @@ class UserController extends Api_Controller_Action
 
       // Send Email
       $emailer = new Lib_Controller_Helper_Emailer();
-      $emailStatus = $emailer->sendEmail($object->{User::COLUMN_EMAIL}, $params);
+      $emailStatus = $emailer->sendEmail($object->{User::COLUMN_EMAIL}, $params,
+        Lib_Controller_Helper_Emailer::REGISTRATION_EMAIL);
     } catch (Exception $e) {
       $this->_cleanUpAfterCreationFailure($object, $data);
       $emailStatus = false;

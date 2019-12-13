@@ -194,7 +194,7 @@ class Utils
   public static function getRandomKey($length = 32)
   {
     if (APPLICATION_ENV == 'test') {
-      return 'randomkeyfortestrandomkeyfortest';
+      return 'randomkeyfortest';
     }
 
     $from = '0123456789abcdefghijklmnopqrstuvwxyz';

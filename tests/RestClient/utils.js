@@ -22,6 +22,14 @@ export const getDateForBackend = (offsetAsSeconds = 0) => {
   return `${Y}-${M}-${D} ${h}:${i}:${s}.${v}`;
 }
 
+export const uuidv4 = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
 export const looksLikeUUID = (str) => {
   const regexp = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
   return !!str.match(regexp);

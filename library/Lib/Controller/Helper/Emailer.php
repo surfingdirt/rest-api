@@ -33,6 +33,16 @@ class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstra
           $subject = ucfirst(Globals::getTranslate()->_('lostPasswordEmailTitle'));
           $template = 'lost-password';
           $variables = json_encode(array(
+            "title" => "Lost your password?",
+            "hello" => "Hello",
+            "username" => $params['username'],
+            "forgotYourPassword" => "forgot your password?",
+            "itHappens" => "It happens to the best of us. The good news is you can change it right here!",
+            "destination" => $params['destination'],
+            "resetButtonLabel" => "Reset my password",
+            "siteUrl" => APP_URL,
+            "thankYou" => "Thank you, we'll see you soon!",
+            "ifNot" => "If you didn’t request a password reset, you don’t have to do anything. Just ignore this email.",
           ));
           break;
         case self::REGISTRATION_EMAIL:
@@ -43,8 +53,6 @@ class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstra
             "title" => "Confirm your email address",
             "hello" => "Hello",
             "username" => $params['username'],
-            "userP" => $params['userP'],
-            "yourPassword" => "Your password is",
             "confirmEmail" => "Welcome to the site! Before you can continue, please confirm your email address by clicking the link below:",
             "destination" => APP_URL.'/confirm-email?id='. $params['userId'] . '&key='.$params['activationKey'],
             "confirmButtonLabel" => "Confirm my email address",

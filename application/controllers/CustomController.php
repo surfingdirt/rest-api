@@ -67,7 +67,8 @@ class CustomController extends Zend_Controller_Action
   {
     // Update user with a new password and a new activation key
     $userTable = new Api_User();
-    $where = $userTable->getAdapter()->quoteInto(User::COLUMN_USERNAME . ' = ?', $this->_request->getParam(User::INPUT_USERNAME));
+    $where = $userTable->getAdapter()->quoteInto(User::COLUMN_USERNAME . ' = ?',
+      $this->_request->getParam(User::INPUT_USERNAME));
     $user = $userTable->fetchRow($where);
 
     if (empty($user)) {
@@ -75,32 +76,40 @@ class CustomController extends Zend_Controller_Action
     }
 
     $newPassword = $this->_generateNewPassword();
-    $user->newPassword = md5($newPassword);
-    $newActivationKey = $user->activationKey = $this->_generateActivationKey();
-
+    $authManager = new Lib_Auth_Manager(Globals::getMainDatabase());
+    $saltedPassword = $authManager->makeSaltedHash($newPassword, $user->salt);
+    $user->newPassword = $saltedPassword;
+    $user->activationKey = $this->_generateActivationKey();
     $id = $user->save();
+
     if ($id != $user->{User::COLUMN_USERID}) {
-      $this->_helper->redirectToRoute('usererror', array('errorCode' => User::NEWPASSWORD_FAILED));
+      $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::USER_NEW_PASSWORD_FAILED);
+      return;
     }
 
-    $link = APP_URL . Globals::getRouter()->assemble(array(), 'activatenewpassword');
-    $link .= '?' . User::COLUMN_USERID . "=" . $user->{User::COLUMN_USERID} . "&" . self::ACTIVATION_KEY_PARAMNAME . "={$user->activationKey}";
+    // TODO: check that this $link goes to /users/:id/activate-new-password/
+    $destination = APP_URL . Globals::getRouter()->assemble(array(
+        'id' => $user->{User::COLUMN_USERID},
+      ), 'activateNewPassword'). '?'.self::ACTIVATION_KEY_PARAMNAME.'='.$user->activationKey;
 
     $params = array(
-      User::COLUMN_USERNAME => $user->{User::COLUMN_USERNAME},
-      User::INPUT_USERID => $user->{User::COLUMN_USERID},
-      'activationKey' => $newActivationKey,
-      'newPassword' => $newPassword,
-      'link' => $link,
-      'site' => APP_NAME,
+      'username' => $user->{User::COLUMN_USERNAME},
+      'destination' => $destination,
     );
 
     if (APPLICATION_ENV == 'test') {
-      $this->view->status = true;
-    } else {
-      $this->view->status = $this->_helper->emailer()->sendEmail($user->{User::COLUMN_EMAIL}, $params, Lib_Controller_Helper_Emailer::LOST_PASSWORD_EMAIL);
+      $this->view->output = [
+        'userId' => $user->{User::COLUMN_USERID},
+        'username' => $user->{User::COLUMN_USERNAME},
+        'email' => $user->{User::COLUMN_EMAIL},
+        'activationKey' => $user->activationKey,
+      ];
+      return;
     }
-    $this->view->resourceId = $id;
+
+    $emailer = new Lib_Controller_Helper_Emailer();
+    $this->view->output = $emailer->sendEmail($user->{User::COLUMN_EMAIL}, $params,
+      Lib_Controller_Helper_Emailer::LOST_PASSWORD_EMAIL);
   }
 
   public function activateNewPasswordAction()

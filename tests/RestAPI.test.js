@@ -44,6 +44,7 @@ import { cleanupTestDatabase } from './RestClient/database';
 import {
   getDateForBackend,
   getSortedKeysAsString,
+  uuidv4,
   looksLikeUUID,
   checkSuccess,
   checkBadRequest,
@@ -55,6 +56,9 @@ const { PHOTO, VIDEO } = MEDIA_TYPES;
 const { DAILYMOTION, FACEBOOK, INSTAGRAM, VIMEO, YOUTUBE } = MEDIA_SUBTYPES_VIDEO;
 const plainUserPath = getResourcePath(USER, plainUser.id);
 const tokenPath = getResourcePath(TOKEN);
+
+const oldP = 'abc123def';
+const newPassword = 'thisisthenewpassword';
 
 const ME = 'me';
 
@@ -142,6 +146,26 @@ describe('Token tests', () => {
 
 describe('User tests', () => {
   const userClient = new ResourceClient(client, USER);
+
+  const createNewMember = async (username, email, userId = null) => {
+    await userClient.clearToken();
+    if (userId) {
+      userClient.setUUIDs([userId]);
+    }
+    const localNewUser = checkSuccess(
+      await userClient.post({
+        username,
+        userP: oldP,
+        userPC: oldP,
+        email,
+      }),
+    );
+
+    await userClient.setUser(adminUser);
+    checkSuccess(await userClient.put(localNewUser.userId, { status: 'member' }));
+
+    return localNewUser;
+  };
 
   describe('Error cases', () => {
     test('Missing user request should return a 404', async () => {
@@ -311,26 +335,6 @@ describe('User tests', () => {
   });
 
   describe('User PUT', () => {
-    const oldP = 'abc123def';
-    const newPassword = 'thisisthenewpassword';
-
-    const createNewMember = async (username, email) => {
-      await userClient.clearToken();
-      const localNewUser = checkSuccess(
-        await userClient.post({
-          username,
-          userP: oldP,
-          userPC: oldP,
-          email,
-        }),
-      );
-
-      await userClient.setUser(adminUser);
-      checkSuccess(await userClient.put(localNewUser.userId, { status: 'member' }));
-
-      return localNewUser;
-    };
-
     test('Admin can change user status', async () => {
       await userClient.setUser(adminUser);
       const body = checkSuccess(await userClient.put(createdUser.id, { status: 'member' }));
@@ -464,6 +468,28 @@ describe('User tests', () => {
 
       userClient.clearToken();
       checkNotFound(await userClient.delete(userIdToDelete));
+    });
+  });
+
+  describe('User account management', () => {
+    test('Forgot password generates new data', async () => {
+      const username = 'forgetter';
+      const email = 'forgetter@gmail.com';
+      // Create a new member
+      const userId = uuidv4();
+      const newUser = await createNewMember(username, email, userId);
+      const path = `/lost-password/`;
+      const data = { username };
+      const response = await client.post({ path, data, debugBackend: false });
+
+      // Note: this is not the expected response in production mode.
+      // This test is here to exercise the backend code and make sure it does not crash before generating a key
+      expect(response.body).toEqual({
+        activationKey: 'randomkeyfortest',
+        email,
+        userId,
+        username,
+      });
     });
   });
 });

@@ -177,7 +177,7 @@ CREATE TABLE `users` (
   `city` varchar(64) DEFAULT NULL,
   `site` varchar(255) DEFAULT NULL,
   `activationKey` varchar(32) DEFAULT NULL,
-  `newPassword` varchar(32) DEFAULT NULL,
+  `newPassword` varchar(128) DEFAULT NULL,
   `avatar` varchar(36) DEFAULT NULL,
   `cover` varchar(36) DEFAULT NULL,
   `bio` varchar(1024) DEFAULT NULL,
