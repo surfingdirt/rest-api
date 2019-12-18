@@ -87,7 +87,6 @@ class CustomController extends Zend_Controller_Action
       return;
     }
 
-    // TODO: check that this $link goes to /users/:id/activate-new-password/
     $destination = APP_URL . Globals::getRouter()->assemble(array(
         'id' => $user->{User::COLUMN_USERID},
       ), 'activateNewPassword'). '?'.self::ACTIVATION_KEY_PARAMNAME.'='.$user->activationKey;
@@ -133,10 +132,6 @@ class CustomController extends Zend_Controller_Action
     if ($id != $user->{User::COLUMN_USERID}) {
       throw new Api_Exception('Password activation failed');
     }
-
-    Utils::deleteCookie(User::COOKIE_MD5);
-    Utils::deleteCookie(User::COOKIE_USERNAME);
-    Utils::deleteCookie(User::COOKIE_REMEMBER);
 
     $this->_savePendingUserIdentity($userId);
 
