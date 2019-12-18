@@ -472,25 +472,57 @@ describe('User tests', () => {
   });
 
   describe('User account management', () => {
-    test('Forgot password generates new data', async () => {
+    test('Complete lost password workflow', async () => {
       const username = 'forgetter';
       const email = 'forgetter@gmail.com';
+      const activationKey = 'randomkeyfortest';
       // Create a new member
       const userId = uuidv4();
       const newUser = await createNewMember(username, email, userId);
-      const path = `/lost-password/`;
-      const data = { username };
-      const response = await client.post({ path, data, debugBackend: false });
 
+      const lostPasswordBody = checkSuccess(
+        await client.post({ path: '/lost-password/', data: { username } }),
+      );
       // Note: this is not the expected response in production mode.
-      // This test is here to exercise the backend code and make sure it does not crash before generating a key
-      expect(response.body).toEqual({
-        activationKey: 'randomkeyfortest',
+      // This test is here to exercise the backend code and make sure it does not crash before
+      // generating a key.
+      expect(lostPasswordBody).toEqual({
+        activationKey,
         email,
         userId,
         username,
+        newPassword: 'randomkeyfortest',
       });
+
+      checkNotFound(
+        await client.get({
+          path: `/user/${userId}/activate-new-password/`,
+          urlParams: { aK: 'badkey' },
+        }),
+      );
+      checkNotFound(
+        await client.get({
+          path: `/user/bad-user-id/activate-new-password/`,
+          urlParams: { aK: activationKey },
+        }),
+      );
+      const body = checkSuccess(
+        await client.get({
+          path: `/user/${userId}/activate-new-password/`,
+          urlParams: { aK: activationKey },
+          debugBackend: true,
+        }),
+      );
+      expect(body).toEqual({ 'status': true});
     });
+
+    expect(async () => {
+      await client.login(username, oldP);
+    }).toThrowError(`Login as '${username}' failed`);
+
+    expect(async () => {
+      await client.login(username, newPassword);
+    }).not.toThrowError(`Login as '${username}' failed`);
   });
 });
 

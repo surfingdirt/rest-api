@@ -95,6 +95,7 @@ class CustomController extends Zend_Controller_Action
     $params = array(
       'username' => $user->{User::COLUMN_USERNAME},
       'destination' => $destination,
+      'newPassword' => $newPassword,
     );
 
     if (APPLICATION_ENV == 'test') {
@@ -103,6 +104,7 @@ class CustomController extends Zend_Controller_Action
         'username' => $user->{User::COLUMN_USERNAME},
         'email' => $user->{User::COLUMN_EMAIL},
         'activationKey' => $user->activationKey,
+        'newPassword' => $newPassword,
       ];
       return;
     }
@@ -138,7 +140,7 @@ class CustomController extends Zend_Controller_Action
 
     $this->_savePendingUserIdentity($userId);
 
-    $this->view->status = true;
+    $this->view->output = array('status' => true);
   }
 
   /**
