@@ -507,10 +507,9 @@ describe('User tests', () => {
         }),
       );
       const body = checkSuccess(
-        await client.get({
+        await client.post({
           path: `/user/${userId}/activate-new-password/`,
-          urlParams: { aK: activationKey },
-          debugBackend: true,
+          data: { aK: activationKey },
         }),
       );
       expect(body).toEqual({ 'status': true});
