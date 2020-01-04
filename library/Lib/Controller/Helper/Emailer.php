@@ -76,6 +76,7 @@ class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstra
         ],
         'h:X-Mailgun-Variables' => $variables,
       ]);
+      $emailStatus = true;
     } catch (Exception $e) {
       $msg = "Email error" . PHP_EOL . $e->getMessage();
       Globals::getLogger()->emailError($msg);
