@@ -89,7 +89,7 @@ class CustomController extends Zend_Controller_Action
 
     $destinationParts = [
       APP_URL,
-      '/action/activate-new-password',
+      '/actions/activate-new-password',
       '?',
       'userId',
       '=',
