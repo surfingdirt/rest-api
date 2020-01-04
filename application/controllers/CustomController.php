@@ -89,10 +89,12 @@ class CustomController extends Zend_Controller_Action
 
     $destinationParts = [
       APP_URL,
-      '/rider/',
-      $user->{User::COLUMN_USERID},
-      '/activate-new-password',
+      '/action/activate-new-password',
       '?',
+      'userId',
+      '=',
+      $user->{User::COLUMN_USERID},
+      '&',
       self::ACTIVATION_KEY_PARAMNAME,
       '=',
       $user->activationKey
