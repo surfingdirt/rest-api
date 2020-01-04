@@ -36,7 +36,7 @@ class Lib_Controller_Helper_Emailer extends Zend_Controller_Action_Helper_Abstra
             "title" => "Lost your password?",
             "hello" => "Hello",
             "username" => $params['username'],
-            "forgotYourPassword" => "forgot your password?",
+            "forgotYourPassword" => "Forgot your password?",
             "itHappens" => "It happens to the best of us. The good news is you can change it right here!",
             "destination" => $params['destination'],
             "resetButtonLabel" => "Reset my password",
