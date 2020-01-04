@@ -87,9 +87,18 @@ class CustomController extends Zend_Controller_Action
       return;
     }
 
-    $destination = APP_URL . Globals::getRouter()->assemble(array(
-        'id' => $user->{User::COLUMN_USERID},
-      ), 'activateNewPassword'). '?'.self::ACTIVATION_KEY_PARAMNAME.'='.$user->activationKey;
+    $destinationParts = [
+      APP_URL,
+      '/rider/',
+      $user->{User::COLUMN_USERID},
+      '/activate-new-password',
+      '?',
+      self::ACTIVATION_KEY_PARAMNAME,
+      '=',
+      $user->activationKey
+    ];
+
+    $destination = implode('', $destinationParts);
 
     $params = array(
       'username' => $user->{User::COLUMN_USERNAME},
