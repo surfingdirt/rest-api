@@ -178,11 +178,12 @@ export default class StatelessClient {
     return response;
   }
 
-  async login(username, password) {
+  async login(username, password, debugBackend = false) {
     try {
       const loginResponse = await this.post({
         path: getResourcePath(TOKEN),
         data: { userP: password, username: username },
+        debugBackend
       });
       const loginResponseBody = loginResponse.body;
       if (!loginResponseBody.token) {

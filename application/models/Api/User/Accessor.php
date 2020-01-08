@@ -9,7 +9,8 @@ class Api_User_Accessor extends Api_Data_Accessor
     'cover',
     'date',
     'firstName',
-    'lang',
+    'locale',
+    'timezone',
     'lastName',
     'site',
     'userId',
@@ -30,7 +31,9 @@ class Api_User_Accessor extends Api_Data_Accessor
   public $publicCreateAttributes = array(
     'username' => 'username',
     User::INPUT_PASSWORD => 'password',
-    'email' => 'email'
+    'email' => 'email',
+    'locale' => 'locale',
+    'timezone' => 'timezone',
   );
   public $memberCreateAttributes = array();
   public $adminCreateAttributes = array();
@@ -43,7 +46,8 @@ class Api_User_Accessor extends Api_Data_Accessor
     'cover' => 'cover',
     'email' => 'email',
     'firstName' => 'firstName',
-    'lang' => 'lang',
+    'locale' => 'locale',
+    'timezone' => 'timezone',
     'lastName' => 'lastName',
     'site' => 'site',
     User::INPUT_PASSWORD => 'password',
@@ -90,7 +94,6 @@ class Api_User_Accessor extends Api_Data_Accessor
       $object->{User::COLUMN_USERID} = $userId;
       $object->status = User::STATUS_PENDING;
       $object->date = Utils::date('Y-m-d H:i:s');
-      $object->lang = Globals::getTranslate()->getLocale();
       $object->activationKey = Utils::getRandomKey(32);
       $object->save();
 

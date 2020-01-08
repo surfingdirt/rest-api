@@ -183,13 +183,13 @@ describe('User tests', () => {
 
   describe('User GET', () => {
     const plainUserPublicInfo =
-      '["actions","album","avatar","bio","city","cover","date","firstName","lang","lastName","site","userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","firstName","lastName","locale","site","timezone","userId","username"]';
 
     const plainUserSelfInfo =
-      '["actions","album","avatar","bio","city","cover","date","email","firstName","lang","lastName","site","status","userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","email","firstName","lastName","locale","site","status","timezone","userId","username"]';
 
     const plainUserAdminInfo =
-      '["actions","album","avatar","bio","city","cover","date","email","firstName","lang","lastLogin","lastName","site","status","userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","email","firstName","lastLogin","lastName","locale","site","status","timezone","userId","username"]';
 
     test("Retrieve plainuser's data as guest", async () => {
       userClient.clearToken();
@@ -230,7 +230,7 @@ describe('User tests', () => {
 
   describe('User GET /me', () => {
     const meKeys =
-      '["actions","album","avatar","bio","city","cover","date","email","firstName","lang","lastName","site","status","userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","email","firstName","lastName","locale","site","status","timezone","userId","username"]';
 
     test('Retrieve /user/me as guest', async () => {
       userClient.clearToken();
@@ -305,7 +305,7 @@ describe('User tests', () => {
 
   describe('User POST', () => {
     const createdUserKeys =
-      '["actions","album","avatar","bio","city","cover","date","email","firstName","lang","lastName","site","status","userId","username"]';
+      '["actions","album","avatar","bio","city","cover","date","email","firstName","lastName","locale","site","status","timezone","userId","username"]';
 
     test('Logged-in user cannot create a new user', async () => {
       await userClient.setUser(plainUser);
@@ -481,7 +481,7 @@ describe('User tests', () => {
       const newUser = await createNewMember(username, email, userId);
 
       const lostPasswordBody = checkSuccess(
-        await client.post({ path: '/lost-password/', data: { username } }),
+        await client.post({ path: '/lost-password/', data: { username }}),
       );
       // Note: this is not the expected response in production mode.
       // This test is here to exercise the backend code and make sure it does not crash before
@@ -2069,6 +2069,7 @@ describe('Comment tests', () => {
 
     test.skip('Comments can be translated', async () => {
       // TODO: there's a problem with the way comments are cached with regards to translation
+      // TODO: make sure locale is used rather than lang
       // We need to cache all translations at the same time, and pluck the ones we need at render time
       const { content: enContent } = checkSuccess(await commentClient.get(translatedComment.id));
       expect(enContent).toEqual(translatedComment.enContent);
