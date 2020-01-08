@@ -6,7 +6,7 @@ class TestController extends Api_Controller_Action
     parent::init();
 
     if (APPLICATION_ENV != 'test' && $this->_user->status != User::STATUS_ADMIN) {
-//      throw new Api_Exception_Unauthorised();
+      throw new Api_Exception_Unauthorised();
     }
 
     Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer')->setViewScriptPathSpec('view.phtml');
