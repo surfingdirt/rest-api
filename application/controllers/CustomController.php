@@ -49,7 +49,6 @@ class CustomController extends Zend_Controller_Action
         'status' => true,
         'alreadyDone' => false
       );
-      $this->_savePendingUserIdentity($userId);
     } else {
       $this->view->output = array(
         'status' => true,
@@ -144,8 +143,6 @@ class CustomController extends Zend_Controller_Action
       throw new Api_Exception('Password activation failed');
     }
 
-    $this->_savePendingUserIdentity($userId);
-
     $this->view->output = array('status' => true);
   }
 
@@ -164,20 +161,6 @@ class CustomController extends Zend_Controller_Action
     $user = $table->fetchRow($where . $where2);
 
     return $user;
-  }
-
-  /**
-   * Save user identity while waiting for confirmation
-   *
-   * @param integer $userId
-   */
-  private function _savePendingUserIdentity($userId)
-  {
-    $userData = new stdClass();
-    $userData->{User::COLUMN_USERID} = $userId;
-    $userData->sessionId = session_id();
-    $userData->lastLogin = Utils::date('Y-m-d H:i:s');
-    Zend_Auth::getInstance()->getStorage()->write($userData);
   }
 
   /**
