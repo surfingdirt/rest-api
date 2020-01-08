@@ -495,15 +495,15 @@ describe('User tests', () => {
       });
 
       checkNotFound(
-        await client.get({
+        await client.post({
           path: `/user/${userId}/activate-new-password/`,
-          urlParams: { aK: 'badkey' },
+          data: { aK: 'badkey' },
         }),
       );
       checkNotFound(
-        await client.get({
+        await client.post({
           path: `/user/bad-user-id/activate-new-password/`,
-          urlParams: { aK: activationKey },
+          data: { aK: activationKey },
         }),
       );
       const body = checkSuccess(
@@ -513,15 +513,20 @@ describe('User tests', () => {
         }),
       );
       expect(body).toEqual({ 'status': true});
+
+      try {
+        await client.login(username, oldP);
+        throw new Error('Should have failed to login with old password');
+      } catch(e) {
+        expect(e.message).toEqual(`Login as '${username}' failed`);
+      }
+
+      try {
+        await client.login(username, 'randomkeyfortest');
+      } catch(e) {
+        throw new Error('Failed to login with new password');
+      }
     });
-
-    expect(async () => {
-      await client.login(username, oldP);
-    }).toThrowError(`Login as '${username}' failed`);
-
-    expect(async () => {
-      await client.login(username, newPassword);
-    }).not.toThrowError(`Login as '${username}' failed`);
   });
 });
 
