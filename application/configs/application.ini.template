@@ -17,6 +17,7 @@ resources.session.remember_me_seconds = 864000
 ;Memcached
 constants.MEMCACHED_HOST = 'memcached'
 constants.MEMCACHED_PORT = 11211
+constants.CLEAN_CACHE_KEY = '123'
 
 ; Constants
 constants.AUTHCHECK = 'password'

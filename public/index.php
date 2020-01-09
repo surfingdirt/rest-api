@@ -98,7 +98,11 @@ if (APPLICATION_ENV === TEST) {
   // Log auth header
 }
 
-Globals::getGlobalCache()->clean();
+$cleanCache = isset($_GET['cleanCache']) && isset($_GET['cleanCacheKey']) && $_GET['cleanCacheKey'] === CLEAN_CACHE_KEY;
+if ($cleanCache) {
+  Globals::getGlobalCache()->clean();
+}
+
 
 $frontController->dispatch();
 
