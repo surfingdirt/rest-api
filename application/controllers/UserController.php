@@ -82,7 +82,7 @@ class UserController extends Api_Controller_Action
     } else {
       $table = new User();
       $user = $table->findByEmail($_GET['email']);
-      $output = $user->isValidUser();
+      $output = $user && $user->isValidUser();
     }
 
     $this->view->output = $output;
@@ -95,7 +95,7 @@ class UserController extends Api_Controller_Action
     } else {
       $table = new User();
       $user = $table->findByName($_GET['username']);
-      $output = $user->isValidUser();
+      $output = $user && $user->isValidUser();
     }
 
     $this->view->output = $output;
