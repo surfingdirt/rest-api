@@ -30,6 +30,9 @@ class UserController extends Api_Controller_Action
         return true;
       }
 
+      // This seems to stop the problems when calling from UI:
+//      return true;
+
       // send email for password and confirmation
       $params['activationKey'] = $object->activationKey;
       $params['userId'] = $object->getId();

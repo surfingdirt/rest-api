@@ -3,6 +3,9 @@
 ; Debug output
 phpSettings.display_startup_errors = 0
 phpSettings.display_errors = 0
+phpSettings.error_log = '../data/logs/api/php_error_log'
+phpSettings.html_errors = 0
+phpSettings.log_errors = 1
 
 ; Database
 constants.GLOBAL_DB_HOST = 'localhost'
@@ -205,8 +208,9 @@ constants.TONES = 'neutral,joking,angry,happy,sad'
 
 [test : production]
 
-phpSettings.display_startup_errors = 1
-phpSettings.display_errors = 1
+phpSettings.display_startup_errors = 0
+phpSettings.display_errors = 0
+phpSettings.error_log = '../data/logs/test/php_error_log'
 
 constants.APP_DEBUGDIR = '../data/logs/test/'
 

@@ -52,11 +52,14 @@ foreach ($constants as $name => $value) {
 /*
  * PHP SETTINGS
  */
-//ini_set('html_errors', 0); // Make sure JSON is always valid
 ini_set('upload_max_filesize', GLOBAL_UPLOAD_MAXSIZE);
 ini_set('upload_tmp_dir', GLOBAL_UPLOAD_TMPDIR);
-ini_set('display_startup_errors', $config->$env->phpSettings->display_startup_errors);
+
 ini_set('display_errors', $config->$env->phpSettings->display_errors);
+ini_set('display_startup_errors', $config->$env->phpSettings->display_startup_errors);
+ini_set('error_log', $config->$env->phpSettings->error_log);
+ini_set('html_errors', $config->$env->phpSettings->html_errors);
+ini_set('log_errors', $config->$env->phpSettings->log_errors);
 date_default_timezone_set('UTC');
 error_reporting(E_ALL | E_STRICT);
 

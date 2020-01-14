@@ -19,7 +19,14 @@ class Logger extends Zend_Log
     $headers = apache_request_headers();
     $authorization = array_key_exists('Authorization', $headers) ? $headers['Authorization'] : '';
 
-    $this->setEventItem('timestamp', date('Y-m-d H:i:s'));
+    /*
+     * TODO:
+     * - make $authorization unstealable: make it unique but obfuscated - perhaps at GQL level
+     * - gather ip from GQL, and perhaps from node too (if isNode && hasIP)
+     * - referer comes from GQL and perhaps from node too (if isNode && hasReferer)
+     */
+
+    $this->setEventItem('timestamp', date('Y-m-d H:i:s.v'));
     $this->setEventItem(User::COLUMN_USERID, $this->_userId);
     $this->setEventItem('url', Utils::getCompleteUrl());
     $this->setEventItem('method', $_SERVER['REQUEST_METHOD']);
