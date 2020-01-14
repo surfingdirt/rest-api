@@ -36,6 +36,25 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
     }
   }
 
+  public function isValidUser() {
+    switch ($this->status) {
+      case User::STATUS_GUEST:
+      case User::STATUS_BANNED:
+      case User::STATUS_PENDING:
+        return false;
+        break;
+      case User::STATUS_MEMBER:
+      case User::STATUS_WRITER:
+      case User::STATUS_EDITOR:
+      case User::STATUS_ADMIN:
+        return true;
+        break;
+      default:
+        throw new Api_Exception("Unexpected status for user '" . $this->getId() . "': '" . $this->status . "'");
+        break;
+    }
+  }
+
   public function isReadableBy(User_Row $user, Lib_Acl $acl)
   {
     if (in_array($this->status, array(User::STATUS_BANNED, User::STATUS_PENDING, User::STATUS_GUEST))) {

@@ -17,6 +17,9 @@ class Routes {
 
       'me' => new Zend_Controller_Router_Route('/user/me/', array('controller' => 'user', 'action' => 'me')),
 
+      'emailExists' => new Zend_Controller_Router_Route('/user/email-exists/', array('controller' => 'user', 'action' => 'email-exists')),
+      'usernameExists' => new Zend_Controller_Router_Route('/user/username-exists/', array('controller' => 'user', 'action' => 'username-exists')),
+
       'userAlbums' => new Zend_Controller_Router_Route('/user/:id/albums/', array('controller' => 'useralbum', 'action' => 'list')),
 
       'comments' => new Zend_Controller_Router_Route('/:itemType/:itemId/comments/', array('controller' => 'comments', 'action' => 'list')),

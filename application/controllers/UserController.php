@@ -74,4 +74,30 @@ class UserController extends Api_Controller_Action
 
     $this->view->output = $this->_accessor->getObjectData($this->_user);
   }
+
+  public function emailExistsAction()
+  {
+    if (!isset($_GET['email'])) {
+      $output = false;
+    } else {
+      $table = new User();
+      $user = $table->findByEmail($_GET['email']);
+      $output = User_Row && $user->isValidUser();
+    }
+
+    $this->view->output = $output;
+  }
+
+  public function usernameExistsAction()
+  {
+    if (!isset($_GET['username'])) {
+      $output = false;
+    } else {
+      $table = new User();
+      $user = $table->findByName($_GET['username']);
+      $output = $user->isValidUser();
+    }
+
+    $this->view->output = $output;
+  }
 }
