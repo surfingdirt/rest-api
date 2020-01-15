@@ -28,21 +28,14 @@ class User_Form_Update extends Lib_Form
 
     parent::__construct($options);
 
-    // TODO: handle language and email updates!
-//    // These elements are only accessible after account confirmation
-//      $languages = $this->_translator->getList();
-//      $lang = new Zend_Form_Element_Select('lang');
-//      $lang->setLabel(ucfirst(Globals::getTranslate()->_('language')))
-//        ->setMultiOptions($languages);
-
     if ($this->_pending) {
       return;
     }
 
     $needsAllThreePasswords =
-      isset($data[User::INPUT_PASSWORD]) ||
-      isset($data[User::INPUT_PASSWORD_CONFIRM]) ||
-      isset($data[User::INPUT_PASSWORD_OLD]);
+      isset($data[User::INPUT_PASSWORD]) && $data[User::INPUT_PASSWORD] ||
+      isset($data[User::INPUT_PASSWORD_CONFIRM]) && $data[User::INPUT_PASSWORD_CONFIRM] ||
+      isset($data[User::INPUT_PASSWORD_OLD]) && $data[User::INPUT_PASSWORD_OLD];
     $required = $needsAllThreePasswords;
 
     $passwordOld = new Lib_Form_Element_Password_Old($required);
