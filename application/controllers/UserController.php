@@ -80,9 +80,15 @@ class UserController extends Api_Controller_Action
     if (!isset($_GET['email'])) {
       $output = false;
     } else {
-      $table = new User();
-      $user = $table->findByEmail($_GET['email']);
-      $output = $user && $user->isValidUser();
+      $email = $_GET['email'];
+      if ($this->_user->email === $email) {
+        // Report email as not taken if it's the user's own
+        $output = false;
+      } else {
+        $table = new User();
+        $user = $table->findByEmail($email);
+        $output = $user && $user->isValidUser();
+      }
     }
 
     $this->view->output = $output;
