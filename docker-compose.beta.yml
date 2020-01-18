@@ -1,17 +1,18 @@
-# ./docker-compose.yml
+# ./docker-compose.beta.yml
 
 version: '3'
 
 services:
-  memcached:
+  memcached_beta:
     image: memcached:1.4
+    container_name: memcached_beta
     ports:
-      - "11212:11211"
-  api:
+      - "11213:11211"
+  api_beta:
     environment:
             - APPLICATION_ENV=beta
     image: surfingdirt/rest-api:3
-    container_name: api
+    container_name: api_beta
     volumes:
       - /home/mikael/www/beta/api/:/var/www/html/
     ports:

@@ -1,17 +1,18 @@
-# ./docker-compose.yml
+# ./docker-compose.production.yml
 
 version: '3'
 
 services:
-  memcached:
+  memcached_prod:
     image: memcached:1.4
+    container_name: memcached_production
     ports:
       - "11212:11211"
-  api:
+  api_prod:
     environment:
             - APPLICATION_ENV=production
     image: surfingdirt/rest-api:3
-    container_name: api
+    container_name: api_prod
     volumes:
       - /home/mikael/www/production/api/:/var/www/html/
     ports:
