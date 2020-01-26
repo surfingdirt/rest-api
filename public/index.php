@@ -96,12 +96,10 @@ if (APPLICATION_ENV === TEST) {
 /*
  * OPENTRACING
  */
-// TODO: enable tracing if a particular header is detected
-$tracingEnabled = OPENTRACING_ENABLED;
-if ($tracingEnabled) {
+if (OPENTRACING_ENABLED) {
   $tracer = Globals::getTracer();
-  $span = $tracer->newTrace();
-  $span->setName('whole application');
+  $span = $tracer->newChild();
+  $span->setName('API request handling');
   $span->start();
 }
 
@@ -119,7 +117,7 @@ if ($cleanCache) {
 
 $frontController->dispatch();
 
-if ($tracingEnabled) {
+if (OPENTRACING_ENABLED) {
   $span->finish();
   $tracer->flush();
 }
