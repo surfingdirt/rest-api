@@ -3,15 +3,20 @@
 version: '3'
 
 services:
-  memcached_prod:
+  zipkin:
+    container_name: zipkin_production
+    image: openzipkin/zipkin:latest
+    ports:
+      - "9411:9411"
+  memcached:
     image: memcached:1.4
     container_name: memcached_production
     ports:
       - "11212:11211"
-  api_prod:
+  api:
     environment:
             - APPLICATION_ENV=production
-    image: surfingdirt/rest-api:3
+    image: surfingdirt/rest-api:4
     container_name: api_prod
     volumes:
       - /home/mikael/www/production/api/:/var/www/html/

@@ -1,6 +1,4 @@
 <?php
-$t1 = microtime(true);
-
 /*
  * APPLICATION ENVIRONMENT
  */
@@ -63,6 +61,7 @@ ini_set('log_errors', $config->$env->phpSettings->log_errors);
 date_default_timezone_set('UTC');
 error_reporting(E_ALL | E_STRICT);
 
+
 /*
  * ZEND CONTROLLER SETUP
  */
@@ -95,6 +94,18 @@ if (APPLICATION_ENV === TEST) {
 }
 
 /*
+ * OPENTRACING
+ */
+// TODO: enable tracing if a particular header is detected
+$tracingEnabled = OPENTRACING_ENABLED;
+if ($tracingEnabled) {
+  $tracer = Globals::getTracer();
+  $span = $tracer->newTrace();
+  $span->setName('whole application');
+  $span->start();
+}
+
+/*
  * HANDLE THE REQUEST
  */
 if (APPLICATION_ENV === TEST) {
@@ -106,9 +117,9 @@ if ($cleanCache) {
   Globals::getGlobalCache()->clean();
 }
 
-
 $frontController->dispatch();
 
-//$t2 = microtime(true);
-//$time = ($t2 - $t1) * 1000;
-//Globals::getLogger()->performance("Request took $time milliseconds");
+if ($tracingEnabled) {
+  $span->finish();
+  $tracer->flush();
+}

@@ -76,6 +76,8 @@ class Globals
     'jpg', 'jpeg', 'gif', 'png', 'swf', 'pdf', 'ppt', 'doc', 'xls', 'txt'
   );
 
+  private static $_tracer;
+
   private static $_JWTBlacklist;
 
   /**
@@ -348,4 +350,20 @@ class Globals
   {
     return self::$_filesExtensionUploadWhiteList;
   }
+
+  /**
+   * Configure and return the tracer instance
+   *
+   * @return Tracer
+   */
+  public static function getTracer()
+  {
+    if (empty(self::$_tracer)) {
+      $tracer = new Tracer();
+      self::$_tracer = $tracer;
+    }
+
+    return self::$_tracer;
+  }
+
 }
