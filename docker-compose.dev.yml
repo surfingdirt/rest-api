@@ -1,0 +1,26 @@
+# ./docker-compose.yml
+
+version: '3'
+
+services:
+  zipkin:
+    container_name: zipkin_dev
+    image: openzipkin/zipkin:latest
+    ports:
+      - "9411:9411"
+  memcached:
+    image: memcached:1.4
+    container_name: memcached_dev
+    ports:
+      - "11212:11211"
+  api:
+    environment:
+            - APPLICATION_ENV=development
+    image: surfingdirt/rest-api:4
+    container_name: api_dev
+    volumes:
+      - /Library/WebServer/Documents/www.local.wrk:/var/www/html/
+    ports:
+      - "80:80"
+    stdin_open: true
+    tty: true

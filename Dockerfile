@@ -26,11 +26,14 @@ RUN buildDeps=" \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install gd \
     && docker-php-ext-install exif \
+    && docker-php-ext-install sockets \
+    && pecl install memcached \
     && docker-php-ext-enable memcached.so \
     && apt-get purge -y --auto-remove $buildDeps \
     && rm -r /var/lib/apt/lists/*
 
 
+RUN pecl install xdebug-2.6.1 && docker-php-ext-enable xdebug
 RUN docker-php-ext-enable xdebug
 RUN echo 'xdebug.remote_port=9000' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -41,7 +44,3 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY apache2.conf /etc/apache2/
 
 RUN a2enmod rewrite headers
-
-# Pas possible de faire ca, sauf si on a installe les fichiers via git clone avant:
-#WORKDIR library/vendor
-#RUN composer install
