@@ -98,8 +98,8 @@ if (APPLICATION_ENV === TEST) {
  */
 if (OPENTRACING_ENABLED) {
   $tracer = Globals::getTracer();
-  $span = $tracer->newChild();
-  $span->setName('API request handling');
+  $span = $tracer->startTrace();
+  $span->setName("API request handling for ".$_SERVER['REQUEST_URI']);
   $span->start();
 }
 
