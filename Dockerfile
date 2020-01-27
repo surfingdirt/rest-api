@@ -1,4 +1,6 @@
-# build with: docker build -t php:7.2.2-apache .
+# build with: docker build .
+# then tag and push to surfingdirt/rest-api:x
+# used to build version 5:
 FROM php:7.2.2-apache
 
 # Install PHP extensions and PECL modules.
@@ -27,20 +29,18 @@ RUN buildDeps=" \
     && docker-php-ext-install gd \
     && docker-php-ext-install exif \
     && docker-php-ext-install sockets \
-    && pecl install memcached \
+    # && pecl install memcached \
     && docker-php-ext-enable memcached.so \
     && apt-get purge -y --auto-remove $buildDeps \
     && rm -r /var/lib/apt/lists/*
 
 
-RUN pecl install xdebug-2.6.1 && docker-php-ext-enable xdebug
+#RUN pecl install xdebug-2.6.1 && docker-php-ext-enable xdebug
 RUN docker-php-ext-enable xdebug
 RUN echo 'xdebug.remote_port=9000' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo 'xdebug.remote_host=host.docker.internal' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-COPY apache2.conf /etc/apache2/
+COPY ./apache2.conf /etc/apache2/
 
 RUN a2enmod rewrite headers
