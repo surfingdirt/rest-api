@@ -16,7 +16,7 @@ services:
   api:
     environment:
             - APPLICATION_ENV=production
-    image: surfingdirt/rest-api:4
+    image: surfingdirt/rest-api:5
     container_name: api_prod
     volumes:
       - /home/mikael/www/production/api/:/var/www/html/

@@ -16,7 +16,7 @@ services:
   api:
     environment:
             - APPLICATION_ENV=development
-    image: surfingdirt/rest-api:4
+    image: surfingdirt/rest-api:5
     container_name: api_dev
     volumes:
       - /Library/WebServer/Documents/www.local.wrk:/var/www/html/
