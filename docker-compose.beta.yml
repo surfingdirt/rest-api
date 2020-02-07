@@ -7,7 +7,7 @@ services:
     container_name: zipkin_beta
     image: openzipkin/zipkin:latest
     ports:
-      - "9411:9412"
+      - "9412:9411"
   memcached:
     image: memcached:1.4
     container_name: memcached_beta
