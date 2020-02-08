@@ -1,6 +1,8 @@
 <?php
 use Zipkin\Annotation;
 use Zipkin\Endpoint;
+use Zipkin\Propagation\B3;
+use Zipkin\Propagation\DefaultSamplingFlags;
 use Zipkin\Propagation\RequestHeaders;
 use Zipkin\Propagation\TraceContext;
 use Zipkin\Reporters\Http;
@@ -14,6 +16,8 @@ class Tracer
   protected $_tracing;
 
   protected $_tracer;
+
+  const TRACING_REQUEST_FLAG = 'tracing';
 
   public function __construct() {
     $endpoint = Endpoint::create(OPENTRACING_SERVICE_NAME, '0.0.0.0', null, OPENTRACING_ENDPOINT_PORT);
@@ -59,8 +63,12 @@ class Tracer
       }
     }
 
-    $samplingFlags = null;
-    $newSpan = $this->_instance->newTrace($samplingFlags);
+    if (OPENTRACING_CONFIG_TRACE_ALL || isset($_GET[self::TRACING_REQUEST_FLAG])) {
+      $newSpan = $this->_instance->newTrace(DefaultSamplingFlags::createAsSampled());
+    } else {
+      $newSpan = $this->_instance->newTrace(DefaultSamplingFlags::createAsNotSampled());
+    }
+
     $traceId = $newSpan->getContext()->getTraceId();
     $logMsg[] = "New trace - id: $traceId";
 

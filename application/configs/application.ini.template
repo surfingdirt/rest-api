@@ -8,7 +8,8 @@ phpSettings.html_errors = 0
 phpSettings.log_errors = 1
 
 ; Tracing
-constants.OPENTRACING_ENABLED = false
+constants.OPENTRACING_CONFIG_DISABLE = false
+constants.OPENTRACING_CONFIG_TRACE_ALL = false
 constants.OPENTRACING_SERVICE_NAME = 'api'
 constants.OPENTRACING_ENDPOINT_HOST = 'zipkin'
 constants.OPENTRACING_ENDPOINT_PORT = 9411

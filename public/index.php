@@ -96,28 +96,27 @@ if (APPLICATION_ENV === TEST) {
 /*
  * OPENTRACING
  */
-if (OPENTRACING_ENABLED) {
+if (!OPENTRACING_CONFIG_DISABLE) {
   $tracer = Globals::getTracer();
   $span = $tracer->startTrace();
-  $span->setName("API request handling for ".$_SERVER['REQUEST_URI']);
+  $span->setName("API request handling for " . $_SERVER['REQUEST_URI']);
   $span->start();
 }
-
 /*
- * HANDLE THE REQUEST
+ * CACHE BUSTING
+ * Use this if the cache is corrupted.
  */
-if (APPLICATION_ENV === TEST) {
-  // Log auth header
-}
-
 $cleanCache = isset($_GET['cleanCache']) && isset($_GET['cleanCacheKey']) && $_GET['cleanCacheKey'] === CLEAN_CACHE_KEY;
 if ($cleanCache) {
   Globals::getGlobalCache()->clean();
 }
 
+/*
+* HANDLE THE REQUEST
+*/
 $frontController->dispatch();
 
-if (OPENTRACING_ENABLED) {
+if (!OPENTRACING_CONFIG_DISABLE) {
   $span->finish();
   $tracer->flush();
 }
