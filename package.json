@@ -10,7 +10,8 @@
     "resetbeta": "mysql surfingdirtcom_beta -uroot < data/sql/dev_fixtures.sql",
     "resettestdb": "mysql ridedb_test -uroot < data/sql/test_fixtures.sql",
     "runbeta": "docker-compose -p beta -f docker-compose.beta.yml up -d",
-    "runprod": "docker-compose -p production -f docker-compose.production.yml up -d"
+    "runprod": "docker-compose -p production -f docker-compose.production.yml up -d",
+    "startdev": "docker-compose -p dev -f docker-compose.dev.yml up -d"
   },
   "repository": {
     "type": "git",
