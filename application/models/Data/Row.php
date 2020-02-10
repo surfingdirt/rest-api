@@ -631,8 +631,10 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     $title = $this->{$this->_titleColumn};
     if (empty($title)) {
       $title = $this->getItemType();
+      return $title;
     }
-    return $title;
+
+    return json_decode($title, true);
   }
 
   /**
@@ -642,7 +644,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    */
   public function getDescription()
   {
-    $description = $this->description;
+    $description = json_decode($this->description, true);
     return $description;
   }
 
