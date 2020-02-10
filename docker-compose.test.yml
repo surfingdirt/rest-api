@@ -1,0 +1,21 @@
+# ./docker-compose.yml
+
+version: '3'
+
+services:
+  memcached:
+    image: memcached:1.4
+    container_name: memcached_test
+    ports:
+      - "11212:11211"
+  api:
+    environment:
+            - APPLICATION_ENV=test
+    image: surfingdirt/rest-api:5
+    container_name: api_test
+    volumes:
+      - /Library/WebServer/Documents/www.local.wrk/RideDB:/var/www/html/
+    ports:
+      - "80:80"
+    stdin_open: true
+    tty: true

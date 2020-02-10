@@ -215,30 +215,30 @@ constants.TONES = 'neutral,joking,angry,happy,sad'
 
 [test : production]
 
+constants.GLOBAL_DB_HOST = 'host.docker.internal'
+constants.GLOBAL_DB_NAME = 'ridedb_test'
+constants.GLOBAL_DB_USER = 'root'
+constants.GLOBAL_DB_PASSWORD = ''
+
 phpSettings.display_startup_errors = 0
 phpSettings.display_errors = 0
 phpSettings.error_log = '../data/logs/test/php_error_log'
 
 constants.APP_DEBUGDIR = '../data/logs/test/'
-
-constants.GLOBAL_DOMAIN = 'api.ridedb'
-constants.GLOBAL_EXTENSION = 'dev'
-constants.GLOBAL_DOMAIN_FULL = 'api/ridedb.wrk'
+constants.RANDOM_SEED = 1
+constants.GLOBAL_DOMAIN = 'localhost:80'
+constants.GLOBAL_EXTENSION = ''
+constants.GLOBAL_DOMAIN_FULL = 'localhost:80'
 
 constants.APP_SUBDOMAIN = 'test'
-constants.APP_URL = 'http://test.api.ridedb.wrk'
-constants.COOKIE_DOMAIN = 'test.api.ridedb.wrk'
+constants.APP_URL = 'http://localhost:80'
+constants.COOKIE_DOMAIN = 'localhost:80'
 
 constants.DEBUG = false
-constants.GLOBAL_DB_NAME = 'ridedb_test'
-constants.GLOBAL_DB_USER = 'root'
-constants.GLOBAL_DB_PASSWORD = ''
 
 constants.ALLOW_CACHE = true
 constants.GLOBAL_CACHE_FILE_DIR = '../data/cache/test'
-constants.APP_CACHE_FILE_DIR = '../data/cache/test/app/'
-constants.APP_CACHE_ACTIVE = true
-constants.GLOBAL_CACHE_METHOD = 'File'
-constants.APP_CACHE_METHOD = 'File'
+constants.GLOBAL_CACHE_METHOD = 'Libmemcached'
 constants.GLOBAL_CACHE_LIFETIME = 86400
-constants.APP_CACHE_LIFETIME = 86400
+
+constants.MEMCACHED_HOST = 'memcached_test'
