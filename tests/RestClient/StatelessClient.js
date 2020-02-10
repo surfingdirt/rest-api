@@ -23,7 +23,7 @@ export default class StatelessClient {
   constructor(hostUrl) {
     this.hostUrl = hostUrl;
     this.uuids = [];
-    this.locale = null;
+    this.locale = 'en-US';
   }
 
   getFullUri({ path, urlParams = null, debugBackend = false }) {
