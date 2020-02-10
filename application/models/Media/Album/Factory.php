@@ -22,12 +22,16 @@ class Media_Album_Factory
     if (empty($data['keyName'])) {
       // Simple Album
       $album = self::buildSimpleAlbum($albumId, $page);
+      $album->refresh();
     } elseif (empty($data['itemType'])) {
       $dataType = Data::mapDataType($data['keyName']);
       $table = new $dataType();
       if ($dataType == ucfirst(User::ITEM_TYPE)) {
         // User aggregate album
         $user = $table->find($data['keyValue'])->current();
+        if (!$user) {
+          throw new Lib_Exception_NotFound("Could not find user '${data['keyValue']}'");
+        }
         $album = self::buildAggregateUserAlbum($user, $page);
       } else {
         // Item aggregate album

@@ -15,6 +15,11 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
    */
   protected $_location;
 
+  protected $_isTitleTranslated = false;
+
+  protected $_isDescriptionTranslated = false;
+
+
   public function getTitle()
   {
       /* Media item title may be empty */

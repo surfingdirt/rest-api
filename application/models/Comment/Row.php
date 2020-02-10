@@ -80,7 +80,7 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
    */
   protected function _isTranslated($columnName)
   {
-    return ($columnName === 'content');
+    return false;
   }
 
   public function getTone()

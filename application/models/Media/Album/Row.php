@@ -67,7 +67,8 @@ abstract class Media_Album_Row extends Data_Row
    */
   protected $_defaultNotification = false;
 
-  protected $_isTitleTranslated = true;
+  protected $_isTitleTranslated = false;
+  protected $_isDescriptionTranslated = false;
 
   /**
    * Defined by Zend_Acl_Resource_Interface
