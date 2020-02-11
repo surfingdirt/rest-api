@@ -160,4 +160,13 @@ class Api_User_Accessor extends Api_Data_Accessor
     return $attr;
   }
 
+  protected function _addEntriesForAttribute($attr, $object, $ret)
+  {
+    if ($attr === 'bio') {
+      $ret[$attr] = json_decode($object->bio, true);
+      return $ret;
+    }
+
+    return parent::_addEntriesForAttribute($attr, $object, $ret);
+  }
 }

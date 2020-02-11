@@ -206,4 +206,30 @@ class TestController extends Api_Controller_Action
     Globals::getGlobalCache()->clean();
     $this->view->output = $log;
   }
+
+  public function portBiosAction()
+  {
+    Globals::getGlobalCache()->clean();
+    $log = [];
+
+    $userTable = new User();
+    $users = $userTable->fetchAll();
+    $locale = 'en-US';
+    foreach ($users as $user) {
+      if (!$user->bio) {
+        $log[] = "Skipping user '$user->username' - no bio";
+        continue;
+      }
+      $user->bio = json_encode([$locale => $user->bio]);
+      try {
+        $user->save();
+      } catch (Exception $e) {
+        $log[] = "Failed to save user '$user->username': ".$e->getMesage();
+      }
+      $log[] = "Processed user '$user->username'";
+    }
+
+    Globals::getGlobalCache()->clean();
+    $this->view->output = $log;
+  }
 }
