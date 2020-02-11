@@ -22,24 +22,23 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
 
   public function getTitle()
   {
-      /* Media item title may be empty */
-      $title = $this->{$this->_titleColumn};
-      return $title;
-    }
+    $title = $this->{$this->_titleColumn};
+    return json_decode($title, true);
+  }
 
-    protected function _postDelete()
-    {
-      parent::_postDelete();
+  protected function _postDelete()
+  {
+    parent::_postDelete();
 
-      $table = new Media_Item_Users();
-      $where = $table->getAdapter()->quoteInto("mediaId = ?", $this->id);
-      $table->delete($where);
-    }
+    $table = new Media_Item_Users();
+    $where = $table->getAdapter()->quoteInto("mediaId = ?", $this->id);
+    $table->delete($where);
+  }
 
-    /**
-     * Returns a list of all cache id's that must be emptied
-     * when saving/deleting this object.
-     */
+  /**
+   * Returns a list of all cache id's that must be emptied
+   * when saving/deleting this object.
+   */
   protected function _getCacheIdsForClear()
   {
     $return = parent::_getCacheIdsForClear();

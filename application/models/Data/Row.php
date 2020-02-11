@@ -629,11 +629,6 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
   public function getTitle()
   {
     $title = $this->{$this->_titleColumn};
-    if (empty($title)) {
-      $title = $this->getItemType();
-      return $title;
-    }
-
     return json_decode($title, true);
   }
 
