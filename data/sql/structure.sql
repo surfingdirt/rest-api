@@ -4,6 +4,21 @@
 
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
+DROP TABLE IF EXISTS `comments`;
+CREATE TABLE `comments` (
+  `id` varchar(36) NOT NULL,
+  `parentId` varchar(36)  NOT NULL,
+  `parentType` varchar(64) NOT NULL,
+  `content` TEXT COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `date` datetime NOT NULL,
+  `submitter` varchar(36) NOT NULL,
+  `lastEditionDate` datetime DEFAULT NULL,
+  `lastEditor` varchar(36) DEFAULT NULL,
+  `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
+  `tone` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 /*Table structure for table `images` */
 
 DROP TABLE IF EXISTS `images`;
@@ -76,13 +91,15 @@ CREATE TABLE `media_albums` (
   `submitter` varchar(36) NOT NULL,
   `lastEditionDate` datetime(3) DEFAULT NULL,
   `lastEditor` varchar(36) DEFAULT NULL,
+  `title` TEXT COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` TEXT COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` enum('valid','invalid') NOT NULL DEFAULT 'invalid',
   `albumType` enum('simple','aggregate') NOT NULL DEFAULT 'simple' COMMENT 'Simple or aggregated',
   `albumContributions` enum('private','public') NOT NULL DEFAULT 'private',
   `albumCreation` enum('static','automatic','user') NOT NULL DEFAULT 'automatic',
   `albumVisibility` enum('private','unlisted','visible') NOT NULL DEFAULT 'visible',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Table structure for table `media_albums_items` */
 
@@ -108,6 +125,8 @@ CREATE TABLE `media_items` (
   `mediaSubType` varchar(255) NOT NULL,
   `vendorKey` varchar(1024) DEFAULT NULL,
   `albumId` varchar(36) NOT NULL,
+  `title` TEXT COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` TEXT COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `storageType` varchar(255) NOT NULL,
   `imageId` varchar(36) NOT NULL,
   `width` int(10) unsigned NOT NULL,
@@ -119,7 +138,7 @@ CREATE TABLE `media_items` (
   `lastEditor` varchar(36) DEFAULT NULL,
   UNIQUE KEY `imageId` (`imageId`),
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Table structure for table `media_items_users` */
 
@@ -181,9 +200,9 @@ CREATE TABLE `users` (
   `newPassword` varchar(128) DEFAULT NULL,
   `avatar` varchar(36) DEFAULT NULL,
   `cover` varchar(36) DEFAULT NULL,
-  `bio` varchar(1024) DEFAULT NULL,
+  `bio` TEXT COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`userId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Table structure for table `migrations` */
 
