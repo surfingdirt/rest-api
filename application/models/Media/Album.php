@@ -72,9 +72,11 @@ class Media_Album extends Data
 
     $title = Globals::getTranslate()->translate('albumFor');
     $title = sprintf($title, $data->getTitle());
+    $storedTitle = json_encode([DEFAULT_LOCALE => $title]);
+
     $album->submitter = $data->submitter;
-    $album->title = $title;
-    $album->description = $title;
+    $album->title = $storedTitle;
+    $album->description = $storedTitle;
     $album->date = $data->date;
 
     $album->albumType = self::TYPE_AGGREGATE;
@@ -106,10 +108,12 @@ class Media_Album extends Data
 
     $title = Globals::getTranslate()->translate('albumFor');
     $title = sprintf($title, $user->getTitle());
+    $storedTitle = json_encode([DEFAULT_LOCALE => $title]);
+
     $album->id = Utils::uuidV4();
     $album->submitter = $user->getId();
-    $album->title = $title;
-    $album->description = $title;
+    $album->title = $storedTitle;
+    $album->description = $storedTitle;
     $album->date = $user->date;
 
     $album->albumType = self::TYPE_AGGREGATE;
