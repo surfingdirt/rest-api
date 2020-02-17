@@ -223,6 +223,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    */
   protected function _saveTranslatedTexts()
   {
+    return;
     $lang = Zend_Registry::get('Zend_Locale');
 
     foreach ($this->_translationBuffer as $columnName => $value) {
@@ -1235,7 +1236,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     }
 
     $return = parent::_doInsert();
-    $this->_saveTranslatedTexts();
+//    $this->_saveTranslatedTexts();
 
     $item->itemId = $this->id;
     $item->itemType = $this->_table->getItemType();

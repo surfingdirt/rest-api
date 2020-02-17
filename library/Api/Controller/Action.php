@@ -335,6 +335,16 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
    */
   protected function _mapResource($key)
   {
+    $resourceName = $this->_getResourceName($key);
+    $accessorName = $resourceName . '_Accessor';
+
+    $table = new $resourceName();
+    $accessor = new $accessorName($this->_user, $this->_acl);
+
+    return array($table, $accessor);
+  }
+
+  protected function _getResourceName($key) {
     $resources = array(
       'album' => 'Album',
       'comments' => 'Comment',
@@ -346,14 +356,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     if (!isset($resources[$key])) {
       throw new Exception('Unknown resource');
     }
-
-    $resourceName = 'Api_' . $resources[$key];
-    $accessorName = $resourceName . '_Accessor';
-
-    $table = new $resourceName();
-    $accessor = new $accessorName($this->_user, $this->_acl);
-
-    return array($table, $accessor);
+    return 'Api_' . $resources[$key];
   }
 
   /**

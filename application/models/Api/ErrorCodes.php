@@ -61,6 +61,7 @@ class Api_ErrorCodes
    * GENERAL
    */
   const CONNECTION_REFUSED = 17001;
+  const BAD_METHOD = 17002;
 
   /*
    * USERS

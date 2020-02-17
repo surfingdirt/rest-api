@@ -23,19 +23,8 @@ class Routes {
       'userAlbums' => new Zend_Controller_Router_Route('/user/:id/albums/', array('controller' => 'useralbum', 'action' => 'list')),
 
       'comments' => new Zend_Controller_Router_Route('/:itemType/:itemId/comments/', array('controller' => 'comments', 'action' => 'list')),
-//      'countryRegions' => new Zend_Controller_Router_Route('/countries/:countryId/regions/', array('controller' => 'regions', 'action' => 'list')),
-//
-//      'countryLocations' => new Zend_Controller_Router_Route('/countries/:countryId/locations/', array('controller' => 'locations', 'action' => 'list')),
-//      'regionLocations' => new Zend_Controller_Router_Route('/regions/:regionId/locations/', array('controller' => 'locations', 'action' => 'list')),
-//
-//      'checkinsBySpot' => new Zend_Controller_Router_Route('/checkins/spots/:spotId/', array('controller' => 'checkins', 'action' => 'list')),
-//      'checkinsBySpotCurrent' => new Zend_Controller_Router_Route('/checkins/spot/:spotId/current/', array('controller' => 'checkins', 'action' => 'list', 'onlyCurrent' => true)),
-//      'checkinsByCountry' => new Zend_Controller_Router_Route('/checkins/countries/:countryId/', array('controller' => 'checkins', 'action' => 'list')),
-//      'checkinsByRegion' => new Zend_Controller_Router_Route('/checkins/regions/:regionId/', array('controller' => 'checkins', 'action' => 'list')),
-//      'checkinsByUser' => new Zend_Controller_Router_Route('/checkins/users/:userId/', array('controller' => 'checkins', 'action' => 'list')),
-//      'checkinsByUserCurrent' => new Zend_Controller_Router_Route('/checkins/users/:userId/current/', array('controller' => 'checkins', 'action' => 'list', 'onlyCurrent' => true)),
-//      'checkinsAroundSpot' => new Zend_Controller_Router_Route('/checkins/spots/:spotId/around/', array('controller' => 'checkins', 'action' => 'list', 'fetchAround' => true)),
-//      'checkinsAroundLocation' => new Zend_Controller_Router_Route('/checkins/around/', array('controller' => 'checkins', 'action' => 'list', 'fetchAround' => true)),
+
+      'translations' => new Zend_Controller_Router_Route('/translations/:itemType/:itemId/:field/', array('controller' => 'translation', 'action' => 'index' )),
 
       'createdata' => $dummyRoute,
       'editdata' => $dummyRoute,

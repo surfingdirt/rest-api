@@ -1929,7 +1929,6 @@ describe('Album tests', () => {
 
     test('Owner can update album title and description', async () => {
       albumClient.setUser(plainUser);
-      albumClient.setDebugBackend(true);
       const { title, description } = checkSuccess(
         await albumClient.put(updatableAlbumId, {
           title: [{ locale: 'en-US', text: 'ownerTitle' }],
@@ -2214,7 +2213,7 @@ describe('Comment tests', () => {
 
 describe ('Translation tests', () => {
   const commentClient = new ResourceClient(client, COMMENT);
-  const translationPath = `/translations/itemType/comment/itemId/${translatedComment.id}/field/content`;
+  const translationPath = `/translations/comments/${translatedComment.id}/content`;
 
   test('Manage comment translations', async () => {
     const updatedFrench = 'updatedFrench';
@@ -2224,12 +2223,11 @@ describe ('Translation tests', () => {
     expect(enContent).toEqual([{ locale: 'en-US', text: translatedComment.enContent }]);
 
     // Add
-    const addPayload = [{ locale: 'fr-FR', text: translatedComment.frContent }];
+    const addPayload = { content: { locale: 'fr-FR', text: translatedComment.frContent }};
     checkSuccess(await client.post({
       path: translationPath,
       data: addPayload,
       token: null,
-      debugBackend: true,
     }));
     const { content: enAndFrContent } = checkSuccess(await commentClient.get(translatedComment.id));
     expect(enAndFrContent).toEqual([
@@ -2238,7 +2236,7 @@ describe ('Translation tests', () => {
     ]);
 
     // Update
-    const updatePayload = [{ locale: 'fr-FR', text: updatedFrench }];
+    const updatePayload = { content: { locale: 'fr-FR', text: updatedFrench } };
     checkSuccess(await client.put({
       path: translationPath,
       data: updatePayload,
@@ -2251,7 +2249,7 @@ describe ('Translation tests', () => {
     ]);
 
     // Remove
-    const removedFrPayload = [{ locale: 'fr-FR', text: null }];
+    const removedFrPayload = { content: { locale: 'fr-FR', text: null } };
     checkSuccess(await client.put({
       path: translationPath,
       data: removedFrPayload,
