@@ -43,6 +43,11 @@ abstract class Data_Form extends Lib_Form implements Data_Form_DataInterface
     $this->_setup();
   }
 
+  public function setDescription($value)
+  {
+    // Stub to avoid calling the parent when the form is created with $data passed into $options
+  }
+
   /**
    * Returns a list of form elements that match the database columns
    *

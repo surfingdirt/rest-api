@@ -69,12 +69,13 @@ class Lib_Form_Element_Users extends Zend_Form_Element_Text
 
   public function buildUserList($glue = ',')
   {
+    $list = null;
     if (ALLOW_CACHE) {
       $cacheId = User::VALID_USER_LIST_CACHE_ID;
       $cache = Globals::getGlobalCache();
+      $list = $cache->load($cacheId);
     }
-    if (ALLOW_CACHE || !($list = $cache->load($cacheId))) {
-
+    if (!$list) {
       $table = new Api_User();
       $statusList = array(
         User::STATUS_ADMIN,

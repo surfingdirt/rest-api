@@ -81,9 +81,4 @@ class Lib_Form_Element_Dpt extends Lib_Form_Element_Data
   {
     return $this->_hint;
   }
-
-  public function setHint($hint)
-  {
-    $this->_hint = $hint;
-  }
 }

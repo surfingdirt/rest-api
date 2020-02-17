@@ -7,8 +7,7 @@ class Lib_Form_Contact extends Lib_Form
     parent::__construct();
 
     $message = new Lib_Form_Element_Textarea('message');
-    $message->setHint('contactMessageHint')
-      ->setLabel(ucfirst($this->_translator->translate('message')))
+    $message->setLabel(ucfirst($this->_translator->translate('message')))
       ->setRequired(true)
       ->addValidator('notEmpty');
 

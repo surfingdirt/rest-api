@@ -1,24 +1,9 @@
 <?php
 
-class Data_Form_Element_Description extends Lib_Form_Element_TinyMce
+class Data_Form_Element_Description extends Lib_Form_Element_Translated
 {
-  protected $_form;
-
-  protected $_isAdvancedByDefault = false;
-
-  public function __construct($form, $options = null, $required = true)
+  public function __construct($form, $options = null, $required = false)
   {
-    $this->_form = $form;
-
-    parent::__construct('description', $options);
-    $this->setLabel(ucfirst(Globals::getTranslate()->_('description')))
-      ->setRequired($required)
-      ->addPrefixPath('Lib_Filter', 'Lib/Filter', 'Filter');
+    parent::__construct('description', $options, $required);
   }
-
-  public function getHint()
-  {
-    return 'descriptionHint';
-  }
-
 }

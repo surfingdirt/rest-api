@@ -2,7 +2,7 @@ export const photoIdForComments = '523de4aa-3c06-45c8-8c4f-339a37d2bf83';
 
 export const singleComment = {
   id: '4c49ebde-6d4b-4dba-b3f5-f19fb7bfa23f',
-  content: 'This is comment 4',
+  content: [{ 'locale': 'en-US', 'text': 'This is comment 4'}],
   date: '2019-11-07 16:45:00',
   tone: 'tone4',
 };

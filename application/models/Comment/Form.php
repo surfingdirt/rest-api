@@ -38,8 +38,6 @@ class Comment_Form extends Data_Form
     $element = new Data_Form_Element_Content($this);
     $element->setLabel(ucfirst(Globals::getTranslate()->_('comment')));
 
-    // No hint for comments
-    $element->setHint(null);
     return $element;
   }
 

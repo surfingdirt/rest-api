@@ -10,7 +10,6 @@ class Dpt_Form_GoTo extends Lib_Form
   {
     parent::__construct();
     $dpt = new Lib_Form_Element_Dpt('dpt', true, true);
-    $dpt->setHint(null);
     if ($countryId) {
       $dpt->country = $countryId;
     }

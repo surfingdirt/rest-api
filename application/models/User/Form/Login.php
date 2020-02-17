@@ -24,7 +24,6 @@ class User_Form_Login extends Lib_Form
       ->setName('loginForm');
 
     $username = new Lib_Form_Element_Username();
-    $username->setHint('');
     $password = new Lib_Form_Element_Password();
 
     $remember = new Zend_Form_Element_Checkbox(User::INPUT_REMEMBER);

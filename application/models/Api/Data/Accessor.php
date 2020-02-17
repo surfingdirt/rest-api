@@ -263,7 +263,11 @@ abstract class Api_Data_Accessor
         if (!isset($data[$attrFormName])) {
           continue;
         }
-        $object->$attrDBName = $data[$attrFormName];
+        if (in_array($attrFormName, ['content', 'description', 'title'])) {
+          $object->$attrDBName = json_encode($data[$attrFormName]);
+        } else {
+          $object->$attrDBName = $data[$attrFormName];
+        }
       }
       $object->save();
     }
@@ -277,6 +281,7 @@ abstract class Api_Data_Accessor
   {
     $attributes = $this->getUpdateAttributes($object);
     $form = $object->getForm($this->_user, $this->_acl, $data);
+    // TODO: here we need to be careful about translated fields: keep old keys, add new ones. just a plain merge is too blunt
     $data = array_merge($form->populateFromDatabaseData($object->toArray()), $data);
     if (!$form->isValid($data)) {
       $errors = $form->getNonEmptyErrors();
@@ -311,6 +316,9 @@ abstract class Api_Data_Accessor
     }
 
     $target = isset($formattedData[$attrFormName]) ? $formattedData[$attrFormName] : $rawData[$attrFormName];
+    if (in_array($attrDBName, ['content', 'description', 'title'])) {
+      $target = json_encode($target);
+    }
     $object->$attrDBName = $target;
   }
 }

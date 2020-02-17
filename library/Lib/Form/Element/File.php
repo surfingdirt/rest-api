@@ -44,11 +44,6 @@ class Lib_Form_Element_File extends Zend_Form_Element_File
         }
 	}
 	
-	public function setHint($hint)
-	{
-		$this->_hint = $hint;
-	}
-	
 	public function getHint()
 	{
 		return $this->_hint;

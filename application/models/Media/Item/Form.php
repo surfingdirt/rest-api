@@ -76,7 +76,7 @@ abstract class Media_Item_Form extends Data_Form
 
   public function getDescription()
   {
-    $element = new Data_Form_Element_Description($this, null, false);
+    $element = new  Data_Form_Element_Description($this, null, false);
     return $element;
   }
 

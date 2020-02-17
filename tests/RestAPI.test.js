@@ -727,8 +727,8 @@ describe('Media tests', () => {
       await mediaClient.post({
         mediaType: PHOTO,
         albumId: user.albumId,
-        title: 'A new photo title',
-        description: 'A new photo description',
+        title: [{ locale: 'en-US', text: 'A new video title'}],
+        description: [{ locale: 'en-US', text: 'A new video description'}],
         imageId: imageId,
         storageType: 0,
       }),
@@ -744,8 +744,8 @@ describe('Media tests', () => {
         mediaType: VIDEO,
         mediaSubType: YOUTUBE,
         albumId: user.albumId,
-        title: 'A new video title',
-        description: 'A new video description',
+        title: [{ locale: 'en-US', text: 'A new video title'}],
+        description: [{ locale: 'en-US', text: 'A new video description'}],
         vendorKey,
         storageType: 0,
       }),
@@ -835,7 +835,7 @@ describe('Media tests', () => {
       await mediaClient.clearToken();
       checkUnauthorised(
         await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title',
+          title: [{ locale: 'en-US', text: 'Modified title'}],
         }),
       );
     });
@@ -844,7 +844,7 @@ describe('Media tests', () => {
       await mediaClient.setUser(writerUser);
       checkUnauthorised(
         await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title',
+          title: [{ locale: 'en-US', text: 'Modified title'}],
         }),
       );
     });
@@ -854,30 +854,30 @@ describe('Media tests', () => {
       await mediaClient.get(invalidPhoto.id);
       const body = checkSuccess(
         await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title',
+          title: [{ locale: 'en-US', text: 'Modified title'}],
         }),
       );
-      expect(body.title).toEqual('Modified title');
+      expect(body.title).toEqual([{ locale: 'en-US', text: 'Modified title'}]);
     });
 
     test('Editor can PUT', async () => {
       await mediaClient.setUser(editorUser);
       const body = checkSuccess(
         await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title2',
+          title: [{ locale: 'en-US', text: 'Modified title2'}],
         }),
       );
-      expect(body.title).toEqual('Modified title2');
+      expect(body.title).toEqual([{ locale: 'en-US', text: 'Modified title2'}]);
     });
 
     test('Admin can PUT', async () => {
       await mediaClient.setUser(adminUser);
       const body = checkSuccess(
         await mediaClient.put(invalidPhoto.id, {
-          title: 'Modified title3',
+          title: [{ locale: 'en-US', text: 'Modified title3'}],
         }),
       );
-      expect(body.title).toEqual('Modified title3');
+      expect(body.title).toEqual([{ locale: 'en-US', text: 'Modified title3'}]);
     });
   });
 
@@ -895,8 +895,8 @@ describe('Media tests', () => {
             await mediaClient.post({
               mediaType: PHOTO,
               albumId: plainUser.albumId,
-              title: 'A new photo title',
-              description: 'A new photo description',
+              title: [{ locale: 'en-US', text: 'A new video title'}],
+              description: [{ locale: 'en-US', text: 'A new video description'}],
               imageId: existingImageId,
               storageType: 0,
             }),
@@ -911,8 +911,8 @@ describe('Media tests', () => {
             await mediaClient.post({
               mediaType: PHOTO,
               albumId: plainUser.albumId,
-              title: 'A new photo title',
-              description: 'A new photo description',
+              title: [{ locale: 'en-US', text: 'A new video title'}],
+              description: [{ locale: 'en-US', text: 'A new video description'}],
               imageId: existingImageId,
               storageType: 0,
             }),
@@ -924,8 +924,8 @@ describe('Media tests', () => {
             await mediaClient.post({
               mediaType: PHOTO,
               albumId: plainUser.albumId,
-              title: 'A new photo title',
-              description: 'A new photo description',
+              title: { locale: 'en-US', text: 'A new video title'},
+              description: { locale: 'en-US', text: 'A new video description'},
               imageId: existingImageId,
               storageType: 0,
             }),
@@ -953,8 +953,8 @@ describe('Media tests', () => {
             await mediaClient.post({
               mediaType: PHOTO,
               albumId: plainUserStaticAlbum.id,
-              title: 'A new photo title',
-              description: 'A new photo description',
+              title: [{ locale: 'en-US', text: 'A new video title'}],
+              description: [{ locale: 'en-US', text: 'A new video description'}],
               imageId: secondExistingImageId,
               storageType: 0,
             }),
@@ -972,8 +972,8 @@ describe('Media tests', () => {
             await mediaClient.post({
               mediaType: PHOTO,
               albumId: plainUserStaticAlbum.id,
-              title: 'A new photo title',
-              description: 'A new photo description',
+              title: [{ locale: 'en-US', text: 'A new video title'}],
+              description: [{ locale: 'en-US', text: 'A new video description'}],
               imageId: fourthExistingImageId,
               storageType: 0,
             }),
@@ -998,8 +998,8 @@ describe('Media tests', () => {
               mediaType: PHOTO,
               imageId: 'badImageId',
               albumId: plainUser.albumId,
-              title: 'A failing photo title',
-              description: 'A failing photo description',
+              title: [{ locale: 'en-US', text: 'A failing photo title'}],
+              description: [{ locale: 'en-US', text: 'A failing photo description'}],
               storageType: 0,
             }),
           );
@@ -1013,8 +1013,8 @@ describe('Media tests', () => {
               mediaType: PHOTO,
               imageId: notPostedImageId,
               albumId: aggregateAlbum.id,
-              title: 'A failing photo title',
-              description: 'A failing photo description',
+              title: [{ locale: 'en-US', text: 'A failing photo title'}],
+              description: [{ locale: 'en-US', text: 'A failing photo description'}],
               storageType: 0,
             }),
           );
@@ -1028,8 +1028,8 @@ describe('Media tests', () => {
               mediaType: PHOTO,
               imageId: notPostedImageId,
               albumId: editorUserStaticPrivateAlbum.id,
-              title: 'A failing photo title',
-              description: 'A failing photo description',
+              title: [{ locale: 'en-US', text: 'A failing photo title'}],
+              description: [{ locale: 'en-US', text: 'A failing photo description'}],
               storageType: 0,
             }),
           );
@@ -1043,8 +1043,8 @@ describe('Media tests', () => {
               mediaType: PHOTO,
               imageId: notPostedImageId,
               albumId: 'nachoAlbum',
-              title: 'A failing photo title',
-              description: 'A failing photo description',
+              title: [{ locale: 'en-US', text: 'A failing photo title'}],
+              description: [{ locale: 'en-US', text: 'A failing photo description'}],
               storageType: 0,
             }),
           );
@@ -1058,8 +1058,8 @@ describe('Media tests', () => {
               mediaType: PHOTO,
               imageId: notPostedImageId,
               albumId: plainUser.albumId,
-              title: 'A failing photo title',
-              description: 'A failing photo description',
+              title: [{ locale: 'en-US', text: 'A failing photo title'}],
+              description: [{ locale: 'en-US', text: 'A failing photo description'}],
               storageType: 27,
             }),
           );
@@ -1090,12 +1090,12 @@ describe('Media tests', () => {
           await mediaClient.setUser(plainUser);
           const body = checkSuccess(
             await mediaClient.put(photo.id, {
-              title: 'a new title',
-              description: 'a new description',
+              title: [{ locale: 'en-US', text: 'a new title'}],
+              description: [{ locale: 'en-US', text: 'a new description'}],
             }),
           );
-          expect(body.title).toEqual('a new title');
-          expect(body.description).toEqual('a new description');
+          expect(body.title.text).toEqual('a new title');
+          expect(body.description.text).toEqual('a new description');
         });
       });
 
@@ -1164,8 +1164,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: '1PcGJIjhQjg',
               albumId: plainUser.albumId,
-              title: 'A new YouTube video title',
-              description: 'A new YouTube video description',
+              title: [{ locale: 'en-US', text: 'A new YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A new YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1182,8 +1182,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: '1PcGJIjhQjg',
               albumId: plainUser.albumId,
-              title: 'A new YouTube video title',
-              description: 'A new YouTube video description',
+              title: [{ locale: 'en-US', text: 'A new YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A new YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1202,8 +1202,8 @@ describe('Media tests', () => {
               height: 456,
               vendorKey: '1PcGJIjhQjg',
               albumId: plainUser.albumId,
-              title: 'A new YouTube video title',
-              description: 'A new YouTube video description',
+              title: [{ locale: 'en-US', text: 'A new YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A new YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1224,8 +1224,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: 'kmWSGtyfDbA',
               albumId: plainUser.albumId,
-              title: 'A new YouTube video title',
-              description: 'A new YouTube video description',
+              title: [{ locale: 'en-US', text: 'A new YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A new YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1238,8 +1238,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: 'kmWSGtyfDbA',
               albumId: plainUser.albumId,
-              title: 'A dupe YouTube video title',
-              description: 'A dupe YouTube video description',
+              title: [{ locale: 'en-US', text: 'A new YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A new YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1256,8 +1256,8 @@ describe('Media tests', () => {
               mediaSubType: VIMEO,
               vendorKey: '16567910',
               albumId: plainUser.albumId,
-              title: 'A new Vimeo video title',
-              description: 'A new Vimeo video description',
+              title: [{ locale: 'en-US', text: 'A new Vimeo video title'}],
+              description: [{ locale: 'en-US', text: 'A new Vimeo video description'}],
               storageType: 0,
             }),
           );
@@ -1274,8 +1274,8 @@ describe('Media tests', () => {
               mediaSubType: FACEBOOK,
               vendorKey: 'showhey.miyata/videos/1854604844577137',
               albumId: plainUser.albumId,
-              title: 'A new Facebook video title',
-              description: 'A new Facebook video description',
+              title: [{ locale: 'en-US', text: 'A new Facebook video title'}],
+              description: [{ locale: 'en-US', text: 'A new Facebook video description'}],
               storageType: 0,
             }),
           );
@@ -1292,8 +1292,8 @@ describe('Media tests', () => {
               mediaSubType: DAILYMOTION,
               vendorKey: 'x1buew',
               albumId: plainUser.albumId,
-              title: 'A new Dailymotion video title',
-              description: 'A new Dailymotion video description',
+              title: [{ locale: 'en-US', text: 'A new Dailymotion video title'}],
+              description: [{ locale: 'en-US', text: 'A new Dailymotion video description'}],
               storageType: 0,
             }),
           );
@@ -1310,8 +1310,8 @@ describe('Media tests', () => {
               mediaSubType: INSTAGRAM,
               vendorKey: 'Bks-3LhgiDQ',
               albumId: plainUser.albumId,
-              title: 'A new Instagram video title',
-              description: 'A new Instagram video description',
+              title: [{ locale: 'en-US', text: 'A new Instagram video title'}],
+              description: [{ locale: 'en-US', text: 'A new Instagram video description'}],
               storageType: 0,
             }),
           );
@@ -1328,8 +1328,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: 'RoAV-FSDGlA',
               albumId: plainUserStaticAlbum.id,
-              title: 'A failing YouTube video title',
-              description: 'A failing YouTube video description',
+              title: [{ locale: 'en-US', text: 'A failing YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A failing YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1347,8 +1347,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: '1PcGJIjhQjg',
               albumId: editorUserStaticPublicAlbum.id,
-              title: 'A successful YouTube video title',
-              description: 'A successful YouTube video description',
+              title: [{ locale: 'en-US', text: 'A successful YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A successful YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1364,8 +1364,8 @@ describe('Media tests', () => {
               mediaType: VIDEO,
               mediaSubType: 'sds',
               albumId: plainUser.albumId,
-              title: 'A new video title',
-              description: 'A new video description',
+              title: [{ locale: 'en-US', text: 'A new YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A new YouTube video description'}],
               vendorKey: '1PcGJIjhQjg',
               storageType: 0,
             }),
@@ -1382,8 +1382,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: 'badKey',
               albumId: plainUser.albumId,
-              title: 'A failing YouTube video title',
-              description: 'A failing YouTube video description',
+              title: [{ locale: 'en-US', text: 'A failing YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A failing YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1399,8 +1399,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: '1PcGJIjhQjg',
               albumId: plainUser.albumId,
-              title: 'A failing YouTube video title',
-              description: 'A failing YouTube video description',
+              title: [{ locale: 'en-US', text: 'A failing YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A failing YouTube video description'}],
               storageType: 27,
             }),
           );
@@ -1416,8 +1416,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: '1PcGJIjhQjg',
               albumId: aggregateAlbum.id,
-              title: 'A failing YouTube video title',
-              description: 'A failing YouTube video description',
+              title: [{ locale: 'en-US', text: 'A failing YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A failing YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1433,8 +1433,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: '1PcGJIjhQjg',
               albumId: editorUserStaticPrivateAlbum.id,
-              title: 'A failing YouTube video title',
-              description: 'A failing YouTube video description',
+              title: [{ locale: 'en-US', text: 'A failing YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A failing YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1450,8 +1450,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: '1PcGJIjhQjg',
               albumId: 'nachoalbum',
-              title: 'A failing YouTube video title',
-              description: 'A failing YouTube video description',
+              title: [{ locale: 'en-US', text: 'A failing YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A failing YouTube video description'}],
               storageType: 0,
             }),
           );
@@ -1467,8 +1467,8 @@ describe('Media tests', () => {
               mediaSubType: YOUTUBE,
               vendorKey: '1PcGJIjhQjg',
               albumId: plainUser.albumId,
-              title: 'A failing YouTube video title',
-              description: 'A failing YouTube video description',
+              title: [{ locale: 'en-US', text: 'A failing YouTube video title'}],
+              description: [{ locale: 'en-US', text: 'A failing YouTube video description'}],
               storageType: 27,
             }),
           );
@@ -1610,8 +1610,13 @@ describe('Album tests', () => {
 
   const createStaticAlbum = async (user, data) => {
     await albumClient.setUser(user);
-    const body = checkSuccess(await albumClient.postFormData(data));
-    return body;
+    try {
+      const body = checkSuccess(await albumClient.post(data));
+      return body;
+    } catch (e) {
+      console.error(e);
+      throw(e);
+    }
   };
 
   const createUser = async (username, email) => {
@@ -1638,12 +1643,17 @@ describe('Album tests', () => {
 
     test('Guest user cannot create static album', async () => {
       albumClient.clearToken();
-      checkUnauthorised(await albumClient.post({ title: 'will not work' }));
+      checkUnauthorised(await albumClient.post({
+        title: [{ locale: 'en-US', text: 'will not work'}],
+      }));
     });
 
     test('Logged in user can create static album', async () => {
       albumClient.setUser(plainUser);
-      checkSuccess(await albumClient.post({ title: 'will work', description: 'ok' }));
+      checkSuccess(await albumClient.post({
+        title: [{ locale: 'en-US', text: 'will work'}],
+        description: [{ locale: 'en-US', text: 'ok'}],
+      }));
     });
 
     test('Title is mandatory but not description', async () => {
@@ -1651,14 +1661,19 @@ describe('Album tests', () => {
       const body1 = checkBadRequest(await albumClient.post({}));
       expect(body1.errors).toEqual({ title: ['notEmptyInvalid'] });
 
-      const body2 = checkBadRequest(await albumClient.post({ title: '' }));
-      expect(body2.errors).toEqual({ title: ['isEmpty'] });
+      const body2 = checkBadRequest(await albumClient.post({
+        title: [{ locale: 'en-US', text: ''}],
+      }));
+      expect(body2.errors).toEqual({ title: ['emptyText'] });
     });
 
     test('Plain user can create private albums', async () => {
       albumClient.setUser(plainUser);
       const { albumContributions, albumType } = checkSuccess(
-        await albumClient.post({ title: 'Album for actions', albumContributions: 'private' }),
+        await albumClient.post({
+          title: [{ locale: 'en-US', text: 'will Album for actions'}],
+          albumContributions: 'private'
+        }),
       );
 
       expect(albumContributions).toEqual('private');
@@ -1669,7 +1684,7 @@ describe('Album tests', () => {
       albumClient.setUser(plainUser);
       const { albumContributions, albumType } = checkSuccess(
         await albumClient.post({
-          title: 'Album for actions - public',
+          title: [{ locale: 'en-US', text: 'Album for actions - public'}],
           albumContributions: 'public',
         }),
       );
@@ -1690,8 +1705,8 @@ describe('Album tests', () => {
           mediaType: VIDEO,
           mediaSubType: YOUTUBE,
           albumId: submitter.albumId,
-          title: 'A new video title',
-          description: 'A new video description',
+          title: [{ locale: 'en-US', text: 'A new video title'}],
+          description: [{ locale: 'en-US', text: 'A new video description'}],
           vendorKey,
           users: users,
           storageType: 0,
@@ -1709,8 +1724,8 @@ describe('Album tests', () => {
           mediaSubType: YOUTUBE,
           vendorKey,
           albumId,
-          title: 'A new video title',
-          description: 'A new video description',
+          title: [{ locale: 'en-US', text: 'A new video title'}],
+          description: [{ locale: 'en-US', text: 'A new video description'}],
           users: [],
           storageType: 0,
         }),
@@ -1760,7 +1775,9 @@ describe('Album tests', () => {
     });
 
     test('Album content can be sorted and/or paginated', async () => {
-      const album = await createStaticAlbum(plainUser, { title: 'Album for sorting' });
+      const album = await createStaticAlbum(plainUser, {
+        title: [{ locale: 'en-US', text: 'Album for sorting' }],
+      });
       await postVideoWithToStaticAlbum(plainUser, '123', album.id);
       await postVideoWithToStaticAlbum(plainUser, '456', album.id);
       await postVideoWithToStaticAlbum(plainUser, '789', album.id);
@@ -1823,7 +1840,10 @@ describe('Album tests', () => {
     test("Private simple album can't be added to (except by owner and admin/editor)", async () => {
       albumClient.setUser(plainUser);
       const { id: albumId, albumContributions, albumType } = checkSuccess(
-        await albumClient.post({ title: 'Album for actions', albumContributions: 'private' }),
+        await albumClient.post({
+          title: [{ locale: 'en-US', text: 'Album for actions'}],
+          albumContributions: 'private'
+        }),
       );
 
       expect(albumContributions).toEqual('private');
@@ -1854,7 +1874,7 @@ describe('Album tests', () => {
 
     test('Public simple album can be added to (except by guest)', async () => {
       const { id: albumId } = await createStaticAlbum(plainUser, {
-        title: 'Album for actions',
+        title: [{ locale: 'en-US', text: 'Album for actions'}],
         albumContributions: 'public',
       });
 
@@ -1891,7 +1911,7 @@ describe('Album tests', () => {
 
     beforeAll(async () => {
       const body = await createStaticAlbum(plainUser, {
-        title: 'Album for updates',
+        title: [{ locale: 'en-US', text: 'Album for updates' }],
       });
 
       updatableAlbumId = body.id;
@@ -1909,41 +1929,42 @@ describe('Album tests', () => {
 
     test('Owner can update album title and description', async () => {
       albumClient.setUser(plainUser);
+      albumClient.setDebugBackend(true);
       const { title, description } = checkSuccess(
         await albumClient.put(updatableAlbumId, {
-          title: 'ownerTitle',
-          description: 'ownerDescription',
+          title: [{ locale: 'en-US', text: 'ownerTitle' }],
+          description: [{ locale: 'en-US', text: 'ownerDescription' }],
         }),
       );
 
-      expect(title).toEqual('ownerTitle');
-      expect(description).toEqual('ownerDescription');
+      expect(title).toEqual([{'locale': 'en-US', 'text': 'ownerTitle' }]);
+      expect(description).toEqual([{'locale': 'en-US', 'text': 'ownerDescription' }]);
     });
 
     test('Editor can update album title and description', async () => {
       albumClient.setUser(editorUser);
       const { title, description } = checkSuccess(
         await albumClient.put(updatableAlbumId, {
-          title: 'editorTitle',
-          description: 'editorDescription',
+          title: [{ locale: 'en-US', text: 'editorTitle' }],
+          description: [{ locale: 'en-US', text: 'editorDescription' }],
         }),
       );
 
-      expect(title).toEqual('editorTitle');
-      expect(description).toEqual('editorDescription');
+      expect(title).toEqual([{'locale': 'en-US', 'text': 'editorTitle' }]);
+      expect(description).toEqual([{'locale': 'en-US', 'text': 'editorDescription' }]);
     });
 
     test('Admin can update album title and description', async () => {
       albumClient.setUser(adminUser);
       const { title, description } = checkSuccess(
         await albumClient.put(updatableAlbumId, {
-          title: 'adminTitle',
-          description: 'adminDescription',
+          title: [{ locale: 'en-US', text: 'adminTitle' }],
+          description: [{ locale: 'en-US', text: 'adminDescription' }],
         }),
       );
 
-      expect(title).toEqual('adminTitle');
-      expect(description).toEqual('adminDescription');
+      expect(title).toEqual([{'locale': 'en-US', 'text': 'adminTitle' }]);
+      expect(description).toEqual([{'locale': 'en-US', 'text': 'adminDescription' }]);
     });
   });
 
@@ -1956,7 +1977,7 @@ describe('Album tests', () => {
 
     test('Non-empty static album cannot be deleted', async () => {
       const { id: albumId } = await createStaticAlbum(plainUser, {
-        title: 'Static album for delete',
+        title: [{ locale: 'en-US', text: 'Static album for delete' }],
       });
 
       const mediaClient = new ResourceClient(client, MEDIA);
@@ -1967,8 +1988,8 @@ describe('Album tests', () => {
           mediaType: VIDEO,
           mediaSubType: YOUTUBE,
           albumId: albumId,
-          title: 'A new video title',
-          description: 'A new video description',
+          title: [{ locale: 'en-US', text: 'A new video title'}],
+          description: [{ locale: 'en-US', text: 'A new video description'}],
           vendorKey: '1PcGJIjhQjg',
           storageType: 0,
         }),
@@ -1981,7 +2002,7 @@ describe('Album tests', () => {
 
     test('Guest and writer cannot delete empty static album', async () => {
       const { id: deletableAlbumId } = await createStaticAlbum(plainUser, {
-        title: 'Album for delete',
+        title: [{ locale: 'en-US', text: 'Album for delete' }],
       });
 
       albumClient.clearToken();
@@ -1993,7 +2014,7 @@ describe('Album tests', () => {
 
     test('Owner can delete empty static album', async () => {
       const { id: deletableAlbumId } = await createStaticAlbum(plainUser, {
-        title: 'Album for delete',
+        title: [{ locale: 'en-US', text: 'Album for delete' }],
       });
 
       albumClient.setUser(plainUser);
@@ -2002,7 +2023,7 @@ describe('Album tests', () => {
 
     test('Editor can delete empty static album', async () => {
       const { id: deletableAlbumId } = await createStaticAlbum(plainUser, {
-        title: 'Album for delete',
+        title: [{ locale: 'en-US', text: 'Album for delete' }],
       });
 
       albumClient.setUser(editorUser);
@@ -2011,7 +2032,7 @@ describe('Album tests', () => {
 
     test('Admin can delete empty static album', async () => {
       const { id: deletableAlbumId } = await createStaticAlbum(plainUser, {
-        title: 'Album for delete',
+        title: [{ locale: 'en-US', text: 'Album for delete' }],
       });
 
       albumClient.setUser(adminUser);
@@ -2039,7 +2060,7 @@ describe('Comment tests', () => {
 
     test('XSS content is NOT escaped - See application/views/script.phtml', async () => {
       const body = checkSuccess(await commentClient.get(XSSComment.id));
-      expect(body.content).toEqual("</script><script>alert('this is an XSS')</script>");
+      expect(body.content.text).toEqual("</script><script>alert('this is an XSS')</script>");
     });
 
     test('Check only allowed users can see invalid comment', async () => {
@@ -2067,18 +2088,6 @@ describe('Comment tests', () => {
       checkSuccess(await commentClient.get(invalidComment.id));
     });
 
-    test.skip('Comments can be translated', async () => {
-      // TODO: there's a problem with the way comments are cached with regards to translation
-      // TODO: make sure locale is used rather than lang
-      // We need to cache all translations at the same time, and pluck the ones we need at render time
-      const { content: enContent } = checkSuccess(await commentClient.get(translatedComment.id));
-      expect(enContent).toEqual(translatedComment.enContent);
-
-      commentClient.setLocale('fr-FR');
-      const { content: frContent } = checkSuccess(await commentClient.get(translatedComment.id));
-      expect(frContent).toEqual(translatedComment.frContent);
-    });
-
     test('List comments on an item', async () => {
       const body = checkSuccess(await videoClient.getComments(photoIdForComments));
       expect(body.length).toEqual(3);
@@ -2095,7 +2104,7 @@ describe('Comment tests', () => {
       await commentClient.setUser(plainUser);
 
       const commentPayload = {
-        content: 'This is a new comment',
+        content: { locale: 'en-US', text: 'This is a new comment' },
         itemType: 'mediaalbum',
         itemId: albumId,
         tone: 'neutral',
@@ -2111,35 +2120,54 @@ describe('Comment tests', () => {
     });
   });
 
-  describe('PUT', () => {
+  describe.skip('PUT', () => {
     test('Update existing comments', async () => {
       // All comments were posted by writerUser
-      checkUnauthorised(await commentClient.put(commentsForUpdate[0].id, { content: 'modified' }));
+      checkUnauthorised(await commentClient.put(commentsForUpdate[0].id, { content: { locale: 'en-US', text: 'modified' } }));
 
       await commentClient.setUser(bannedUser);
-      checkUnauthorised(await commentClient.put(commentsForUpdate[1].id, { content: 'modified' }));
+      checkUnauthorised(await commentClient.put(commentsForUpdate[1].id, { content: { locale: 'en-US', text: 'modified' } }));
 
       await commentClient.setUser(plainUser);
-      checkUnauthorised(await commentClient.put(commentsForUpdate[2].id, { content: 'modified' }));
+      checkUnauthorised(await commentClient.put(commentsForUpdate[2].id, { content: { locale: 'en-US', text: 'modified' } }));
 
       await commentClient.setUser(writerUser);
       const ownerBody = checkSuccess(
-        await commentClient.put(commentsForUpdate[3].id, { content: 'modified' }),
+        await commentClient.put(commentsForUpdate[3].id, { content: { locale: 'en-US', text: 'modified' } }),
       );
-      expect(ownerBody.content).toEqual('modified');
+      expect(ownerBody.content).toEqual({ locale: 'en-US', text: 'modified' });
 
       await commentClient.setUser(editorUser);
       const editorBody = checkSuccess(
-        await commentClient.put(commentsForUpdate[4].id, { content: 'modified' }),
+        await commentClient.put(commentsForUpdate[4].id, { content: { locale: 'en-US', text: 'modified' } }),
       );
-      expect(editorBody.content).toEqual('modified');
+      expect(editorBody.content).toEqual({ locale: 'en-US', text: 'modified' });
 
       await commentClient.setUser(adminUser);
       const adminBody = checkSuccess(
-        await commentClient.put(commentsForUpdate[5].id, { content: 'modified' }),
+        await commentClient.put(commentsForUpdate[5].id, { content: { locale: 'en-US', text: 'modified' } }),
       );
-      expect(adminBody.content).toEqual('modified');
+      expect(adminBody.content).toEqual({ locale: 'en-US', text: 'modified' });
     });
+
+    test('Add a translation to a comment', async () => {
+      const { content: enContent } = checkSuccess(await commentClient.get(translatedComment.id));
+      expect(enContent).toEqual([{ locale: 'en-US', text: translatedComment.enContent }]);
+
+      // TODO: put
+
+      const { content: enAndfrContent } = checkSuccess(await commentClient.get(translatedComment.id));
+      expect(enAndfrContent).toEqual(translatedComment.frContent);
+    });
+
+    test('Remove a translation from a comment', async () => {
+
+    });
+
+    test('Update a translation in a comment', async () => {
+
+    });
+
   });
 
   describe('DELETE', () => {
@@ -2179,8 +2207,8 @@ describe('Comment tests', () => {
         await photoClient.post({
           mediaType: PHOTO,
           albumId: plainUserStaticAlbum.id,
-          title: 'A new photo title',
-          description: 'A new photo description',
+          title: [{ locale: 'en-US', text: 'A new photo title' }],
+          description: [{ locale: 'en-US', text: 'A new photo description' }],
           imageId: imageId,
           storageType: 0,
         }),
@@ -2188,7 +2216,7 @@ describe('Comment tests', () => {
 
       await commentClient.setUser(writerUser);
       const commentPayload = {
-        content: 'This is a new photo comment for deletion',
+        content: [{ locale: 'en-US', text: 'This is a new photo comment for deletion' }],
         itemType: 'photo',
         itemId: newPhoto.id,
         tone: 'neutral',
