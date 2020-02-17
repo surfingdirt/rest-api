@@ -23,7 +23,7 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
   public function getTitle()
   {
     $title = $this->{$this->_titleColumn};
-    return json_decode($title, true);
+    return Lib_Translate::decodeField($title);
   }
 
   protected function _postDelete()

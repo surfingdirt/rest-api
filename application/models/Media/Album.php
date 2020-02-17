@@ -72,7 +72,9 @@ class Media_Album extends Data
 
     $title = Globals::getTranslate()->translate('albumFor');
     $title = sprintf($title, $data->getTitle());
-    $storedTitle = json_encode([DEFAULT_LOCALE => $title]);
+    $storedTitle = Lib_Translate::encodeField([
+      ['locale' => DEFAULT_LOCALE, 'text' => $title],
+    ]);
 
     $album->submitter = $data->submitter;
     $album->title = $storedTitle;
@@ -108,7 +110,9 @@ class Media_Album extends Data
 
     $title = Globals::getTranslate()->translate('albumFor');
     $title = sprintf($title, $user->getTitle());
-    $storedTitle = json_encode([DEFAULT_LOCALE => $title]);
+    $storedTitle = Lib_Translate::encodeField([
+      ['locale' => DEFAULT_LOCALE, 'text' => $title],
+    ]);
 
     $album->id = Utils::uuidV4();
     $album->submitter = $user->getId();
@@ -157,8 +161,12 @@ class Media_Album extends Data
     $album = $albumTable->fetchNew();
     $album->submitter = $user->getId();
     $album->date = $user->date;
-    $album->title = 'album for ' . $user->getTitle();
-    $album->description = 'album for ' . $user->getTitle();
+    $album->title = Lib_Translate::encodeField([
+      ['locale' => DEFAULT_LOCALE, 'text' => 'album for ' . $user->getTitle()],
+    ]);
+    $album->description = Lib_Translate::encodeField([
+      ['locale' => DEFAULT_LOCALE, 'text' => 'album for ' . $user->getTitle()],
+    ]);
     $album->userId = $user->{User::COLUMN_USERID};
     $album->albumType = self::TYPE_AGGREGATE;
     $album->albumCreation = self::CREATION_AUTOMATIC;
@@ -206,8 +214,12 @@ class Media_Album extends Data
     $album = $albumTable->fetchNew();
     $album->submitter = $data->submitter;
     $album->date = $data->date;
-    $album->title = 'album for ' . $data->getTitle();
-    $album->description = 'album for ' . $data->getTitle();
+    $album->title = Lib_Translate::encodeField([
+      ['locale' => DEFAULT_LOCALE, 'text' => 'album for ' . $user->getTitle()],
+    ]);
+    $album->description = Lib_Translate::encodeField([
+      ['locale' => DEFAULT_LOCALE, 'text' => 'album for ' . $user->getTitle()],
+    ]);
     $album->albumCreation = self::CREATION_AUTOMATIC;
     $album->albumContributions = $access;
 

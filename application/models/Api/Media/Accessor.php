@@ -230,8 +230,8 @@ class Api_Media_Accessor extends Api_Data_Accessor
       if (in_array($key, $disregardUpdates)) {
         continue;
       }
-      if (isset($data[$key]) && in_array($key, ['content', 'description', 'title'])) {
-        $dataRow->$key = json_encode($data[$key]);
+      if (isset($data[$key]) && Lib_Translate::isTranslatedField($key)) {
+        $dataRow->$key = Lib_Translate::encodeField($data[$key]);
         continue;
       }
 

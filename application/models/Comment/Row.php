@@ -115,8 +115,7 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
    */
   public function getContent()
   {
-    $content = json_decode($this->content, true);
-    return $content;
+    return Lib_Translate::decodeField($this->content);
   }
 
   /**

@@ -263,8 +263,8 @@ abstract class Api_Data_Accessor
         if (!isset($data[$attrFormName])) {
           continue;
         }
-        if (in_array($attrFormName, ['content', 'description', 'title'])) {
-          $object->$attrDBName = json_encode($data[$attrFormName]);
+        if (Lib_Translate::isTranslatedField($attrFormName)) {
+          $object->$attrDBName = Lib_Translate::encodeField($data[$attrFormName]);
         } else {
           $object->$attrDBName = $data[$attrFormName];
         }
@@ -316,8 +316,8 @@ abstract class Api_Data_Accessor
     }
 
     $target = isset($formattedData[$attrFormName]) ? $formattedData[$attrFormName] : $rawData[$attrFormName];
-    if (in_array($attrDBName, ['content', 'description', 'title'])) {
-      $target = json_encode($target);
+    if (Lib_Translate::isTranslatedField($attrDBName)) {
+      $target = Lib_Translate::encodeField($target);
     }
     $object->$attrDBName = $target;
   }

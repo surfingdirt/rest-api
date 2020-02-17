@@ -924,8 +924,8 @@ describe('Media tests', () => {
             await mediaClient.post({
               mediaType: PHOTO,
               albumId: plainUser.albumId,
-              title: { locale: 'en-US', text: 'A new video title'},
-              description: { locale: 'en-US', text: 'A new video description'},
+              title: [{ locale: 'en-US', text: 'A new video title'}],
+              description: [{ locale: 'en-US', text: 'A new video description'}],
               imageId: existingImageId,
               storageType: 0,
             }),
@@ -1094,8 +1094,8 @@ describe('Media tests', () => {
               description: [{ locale: 'en-US', text: 'a new description'}],
             }),
           );
-          expect(body.title.text).toEqual('a new title');
-          expect(body.description.text).toEqual('a new description');
+          expect(body.title).toEqual([{ locale: 'en-US', text: 'a new title'}]);
+          expect(body.description).toEqual([{ locale: 'en-US', text: 'a new description'}]);
         });
       });
 
@@ -2060,7 +2060,7 @@ describe('Comment tests', () => {
 
     test('XSS content is NOT escaped - See application/views/script.phtml', async () => {
       const body = checkSuccess(await commentClient.get(XSSComment.id));
-      expect(body.content.text).toEqual("</script><script>alert('this is an XSS')</script>");
+      expect(body.content).toEqual([{ locale: 'en-US', text: "</script><script>alert('this is an XSS')</script>" }]);
     });
 
     test('Check only allowed users can see invalid comment', async () => {
@@ -2104,7 +2104,7 @@ describe('Comment tests', () => {
       await commentClient.setUser(plainUser);
 
       const commentPayload = {
-        content: { locale: 'en-US', text: 'This is a new comment' },
+        content: [{ locale: 'en-US', text: 'This is a new comment' }],
         itemType: 'mediaalbum',
         itemId: albumId,
         tone: 'neutral',
@@ -2120,54 +2120,35 @@ describe('Comment tests', () => {
     });
   });
 
-  describe.skip('PUT', () => {
+  describe('PUT', () => {
     test('Update existing comments', async () => {
       // All comments were posted by writerUser
-      checkUnauthorised(await commentClient.put(commentsForUpdate[0].id, { content: { locale: 'en-US', text: 'modified' } }));
+      checkUnauthorised(await commentClient.put(commentsForUpdate[0].id, { content: [{ locale: 'en-US', text: 'modified' }] }));
 
       await commentClient.setUser(bannedUser);
-      checkUnauthorised(await commentClient.put(commentsForUpdate[1].id, { content: { locale: 'en-US', text: 'modified' } }));
+      checkUnauthorised(await commentClient.put(commentsForUpdate[1].id, { content: [{ locale: 'en-US', text: 'modified' }] }));
 
       await commentClient.setUser(plainUser);
-      checkUnauthorised(await commentClient.put(commentsForUpdate[2].id, { content: { locale: 'en-US', text: 'modified' } }));
+      checkUnauthorised(await commentClient.put(commentsForUpdate[2].id, { content: [{ locale: 'en-US', text: 'modified' }] }));
 
       await commentClient.setUser(writerUser);
       const ownerBody = checkSuccess(
-        await commentClient.put(commentsForUpdate[3].id, { content: { locale: 'en-US', text: 'modified' } }),
+        await commentClient.put(commentsForUpdate[3].id, { content: [{ locale: 'en-US', text: 'modified' }] }),
       );
-      expect(ownerBody.content).toEqual({ locale: 'en-US', text: 'modified' });
+      expect(ownerBody.content).toEqual([{ locale: 'en-US', text: 'modified' }]);
 
       await commentClient.setUser(editorUser);
       const editorBody = checkSuccess(
-        await commentClient.put(commentsForUpdate[4].id, { content: { locale: 'en-US', text: 'modified' } }),
+        await commentClient.put(commentsForUpdate[4].id, { content: [{ locale: 'en-US', text: 'modified' }] }),
       );
-      expect(editorBody.content).toEqual({ locale: 'en-US', text: 'modified' });
+      expect(editorBody.content).toEqual([{ locale: 'en-US', text: 'modified' }]);
 
       await commentClient.setUser(adminUser);
       const adminBody = checkSuccess(
-        await commentClient.put(commentsForUpdate[5].id, { content: { locale: 'en-US', text: 'modified' } }),
+        await commentClient.put(commentsForUpdate[5].id, { content: [{ locale: 'en-US', text: 'modified' }] }),
       );
-      expect(adminBody.content).toEqual({ locale: 'en-US', text: 'modified' });
+      expect(adminBody.content).toEqual([{ locale: 'en-US', text: 'modified' }]);
     });
-
-    test('Add a translation to a comment', async () => {
-      const { content: enContent } = checkSuccess(await commentClient.get(translatedComment.id));
-      expect(enContent).toEqual([{ locale: 'en-US', text: translatedComment.enContent }]);
-
-      // TODO: put
-
-      const { content: enAndfrContent } = checkSuccess(await commentClient.get(translatedComment.id));
-      expect(enAndfrContent).toEqual(translatedComment.frContent);
-    });
-
-    test('Remove a translation from a comment', async () => {
-
-    });
-
-    test('Update a translation in a comment', async () => {
-
-    });
-
   });
 
   describe('DELETE', () => {
@@ -2229,4 +2210,57 @@ describe('Comment tests', () => {
       checkNotFound(await commentClient.get(newComment.id));
     });
   });
+});
+
+describe ('Translation tests', () => {
+  const commentClient = new ResourceClient(client, COMMENT);
+  const translationPath = `/translations/itemType/comment/itemId/${translatedComment.id}/field/content`;
+
+  test('Manage comment translations', async () => {
+    const updatedFrench = 'updatedFrench';
+
+    // Initial
+    const { content: enContent } = checkSuccess(await commentClient.get(translatedComment.id));
+    expect(enContent).toEqual([{ locale: 'en-US', text: translatedComment.enContent }]);
+
+    // Add
+    const addPayload = [{ locale: 'fr-FR', text: translatedComment.frContent }];
+    checkSuccess(await client.post({
+      path: translationPath,
+      data: addPayload,
+      token: null,
+      debugBackend: true,
+    }));
+    const { content: enAndFrContent } = checkSuccess(await commentClient.get(translatedComment.id));
+    expect(enAndFrContent).toEqual([
+      { locale: 'en-US', text: translatedComment.enContent},
+      { locale: 'fr-FR', text: translatedComment.frContent }
+    ]);
+
+    // Update
+    const updatePayload = [{ locale: 'fr-FR', text: updatedFrench }];
+    checkSuccess(await client.put({
+      path: translationPath,
+      data: updatePayload,
+      token: null,
+    }));
+    const { content: updatedEnAndFrContent } = checkSuccess(await commentClient.get(translatedComment.id));
+    expect(updatedEnAndFrContent).toEqual([
+      { locale: 'en-US', text: translatedComment.enContent},
+      { locale: 'fr-FR', text: updatedFrench }
+    ]);
+
+    // Remove
+    const removedFrPayload = [{ locale: 'fr-FR', text: null }];
+    checkSuccess(await client.put({
+      path: translationPath,
+      data: removedFrPayload,
+      token: null,
+    }));
+    const { content: removedFrContent } = checkSuccess(await commentClient.get(translatedComment.id));
+    expect(removedFrContent).toEqual([
+      { locale: 'en-US', text: translatedComment.enContent},
+    ]);
+  });
+
 });

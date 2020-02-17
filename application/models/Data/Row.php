@@ -629,7 +629,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
   public function getTitle()
   {
     $title = $this->{$this->_titleColumn};
-    return json_decode($title, true);
+    return Lib_Translate::decodeField($title);
   }
 
   /**
@@ -639,8 +639,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    */
   public function getDescription()
   {
-    $description = json_decode($this->description, true);
-    return $description;
+    return Lib_Translate::decodeField($this->description);
   }
 
   /**

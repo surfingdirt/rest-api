@@ -163,7 +163,7 @@ class Api_User_Accessor extends Api_Data_Accessor
   protected function _addEntriesForAttribute($attr, $object, $ret)
   {
     if ($attr === 'bio') {
-      $ret[$attr] = json_decode($object->bio, true);
+      $ret[$attr] = Lib_Translate::decodeField($object->bio);
       return $ret;
     }
 
