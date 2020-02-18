@@ -121,7 +121,7 @@ class TestController extends Api_Controller_Action
             if (!is_array($existingContent)) {
               $existingContent = [];
             }
-            $content = array_merge($existingContent, [[$locale => $translation->text]]);
+            $content = array_merge($existingContent, [['locale' => $locale, 'text' => $translation->text]]);
             $item->content = json_encode($content, true);
             $item->save();
           } catch (Exception $e) {
@@ -145,7 +145,7 @@ class TestController extends Api_Controller_Action
             if (!is_array($existing)) {
               $existing = [];
             }
-            $merged = array_merge($existing, [[$locale => $translation->text]]);
+            $merged = array_merge($existing, [['locale' => $locale, 'text' => $translation->text]]);
             $item->{$column} = json_encode($merged);
 
             $item->save();
@@ -170,7 +170,7 @@ class TestController extends Api_Controller_Action
             if (!is_array($existing)) {
               $existing = [];
             }
-            $merged = array_merge($existing, [[$locale => $translation->text]]);
+            $merged = array_merge($existing, [['locale' => $locale, 'text' => $translation->text]]);
             $item->{$column} = json_encode($merged);
 
             $item->save();
@@ -195,7 +195,7 @@ class TestController extends Api_Controller_Action
             if (!is_array($existing)) {
               $existing = [];
             }
-            $merged = array_merge($existing, [[$locale => $translation->text]]);
+            $merged = array_merge($existing, [['locale' => $locale, 'text' => $translation->text]]);
             $item->{$column} = json_encode($merged);
 
             $item->save();
@@ -224,7 +224,7 @@ class TestController extends Api_Controller_Action
         $log[] = "Skipping user '$user->username' - no bio";
         continue;
       }
-      $user->bio = json_encode([[$locale => $user->bio]]);
+      $user->bio = json_encode([['locale' => $locale, 'text' => $user->bio]]);
       try {
         $user->save();
       } catch (Exception $e) {
