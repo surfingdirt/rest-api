@@ -116,11 +116,12 @@ class TestController extends Api_Controller_Action
           }
           try {
             // Comments only have 'content' columns
-            $existingContent = $item->content ? json_decode($item->content, true) : [];
+            // $existingContent = $item->content ? json_decode($item->content, true) : [];
+            $existingContent = []; // Temporary to fix array issue in db
             if (!is_array($existingContent)) {
               $existingContent = [];
             }
-            $content = array_merge($existingContent, [$locale => $translation->text]);
+            $content = array_merge($existingContent, [[$locale => $translation->text]]);
             $item->content = json_encode($content, true);
             $item->save();
           } catch (Exception $e) {
@@ -139,11 +140,12 @@ class TestController extends Api_Controller_Action
           }
           try {
             $column = $translation->type;
-            $existing = $item->{$column} ? json_decode($item->{$column}, true) : [];
+            // $existing = $item->{$column} ? json_decode($item->{$column}, true) : [];
+            $existing = []; // Temporary to fix array issue in db
             if (!is_array($existing)) {
               $existing = [];
             }
-            $merged = array_merge($existing, [$locale => $translation->text]);
+            $merged = array_merge($existing, [[$locale => $translation->text]]);
             $item->{$column} = json_encode($merged);
 
             $item->save();
@@ -163,11 +165,12 @@ class TestController extends Api_Controller_Action
           }
           try {
             $column = $translation->type;
-            $existing = $item->{$column} ? json_decode($item->{$column}, true) : [];
+            // $existing = $item->{$column} ? json_decode($item->{$column}, true) : [];
+            $existing = []; // Temporary to fix array issue in db
             if (!is_array($existing)) {
               $existing = [];
             }
-            $merged = array_merge($existing, [$locale => $translation->text]);
+            $merged = array_merge($existing, [[$locale => $translation->text]]);
             $item->{$column} = json_encode($merged);
 
             $item->save();
@@ -187,11 +190,12 @@ class TestController extends Api_Controller_Action
           }
           try {
             $column = $translation->type;
-            $existing = $item->{$column} ? json_decode($item->{$column}, true) : [];
+            //$existing = $item->{$column} ? json_decode($item->{$column}, true) : [];
+            $existing = []; // Temporary to fix array issue in db
             if (!is_array($existing)) {
               $existing = [];
             }
-            $merged = array_merge($existing, [$locale => $translation->text]);
+            $merged = array_merge($existing, [[$locale => $translation->text]]);
             $item->{$column} = json_encode($merged);
 
             $item->save();
@@ -220,7 +224,7 @@ class TestController extends Api_Controller_Action
         $log[] = "Skipping user '$user->username' - no bio";
         continue;
       }
-      $user->bio = json_encode([$locale => $user->bio]);
+      $user->bio = json_encode([[$locale => $user->bio]]);
       try {
         $user->save();
       } catch (Exception $e) {
