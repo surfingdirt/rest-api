@@ -3,7 +3,7 @@
 class Lib_Translate
 {
   public static function isTranslatedField($key) {
-    return in_array($key, ['content', 'description', 'title']);
+    return in_array($key, ['bio', 'content', 'description', 'title']);
   }
 
   public static function encodeField($content) {

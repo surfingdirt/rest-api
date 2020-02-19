@@ -128,6 +128,11 @@ class Api_User_Accessor extends Api_Data_Accessor
       $authManager = new Lib_Auth_Manager(Globals::getMainDatabase());
       $target = $authManager->makeSaltedHash($target, $object->salt);
     }
+    if (isset($rawData[$attrFormName]) && Lib_Translate::isTranslatedField($attrFormName)) {
+      $object->$attrDBName = Lib_Translate::encodeField($rawData[$attrFormName]);
+      return;
+    }
+
     $object->$attrDBName = $target;
   }
 
