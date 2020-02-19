@@ -1,6 +1,6 @@
 import {realpathSync} from 'fs';
 
-export const hostUrl = 'http://localhost:80';
+export const hostUrl = 'http://localhost:8008';
 export const JWT_SECRET = 'wouldntyouliketoknow5748right';
 export const JWT_TTL = 24 * 3600;
 export const port = 80;

@@ -21,6 +21,6 @@ services:
     volumes:
       - /Library/WebServer/Documents/www.local.wrk/RideDB:/var/www/html/
     ports:
-      - "80:80"
+      - "8007:80"
     stdin_open: true
     tty: true
