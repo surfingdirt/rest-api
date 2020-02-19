@@ -2223,7 +2223,7 @@ describe ('Translation tests', () => {
     expect(enContent).toEqual([{ locale: 'en-US', text: translatedComment.enContent }]);
 
     // Add
-    const addPayload = { content: { locale: 'fr-FR', text: translatedComment.frContent }};
+    const addPayload = { translation: { locale: 'fr-FR', text: translatedComment.frContent }};
     checkSuccess(await client.post({
       path: translationPath,
       data: addPayload,
@@ -2236,7 +2236,7 @@ describe ('Translation tests', () => {
     ]);
 
     // Update
-    const updatePayload = { content: { locale: 'fr-FR', text: updatedFrench } };
+    const updatePayload = { translation: { locale: 'fr-FR', text: updatedFrench } };
     checkSuccess(await client.put({
       path: translationPath,
       data: updatePayload,
@@ -2249,7 +2249,7 @@ describe ('Translation tests', () => {
     ]);
 
     // Remove
-    const removedFrPayload = { content: { locale: 'fr-FR', text: null } };
+    const removedFrPayload = { translation: { locale: 'fr-FR', text: null } };
     checkSuccess(await client.put({
       path: translationPath,
       data: removedFrPayload,

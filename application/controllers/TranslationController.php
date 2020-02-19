@@ -17,9 +17,9 @@ class TranslationController extends Api_Controller_Action
     $itemId = $this->_request->getParam('itemId');
     $field = $this->_request->getParam('field');
 
-    $payload = $this->_request->getParam($field);
-    $locale = $payload['locale'];
-    $text = $payload['text'];
+    $translation = $this->_request->getParam('translation');
+    $locale = $translation['locale'];
+    $text = $translation['text'];
 
     $newTranslation = [
       'locale' => $locale, 'text' => $text
