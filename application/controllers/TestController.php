@@ -123,7 +123,7 @@ class TestController extends Api_Controller_Action
             }
             $content = array_merge($existingContent, [['locale' => $locale, 'text' => $translation->text]]);
             $item->content = json_encode($content, true);
-            $item->save();
+            $item->save(true);
           } catch (Exception $e) {
             $log[] = "Failed to process comment with id '$translation->id': ".$e->getMessage();
           }
@@ -148,7 +148,7 @@ class TestController extends Api_Controller_Action
             $merged = array_merge($existing, [['locale' => $locale, 'text' => $translation->text]]);
             $item->{$column} = json_encode($merged);
 
-            $item->save();
+            $item->save(true);
           } catch (Exception $e) {
             $log[] = "Failed to process album with id '$translation->id': ".$e->getMessage();
           }
@@ -173,7 +173,7 @@ class TestController extends Api_Controller_Action
             $merged = array_merge($existing, [['locale' => $locale, 'text' => $translation->text]]);
             $item->{$column} = json_encode($merged);
 
-            $item->save();
+            $item->save(true);
           } catch (Exception $e) {
             $log[] = "Failed to process photo with id '$translation->id': ".$e->getMessage();
           }
@@ -198,7 +198,7 @@ class TestController extends Api_Controller_Action
             $merged = array_merge($existing, [['locale' => $locale, 'text' => $translation->text]]);
             $item->{$column} = json_encode($merged);
 
-            $item->save();
+            $item->save(true);
           } catch (Exception $e) {
             $log[] = "Failed to process video with id '$translation->id': ".$e->getMesage();
           }
