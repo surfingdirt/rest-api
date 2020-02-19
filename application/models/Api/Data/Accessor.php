@@ -281,8 +281,7 @@ abstract class Api_Data_Accessor
   {
     $attributes = $this->getUpdateAttributes($object);
     $form = $object->getForm($this->_user, $this->_acl, $data);
-    // TODO: here we need to be careful about translated fields: keep old keys, add new ones. just a plain merge is too blunt
-    $data = array_merge($form->populateFromDatabaseData($object->toArray()), $data);
+    $data = $this->_mergeDataForUpdate($form->populateFromDatabaseData($object->toArray()), $data);
     if (!$form->isValid($data)) {
       $errors = $form->getNonEmptyErrors();
       return $errors;
@@ -294,6 +293,26 @@ abstract class Api_Data_Accessor
     }
     $object->save();
     return array();
+  }
+
+  protected function _mergeDataForUpdate($existingData, $newData) {
+    $ret = [];
+    foreach($existingData as $key => $existing) {
+      // Keep existing data
+      $ret[$key] = $existing;
+      if (isset($newData[$key])) {
+        if (Lib_Translate::isTranslatedField($key)) {
+          // We're changing the meaning of the content: wipe out everything but the new content
+          // No need for this branch in the end, but the comment is useful
+          $ret[$key] = $newData[$key];
+        } else {
+          // Overwrite with new one
+          $ret[$key] = $newData[$key];
+        }
+      }
+
+    }
+    return $ret;
   }
 
   public function deleteObject($object)

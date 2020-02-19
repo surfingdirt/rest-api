@@ -8,6 +8,7 @@ class Lib_Validate_Translated extends Zend_Validate_Abstract
   const NOT_TEXT = 'notText';
   const UNSUPPORTED_LOCALE = 'unsupportedLocale';
   const WRONG_FORMAT = 'wrongFormat';
+  const MISSING_ONE_ARRAY_LEVEL = 'missingOneArrayLevel';
 
   public function __construct($textMustNotBeEmpty = false) {
     $this->_textMustNotBeEmpty = $textMustNotBeEmpty;
@@ -21,6 +22,11 @@ class Lib_Validate_Translated extends Zend_Validate_Abstract
     }
 
     foreach ($value as $entry) {
+      if (!is_array($entry)) {
+        $this->_error(self::MISSING_ONE_ARRAY_LEVEL, json_encode($entry));
+        return false;
+      }
+
       if (!isset($entry['locale'])) {
         $this->_error(self::MISSING_LOCALE, json_encode($entry));
         return false;
