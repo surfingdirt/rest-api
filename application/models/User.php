@@ -5,6 +5,7 @@ class User extends Cache_Object
   const ITEM_TYPE = 'user';
   const ALBUM_KEYNAME = 'user';
   const VALID_USER_LIST_CACHE_ID = 'validUsers';
+  const USER_ALBUM_CACHE_ID_PART = 'userAlbum';
 
   protected $_name = Constants_TableNames::USER;
 
@@ -124,6 +125,16 @@ class User extends Cache_Object
    * @var array
    */
   protected $_dependentTables = array('Spot', 'News', 'Article', 'Trick', 'Media', 'User_Notification', 'Blog', 'Facebook_User');
+
+  public static function getUserAlbumCacheId($userId)
+  {
+    return self::USER_ALBUM_CACHE_ID_PART . '_' . self::getIdForCache($userId);
+  }
+
+  public static function getIdForCache($id)
+  {
+    return str_replace('-', '', $id);
+  }
 
   /**
    * Get the cache for this object

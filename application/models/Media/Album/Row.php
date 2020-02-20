@@ -153,6 +153,7 @@ abstract class Media_Album_Row extends Data_Row
     $return = parent::_getCacheIdsForClear();
     $return[] = $this->getItemsCacheId();
     $return[] = Api_Album::ALBUM_LIST_CACHE_ID;
+    $return[] = User::getUserAlbumCacheId($this->submitter);
     return $return;
   }
 

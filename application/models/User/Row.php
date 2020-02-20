@@ -249,7 +249,20 @@ class User_Row extends Zend_Db_Table_Row implements Zend_Acl_Role_Interface,
    */
   public function getAlbum()
   {
-    $album = Media_Album_Factory::buildAggregateUserAlbum($this);
+    $cache = $this->getCache();
+    $cacheId = User::getUserAlbumCacheId($this->getId());
+    $album = null;
+
+    if (ALLOW_CACHE) {
+      $album = $cache->load($cacheId);
+    }
+    if (!$album) {
+      $album = Media_Album_Factory::buildAggregateUserAlbum($this);
+    }
+    if (ALLOW_CACHE) {
+      $cache->save($album, $cacheId);
+    }
+
     return $album;
   }
 
