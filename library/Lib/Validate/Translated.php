@@ -16,7 +16,7 @@ class Lib_Validate_Translated extends Zend_Validate_Abstract
 
   public function isValid($value)
   {
-    if (!is_array($value)) {
+    if ($value && !is_array($value)) {
       $this->_error(self::WRONG_FORMAT, json_encode($value));
       return false;
     }
