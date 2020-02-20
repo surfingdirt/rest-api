@@ -1,4 +1,4 @@
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 /*!40101 SET SQL_MODE=''*/;
 
@@ -35,7 +35,7 @@ CREATE TABLE `images` (
   `width` int(11) NOT NULL,
   `height` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `item_views` */
 
@@ -50,7 +50,7 @@ CREATE TABLE `item_views` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `item` (`itemId`,`itemType`),
   KEY `date` (`lastView`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `items` */
 
@@ -68,7 +68,7 @@ CREATE TABLE `items` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `item` (`date`,`itemId`,`itemType`) USING BTREE,
   KEY `parentItemId` (`parentItemId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `media_album_aggregations`;
 
@@ -79,7 +79,7 @@ CREATE TABLE `media_album_aggregations` (
   `albumId` varchar(36) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `Index_2` (`albumId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `media_albums` */
 
@@ -113,7 +113,7 @@ CREATE TABLE `media_albums_items` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `item` (`itemType`,`itemId`),
   UNIQUE KEY `album` (`albumId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `media_items` */
 
@@ -150,7 +150,7 @@ CREATE TABLE `media_items_users` (
   `userId` varchar(36) NOT NULL,
   `userName` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `translated_texts` */
 
@@ -163,7 +163,7 @@ CREATE TABLE `translated_texts` (
   `type` enum('title','description','content') CHARACTER SET utf8 NOT NULL,
   `text` text CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`,`itemType`,`lang`,`type`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `user_notifications` */
 
@@ -175,7 +175,7 @@ CREATE TABLE `user_notifications` (
   `medium` enum('none','homePage','email','twitter','facebook') NOT NULL DEFAULT 'none',
   `notify` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`userId`,`medium`,`itemType`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 /*Table structure for table `users` */
 
