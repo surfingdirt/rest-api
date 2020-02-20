@@ -10,4 +10,24 @@
  * (1) https://edx.readthedocs.io/projects/edx-developer-guide/en/latest/preventing_xss/preventing_xss.html#philosophy-and-general-rules
  * (2) https://github.com/apollographql/apollo-client/issues/5567
  */
-echo json_encode($this->output);
+
+function safe_json_encode($value, $options = 0, $depth = 512) {
+  $encoded = json_encode($value, $options, $depth);
+  if ($encoded === false && $value && json_last_error() == JSON_ERROR_UTF8) {
+    $encoded = json_encode(utf8ize($value), $options, $depth);
+  }
+  return $encoded;
+}
+
+function utf8ize($mixed) {
+  if (is_array($mixed)) {
+    foreach ($mixed as $key => $value) {
+      $mixed[$key] = utf8ize($value);
+    }
+  } elseif (is_string($mixed)) {
+    return mb_convert_encoding($mixed, "UTF-8", "UTF-8");
+  }
+  return $mixed;
+}
+
+echo safe_json_encode($this->output);
