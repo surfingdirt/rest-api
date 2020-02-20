@@ -16,6 +16,7 @@ constants.OPENTRACING_ENDPOINT_PORT = 9411
 
 ; Database
 constants.GLOBAL_DB_HOST = 'localhost'
+constants.GLOBAL_DB_PORT = 3306
 constants.GLOBAL_DB_NAME = 'ridedb_prod'
 constants.GLOBAL_DB_USER = 'ridedb'
 constants.GLOBAL_DB_PASSWORD = ''
