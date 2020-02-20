@@ -52,6 +52,7 @@ class Api_User_Accessor extends Api_Data_Accessor
     'site' => 'site',
     User::INPUT_PASSWORD => 'password',
     User::INPUT_PASSWORD_CONFIRM => 'password',
+    User::INPUT_PASSWORD_OLD => 'password',
   );
   public $adminWriteAttributes = array(
     'lastLogin' => 'lastLogin',

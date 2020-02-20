@@ -39,9 +39,9 @@ class User_Form_Update extends Lib_Form
     $required = $needsAllThreePasswords;
 
     $passwordOld = new Lib_Form_Element_Password_Old($required);
-    $password = new Lib_Form_Element_Password($required, $this, User::INPUT_PASSWORD_CONFIRM);
+    $password = new Lib_Form_Element_Password($required);
     $passwordConfirm = new Lib_Form_Element_Password_Confirm($required, $this, User::INPUT_PASSWORD);
-    $bio = new Data_Form_Element_Bio($this, false);
+    $bio = new Data_Form_Element_Bio($this);
     $this->addElements(array($passwordOld, $password, $passwordConfirm, $bio));
   }
 

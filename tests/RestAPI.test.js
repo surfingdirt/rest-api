@@ -98,49 +98,51 @@ describe('Token tests', () => {
     checkUnauthorised(await client.get({ path, token }));
   });
 
-  test('token management is working properly', async () => {
-    let user1Token;
+  describe('End to end', () => {
+    test('token management is working properly', async () => {
+      let user1Token;
 
-    const { username, password } = plainUser;
+      const { username, password } = plainUser;
 
-    // Login request as user 1
-    const loginResponseBody = checkSuccess(
-      await client.post({
-        path: tokenPath,
-        data: { userP: password, username: username },
-      }),
-    );
-    expect(loginResponseBody.token).toBeDefined();
-    user1Token = loginResponseBody.token;
+      // Login request as user 1
+      const loginResponseBody = checkSuccess(
+        await client.post({
+          path: tokenPath,
+          data: { userP: password, username: username },
+        }),
+      );
+      expect(loginResponseBody.token).toBeDefined();
+      user1Token = loginResponseBody.token;
 
-    // Tweak server time to be seconds after the expiration date
-    const afterExpirationDate = getDateForBackend(JWT_TTL + 2);
-    await client.setDate(afterExpirationDate);
+      // Tweak server time to be seconds after the expiration date
+      const afterExpirationDate = getDateForBackend(JWT_TTL + 2);
+      await client.setDate(afterExpirationDate);
 
-    // Request user 1 with user1Token while server thinks it's the future
-    checkUnauthorised(
-      await client.get({
-        path: plainUserPath,
-        token: user1Token,
-      }),
-      403,
-    );
-    // Sets time back
-    await client.setDate(null);
+      // Request user 1 with user1Token while server thinks it's the future
+      checkUnauthorised(
+        await client.get({
+          path: plainUserPath,
+          token: user1Token,
+          debugBackend: true,
+        })
+      );
+      // Sets time back
+      await client.setDate(null);
 
-    // Request user 1 with user1Token while server thinks it's the present again
-    checkSuccess(await client.get({ path: plainUserPath, token: user1Token }));
+      // Request user 1 with user1Token while server thinks it's the present again
+      checkSuccess(await client.get({ path: plainUserPath, token: user1Token }));
 
-    // Delete token as self (ie, logout)
-    checkSuccess(
-      await client.delete({
-        path: getResourcePath(TOKEN),
-        token: user1Token,
-      }),
-    );
+      // Delete token as self (ie, logout)
+      checkSuccess(
+        await client.delete({
+          path: getResourcePath(TOKEN),
+          token: user1Token,
+        }),
+      );
 
-    // Request user 1 with blacklisted user1Token
-    checkUnauthorised(await client.get({ path: plainUserPath, token: user1Token }), 403);
+      // Request user 1 with blacklisted user1Token
+      checkUnauthorised(await client.get({ path: plainUserPath, token: user1Token }), 403);
+    });
   });
 });
 
@@ -415,19 +417,20 @@ describe('User tests', () => {
       }).not.toThrow();
     });
 
-    test('Requests with matching passwords but inadequate new password are rejected', async () => {
+    test.skip('Requests with matching passwords but inadequate new password are rejected', async () => {
       const username = 'userForPasswordUpdate2';
       const email = 'update2@here.com';
       const localNewUser = await createNewMember(username, email);
 
       await userClient.setUser({ id: localNewUser.userId });
-      const body = checkBadRequest(
-        await userClient.put(localNewUser.userId, {
-          userP: '1',
-          userPC: '1',
-          userPO: oldP,
-        }),
-      );
+      userClient.setDebugBackend(true);
+      const resp = await userClient.put(localNewUser.userId, {
+        userP: '1',
+        userPC: '1',
+        userPO: oldP,
+      });
+
+      const body = checkBadRequest(resp);
       expect(body).toEqual({ code: 16001, errors: { userP: ['tooShort'] } });
     });
   });
