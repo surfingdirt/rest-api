@@ -60,14 +60,8 @@ class AlbumController extends Api_Controller_Action
 
     $results = $this->_getAllObjects($where, $sort, $dir, $count, $start);
 
-    $resources = array();
-    foreach ($results as $object) {
-      $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName(), $this->_request->getParams());
-    }
-
-    $this->view->output = $resources;
+    $this->view->output = $results;
   }
-
 
   protected function _getWhereClause(User_Row $user)
   {
@@ -95,5 +89,31 @@ class AlbumController extends Api_Controller_Action
     }
 
     return $return;
+  }
+
+  protected function _getAllObjects($where, $sort = null, $dir = null, $count = null, $start = null)
+  {
+    $cacheId = Api_Album::ALBUM_LIST_CACHE_ID;
+    $cache = Globals::getGlobalCache();
+    $action = $this->_request->getActionName();
+    $params = $this->_request->getParams();
+    $results = null;
+
+    if (ALLOW_CACHE) {
+      $results = $cache->load($cacheId);
+    }
+
+    if (!$results) {
+      $albums = parent::_getAllObjects($where, $sort, $dir, $count, $start);
+      $results = array();
+      foreach ($albums as $album) {
+        $results[] = $this->_accessor->getObjectData($album, $action, $params);
+      }
+      if (ALLOW_CACHE) {
+        $cache->save($results, $cacheId);
+      }
+    }
+
+    return $results;
   }
 }
