@@ -91,12 +91,9 @@ class Globals
       $parameters = array('host' => GLOBAL_DB_HOST,
         'username' => GLOBAL_DB_USER,
         'password' => GLOBAL_DB_PASSWORD,
-        'dbname' => GLOBAL_DB_NAME,
-        'charset' => 'utf8mb4'
+        'dbname' => GLOBAL_DB_NAME
       );
       $db = Zend_Db::factory('Pdo_Mysql', $parameters);
-      $db->getConnection();
-
       self::$_db = $db;
     }
     return (self::$_db);
