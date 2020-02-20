@@ -280,13 +280,16 @@ abstract class Api_Data_Accessor
   public function updateObjectWithData($object, $data)
   {
     $attributes = $this->getUpdateAttributes($object);
+    // Validation
     $form = $object->getForm($this->_user, $this->_acl, $data);
-    $data = $this->_mergeDataForUpdate($form->populateFromDatabaseData($object->toArray()), $data, $attributes);
     if (!$form->isValid($data)) {
       $errors = $form->getNonEmptyErrors();
       return $errors;
     }
 
+    // Updates
+    $data = $this->_mergeDataForUpdate($form->populateFromDatabaseData($object->toArray()), $data, $attributes);
+    $form = $object->getForm($this->_user, $this->_acl, $data);
     $formattedData = $form->getFormattedValuesForDatabase();
     foreach ($attributes as $attrFormName => $attrDBName) {
       $this->_updateKey($object, $attrFormName, $attrDBName, $data, $formattedData);
