@@ -121,6 +121,9 @@ class Api_User_Accessor extends Api_Data_Accessor
     }
 
     $target = isset($formattedData[$attrFormName]) ? $formattedData[$attrFormName] : $rawData[$attrFormName];
+    if ($attrFormName == 'userPO') {
+      return;
+    }
     if ($attrFormName == 'userPC') {
       return;
     }
