@@ -65,9 +65,13 @@ class Api_Album_Row extends Media_Album_Row
   {
     $cache = $this->getCache();
     $cacheId = $this->getItemsCacheId();
+    $albumItems = null;
 
-    if (ALLOW_CACHE || !($albumItems = $cache->load($cacheId))) {
+    if (ALLOW_CACHE) {
+      $albumItems = $cache->load($cacheId);
+    }
 
+    if (!$albumItems) {
       $db = Globals::getMainDatabase();
       $where = $db->quoteInto('WHERE m.albumId = ?', $this->id);
       $sql = "
@@ -77,9 +81,10 @@ class Api_Album_Row extends Media_Album_Row
 				ORDER BY m.id DESC
 			";
       $albumItems = $db->query($sql)->fetchAll();
-      if (ALLOW_CACHE) {
-        $this->getTable()->saveDataInCache($cache, $albumItems, $cacheId);
-      }
+    }
+
+    if (ALLOW_CACHE) {
+      $this->getTable()->saveDataInCache($cache, $albumItems, $cacheId);
     }
 
     return $albumItems;
