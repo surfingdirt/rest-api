@@ -114,6 +114,9 @@ class AlbumController extends Api_Controller_Action
       }
     }
 
+    if (!$results) {
+      $results = [];
+    }
     return $results;
   }
 }
