@@ -42,6 +42,7 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
   protected function _getCacheIdsForClear()
   {
     $return = parent::_getCacheIdsForClear();
+    $return[] = Api_Album::ALBUM_LIST_CACHE_ID;
     $return[] = $this->getAlbum()->getItemsCacheId();
     $return[] = $this->_getUsersInMediaCacheId();
     $return[] = $this->getParentRowCacheId('User', 'Author');
