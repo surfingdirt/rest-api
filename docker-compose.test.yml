@@ -7,7 +7,7 @@ services:
     image: memcached:1.4
     container_name: memcached_test
     ports:
-      - "11212:11211"
+      - "11214:11211"
   api:
     environment:
             - APPLICATION_ENV=test
