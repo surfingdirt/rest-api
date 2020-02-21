@@ -93,13 +93,15 @@ class AlbumController extends Api_Controller_Action
 
   protected function _getAllObjects($where, $sort = null, $dir = null, $count = null, $start = null)
   {
+    // TODO: fix this cache issue where all calls to listAlbum get mixed up
+    $allowCache = ALLOW_CACHE && false;
     $cacheId = Api_Album::ALBUM_LIST_CACHE_ID;
     $cache = Globals::getGlobalCache();
     $action = $this->_request->getActionName();
     $params = $this->_request->getParams();
     $results = null;
 
-    if (ALLOW_CACHE) {
+    if ($allowCache) {
       $results = $cache->load($cacheId);
     }
 
@@ -109,7 +111,7 @@ class AlbumController extends Api_Controller_Action
       foreach ($albums as $album) {
         $results[] = $this->_accessor->getObjectData($album, $action, $params);
       }
-      if (ALLOW_CACHE) {
+      if ($allowCache) {
         $cache->save($results, $cacheId);
       }
     }
