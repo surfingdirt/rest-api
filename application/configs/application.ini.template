@@ -57,7 +57,7 @@ constants.CONTACT_EMAIL_TITLE = 'ridedb.org - contact'
 constants.APP_DEBUGDIR = '../data/logs/api/'
 
 constants.DEFAULT_LOCALE = 'en-US'
-constants.SUPPORTED_LOCALES = 'en-US,fr-FR,es-ES'
+constants.SUPPORTED_LOCALES = 'en-US,fr-FR,es-ES,de-DE,it-IT,pl-PL,pt-PT,ru-RU'
 
 constants.GLOBAL_LANG_PATH = '../application/configs/lang/'
 constants.GLOBAL_LANG_DEFAULT = 'fr'
