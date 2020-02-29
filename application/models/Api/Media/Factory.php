@@ -35,7 +35,9 @@ class Api_Media_Factory
   public static function buildItemByIdAndMediaType($id, $mediaType)
   {
     $table = self::_getTableByMediaType($mediaType);
-    $item = $table->find($id)->current();
+    $neutralItem = $table->find($id)->current();
+    $item = $table->createRow($neutralItem->toArray());
+    $item->refreshFromData();
     return $item;
   }
 

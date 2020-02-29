@@ -976,6 +976,11 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     }
   }
 
+  public function refreshFromData()
+  {
+    $this->_cleanData = $this->_data;
+  }
+
   /**
    * Whether this object is fully saved with one form (true),
    * or if we must go through two passes (false).
