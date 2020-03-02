@@ -24,6 +24,11 @@ abstract class Cache_Object extends Zend_Db_Table_Abstract
     return strtolower($this->_itemType);
   }
 
+  public function findWithoutCache($args = null)
+  {
+    return parent::find($args);
+  }
+
   public function find($args = null)
   {
     if (!is_array($args)) {
