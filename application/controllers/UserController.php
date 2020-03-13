@@ -6,7 +6,7 @@ class UserController extends Api_Controller_Action
 
   public $listKey = 'date';
 
-  public $listCount = 30;
+  public $listCount = 60;
 
   protected function _getWhereClause(User_Row $user)
   {
