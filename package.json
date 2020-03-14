@@ -13,8 +13,8 @@
     "startbeta": "docker-compose -p beta -f docker-compose.beta.yml up -d",
     "stopbeta": "docker-compose -p beta -f docker-compose.beta.yml down",
 
-    "runprod": "docker-compose -p production -f docker-compose.production.yml up -d",
-    "startprod": "docker-compose -p production -f docker-compose.production.yml down",
+    "startprod": "docker-compose -p production -f docker-compose.production.yml up -d",
+    "stopprod": "docker-compose -p production -f docker-compose.production.yml down",
 
     "starttest": "docker-compose -p test -f docker-compose.test.yml up -d",
     "stoptest": "docker-compose -p test -f docker-compose.test.yml down",
