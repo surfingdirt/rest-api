@@ -205,7 +205,9 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     }
     $data = $this->_getBodyParams();
 
-    $result = $this->_table->find($id);
+    // Force data load from the disk to guarantee we get the latest version
+    // and avoid nasty bug with cache where data would be serialized as one type and expected as something else on the way out
+    $result = $this->_table->findWithoutCache($id);
     if (empty($result) || !$object = $result->current()) {
       throw new Api_Exception_NotFound();
     }
