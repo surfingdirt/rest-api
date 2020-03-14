@@ -2,8 +2,14 @@
 
 class Lib_Translate
 {
+  const ORIGINAL = 'original';
+
   public static function isTranslatedField($key) {
     return in_array($key, ['bio', 'content', 'description', 'title']);
+  }
+
+  public static function setAsOriginal(&$content) {
+    $content[0][self::ORIGINAL] = true;
   }
 
   public static function encodeField($content) {
@@ -22,6 +28,9 @@ class Lib_Translate
   {
     $decoded = json_decode($content, true);
     if (!is_array($decoded)) {
+      if (!is_null($decoded)) {
+        Globals::getLogger()->log('Could not decode translated field: ' . $content);
+      }
       return $decoded;
     }
 

@@ -133,7 +133,11 @@ class Api_User_Accessor extends Api_Data_Accessor
       $target = $authManager->makeSaltedHash($target, $object->salt);
     }
     if (isset($rawData[$attrFormName]) && Lib_Translate::isTranslatedField($attrFormName)) {
-      $object->$attrDBName = Lib_Translate::encodeField($rawData[$attrFormName]);
+      $field = $rawData[$attrFormName];
+      if (!$object->$attrFormName) {
+        Lib_Translate::setAsOriginal($field);
+      }
+      $object->$attrDBName = Lib_Translate::encodeField($field);
       return;
     }
 

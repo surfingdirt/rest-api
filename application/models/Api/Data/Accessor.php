@@ -264,7 +264,9 @@ abstract class Api_Data_Accessor
           continue;
         }
         if (Lib_Translate::isTranslatedField($attrFormName)) {
-          $object->$attrDBName = Lib_Translate::encodeField($data[$attrFormName]);
+          $fieldData = $data[$attrFormName];
+          Lib_Translate::setAsOriginal($fieldData);
+          $object->$attrDBName = Lib_Translate::encodeField($fieldData);
         } else {
           $object->$attrDBName = $data[$attrFormName];
         }

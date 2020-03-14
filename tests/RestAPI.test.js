@@ -123,7 +123,6 @@ describe('Token tests', () => {
         await client.get({
           path: plainUserPath,
           token: user1Token,
-          debugBackend: true,
         })
       );
       // Sets time back
@@ -354,6 +353,12 @@ describe('User tests', () => {
       expect(body.firstName).toEqual('yes');
     });
 
+    test('Plain user can update their bio', async () => {
+      await userClient.setUser({ id: createdUser.id });
+      const body = checkSuccess(await userClient.put(createdUser.id, { bio: [{locale: 'en-US', text: 'modified bio' }]}));
+      expect(body.bio).toEqual([{ locale: 'en-US', text: 'modified bio', original: true}]);
+    });
+
     test('Requests with password mismatch are rejected', async () => {
       await userClient.setUser({ id: createdUser.id });
       const body = checkBadRequest(
@@ -423,7 +428,6 @@ describe('User tests', () => {
       const localNewUser = await createNewMember(username, email);
 
       await userClient.setUser({ id: localNewUser.userId });
-      userClient.setDebugBackend(true);
       const resp = await userClient.put(localNewUser.userId, {
         userP: '1',
         userPC: '1',
@@ -1653,10 +1657,13 @@ describe('Album tests', () => {
 
     test('Logged in user can create static album', async () => {
       albumClient.setUser(plainUser);
-      checkSuccess(await albumClient.post({
+      const {title, description} = checkSuccess(await albumClient.post({
         title: [{ locale: 'en-US', text: 'will work'}],
         description: [{ locale: 'en-US', text: 'ok'}],
       }));
+
+      expect(title[0].original).toBeTruthy();
+      expect(description[0].original).toBeTruthy();
     });
 
     test('Title is mandatory but not description', async () => {
@@ -2113,12 +2120,14 @@ describe('Comment tests', () => {
       };
       const body = checkSuccess(await commentClient.post(commentPayload));
 
+      const output = [{ locale: 'en-US', text: 'This is a new comment', original: true}];
+
       expect(body.id).toBeDefined();
-      expect(body.content).toEqual(commentPayload.content);
+      expect(body.content).toEqual(output);
 
       const comments = checkSuccess(await albumClient.getComments(albumId));
       expect(comments.length).toEqual(1);
-      expect(comments[0].content).toEqual(commentPayload.content);
+      expect(comments[0].content).toEqual(output);
     });
   });
 
