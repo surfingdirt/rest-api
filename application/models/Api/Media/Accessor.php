@@ -231,7 +231,11 @@ class Api_Media_Accessor extends Api_Data_Accessor
         continue;
       }
       if (isset($data[$key]) && Lib_Translate::isTranslatedField($key)) {
-        $dataRow->$key = Lib_Translate::encodeField($data[$key]);
+        $field = $data[$key];
+        if (!$dataRow->$key) {
+          Lib_Translate::setAsOriginal($field);
+        }
+        $dataRow->$key = Lib_Translate::encodeField($field);
         continue;
       }
 

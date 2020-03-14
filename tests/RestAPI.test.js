@@ -864,7 +864,7 @@ describe('Media tests', () => {
           title: [{ locale: 'en-US', text: 'Modified title'}],
         }),
       );
-      expect(body.title).toEqual([{ locale: 'en-US', text: 'Modified title'}]);
+      expect(body.title).toEqual([{ locale: 'en-US', text: 'Modified title', original: true}]);
     });
 
     test('Editor can PUT', async () => {
