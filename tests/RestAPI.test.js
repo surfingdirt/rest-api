@@ -2232,7 +2232,7 @@ describe ('Translation tests', () => {
 
     // Initial
     const { content: enContent } = checkSuccess(await commentClient.get(translatedComment.id));
-    expect(enContent).toEqual([{ locale: 'en-US', text: translatedComment.enContent }]);
+    expect(enContent).toEqual([{ locale: 'en-US', text: translatedComment.enContent, original: true }]);
 
     // Add
     const addPayload = { translation: { locale: 'fr-FR', text: translatedComment.frContent }};
@@ -2243,7 +2243,7 @@ describe ('Translation tests', () => {
     }));
     const { content: enAndFrContent } = checkSuccess(await commentClient.get(translatedComment.id));
     expect(enAndFrContent).toEqual([
-      { locale: 'en-US', text: translatedComment.enContent},
+      { locale: 'en-US', text: translatedComment.enContent, original: true},
       { locale: 'fr-FR', text: translatedComment.frContent }
     ]);
 
@@ -2256,7 +2256,7 @@ describe ('Translation tests', () => {
     }));
     const { content: updatedEnAndFrContent } = checkSuccess(await commentClient.get(translatedComment.id));
     expect(updatedEnAndFrContent).toEqual([
-      { locale: 'en-US', text: translatedComment.enContent},
+      { locale: 'en-US', text: translatedComment.enContent, original: true},
       { locale: 'fr-FR', text: updatedFrench }
     ]);
 
@@ -2269,7 +2269,7 @@ describe ('Translation tests', () => {
     }));
     const { content: removedFrContent } = checkSuccess(await commentClient.get(translatedComment.id));
     expect(removedFrContent).toEqual([
-      { locale: 'en-US', text: translatedComment.enContent},
+      { locale: 'en-US', text: translatedComment.enContent, original: true},
     ]);
   });
 
