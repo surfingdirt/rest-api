@@ -8,6 +8,7 @@ class TranslationController extends Api_Controller_Action
 
   public function indexAction()
   {
+    $allowedFieldPerType = $this->_getResourceTranslatedFields();
     $method = $this->_request->getMethod();
     if (!in_array($method, ['POST', 'PUT'])) {
       throw new Api_Exception_BadRequest();
@@ -16,6 +17,11 @@ class TranslationController extends Api_Controller_Action
     $itemType = $this->_request->getParam('itemType');
     $itemId = $this->_request->getParam('itemId');
     $field = $this->_request->getParam('field');
+
+    $resourceName = $this->_getResourceName($itemType);
+    if(!in_array($field, $allowedFieldPerType[$itemType])) {
+      throw new Api_Exception_BadRequest('Bad field');
+    }
 
     $translation = $this->_request->getParam('translation');
     $locale = $translation['locale'];
@@ -26,7 +32,6 @@ class TranslationController extends Api_Controller_Action
     ];
 
     // Build translated object and translations
-    $resourceName = $this->_getResourceName($itemType);
     $table = new $resourceName();
     $result = $table->find($itemId);
     if (empty($result) || !$object = $result->current()) {
@@ -55,6 +60,7 @@ class TranslationController extends Api_Controller_Action
       $newTranslations = array_merge($existingTranslations, [$newTranslation]);
 
     } else {
+      // PUT
       $index = $this->_getEntryIndexForLocale($existingTranslations, $locale);
       if ($text === null) {
         if ($index !== false) {

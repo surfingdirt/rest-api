@@ -346,17 +346,29 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     return array($table, $accessor);
   }
 
-  protected function _getResourceName($key) {
-    $resources = array(
+  protected function _getResources() {
+    return array(
       'album' => 'Album',
       'comments' => 'Comment',
       'media' => 'Media',
       'user' => 'User',
       'useralbum' => 'Album',
     );
+  }
 
+  protected function _getResourceTranslatedFields() {
+    return array(
+      'album' => ['title', 'description'],
+      'comments' => ['content'],
+      'media' => ['title', 'description'],
+      'user' => ['bio'],
+    );
+  }
+
+  protected function _getResourceName($key) {
+    $resources = $this->_getResources();
     if (!isset($resources[$key])) {
-      throw new Exception('Unknown resource');
+      throw new Api_Exception_BadRequest('Unknown resource');
     }
     return 'Api_' . $resources[$key];
   }
