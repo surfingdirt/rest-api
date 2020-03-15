@@ -2240,7 +2240,6 @@ describe ('Translation tests', () => {
       path: translationPath,
       data: addPayload,
       token: null,
-      debugBackend: true,
     }));
     const { content: enAndFrContent } = checkSuccess(await commentClient.get(translatedComment.id));
     expect(enAndFrContent).toEqual([
