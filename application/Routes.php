@@ -24,7 +24,7 @@ class Routes {
 
       'comments' => new Zend_Controller_Router_Route('/:itemType/:itemId/comments/', array('controller' => 'comments', 'action' => 'list')),
 
-      'translations' => new Zend_Controller_Router_Route('/translations/:itemType/:itemId/:field/', array('controller' => 'translation', 'action' => 'index' )),
+      'translations' => new Zend_Controller_Router_Route('/translations/:itemType/:itemId/', array('controller' => 'translation', 'action' => 'index' )),
 
       'createdata' => $dummyRoute,
       'editdata' => $dummyRoute,

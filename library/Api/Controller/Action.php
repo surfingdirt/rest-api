@@ -356,13 +356,14 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     );
   }
 
-  protected function _getResourceTranslatedFields() {
-    return array(
+  protected function _getResourceTranslatedFields($itemType) {
+    $fieldsPerType = array(
       'album' => ['title', 'description'],
       'comments' => ['content'],
       'media' => ['title', 'description'],
       'user' => ['bio'],
     );
+    return $fieldsPerType[$itemType];
   }
 
   protected function _getResourceName($key) {

@@ -2225,7 +2225,7 @@ describe('Comment tests', () => {
 
 describe ('Translation tests', () => {
   const commentClient = new ResourceClient(client, COMMENT);
-  const translationPath = `/translations/comments/${translatedComment.id}/content`;
+  const translationPath = `/translations/comments/${translatedComment.id}`;
 
   test('Manage comment translations', async () => {
     const updatedFrench = 'updatedFrench';
@@ -2235,7 +2235,7 @@ describe ('Translation tests', () => {
     expect(enContent).toEqual([{ locale: 'en-US', text: translatedComment.enContent, original: true }]);
 
     // Add
-    const addPayload = { translation: { locale: 'fr-FR', text: translatedComment.frContent }};
+    const addPayload = { translation: [{ field: 'content', locale: 'fr-FR', text: translatedComment.frContent }]};
     checkSuccess(await client.post({
       path: translationPath,
       data: addPayload,
@@ -2248,7 +2248,7 @@ describe ('Translation tests', () => {
     ]);
 
     // Update
-    const updatePayload = { translation: { locale: 'fr-FR', text: updatedFrench } };
+    const updatePayload = { translation: [{ field: 'content', locale: 'fr-FR', text: updatedFrench }]};
     checkSuccess(await client.put({
       path: translationPath,
       data: updatePayload,
@@ -2261,7 +2261,7 @@ describe ('Translation tests', () => {
     ]);
 
     // Remove
-    const removedFrPayload = { translation: { locale: 'fr-FR', text: null } };
+    const removedFrPayload = { translation: [{ field: 'content', locale: 'fr-FR', text: null }]};
     checkSuccess(await client.put({
       path: translationPath,
       data: removedFrPayload,

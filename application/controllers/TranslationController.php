@@ -8,7 +8,6 @@ class TranslationController extends Api_Controller_Action
 
   public function indexAction()
   {
-    $allowedFieldPerType = $this->_getResourceTranslatedFields();
     $method = $this->_request->getMethod();
     if (!in_array($method, ['POST', 'PUT'])) {
       throw new Api_Exception_BadRequest();
@@ -16,20 +15,9 @@ class TranslationController extends Api_Controller_Action
 
     $itemType = $this->_request->getParam('itemType');
     $itemId = $this->_request->getParam('itemId');
-    $field = $this->_request->getParam('field');
-
     $resourceName = $this->_getResourceName($itemType);
-    if(!in_array($field, $allowedFieldPerType[$itemType])) {
-      throw new Api_Exception_BadRequest('Bad field');
-    }
-
+    $fields = $this->_getResourceTranslatedFields($itemType);
     $translation = $this->_request->getParam('translation');
-    $locale = $translation['locale'];
-    $text = $translation['text'];
-
-    $newTranslation = [
-      'locale' => $locale, 'text' => $text
-    ];
 
     // Build translated object and translations
     $table = new $resourceName();
@@ -37,25 +25,53 @@ class TranslationController extends Api_Controller_Action
     if (empty($result) || !$object = $result->current()) {
       throw new Api_Exception_NotFound();
     }
+
+    foreach ($translation as $translationItem) {
+      $field = $translationItem['field'];
+      if (!in_array($field, $fields)) {
+        $this->_badRequest();
+        $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::FORM_BAD_INPUT);
+      }
+      $status = $this->_handleFieldTranslation($translationItem, $method, $object);
+      if (!$status) {
+        return;
+      }
+    }
+
+    // Do not update edition fields
+    $object->save(true);
+
+    $this->view->output = true;
+  }
+
+  protected function _handleFieldTranslation($translation, $method, $object)
+  {
+    $field = $translation['field'];
+    $locale = $translation['locale'];
+    $text = $translation['text'];
+    $newTranslation = [
+      'locale' => $locale, 'text' => $text
+    ];
+
+    $newTranslations = null;
     $existingTranslations = Lib_Translate::decodeField($object->$field);
 
     // Empty value is allowed for PUT because it means "remove"
     $textMustNotBeEmpty = $method !== 'PUT';
     $validator = new Lib_Validate_Translated($textMustNotBeEmpty);
-    $newTranslations = null;
 
     if ($method === 'POST') {
       if(!$validator->isValid([$newTranslation])) {
         $errors = $validator->getErrors();
         $this->_badRequest();
         $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::FORM_BAD_INPUT);
-        return;
+        return false;
       }
       // Add - but check for existing entry
       if ($this->_getEntryIndexForLocale($existingTranslations, $locale) !== false) {
         $this->_badRequest();
         $this->view->output = array('errors' => ['localeExists'], 'code' => Api_ErrorCodes::FORM_BAD_INPUT);
-        return;
+        return false;
       }
       $newTranslations = array_merge($existingTranslations, [$newTranslation]);
 
@@ -75,7 +91,7 @@ class TranslationController extends Api_Controller_Action
           $errors = $validator->getErrors();
           $this->_badRequest();
           $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::FORM_BAD_INPUT);
-          return;
+          return false;
         }
 
         if ($index !== false) {
@@ -86,16 +102,13 @@ class TranslationController extends Api_Controller_Action
           // Error: this should have been a POST request
           $this->_badRequest();
           $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::BAD_METHOD);
-          return;
+          return false;
         }
       }
     }
 
     $object->$field = Lib_Translate::encodeField($newTranslations);
-    // Do not update edition fields
-    $object->save(true);
-
-    $this->view->output = $newTranslations;
+    return true;
   }
 
   public function putAction()
