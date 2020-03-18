@@ -124,4 +124,16 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
   public function getFolderPath()
   {
   }
+
+  /**
+   * Returns the cache id for the comments attached to the current user
+   *
+   * @return unknown
+   */
+  protected function _getCommentsCacheId()
+  {
+    // Here we're perverting this function's return value by returning the cache id for the parent's comment list
+    $cacheId = 'commentsFor_' . $this->parentType . $this->_getIdForCache($this->parentId);
+    return $cacheId;
+  }
 }
