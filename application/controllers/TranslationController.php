@@ -21,7 +21,7 @@ class TranslationController extends Api_Controller_Action
 
     // Build translated object and translations
     $table = new $resourceName();
-    $result = $table->find($itemId);
+    $result = $table->findWithoutCache($itemId);
     if (empty($result) || !$object = $result->current()) {
       throw new Api_Exception_NotFound();
     }
