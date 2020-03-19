@@ -156,6 +156,188 @@ class TestController extends Api_Controller_Action
     ];
   }
 
+  public function addOriginalUserAction()
+  {
+    $db = Globals::getMainDatabase();
+    $log = [];
+    $output = [];
+
+    $usersSql = "SELECT userId, bio from users where bio IS NOT NULL";
+    $users = $db->query($usersSql);
+
+    foreach($users as $user) {
+      $content = json_decode($user['bio'], true);
+      $id = $user['userId'];
+
+      $clean = null;
+      if (is_null($content)) {
+        $log[] = "Skipping id='$id' because content was decoded to null";
+        continue;
+      }
+      if (is_string($content)) {
+        $clean = [array(
+          'locale' => DEFAULT_LOCALE,
+          'original' => true,
+          'text' => $content,
+        )];
+      } else if(is_array($content)) {
+        if (sizeof($content) === 1) {
+          if (isset($content[0]['original']) && $content[0]['original']) {
+            $log[] = "Skipping id='$id'";
+            continue;
+          }
+          $originalEntryIndex = 0;
+        } else if (sizeof($content) > 1) {
+          $originalEntryIndex = null;
+          foreach($content as $index => $entry) {
+            if (isset($entry['original']) && $entry['original']) {
+              $log[] = "Skipping userId='$id'";
+              continue(2);
+            }
+          }
+          foreach($content as $index => $entry) {
+            if ($entry['locale'] === DEFAULT_LOCALE) {
+              $originalEntryIndex = $index;
+              break;
+            }
+          }
+          if (is_null($originalEntryIndex)) {
+            $log[] = "Could not decide how to handle id='$id'";
+            break;
+          }
+        }
+        $clean = [array(
+          'locale' => $content[$originalEntryIndex]['locale'],
+          'original' => true,
+          'text' => $content[$originalEntryIndex]['text'],
+        )];
+      }
+
+      if (!$clean) {
+        $log[] = "Did not come up with a clean version for userId='$id'";
+      } else {
+        $encoded = json_encode($clean);
+        $quotedContent = $db->quote($encoded);
+        $quotedId = $db->quote($id);
+        $update = "UPDATE users set bio=$quotedContent WHERE userId=$quotedId";
+        $output[] = $update;
+        try {
+          $db->query($update);
+        } catch (Exception $e) {
+          $log[] = "Failed to run SQL for id='$id': ".$e->getMessage();
+          continue;
+        }
+        $log[] = "Success for id='$id'";
+      }
+    }
+
+    $this->view->output = [
+      'output' => $output,
+      'log' => $log,
+    ];
+  }
+
+  public function addOriginalAlbumTitleAction()
+  {
+    $this->view->output = $this->_addOriginal('media_albums', 'title');
+  }
+
+  public function addOriginalAlbumDescriptionAction()
+  {
+    $this->view->output = $this->_addOriginal('media_albums', 'description');
+  }
+
+  public function addOriginalMediaTitleAction()
+  {
+    $this->view->output = $this->_addOriginal('media_items', 'title');
+  }
+
+  public function addOriginalMediaDescriptionAction()
+  {
+    $this->view->output = $this->_addOriginal('media_items', 'description');
+  }
+
+  protected function _addOriginal($table, $column)
+  {
+    $db = Globals::getMainDatabase();
+    $log = [];
+    $output = [];
+
+    $itemSql = "SELECT id, $column from $table where $column IS NOT NULL";
+    $items = $db->query($itemSql);
+
+    foreach($items as $item) {
+      $content = json_decode($item[$column], true);
+      $id = $item['id'];
+
+      $clean = null;
+      if (is_null($content)) {
+        $log[] = "Skipping id='$id' because content was decoded to null";
+        continue;
+      }
+      if (is_string($content)) {
+        $clean = [array(
+          'locale' => DEFAULT_LOCALE,
+          'original' => true,
+          'text' => $content,
+        )];
+      } else if(is_array($content)) {
+        if (sizeof($content) === 1) {
+          if (isset($content[0]['original']) && $content[0]['original']) {
+            $log[] = "Skipping id='$id'";
+            continue;
+          }
+          $originalEntryIndex = 0;
+        } else if (sizeof($content) > 1) {
+          $originalEntryIndex = null;
+          foreach($content as $index => $entry) {
+            if (isset($entry['original']) && $entry['original']) {
+              $log[] = "Skipping id='$id'";
+              continue(2);
+            }
+          }
+          foreach($content as $index => $entry) {
+            if ($entry['locale'] === DEFAULT_LOCALE) {
+              $originalEntryIndex = $index;
+              break;
+            }
+          }
+          if (is_null($originalEntryIndex)) {
+            $log[] = "Could not decide how to handle id='$id'";
+            break;
+          }
+        }
+        $clean = [array(
+          'locale' => $content[$originalEntryIndex]['locale'],
+          'original' => true,
+          'text' => $content[$originalEntryIndex]['text'],
+        )];
+      }
+
+      if (!$clean) {
+        $log[] = "Did not come up with a clean version for id='$id'";
+      } else {
+        $encoded = json_encode($clean);
+        $quotedContent = $db->quote($encoded);
+        $quotedId = $db->quote($id);
+        $update = "UPDATE $table set $column=$quotedContent WHERE id=$quotedId";
+        $output[] = $update;
+        try {
+          $db->query($update);
+        } catch (Exception $e) {
+          $log[] = "Failed to run SQL for id='$id': ".$e->getMessage();
+          continue;
+        }
+        $log[] = "Success for id='$id'";
+      }
+    }
+
+    return [
+      'output' => $output,
+      'log' => $log,
+    ];
+  }
+
   public function portTranslationsAction()
   {
     Globals::getGlobalCache()->clean();
