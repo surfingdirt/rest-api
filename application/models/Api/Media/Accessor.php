@@ -232,7 +232,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
       }
       if (isset($data[$key]) && Lib_Translate::isTranslatedField($key)) {
         $field = $data[$key];
-        if (!$dataRow->$key) {
+        if (!$dataRow->$key || !Lib_Translate::hasOriginal($field)) {
           Lib_Translate::setAsOriginal($field);
         }
         $dataRow->$key = Lib_Translate::encodeField($field);

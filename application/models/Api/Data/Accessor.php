@@ -310,6 +310,9 @@ abstract class Api_Data_Accessor
           // We're changing the meaning of the content: wipe out everything but the new content
           // No need for this branch in the end, but the comment is useful
           $ret[$key] = $newData[$key];
+          if (!Lib_Translate::hasOriginal($ret[$key])) {
+            Lib_Translate::setAsOriginal($ret[$key]);
+          }
         } else {
           // Overwrite with new one
           $ret[$key] = $newData[$key];
@@ -318,7 +321,7 @@ abstract class Api_Data_Accessor
     }
 
     foreach ($newData as $key => $new) {
-      if (!isset($existingData[$key]) && isset($attributes[$key])) {
+      if (!array_key_exists($key, $existingData) && isset($attributes[$key])) {
         $ret[$key] = $new;
       }
     }

@@ -12,6 +12,15 @@ class Lib_Translate
     $content[0][self::ORIGINAL] = true;
   }
 
+  public static function hasOriginal($content) {
+    foreach($content as $entry) {
+      if (isset($entry[self::ORIGINAL])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public static function encodeField($content) {
     return json_encode($content);
   }

@@ -874,7 +874,7 @@ describe('Media tests', () => {
           title: [{ locale: 'en-US', text: 'Modified title2'}],
         }),
       );
-      expect(body.title).toEqual([{ locale: 'en-US', text: 'Modified title2'}]);
+      expect(body.title).toEqual([{ locale: 'en-US', text: 'Modified title2', original: true}]);
     });
 
     test('Admin can PUT', async () => {
@@ -884,7 +884,7 @@ describe('Media tests', () => {
           title: [{ locale: 'en-US', text: 'Modified title3'}],
         }),
       );
-      expect(body.title).toEqual([{ locale: 'en-US', text: 'Modified title3'}]);
+      expect(body.title).toEqual([{ locale: 'en-US', text: 'Modified title3', original: true}]);
     });
   });
 
@@ -1101,8 +1101,8 @@ describe('Media tests', () => {
               description: [{ locale: 'en-US', text: 'a new description'}],
             }),
           );
-          expect(body.title).toEqual([{ locale: 'en-US', text: 'a new title'}]);
-          expect(body.description).toEqual([{ locale: 'en-US', text: 'a new description'}]);
+          expect(body.title).toEqual([{ locale: 'en-US', text: 'a new title', original: true}]);
+          expect(body.description).toEqual([{ locale: 'en-US', text: 'a new description', original: true}]);
         });
       });
 
@@ -1946,8 +1946,8 @@ describe('Album tests', () => {
         }),
       );
 
-      expect(title).toEqual([{'locale': 'en-US', 'text': 'ownerTitle' }]);
-      expect(description).toEqual([{'locale': 'en-US', 'text': 'ownerDescription' }]);
+      expect(title).toEqual([{'locale': 'en-US', 'text': 'ownerTitle', original: true }]);
+      expect(description).toEqual([{'locale': 'en-US', 'text': 'ownerDescription', original: true }]);
     });
 
     test('Editor can update album title and description', async () => {
@@ -1959,8 +1959,8 @@ describe('Album tests', () => {
         }),
       );
 
-      expect(title).toEqual([{'locale': 'en-US', 'text': 'editorTitle' }]);
-      expect(description).toEqual([{'locale': 'en-US', 'text': 'editorDescription' }]);
+      expect(title).toEqual([{'locale': 'en-US', 'text': 'editorTitle', original: true }]);
+      expect(description).toEqual([{'locale': 'en-US', 'text': 'editorDescription', original: true }]);
     });
 
     test('Admin can update album title and description', async () => {
@@ -1972,8 +1972,8 @@ describe('Album tests', () => {
         }),
       );
 
-      expect(title).toEqual([{'locale': 'en-US', 'text': 'adminTitle' }]);
-      expect(description).toEqual([{'locale': 'en-US', 'text': 'adminDescription' }]);
+      expect(title).toEqual([{'locale': 'en-US', 'text': 'adminTitle', original: true }]);
+      expect(description).toEqual([{'locale': 'en-US', 'text': 'adminDescription', original: true }]);
     });
   });
 
@@ -2146,19 +2146,19 @@ describe('Comment tests', () => {
       const ownerBody = checkSuccess(
         await commentClient.put(commentsForUpdate[3].id, { content: [{ locale: 'en-US', text: 'modified' }] }),
       );
-      expect(ownerBody.content).toEqual([{ locale: 'en-US', text: 'modified' }]);
+      expect(ownerBody.content).toEqual([{ locale: 'en-US', text: 'modified', original: true }]);
 
       await commentClient.setUser(editorUser);
       const editorBody = checkSuccess(
         await commentClient.put(commentsForUpdate[4].id, { content: [{ locale: 'en-US', text: 'modified' }] }),
       );
-      expect(editorBody.content).toEqual([{ locale: 'en-US', text: 'modified' }]);
+      expect(editorBody.content).toEqual([{ locale: 'en-US', text: 'modified', original: true }]);
 
       await commentClient.setUser(adminUser);
       const adminBody = checkSuccess(
         await commentClient.put(commentsForUpdate[5].id, { content: [{ locale: 'en-US', text: 'modified' }] }),
       );
-      expect(adminBody.content).toEqual([{ locale: 'en-US', text: 'modified' }]);
+      expect(adminBody.content).toEqual([{ locale: 'en-US', text: 'modified', original: true }]);
     });
   });
 
