@@ -19,6 +19,7 @@ class TestController extends Api_Controller_Action
 
   public function clearPublicFilesAction()
   {
+    return;
     Utils::clearPublicFiles();
     @mkdir(PUBLIC_FILES_DIR);
   }
@@ -74,6 +75,85 @@ class TestController extends Api_Controller_Action
     } catch (Exception $e) {
       $this->view->output = array('error' => $e->getMessage());
     }
+  }
+
+  public function addOriginalCommentAction()
+  {
+    $db = Globals::getMainDatabase();
+    $log = [];
+    $output = [];
+
+    $commentsSql = "SELECT id, content from comments where content IS NOT NULL";
+    $comments = $db->query($commentsSql);
+
+    foreach($comments as $comment) {
+      $content = json_decode($comment['content'], true);
+      $id = $comment['id'];
+
+      $clean = null;
+      if (is_string($content)) {
+        $clean = [array(
+          'locale' => DEFAULT_LOCALE,
+          'original' => true,
+          'text' => $content,
+        )];
+      } else if(is_array($content)) {
+        if (sizeof($content) === 1) {
+          if (isset($content[0]['original']) && $content[0]['original']) {
+            $log[] = "Skipping id='$id'";
+            continue;
+          }
+          $originalEntryIndex = 0;
+        } else if (sizeof($content) > 1) {
+          $originalEntryIndex = null;
+          foreach($content as $index => $entry) {
+            if (isset($entry['original']) && $entry['original']) {
+              $log[] = "Skipping id='$id'";
+              continue(2);
+            }
+          }
+          if (is_null($originalEntryIndex)) {
+            foreach($content as $index => $entry) {
+              if ($entry['locale'] === DEFAULT_LOCALE) {
+                $originalEntryIndex = $index;
+                break;
+              }
+            }
+          }
+          if (is_null($originalEntryIndex)) {
+            $log[] = "Could not decide how to handle id='$id'";
+            break;
+          }
+        }
+        $clean = [array(
+          'locale' => $content[$originalEntryIndex]['locale'],
+          'original' => true,
+          'text' => $content[$originalEntryIndex]['text'],
+        )];
+      }
+
+      if (!$clean) {
+        $log[] = "Did not come up with a clean version for id='$id'";
+      } else {
+        $encoded = json_encode($clean);
+        $quotedContent = $db->quote($encoded);
+        $quotedId = $db->quote($id);
+        $update = "UPDATE comments set content=$quotedContent WHERE id=$quotedId";
+        $output[] = $update;
+        try {
+          $db->query($update);
+        } catch (Exception $e) {
+          $log[] = "Failed to run SQL for id='$id': ".$e->getMessage();
+          continue;
+        }
+        $log[] = "Success for id='$id'";
+      }
+    }
+
+    $this->view->output = [
+      'output' => $output,
+      'log' => $log,
+    ];
   }
 
   public function portTranslationsAction()
