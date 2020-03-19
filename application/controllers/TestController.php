@@ -79,6 +79,7 @@ class TestController extends Api_Controller_Action
 
   public function addOriginalCommentAction()
   {
+    $doSQL = $this->_request->getParam('doSQL');
     $db = Globals::getMainDatabase();
     $log = [];
     $output = [];
@@ -141,7 +142,9 @@ class TestController extends Api_Controller_Action
         $update = "UPDATE comments set content=$quotedContent WHERE id=$quotedId";
         $output[] = $update;
         try {
-          $db->query($update);
+          if ($doSQL) {
+            $db->query($update);
+          }
         } catch (Exception $e) {
           $log[] = "Failed to run SQL for id='$id': ".$e->getMessage();
           continue;
@@ -158,6 +161,7 @@ class TestController extends Api_Controller_Action
 
   public function addOriginalUserAction()
   {
+    $doSQL = $this->_request->getParam('doSQL');
     $db = Globals::getMainDatabase();
     $log = [];
     $output = [];
@@ -222,7 +226,9 @@ class TestController extends Api_Controller_Action
         $update = "UPDATE users set bio=$quotedContent WHERE userId=$quotedId";
         $output[] = $update;
         try {
-          $db->query($update);
+          if ($doSQL) {
+            $db->query($update);
+          }
         } catch (Exception $e) {
           $log[] = "Failed to run SQL for id='$id': ".$e->getMessage();
           continue;
@@ -259,6 +265,7 @@ class TestController extends Api_Controller_Action
 
   protected function _addOriginal($table, $column)
   {
+    $doSQL = $this->_request->getParam('doSQL');
     $db = Globals::getMainDatabase();
     $log = [];
     $output = [];
@@ -323,7 +330,9 @@ class TestController extends Api_Controller_Action
         $update = "UPDATE $table set $column=$quotedContent WHERE id=$quotedId";
         $output[] = $update;
         try {
-          $db->query($update);
+          if ($doSQL) {
+            $db->query($update);
+          }
         } catch (Exception $e) {
           $log[] = "Failed to run SQL for id='$id': ".$e->getMessage();
           continue;
