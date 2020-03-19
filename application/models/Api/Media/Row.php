@@ -45,4 +45,14 @@ class Api_Media_Row extends Media_Item_Row
       return Media_Item::TYPE_PHOTO;
     }
   }
+
+  protected function _getCacheIdsForClear()
+  {
+    $return = parent::_getCacheIdsForClear();
+
+    // Ugly hack to avoid caching issue where Api_Media and Api_Media_Photo/Video don't share the same cache id
+    $return[] = Media_Item::TYPE_PHOTO . $this->_getIdForCache($this->getId());
+    $return[] = Media_Item::TYPE_VIDEO . $this->_getIdForCache($this->getId());
+    return $return;
+  }
 }
