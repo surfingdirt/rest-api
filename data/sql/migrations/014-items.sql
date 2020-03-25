@@ -14,3 +14,6 @@ UPDATE items
     ON items.itemId = comments.id
 SET items.parentItemId = comments.parentId
 WHERE items.itemType in ('comment');
+
+-- Hide Image notifications
+UPDATE items SET notification = 'silent' where itemType = 'image';
