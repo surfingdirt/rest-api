@@ -70,6 +70,7 @@ CREATE TABLE `items` (
     `date` datetime(3) DEFAULT NULL,
     `status` enum('valid','invalid') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'invalid',
     `parentItemId` varchar(36) DEFAULT NULL,
+    `parentItemType` varchar(32) DEFAULT NULL,
     `submitter` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
     `notification` enum('announce','silent') COLLATE utf8mb4_unicode_ci DEFAULT 'announce',
     PRIMARY KEY (`id`),

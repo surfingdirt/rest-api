@@ -1255,6 +1255,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
         Globals::getLogger()->warning($message, Zend_Log::INFO);
       } else {
         $item->parentItemId = $parentItem->id;
+        $item->parentItemType = $parentItem->getItemType();
       }
     }
     $item->save();
