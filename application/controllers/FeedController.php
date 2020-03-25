@@ -5,7 +5,7 @@ class FeedController extends Api_Controller_Action
   public function listAction()
   {
     list($viewRange, $from, $until, $limit, $useCache) = $this->_getContext();
-    $items = Item::getFeedItems($from, $until, $this->_user, $this->_acl, $limit);
+    $items = $this->_table->getFeedItems($from, $until, $this->_user, $this->_acl, $limit);
 
     $this->view->output = array(
       'range' => $viewRange,
