@@ -4,44 +4,6 @@ class NotificationsController extends Api_Controller_Action
 {
   public function listAction()
   {
-    list($viewRange, $from, $until, $limit, $useCache) = $this->_getContext();
-    $items = Item::getFeedItems($from, $until, $this->_user, $this->_acl, $limit);
-
-    $this->view->output = array(
-      'range' => $viewRange,
-      'from' => $from,
-      'items' => $items,
-    );
-  }
-
-  protected function _getContext()
-  {
-    $useCache = false && ALLOW_CACHE;
-    list($range, $viewRange, $from, $until) = $this->_getRange();
-
-    if ($this->_user->getRoleId() == User::STATUS_ADMIN) {
-      $hardFrom = $this->_request->getParam('from');
-      if (!empty($hardFrom)) {
-        $from = $hardFrom;
-        $useCache = false;
-      }
-
-      $hardUntil = $this->_request->getParam('until');
-      if (!empty($hardUntil)) {
-        $until = $hardUntil;
-        $useCache = false;
-      }
-
-      $limit = $this->_request->getParam('limit', MAX_NOTIFICATION_ITEMS_ADMIN);
-    } else {
-      $limit = MAX_NOTIFICATION_ITEMS_USERS;
-    }
-
-    return [$viewRange, $from, $until, $limit, $useCache];
-  }
-
-  public function oldListAction()
-  {
     $useCache = false && ALLOW_CACHE;
     list($range, $viewRange, $from, $until) = $this->_getRange();
 
