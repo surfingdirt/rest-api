@@ -45,6 +45,16 @@ class CustomController extends Zend_Controller_Action
         throw new Api_Exception('Activation failed');
       }
 
+      $itemTable = new Item();
+      $item = $itemTable->createRow();
+      $item->status = Data::VALID;
+      $item->notification = Item_Row::NOTIFICATION_ANNOUNCE;
+      $item->date = $user->date;
+      $item->itemId = $user->getId();
+      $item->itemType = Constants_DataTypes::USER;
+      $item->submitter = $user->getId();
+      $item->save();
+
       $this->view->output = array(
         'status' => true,
         'alreadyDone' => false

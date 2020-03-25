@@ -350,9 +350,14 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     return array(
       'album' => 'Album',
       'comments' => 'Comment',
+      'comment' => 'Comment',
       'media' => 'Media',
+      'mediaalbum' => 'Album',
+      'notifications' => 'Notification',
+      'photo' => 'Media',
       'user' => 'User',
       'useralbum' => 'Album',
+      'video' => 'Media',
     );
   }
 

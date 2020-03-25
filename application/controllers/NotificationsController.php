@@ -2,22 +2,19 @@
 
 class NotificationsController extends Api_Controller_Action
 {
-  protected function _setupViewPath($accept, $headers)
+  public function listAction()
   {
-    $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-    //$this->view->headers = var_export($headers, true);
-    $html = (isset($headers['Accept']) && strpos($headers['Accept'], 'text/html') !== false);
-    if ($html) {
-      $this->view->addHelperPath('../library/Lib/View/Helper/', 'Lib_View_Helper');
-      $this->view->baseUrl = $baseUrl = $this->_request->getBaseUrl();
-      $this->getResponse()->setRawHeader('Content-Type: text/html; charset=UTF-8');
-    } else {
-      $viewRenderer->setViewScriptPathSpec('items/list.json');
-      $this->getResponse()->setRawHeader('Content-Type: application/json; charset=UTF-8');
-    }
+    list($viewRange, $from, $until, $limit, $useCache) = $this->_getContext();
+    $items = Item::getFeedItems($from, $until, $this->_user, $this->_acl, $limit);
+
+    $this->view->output = array(
+      'range' => $viewRange,
+      'from' => $from,
+      'items' => $items,
+    );
   }
 
-  public function listAction()
+  protected function _getContext()
   {
     $useCache = false && ALLOW_CACHE;
     list($range, $viewRange, $from, $until) = $this->_getRange();
@@ -38,7 +35,32 @@ class NotificationsController extends Api_Controller_Action
       $limit = $this->_request->getParam('limit', MAX_NOTIFICATION_ITEMS_ADMIN);
     } else {
       $limit = MAX_NOTIFICATION_ITEMS_USERS;
+    }
 
+    return [$viewRange, $from, $until, $limit, $useCache];
+  }
+
+  public function oldListAction()
+  {
+    $useCache = false && ALLOW_CACHE;
+    list($range, $viewRange, $from, $until) = $this->_getRange();
+
+    if ($this->_user->getRoleId() == User::STATUS_ADMIN) {
+      $hardFrom = $this->_request->getParam('from');
+      if (!empty($hardFrom)) {
+        $from = $hardFrom;
+        $useCache = false;
+      }
+
+      $hardUntil = $this->_request->getParam('until');
+      if (!empty($hardUntil)) {
+        $until = $hardUntil;
+        $useCache = false;
+      }
+
+      $limit = $this->_request->getParam('limit', MAX_NOTIFICATION_ITEMS_ADMIN);
+    } else {
+      $limit = MAX_NOTIFICATION_ITEMS_USERS;
     }
 
     if ($useCache) {
@@ -57,11 +79,11 @@ class NotificationsController extends Api_Controller_Action
       $filteredItems = Item::filterOutItems($allNewItems, User_Notification::MEDIUM_HOMEPAGE, $this->_user, true);
     }
 
-    $filteredItems = $this->_addPrivateMessagesToFilteredItems($filteredItems, $from);
+//    $filteredItems = $this->_addPrivateMessagesToFilteredItems($filteredItems, $from);
 
     $list = $this->_flattenList($filteredItems);
 
-    $this->view->resources = array(
+    $this->view->output = array(
       'range' => $viewRange,
       'from' => $from,
       'newItems' => $list
@@ -77,6 +99,7 @@ class NotificationsController extends Api_Controller_Action
     $until = $until->get('YYYY-MM-dd HH:mm:ss');
 
     $useCache = true && ALLOW_CACHE;
+    $viewRange = 'overLastWeek';
 
     if ($from) {
       $viewRange = 'custom';
@@ -157,20 +180,28 @@ class NotificationsController extends Api_Controller_Action
 
     $accessors = array();
 
-    foreach ($filteredItems['newElementsAndMetadata'] as $newElement) {
+    foreach ($filteredItems['newElementsAndMetadata'] as $index => $newElement) {
       $item = array();
 
       if (!isset($accessors[$newElement['parent']['dataType']])) {
         list($dummy, $accessor) = $this->_mapResource($newElement['parent']['dataType']);
         $accessors[$newElement['parent']['dataType']] = $accessor;
       }
-      $item['parent'] = $accessor->getObjectData($newElement['parent']['object']);
+      $accessor = $accessors[$newElement['parent']['dataType']];
+      try {
+        $item['parent'] = $accessor->getObjectData($newElement['parent']['object']);
+      } catch(Exception $e) {
+        throw $e;
+      }
       $item['parent']['itemType'] = $newElement['parent']['dataType'];
 
       $children = array();
       foreach ($newElement['children'] as $child) {
         list($dummy, $accessor) = $this->_mapResource($child['dataType']);
-        $children[] = $accessor->getObjectData($child['object']);
+        if (isset($child['object'])) {
+          $children[] = $accessor->getObjectData($child['object']);
+        }
+
       }
       $item['children'] = $children;
 

@@ -1975,6 +1975,22 @@ describe('Album tests', () => {
       expect(title).toEqual([{'locale': 'en-US', 'text': 'adminTitle', original: true }]);
       expect(description).toEqual([{'locale': 'en-US', 'text': 'adminDescription', original: true }]);
     });
+
+    test('Owner can create invisible album and then make it visible', async() => {
+      albumClient.setUser(plainUser);
+      const { id } = checkSuccess(
+        await albumClient.post({
+          albumVisibility: 'private',
+          title: [{ locale: 'en-US', text: 'Invisible', }],
+        }),
+      );
+      checkSuccess(
+        await albumClient.put(id, {
+          albumVisibility: 'visible',
+          title: [{ locale: 'en-US', text: 'Visible', }],
+        }),
+      );
+    });
   });
 
   describe('DELETE', () => {

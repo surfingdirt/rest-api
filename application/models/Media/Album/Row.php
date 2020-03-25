@@ -189,6 +189,14 @@ abstract class Media_Album_Row extends Data_Row
     return $nextItem;
   }
 
+  public function getNotification()
+  {
+    if ($this->albumVisibility === Media_Album::VISIBILITY_PRIVATE) {
+      return Item_Row::NOTIFICATION_SILENT;
+    }
+    return Item_Row::NOTIFICATION_ANNOUNCE;
+  }
+
   public function getLink()
   {
     switch ($this->id) {

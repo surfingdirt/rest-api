@@ -6,6 +6,40 @@ class Item extends Cache_Object
 
   protected $_rowClass = 'Item_Row';
 
+  public static function getFeedItems($from, $until, User_Row $user, Lib_Acl $acl, $maxItems)
+  {
+    $db = Globals::getMainDatabase();
+    $userId = $user->getId();
+    $table = Constants_TableNames::ITEM;
+    $silent = Item_Row::NOTIFICATION_SILENT;
+    $valid = Data::VALID;
+
+    $limit = empty($maxItems) ? MAX_NOTIFICATION_ITEMS_USERS : $maxItems;
+
+    $from = $db->quote($from);
+    $from = ' AND date >= ' . $from;
+
+    $until = '';
+    if (!empty($until)) {
+      $until = $db->quote($until);
+      $until = ' AND date < ' . $until;
+    }
+
+    $sql = "
+        SELECT
+        *
+        FROM $table
+        WHERE 1
+        AND notification <> '$silent'
+        AND status = '$valid'
+        $from
+        $until
+        LIMIT $limit        
+    ";
+    $feedItems = $db->fetchAll($sql);
+    return $feedItems;
+  }
+
   /**
    * Return all items posted since the specified date
    *
@@ -47,7 +81,7 @@ class Item extends Cache_Object
     $notifTable = Constants_TableNames::USER_NOTIFICATIONS;
 
     $notificationJoin = "JOIN $notifTable n ON (n.itemType = parent.itemType AND n.notify = " . User_Notification::NOTIFY . ")";
-    $notificationCondition = " AND n.medium = '$medium' AND n.userId = $userId";
+    $notificationCondition = " AND n.medium = '$medium' AND n.userId = '$userId'";
 
     $newElementsAndMetadataSql =
       "SELECT
@@ -58,9 +92,9 @@ child.date AS childItemDate,child.status AS childItemStatus
 FROM $table parent
 $notificationJoin
 LEFT JOIN $table child
-ON (child.parentItemId = parent.id AND child.date > $from$childUntil$childValidCondition AND child.submitter <> $userId AND child.notification <> '$silent')
+ON (child.parentItemId = parent.id AND child.date > $from$childUntil$childValidCondition AND child.submitter <> '$userId' AND child.notification <> '$silent')
 WHERE 1$notificationCondition AND parent.date > $from$parentUntil$parentValidCondition
-AND parent.parentItemId IS NULL AND (parent.submitter <> $userId OR child.submitter <> $userId) AND parent.notification <> '$silent'
+AND parent.parentItemId IS NULL AND (parent.submitter <> '$userId' OR child.submitter <> '$userId') AND parent.notification <> '$silent'
 GROUP BY parentItemId, parentItemType, child.parentItemId, childItemType
 ORDER BY parentItemType ASC, parentItemId DESC
 $limit;";
@@ -76,7 +110,7 @@ $notificationJoin
 JOIN $table child ON (child.parentItemId = parent.id)
 WHERE 1$notificationCondition
 AND child.date > $from AND parent.date < $from$childValidCondition$parentValidCondition
-AND child.submitter <> $userId AND child.notification <> '$silent'
+AND child.submitter <> '$userId' AND child.notification <> '$silent'
 GROUP BY parentItemId, parentItemType, child.itemType
 ORDER BY parentItemType ASC, parentItemId DESC
 $limit;";

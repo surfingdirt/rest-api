@@ -45,28 +45,6 @@ insert into `images`(`id`,`imageType`,`storageType`, `status`, `submitter`, `dat
 ('2c22c53e1954-8039-43f7-8f07-bc560af4', 0, 0, 'valid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:07', null, null, 720, 540),
 ('bf22c53e1954-2339-12f7-5f07-55560af8', 0, 0, 'valid', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:07', null, null, 720, 540);
 
-insert  into `items`(`id`,`itemId`,`itemType`,`date`,`status`,`parentItemId`,`submitter`,`notification`) values
-(1,'a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','2002-02-18 14:00:00','valid',NULL,'60bfb8a7-5754-4186-acd2-44b20ef32399','silent'),
-(2,'40763a20-5aa0-49d2-85f7-292c95cb3643','mediaalbum','2002-02-18 14:00:01','valid',NULL,'60bfb8a7-5754-4186-acd2-44b20ef32399','silent'),
-(3,'40c38ab9-cb77-49a7-a296-0805237d2710','mediaalbum','2002-02-18 14:00:02','valid',NULL,'60bfb8a7-5754-4186-acd2-44b20ef32399','silent'),
-(4,'ab2121cb-03d6-45de-a1ba-4581dd00d79f','mediaalbum','2002-02-18 14:00:03','valid',NULL,'60bfb8a7-5754-4186-acd2-44b20ef32399','silent'),
-(5,'f2aa61fc-bbc5-45b2-bada-10bff101d957','mediaalbum','2002-02-18 14:00:04','valid',NULL,'85193083-ce22-43a5-993b-1c7aba53d13c','silent'),
-(6,'9fb7e4d7-fc38-43b1-a890-4d0872874b5b','mediaalbum','2002-02-18 14:00:05','valid',NULL,'b1786ac1-5cc8-4156-8471-8a80a87efe17','silent'),
-(7,'a5682d96-fc1b-4b76-b306-485631a5f26d','mediaalbum','2002-02-18 14:00:06','valid',NULL,'60bfb8a7-5754-4186-acd2-44b20ef32399','silent'),
-(8,'6b34bbdd-780d-4c2a-adba-c4229a161136','mediaalbum','2002-02-18 14:00:07','valid',NULL,'102e6ed9-cdac-4c9c-9483-a3309970db59','silent'),
-(9,'0a8aca42-cd0e-4fe7-8c55-9495f2e95164','mediaalbum','2002-02-18 14:00:08','valid',NULL,'6750ff62-7195-49f5-bf81-e3d395e6cdcf','silent'),
-(10,'ac1a8df7-e15b-470e-a2bb-b7fb8187270f','mediaalbum','2002-02-18 14:00:09','valid',NULL,'941b2ac5-2519-44de-84f9-ea9980e4631f','silent'),
-(11,'76d513e3-3879-48d7-8f5f-2e8afc36a647','mediaalbum','2002-02-18 14:00:10','valid',NULL,'cc834ce6-58df-4381-aed3-8fe4c2923434','silent'),
-(12,'feba0696-8954-4596-a849-0087cbe8ea76','mediaalbum','2002-02-18 14:00:11','valid',NULL,'85193083-ce22-43a5-993b-1c7aba53d13c','silent'),
-
-(13,'44aa386d-3171-432b-a648-f40929043758','photo','2002-02-18 10:00:00','valid',NULL,'6750ff62-7195-49f5-bf81-e3d395e6cdcf','announce'),
-(14,'9b523108-9b34-43ea-916d-874ff6013021','photo','2002-02-19 10:00:00','valid',NULL,'6750ff62-7195-49f5-bf81-e3d395e6cdcf','announce'),
-(15,'6af68e15-276b-42d7-8683-909943b0ae27','video','2002-02-20 10:00:00','valid',NULL,'85193083-ce22-43a5-993b-1c7aba53d13c','announce'),
-(16,'e4e4cb62-4820-4cff-baff-74b2bdcb1993','photo','2002-02-19 10:00:00','valid',NULL,'85193083-ce22-43a5-993b-1c7aba53d13c','announce'),
-(17,'9119c477-1c48-4449-9b8e-9cdb745fc912','photo','2002-02-19 10:00:00','valid',NULL,'6750ff62-7195-49f5-bf81-e3d395e6cdcf','announce'),
-(18,'051cae3a-95f7-4a29-996d-796d4c263a1e','photo','2002-02-19 10:00:00','invalid',NULL,'85193083-ce22-43a5-993b-1c7aba53d13c','announce'),
-(19,'a8a7b0fd-e0f2-49d9-8974-e6292d7e667b','mediaalbum','2002-02-18 14:00:00','valid',NULL,'cc834ce6-58df-4381-aed3-8fe4c2923434','announce');
-
 insert  into `media_album_aggregations`(`id`,`keyName`,`keyValue`,`albumId`) values
 (1,'user','85193083-ce22-43a5-993b-1c7aba53d13c','ab2121cb-03d6-45de-a1ba-4581dd00d79f'),
 (2,'user','b1786ac1-5cc8-4156-8471-8a80a87efe17','f2aa61fc-bbc5-45b2-bada-10bff101d957'),

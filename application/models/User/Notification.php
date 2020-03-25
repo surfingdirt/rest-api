@@ -15,9 +15,9 @@ class User_Notification extends Zend_Db_Table_Abstract
   protected $_name = Constants_TableNames::USER_NOTIFICATIONS;
 
   protected $_referenceMap = array(
-    'User' => array(
+    'Api_User' => array(
       'columns' => 'userId',
-      'refTableClass' => 'User',
+      'refTableClass' => 'Api_User',
       'refColumns' => User::COLUMN_USERID
     ),
   );

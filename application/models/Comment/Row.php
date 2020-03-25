@@ -58,18 +58,7 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
   public function getParentItem()
   {
     $parentRow = $this->getParentItemfromDatabase();
-    if (!$parentRow) {
-      return null;
-    }
-
-    $itemTable = new Item();
-
-    $adapter = $itemTable->getAdapter();
-    $where = $adapter->quoteInto('itemType = ?', $parentRow->getItemType());
-    $where .= $adapter->quoteInto(' AND itemId = ?', $parentRow->id);
-
-    $parentItem = $itemTable->fetchRow($where);
-    return $parentItem;
+    return $parentRow;
   }
 
   /**

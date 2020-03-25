@@ -1246,7 +1246,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     $item->itemId = $this->id;
     $item->itemType = $this->_table->getItemType();
     $item->status = $this->status;
-    $item->notification = $this->_notification;
+    $item->notification = $this->getNotification();
     $item->submitter = $this->submitter;
     if ($reflection->implementsInterface('Data_Row_MetaDataInterface')) {
       $parentItem = $this->getParentItem();
@@ -1325,7 +1325,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     $item = $itemTable->fetchRow($where);
     if ($item) {
       $item->status = $this->status;
-      $item->notification = $this->_notification;
+      $item->notification = $this->getNotification();
       if (isset($this->date)) {
         $item->date = $this->date;
       }

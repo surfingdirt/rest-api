@@ -26,6 +26,7 @@ class Routes {
 
       'translations' => new Zend_Controller_Router_Route('/translations/:itemType/:itemId/', array('controller' => 'translation', 'action' => 'index' )),
 
+      'displaydata' => $dummyRoute,
       'createdata' => $dummyRoute,
       'editdata' => $dummyRoute,
       'deletedata' => $dummyRoute,

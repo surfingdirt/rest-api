@@ -1,7 +1,8 @@
 <?php
 
 class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
-  Data_Row_MediaItemInterface
+  Data_Row_MediaItemInterface,
+  Data_Row_MetaDataInterface
 //  Data_Row_SpotInterface,
 //  Data_Row_TrickInterface,
 //  Data_Row_LocationInterface,
@@ -661,5 +662,16 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
   {
     list($city, $dptRow, $countryRow) = $this->getCityDptAndCountry();
     return $dptRow;
+  }
+
+  public function getParentItemfromDatabase()
+  {
+    return Media_Album_Factory::buildAlbumById($this->albumId);
+  }
+
+  public function getParentItem()
+  {
+    $parentRow = $this->getParentItemfromDatabase();
+    return $parentRow;
   }
 }
