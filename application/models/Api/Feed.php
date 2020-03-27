@@ -1,6 +1,16 @@
 <?php
 class Api_Feed
 {
+  const TYPES_ALLOWED_IN_LEVEL1 = [
+    Constants_DataTypes::MEDIAALBUM, Constants_DataTypes::USER,
+  ];
+  const TYPES_ALLOWED_IN_LEVEL2 = [
+    Constants_DataTypes::PHOTO, Constants_DataTypes::VIDEO,
+  ];
+  const TYPES_ALLOWED_IN_LEVEL3 = [
+    Constants_DataTypes::COMMENT,
+  ];
+
   public function getFeedItems($from, $until, User_Row $user, Lib_Acl $acl, $maxItems, $useCache)
   {
     $db = Globals::getMainDatabase();
@@ -40,12 +50,13 @@ class Api_Feed
 
     $level1 = $this->_buildLevel1FromItems($items);
     list($level2, $level2Children) = $this->_buildLevel2FromItems($items, $level1);
-    $level3 = $this->_buildLevel3FromItems($items);
+    $level3 = $this->_buildLevel3FromItems($items, $level2, $level2Children);
 
     // Filter out elements from level 1 that are silent
     $level1 = array_filter($level1, function($item) {
       return $item['notification'] === Item_Row::NOTIFICATION_ANNOUNCE;
     });
+
 
     $levels = [$level1, $level2, $level3];
     return [$levels, $log];
@@ -66,10 +77,14 @@ class Api_Feed
   {
     $level1 = [];
     foreach ($items as $item) {
+      if (!in_array($item['itemType'], self::TYPES_ALLOWED_IN_LEVEL1)) {
+        continue;
+      }
       // Only look at elements without a parent
       if ($item['parentItemId']) {
         continue;
       }
+
       $id = $item['itemId'];
       $item['children'] = [];
       $level1[$id] = $item;
@@ -83,6 +98,10 @@ class Api_Feed
     $level2 = [];
     $level2Children = [];
     foreach ($items as $item) {
+      if (!in_array($item['itemType'], self::TYPES_ALLOWED_IN_LEVEL2)) {
+        continue;
+      }
+
       // Only look at elements with a parent
       if (!$item['parentItemId']) {
         continue;
@@ -116,17 +135,20 @@ class Api_Feed
     return [$level2, $level2Children];
   }
 
-  protected function _buildLevel3FromItems($items)
+  protected function _buildLevel3FromItems($items, $level2, $level2Children)
   {
     $level3 = [];
     foreach ($items as $item) {
-      // Only look at
+      if (!in_array($item['itemType'], self::TYPES_ALLOWED_IN_LEVEL3)) {
+        continue;
+      }
       if (!$item['parentItemId'] || $item['notification'] === Item_Row::NOTIFICATION_SILENT) {
         continue;
       }
 
       $parentItemId = $item['parentItemId'];
-      if (!isset($level2Children[$parentItemId])) {
+      if (isset($level2Children[$parentItemId])) {
+        // Parent is in level 2 already: no need to report this
         continue;
       }
 
