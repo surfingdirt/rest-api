@@ -26,9 +26,9 @@ final class FeedTest extends TestCase
   public function testLevelsEmpty() {
     list($level1, $level2, $level3) = $this->_getLevels([]);
 
-    $this->assertEquals($level1, []);
-    $this->assertEquals($level2, []);
-    $this->assertEquals($level3, []);
+    $this->assertEquals([], $level1);
+    $this->assertEquals([], $level2);
+    $this->assertEquals([], $level3);
   }
 
   public function testLevelsNewSilentAlbum() {
@@ -46,9 +46,9 @@ final class FeedTest extends TestCase
       ],
     ]);
 
-    $this->assertEquals($level1, []);
-    $this->assertEquals($level2, []);
-    $this->assertEquals($level3, []);
+    $this->assertEquals([], $level1);
+    $this->assertEquals([], $level2);
+    $this->assertEquals([], $level3);
   }
 
   public function testLevelsNewAnnouncedAlbum() {
@@ -78,8 +78,8 @@ final class FeedTest extends TestCase
         'children' => [],
       ],
     ]);
-    $this->assertEquals($level2, []);
-    $this->assertEquals($level3, []);
+    $this->assertEquals([], $level2);
+    $this->assertEquals([], $level3);
   }
 
   public function testLevelsNewSilentPhoto() {
@@ -96,9 +96,9 @@ final class FeedTest extends TestCase
       ],
     ]);
 
-    $this->assertEquals($level1, []);
-    $this->assertEquals($level2, []);
-    $this->assertEquals($level3, []);
+    $this->assertEquals([], $level1);
+    $this->assertEquals([], $level2);
+    $this->assertEquals([], $level3);
   }
 
   public function testLevelsNewAnnouncedPhoto() {
@@ -115,8 +115,8 @@ final class FeedTest extends TestCase
       ],
     ]);
 
-    $this->assertEquals($level1, []);
-    $this->assertEquals($level2, [
+    $this->assertEquals([], $level1);
+    $this->assertEquals([
       'e9c060b6-8d72-4187-8441-bf89c412e4d6' => [
         'id' => 1,
         'itemId' => 'e9c060b6-8d72-4187-8441-bf89c412e4d6',
@@ -128,8 +128,8 @@ final class FeedTest extends TestCase
         'notification' => 'announce',
         'children' => [],
       ],
-    ]);
-    $this->assertEquals($level3, []);
+    ], $level2);
+    $this->assertEquals([], $level3);
   }
 
   public function testLevelsNewSilentComment() {
@@ -145,10 +145,9 @@ final class FeedTest extends TestCase
         'notification' => 'silent',
       ],
     ]);
-
-    $this->assertEquals($level1, []);
-    $this->assertEquals($level2, []);
-    $this->assertEquals($level3, []);
+    $this->assertEquals([], $level1);
+    $this->assertEquals([], $level2);
+    $this->assertEquals([], $level3);
   }
 
   public function testLevelsNewAnnouncedComment() {
@@ -165,9 +164,9 @@ final class FeedTest extends TestCase
       ],
     ]);
 
-    $this->assertEquals($level1, []);
-    $this->assertEquals($level2, []);
-    $this->assertEquals($level3, [
+    $this->assertEquals([], $level1);
+    $this->assertEquals([], $level2);
+    $this->assertEquals([
       '2a2f012f-4476-41a9-a37d-931749371228' => [
         'id' => 1,
         'itemId' => '2a2f012f-4476-41a9-a37d-931749371228',
@@ -178,7 +177,7 @@ final class FeedTest extends TestCase
         'submitter' => 'c0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'announce',
       ],
-    ]);
+    ], $level3);
   }
 
   /**
@@ -188,13 +187,15 @@ final class FeedTest extends TestCase
   {
     list($newItems, $newSubItems) = $this->_getNewItemsAndSubItems($items);
 
-    $this->assertEquals($newItems, $expectedNewItems);
-    $this->assertEquals($newSubItems, $expectedNewSubItems);
+    $this->assertEquals($expectedNewItems, $newItems);
+    $this->assertEquals($expectedNewSubItems, $newSubItems);
   }
 
   public function mergeProvider() {
     return [
       FeedTestCases::NEW_ALBUM,
+      FeedTestCases::NEW_PHOTO_IN_NEW_ALBUM,
+      FeedTestCases::NEW_PHOTOS_IN_OLD_ALBUM,
     ];
   }
 }

@@ -41,7 +41,7 @@ class Api_Feed
   protected static function _stripNewParent($item)
   {
     return [
-      'children' => [$item],
+      'children' => [self::_stripItem($item)],
       'itemId' => $item['parentItemId'],
       'itemType' => $item['parentItemType'],
     ];
