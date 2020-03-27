@@ -4,6 +4,8 @@
   "description": "The underlying REST API for the site ",
   "scripts": {
     "test": "jest",
+    "testphp": "phpunit tests",
+    "watchphptests": " ./library/vendor/bin/phpunit-watcher watch",
     "installdevdb": "mysql surfingdirtcom_dev -uroot < data/sql/structure.sql",
     "installtestdb": "mysql ridedb_test -uroot < data/sql/structure.sql",
     "resetdevdb": "mysql surfingdirtcom_dev -uroot < data/sql/dev_fixtures.sql",

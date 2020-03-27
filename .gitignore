@@ -14,3 +14,5 @@ _tmp
 node_modules
 .idea
 library/vendor
+*.phar
+*.cache

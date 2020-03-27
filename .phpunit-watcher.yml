@@ -1,0 +1,13 @@
+watch:
+  directories:
+    - application
+    - library
+    - tests/php
+  fileMask: '*.php'
+notifications:
+  passingTests: false
+  failingTests: false
+phpunit:
+  binaryPath: library/vendor/bin/phpunit
+  arguments: '--bootstrap bootstrap.php tests'
+  timeout: 180

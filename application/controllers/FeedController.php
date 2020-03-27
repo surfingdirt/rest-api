@@ -4,14 +4,21 @@ class FeedController extends Api_Controller_Action
 {
   public function listAction()
   {
+    $feed = $this->_table;
     list($viewRange, $from, $until, $limit, $useCache) = $this->_getContext();
-    $items = $this->_table->getFeedItems($from, $until, $this->_user, $this->_acl, $limit);
 
-    $this->view->output = array(
-      'range' => $viewRange,
-      'from' => $from,
-      'items' => $items,
-    );
+    $items = $feed->getFeedItems($from, $until, $this->_user, $this->_acl, $limit, $useCache);
+    list($levels, $log) = $feed->buildLevels($items);
+    $mergedItems = $feed->mergeLevels($levels);
+
+    $this->view->output = $mergedItems;
+//    array(
+//      'range' => $viewRange,
+//      'from' => $from,
+//      'items' => $items,
+//      'levels' => $levels,
+//      'log' => $log,
+//    );
   }
 
   protected function _getContext()
@@ -79,6 +86,11 @@ class FeedController extends Api_Controller_Action
     }
     return array($range, $viewRange, $from, $until);
   }
+
+//  protected function _mapResource($key)
+//  {
+//    // TODO: implement this in order to not define an empty Api_Feed_Accessor
+//  }
 
   public function getAction()
   {
