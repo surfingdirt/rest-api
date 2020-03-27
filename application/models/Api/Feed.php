@@ -11,6 +11,60 @@ class Api_Feed
     Constants_DataTypes::COMMENT,
   ];
 
+  public function __construct()
+  {
+    $this->_level1 = [];
+    $this->_level2 = [];
+    $this->_level3 = [];
+
+    $this->_newItems = [];
+    $this->_newSubItems = [];
+  }
+
+  protected static function _stripItem($item)
+  {
+    return [
+      'date' => $item['date'],
+      'itemId' => $item['itemId'],
+      'itemType' => $item['itemType'],
+      'submitter' => $item['submitter'],
+    ];
+  }
+
+  protected static function _stripRootItem($item)
+  {
+    $root = self::_stripItem($item);
+    $root['children'] = $item['children'];
+    return $root;
+  }
+
+  protected static function _stripNewParent($item)
+  {
+    return [
+      'children' => [$item],
+      'itemId' => $item['parentItemId'],
+      'itemType' => $item['parentItemType'],
+    ];
+  }
+
+  protected static function _attachItemsToParents($childLevel, $parentLevel, $subItems)
+  {
+    foreach ($childLevel as $item) {
+      $parentId = $item['parentItemId'];
+      if (isset($parentLevel[$parentId])) {
+        $parentLevel[$parentId]['children'][] = self::_stripItem($item);
+      } else {
+        if (isset($newSubItems[$parentId])) {
+          $subItems[$parentId]['children'][] = self::_stripItem($item);
+        } else {
+          $subItems[$parentId] = self::_stripNewParent($item);
+        }
+      }
+    }
+
+    return $subItems;
+  }
+
   public function getFeedItems($from, $until, User_Row $user, Lib_Acl $acl, $maxItems, $useCache)
   {
     $db = Globals::getMainDatabase();
@@ -44,33 +98,39 @@ class Api_Feed
     return $feedItems;
   }
 
-  public function buildLevels($items)
+  public function getLevels()
   {
-    $log = [];
-
-    $level1 = $this->_buildLevel1FromItems($items);
-    list($level2, $level2Children) = $this->_buildLevel2FromItems($items, $level1);
-    $level3 = $this->_buildLevel3FromItems($items, $level2, $level2Children);
-
-    // Filter out elements from level 1 that are silent
-    $level1 = array_filter($level1, function($item) {
-      return $item['notification'] === Item_Row::NOTIFICATION_ANNOUNCE;
-    });
-
-
-    $levels = [$level1, $level2, $level3];
-    return [$levels, $log];
+    return [$this->_level1, $this->_level2, $this->_level3];
   }
 
-  public function mergeLevels($levels)
+  public function getNewItems()
   {
-    list($level1, $level2, $level3) = $levels;
+    return $this->_newItems;
+  }
 
-    $mergedItems = array_merge($level1, $level2, $level3);
-    usort($mergedItems, function($a, $b) {
-      return strtotime($b['date']) - strtotime($a['date']);
-    });
-    return $mergedItems;
+  public function getNewSubItems()
+  {
+    return $this->_newSubItems;
+  }
+
+  public function buildLevels($items)
+  {
+    $this->_buildLevel1FromItems($items);
+    $this->_buildLevel2FromItems($items);
+    $this->_buildLevel3FromItems($items);
+  }
+
+  public function mergeLevels()
+  {
+    $this->_newSubItems = self::_attachItemsToParents($this->_level3, $this->_level2, $this->_newSubItems);
+    $this->_newSubItems = self::_attachItemsToParents($this->_level2, $this->_level1, $this->_newSubItems);
+
+    $newItems = [];
+    foreach($this->_level1 as $id => $item) {
+      $newItems[$id] = self::_stripRootItem($item);
+    }
+
+    $this->_newItems = $newItems;
   }
 
   protected function _buildLevel1FromItems($items)
@@ -84,80 +144,63 @@ class Api_Feed
       if ($item['parentItemId']) {
         continue;
       }
+      if ($item['notification'] !== Item_Row::NOTIFICATION_ANNOUNCE) {
+        continue;
+      }
 
       $id = $item['itemId'];
       $item['children'] = [];
       $level1[$id] = $item;
     }
 
-    return $level1;
+    $this->_level1 = $level1;
   }
 
-  protected function _buildLevel2FromItems($items, $level1)
+  protected function _buildLevel2FromItems($items)
   {
     $level2 = [];
-    $level2Children = [];
     foreach ($items as $item) {
       if (!in_array($item['itemType'], self::TYPES_ALLOWED_IN_LEVEL2)) {
         continue;
       }
-
       // Only look at elements with a parent
       if (!$item['parentItemId']) {
         continue;
       }
-
-      if (!$this->_checkItemLevel2($level1, $item, $log)) {
+      if ($item['notification'] !== Item_Row::NOTIFICATION_ANNOUNCE) {
         continue;
       }
 
-      // Only store in level2 those items whose parent is not in level1 already
-      $parentItemId = $item['parentItemId'];
-      if (!isset($level1[$parentItemId])) {
-        $id = $item['itemId'];
-        $level2Children[$id] = $item;
-      }
-    }
-    foreach ($level2Children as $child) {
-      $parentItemId = $child['parentItemId'];
-      if (!isset($level2[$parentItemId]) && $child['notification'] === Item_Row::NOTIFICATION_ANNOUNCE) {
-        $level2[$parentItemId] = [
-          'itemId' => $parentItemId,
-          'itemType' => $child['parentItemType'],
-          // TODO: this isn't right, we need to store the parent's date as well
-          'date' => $child['date'],
-          'children' => [],
-        ];
-      }
-      $level2[$parentItemId]['children'][] = $child;
+      $id = $item['itemId'];
+      $item['children'] = [];
+      $level2[$id] = $item;
     }
 
-    return [$level2, $level2Children];
+    $this->_level2 = $level2;
   }
 
-  protected function _buildLevel3FromItems($items, $level2, $level2Children)
+  protected function _buildLevel3FromItems($items)
   {
     $level3 = [];
     foreach ($items as $item) {
       if (!in_array($item['itemType'], self::TYPES_ALLOWED_IN_LEVEL3)) {
         continue;
       }
-      if (!$item['parentItemId'] || $item['notification'] === Item_Row::NOTIFICATION_SILENT) {
+      // Only look at elements with a parent
+      if (!$item['parentItemId']) {
+        continue;
+      }
+      if ($item['notification'] !== Item_Row::NOTIFICATION_ANNOUNCE) {
         continue;
       }
 
-      $parentItemId = $item['parentItemId'];
-      if (isset($level2Children[$parentItemId])) {
-        // Parent is in level 2 already: no need to report this
-        continue;
-      }
-
-      $parentItem = $level2Children[$parentItemId];
-      $parentItem['children'][] = $item;
-      $level3[] = $item;
+      $id = $item['itemId'];
+      // No need to add a children entry because this is the last level
+      // $item['children'] = [];
+      $level3[$id] = $item;
     }
 
-    return $level3;
+    $this->_level3 = $level3;
   }
 
   protected function _checkItemLevel2($parentLevel, $item, &$log)
