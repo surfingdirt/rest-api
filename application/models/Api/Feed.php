@@ -42,6 +42,7 @@ class Api_Feed
   {
     return [
       'children' => [self::_stripItem($item)],
+      'date' => $item['parentItemDate'],
       'itemId' => $item['parentItemId'],
       'itemType' => $item['parentItemType'],
     ];
