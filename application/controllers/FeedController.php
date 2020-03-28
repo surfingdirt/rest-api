@@ -7,18 +7,17 @@ class FeedController extends Api_Controller_Action
     $feed = $this->_table;
     list($viewRange, $from, $until, $limit, $useCache) = $this->_getContext();
 
-    $items = $feed->getFeedItems($from, $until, $this->_user, $this->_acl, $limit, $useCache);
-    list($levels, $log) = $feed->buildLevels($items);
-    $mergedItems = $feed->mergeLevels($levels);
-
-    $this->view->output = $mergedItems;
-//    array(
-//      'range' => $viewRange,
-//      'from' => $from,
-//      'items' => $items,
-//      'levels' => $levels,
-//      'log' => $log,
-//    );
+    $dbItems = $feed->getDbItems($from, $until, $this->_user, $this->_acl, $limit, $useCache);
+    $feed->buildLevels($dbItems);
+    $feed->mergeLevels();
+    $items = $feed->getSortedItems();
+    $this->view->output =
+      array(
+        'range' => $viewRange,
+        'from' => $from,
+        'items' => $items,
+        'levels' => $levels,
+      );
   }
 
   protected function _getContext()

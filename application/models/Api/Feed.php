@@ -92,7 +92,7 @@ class Api_Feed
     return $sortDate;
   }
 
-  public function getFeedItems($from, $until, User_Row $user, Lib_Acl $acl, $maxItems, $useCache)
+  public function getDbItems($from, $until, User_Row $user, Lib_Acl $acl, $maxItems, $useCache)
   {
     $db = Globals::getMainDatabase();
     $userId = $user->getId();
