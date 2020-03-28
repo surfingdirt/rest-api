@@ -146,4 +146,9 @@ class Media_Album_Aggregate_Row extends Media_Album_Row
     $rawItems = $itemsTable->fetchAll($where);
     return $rawItems;
   }
+
+  public function getNotification()
+  {
+    return Item_Row::NOTIFICATION_SILENT;
+  }
 }
