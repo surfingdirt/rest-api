@@ -33,16 +33,23 @@ class Api_Feed
 
   protected static function _stripRootItem($item)
   {
-    $root = self::_stripItem($item);
-    $root['children'] = $item['children'];
+    $root = [
+      'sortDate' => $item['date'],
+      'itemId' => $item['itemId'],
+      'itemType' => $item['itemType'],
+      'submitter' => $item['submitter'],
+      'children' => $item['children'],
+    ];
+
     return $root;
   }
 
   protected static function _stripNewParent($item)
   {
+    $children = [self::_stripItem($item)];
     return [
-      'children' => [self::_stripItem($item)],
-      'date' => $item['parentItemDate'],
+      'children' => $children,
+      'sortDate' => self::_getSortDate($children),
       'itemId' => $item['parentItemId'],
       'itemType' => $item['parentItemType'],
     ];
@@ -64,6 +71,27 @@ class Api_Feed
     }
 
     return $subItems;
+  }
+
+  protected static function _addSortDate($subItems)
+  {
+    foreach ($subItems as $subItem) {
+      $sortDate = self::_getSortDate($subItem['children']);
+      $subItem['sortDate'] = $sortDate;
+    }
+    return $subItems;
+  }
+
+  protected static function _getSortDate($children)
+  {
+    // The sort date will be that of the most recent of the subItem's children
+    $sortDate = '1970-01-01 00:00:00.000';
+    foreach ($children as $child) {
+      if (strtotime($child['date']) > strtotime($sortDate)) {
+        $sortDate = $child['date'];
+      }
+    }
+    return $sortDate;
   }
 
   public function getFeedItems($from, $until, User_Row $user, Lib_Acl $acl, $maxItems, $useCache)
@@ -125,6 +153,7 @@ class Api_Feed
   {
     $this->_newSubItems = self::_attachItemsToParents($this->_level3, $this->_level2, $this->_newSubItems);
     $this->_newSubItems = self::_attachItemsToParents($this->_level2, $this->_level1, $this->_newSubItems);
+    $this->_newSubItems = self::_addSortDate($this->_newSubItems);
 
     $newItems = [];
     foreach($this->_level1 as $id => $item) {

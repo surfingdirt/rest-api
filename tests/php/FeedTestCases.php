@@ -20,7 +20,7 @@ class FeedTestCases
         'bb918b70-e541-42b0-a5fe-e32eb4748021' => [
           'itemId' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
           'itemType' => 'mediaalbum',
-          'date' => '2019-07-05 17:18:06.769',
+          'sortDate' => '2019-07-05 17:18:06.769',
           'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'children' => [],
         ],
@@ -67,7 +67,7 @@ class FeedTestCases
         'bb918b70-e541-42b0-a5fe-e32eb4748021' => [
           'itemId' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
           'itemType' => 'mediaalbum',
-          'date' => '2019-07-05 17:18:06.769',
+          'sortDate' => '2019-07-05 17:18:06.769',
           'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'children' => [],
         ],
@@ -93,7 +93,7 @@ class FeedTestCases
         'album-id' => [
           'itemId' => 'album-id',
           'itemType' => 'mediaalbum',
-          'date' => '2019-07-01 21:18:06.769',
+          'sortDate' => '2019-07-05 19:18:06.769',
           'children' => [
             [
               'itemId' => 'db918b70-e541-42b0-a5fe-e32eb4748021',
@@ -162,7 +162,7 @@ class FeedTestCases
         'new-album-id' => [
           'itemId' => 'new-album-id',
           'itemType' => 'mediaalbum',
-          'date' => '2019-07-05 17:18:06.769',
+          'sortDate' => '2019-07-05 17:18:06.769',
           'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'children' => [],
         ],
@@ -200,7 +200,7 @@ class FeedTestCases
         'old-album-id' => [
           'itemId' => 'old-album-id',
           'itemType' => 'mediaalbum',
-          'date' => '2019-07-01 17:18:06.769',
+          'sortDate' => '2019-07-05 18:18:06.769',
           'children' => [
             [
               'itemId' => 'new-photo-id',
@@ -231,7 +231,7 @@ class FeedTestCases
         'new-photo-id' => [
           'itemId' => 'new-photo-id',
           'itemType' => 'photo',
-          'date' => '2019-07-01 17:18:06.769',
+          'sortDate' => '2019-07-05 17:18:06.769',
           'children' => [
             [
               'itemId' => 'new-comment-id',
