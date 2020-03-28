@@ -383,7 +383,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     }
   }
 
-  public function FeedTestCases()
+  public function getNotification()
   {
     return $this->_notification;
   }
@@ -1256,7 +1256,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
       } else {
         $item->parentItemId = $parentItem->id;
         $item->parentItemType = $parentItem->getItemType();
-        $item->parentDate = $this->date;
+        $item->parentItemDate = $this->date;
       }
     }
     $item->save();
@@ -1334,7 +1334,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
       if (isset($this->date)) {
         $item->date = $this->date;
         if ($reflection->implementsInterface('Data_Row_MetaDataInterface')) {
-          $item->parentDate = $this->date;
+          $item->parentItemDate = $this->date;
         }
       }
       $item->save();
