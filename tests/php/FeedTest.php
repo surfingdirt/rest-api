@@ -195,7 +195,10 @@ final class FeedTest extends TestCase
     return [
       FeedTestCases::NEW_ALBUM,
       FeedTestCases::NEW_PHOTO_IN_NEW_ALBUM,
-      FeedTestCases::NEW_PHOTOS_IN_OLD_ALBUM,
+      FeedTestCases::NEW_PHOTO_IN_OLD_ALBUM,
+      FeedTestCases::NEW_COMMENT_ON_NEW_PHOTO_ON_NEW_ALBUM,
+      FeedTestCases::NEW_COMMENT_ON_NEW_PHOTO_ON_OLD_ALBUM,
+      FeedTestCases::NEW_COMMENT_ON_OLD_PHOTO_ON_OLD_ALBUM,
     ];
   }
 }
