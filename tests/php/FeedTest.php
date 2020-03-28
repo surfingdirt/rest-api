@@ -192,13 +192,6 @@ final class FeedTest extends TestCase
   }
 
   public function mergeProvider() {
-    return [
-      FeedTestCases::NEW_ALBUM,
-      FeedTestCases::NEW_PHOTO_IN_NEW_ALBUM,
-      FeedTestCases::NEW_PHOTO_IN_OLD_ALBUM,
-      FeedTestCases::NEW_COMMENT_ON_NEW_PHOTO_ON_NEW_ALBUM,
-      FeedTestCases::NEW_COMMENT_ON_NEW_PHOTO_ON_OLD_ALBUM,
-      FeedTestCases::NEW_COMMENT_ON_OLD_PHOTO_ON_OLD_ALBUM,
-    ];
+    return FeedTestCases::MERGE;
   }
 }
