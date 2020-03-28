@@ -32,8 +32,9 @@ class Api_Feed
 
   protected static function _stripRootItem($item)
   {
+    $sortDate = sizeof($item['children']) > 0 ? self::_getSortDate($item['children']) : $item['date'];
     $root = [
-      'sortDate' => $item['date'],
+      'sortDate' => $sortDate,
       'itemId' => $item['itemId'],
       'itemType' => $item['itemType'],
       'children' => $item['children'],
@@ -68,7 +69,7 @@ class Api_Feed
       }
     }
 
-    return $subItems;
+    return [$subItems, $parentLevel];
   }
 
   protected static function _addSortDate($subItems)
@@ -92,12 +93,12 @@ class Api_Feed
     return $sortDate;
   }
 
-  public function getDbItems($from, $until, User_Row $user, Lib_Acl $acl, $maxItems, $useCache)
+  public function getDbItems($from, $until, User_Row $user, Lib_Acl $acl, $maxItems)
   {
     $db = Globals::getMainDatabase();
     $userId = $user->getId();
     $table = Constants_TableNames::ITEM;
-    $silent = Item_Row::NOTIFICATION_SILENT;
+    $announce = Item_Row::NOTIFICATION_ANNOUNCE;
     $valid = Data::VALID;
 
     $limit = empty($maxItems) ? MAX_NOTIFICATION_ITEMS_USERS : $maxItems;
@@ -115,10 +116,12 @@ class Api_Feed
         *
         FROM $table
         WHERE 1
-        AND notification <> '$silent'
+        AND notification = '$announce'
         AND status = '$valid'
+        -- AND id = 1265
         $from
         $until
+        ORDER BY date DESC
         -- LIMIT $limit        
     ";
     $feedItems = $db->fetchAll($sql);
@@ -149,8 +152,8 @@ class Api_Feed
 
   public function mergeLevels()
   {
-    $this->_newSubItems = self::_attachItemsToParents($this->_level3, $this->_level2, $this->_newSubItems);
-    $this->_newSubItems = self::_attachItemsToParents($this->_level2, $this->_level1, $this->_newSubItems);
+    list($this->_newSubItems, $this->_level2) = self::_attachItemsToParents($this->_level3, $this->_level2, $this->_newSubItems);
+    list($this->_newSubItems, $this->_level1) = self::_attachItemsToParents($this->_level2, $this->_level1, $this->_newSubItems);
     $this->_newSubItems = self::_addSortDate($this->_newSubItems);
 
     $newItems = [];
