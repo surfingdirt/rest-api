@@ -383,7 +383,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     }
   }
 
-  public function getNotification()
+  public function FeedTestCases()
   {
     return $this->_notification;
   }
@@ -1256,6 +1256,7 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
       } else {
         $item->parentItemId = $parentItem->id;
         $item->parentItemType = $parentItem->getItemType();
+        $item->parentDate = $this->date;
       }
     }
     $item->save();
@@ -1326,9 +1327,15 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     $item = $itemTable->fetchRow($where);
     if ($item) {
       $item->status = $this->status;
-      $item->notification = $this->getNotification();
+      // An announced item cannot go back to silent
+      if ($item->notification === Item_Row::NOTIFICATION_SILENT) {
+        $item->notification = $this->getNotification();
+      }
       if (isset($this->date)) {
         $item->date = $this->date;
+        if ($reflection->implementsInterface('Data_Row_MetaDataInterface')) {
+          $item->parentDate = $this->date;
+        }
       }
       $item->save();
     }
