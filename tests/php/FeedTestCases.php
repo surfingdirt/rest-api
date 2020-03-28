@@ -12,7 +12,6 @@ class FeedTestCases
           'parentItemId' => null,
           'parentItemType' => null,
           'parentItemDate' => null,
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'notification' => 'announce',
         ],
       ],
@@ -21,7 +20,6 @@ class FeedTestCases
           'itemId' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
           'itemType' => 'mediaalbum',
           'sortDate' => '2019-07-05 17:18:06.769',
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'children' => [],
         ],
       ],
@@ -37,7 +35,6 @@ class FeedTestCases
           'parentItemId' => null,
           'parentItemType' => null,
           'parentItemDate' => null,
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'notification' => 'announce',
         ],
         [
@@ -48,7 +45,6 @@ class FeedTestCases
           'parentItemId' => null,
           'parentItemType' => null,
           'parentItemDate' => null,
-          'submitter' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
           'notification' => 'silent',
         ],
         [
@@ -59,7 +55,6 @@ class FeedTestCases
           'parentItemId' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
           'parentItemType' => 'mediaalbum',
           'parentItemDate' => '2019-07-01 21:18:06.769',
-          'submitter' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
           'notification' => 'announce',
         ],
       ],
@@ -68,7 +63,6 @@ class FeedTestCases
           'itemId' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
           'itemType' => 'mediaalbum',
           'sortDate' => '2019-07-05 17:18:06.769',
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'children' => [],
         ],
       ],
@@ -84,7 +78,6 @@ class FeedTestCases
           'parentItemId' => 'album-id',
           'parentItemType' => 'mediaalbum',
           'parentItemDate' => '2019-07-01 21:18:06.769',
-          'submitter' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
           'notification' => 'announce',
         ],
       ],
@@ -99,7 +92,6 @@ class FeedTestCases
               'itemId' => 'db918b70-e541-42b0-a5fe-e32eb4748021',
               'itemType' => 'photo',
               'date' => '2019-07-05 19:18:06.769',
-              'submitter' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
             ]
           ],
         ]
@@ -115,7 +107,6 @@ class FeedTestCases
           'parentItemId' => 'album-id',
           'parentItemType' => 'mediaalbum',
           'parentItemDate' => '2019-07-01 21:18:06.769',
-          'submitter' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
           'notification' => 'silent',
         ],
       ],
@@ -132,7 +123,6 @@ class FeedTestCases
           'parentItemId' => null,
           'parentItemType' => null,
           'parentItemDate' => null,
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'notification' => 'announce',
         ],
         [
@@ -143,7 +133,6 @@ class FeedTestCases
           'parentItemId' => 'new-album-id',
           'parentItemType' => 'mediaalbum',
           'parentItemDate' => '2019-07-01 17:18:06.769',
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'notification' => 'announce',
         ],
         [
@@ -154,7 +143,6 @@ class FeedTestCases
           'parentItemId' => 'new-photo-id',
           'parentItemType' => 'photo',
           'parentItemDate' => '2019-07-01 18:18:06.769',
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'notification' => 'announce',
         ],
       ],
@@ -163,7 +151,6 @@ class FeedTestCases
           'itemId' => 'new-album-id',
           'itemType' => 'mediaalbum',
           'sortDate' => '2019-07-05 17:18:06.769',
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'children' => [],
         ],
       ],
@@ -180,7 +167,6 @@ class FeedTestCases
           'parentItemId' => 'old-album-id',
           'parentItemType' => 'mediaalbum',
           'parentItemDate' => '2019-07-01 17:18:06.769',
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'notification' => 'announce',
         ],
         [
@@ -191,7 +177,6 @@ class FeedTestCases
           'parentItemId' => 'new-photo-id',
           'parentItemType' => 'photo',
           'parentItemDate' => '2019-07-05 18:18:06.769',
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'notification' => 'announce',
         ],
       ],
@@ -206,7 +191,6 @@ class FeedTestCases
               'itemId' => 'new-photo-id',
               'itemType' => 'photo',
               'date' => '2019-07-05 18:18:06.769',
-              'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
             ]
           ],
         ],
@@ -222,7 +206,6 @@ class FeedTestCases
           'parentItemId' => 'new-photo-id',
           'parentItemType' => 'photo',
           'parentItemDate' => '2019-07-01 17:18:06.769',
-          'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
           'notification' => 'announce',
         ],
       ],
@@ -237,9 +220,75 @@ class FeedTestCases
               'itemId' => 'new-comment-id',
               'itemType' => 'comment',
               'date' => '2019-07-05 17:18:06.769',
-              'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
             ]
           ],
+        ],
+      ],
+    ],
+  ];
+
+  const SORT = [
+    'Sort everything' => [
+      'items' => [
+        [
+          'id' => 1,
+          'itemId' => 'new-album-id',
+          'itemType' => 'mediaalbum',
+          'date' => '2019-07-05 17:18:06.769',
+          'parentItemId' => null,
+          'parentItemType' => null,
+          'parentItemDate' => null,
+          'notification' => 'announce',
+        ],
+        [
+          'id' => 2,
+          'itemId' => 'new-photo-id',
+          'itemType' => 'photo',
+          'date' => '2019-07-05 18:18:06.769',
+          'parentItemId' => 'new-album-id',
+          'parentItemType' => 'mediaalbum',
+          'parentItemDate' => '2019-07-01 17:18:06.769',
+          'notification' => 'announce',
+        ],
+        [
+          'id' => 3,
+          'itemId' => 'new-comment-id',
+          'itemType' => 'comment',
+          'date' => '2019-07-05 19:18:06.769',
+          'parentItemId' => 'new-photo-id',
+          'parentItemType' => 'photo',
+          'parentItemDate' => '2019-07-01 18:18:06.769',
+          'notification' => 'announce',
+        ],
+        [
+          'id' => 4,
+          'itemId' => 'new-comment2-id',
+          'itemType' => 'comment',
+          'date' => '2019-07-03 20:18:06.769',
+          'parentItemId' => 'old-photo-id',
+          'parentItemType' => 'photo',
+          'parentItemDate' => '2019-07-01 18:18:06.769',
+          'notification' => 'announce',
+        ],
+      ],
+      'result' => [
+        [
+          'itemType' => 'mediaalbum',
+          'itemId' => 'new-album-id',
+          'children' => [],
+          'sortDate' => '2019-07-05 17:18:06.769',
+        ],
+        [
+          'itemType' => 'photo',
+          'itemId' => 'old-photo-id',
+          'children' => [
+            [
+              'itemType' => 'comment',
+              'itemId' => 'new-comment2-id',
+              'date' => '2019-07-03 20:18:06.769',
+            ]
+          ],
+          'sortDate' => '2019-07-03 20:18:06.769',
         ],
       ],
     ],

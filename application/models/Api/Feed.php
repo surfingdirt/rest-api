@@ -27,7 +27,6 @@ class Api_Feed
       'date' => $item['date'],
       'itemId' => $item['itemId'],
       'itemType' => $item['itemType'],
-      'submitter' => $item['submitter'],
     ];
   }
 
@@ -37,7 +36,6 @@ class Api_Feed
       'sortDate' => $item['date'],
       'itemId' => $item['itemId'],
       'itemType' => $item['itemType'],
-      'submitter' => $item['submitter'],
       'children' => $item['children'],
     ];
 
@@ -161,6 +159,15 @@ class Api_Feed
     }
 
     $this->_newItems = $newItems;
+  }
+
+  public function getSortedItems()
+  {
+    $items = array_merge($this->_newSubItems, $this->_newItems);
+    usort($items, function($a, $b) {
+      return strtotime($a['sortDate']) < strtotime($b['sortDate']);
+    });
+    return $items;
   }
 
   protected function _buildLevel1FromItems($items)

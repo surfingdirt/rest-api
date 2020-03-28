@@ -20,6 +20,14 @@ final class FeedTest extends TestCase
     return [$newItems, $newSubItems];
   }
 
+  protected function _getSortedItems($items) {
+    $feed = new Api_Feed();
+    $feed->buildLevels($items);
+    $feed->mergeLevels();
+    $result = $feed->getSortedItems();
+    return $result;
+  }
+
   /**
    * Levels
    */
@@ -42,7 +50,6 @@ final class FeedTest extends TestCase
         'parentItemId' => null,
         'parentItemType' => null,
         'parentItemDate' => null,
-        'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'silent',
       ],
     ]);
@@ -62,7 +69,6 @@ final class FeedTest extends TestCase
         'parentItemId' => null,
         'parentItemType' => null,
         'parentItemDate' => null,
-        'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'announce',
       ],
     ]);
@@ -76,7 +82,6 @@ final class FeedTest extends TestCase
         'parentItemId' => null,
         'parentItemType' => null,
         'parentItemDate' => null,
-        'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'announce',
         'children' => [],
       ],
@@ -95,7 +100,6 @@ final class FeedTest extends TestCase
         'parentItemId' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
         'parentItemType' => 'mediaalbum',
         'parentItemDate' => '2019-07-01 21:18:06.769',
-        'submitter' => 'c0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'silent',
       ],
     ]);
@@ -115,7 +119,6 @@ final class FeedTest extends TestCase
         'parentItemId' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
         'parentItemType' => 'mediaalbum',
         'parentItemDate' => '2019-07-01 21:18:06.769',
-        'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'announce',
       ],
     ]);
@@ -130,7 +133,6 @@ final class FeedTest extends TestCase
         'parentItemId' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
         'parentItemType' => 'mediaalbum',
         'parentItemDate' => '2019-07-01 21:18:06.769',
-        'submitter' => 'a0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'announce',
         'children' => [],
       ],
@@ -148,7 +150,6 @@ final class FeedTest extends TestCase
         'parentItemId' => 'e9c060b6-8d72-4187-8441-bf89c412e4d6',
         'parentItemType' => 'photo',
         'parentItemDate' => '2019-07-01 21:18:06.769',
-        'submitter' => 'c0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'silent',
       ],
     ]);
@@ -167,7 +168,6 @@ final class FeedTest extends TestCase
         'parentItemId' => 'e9c060b6-8d72-4187-8441-bf89c412e4d6',
         'parentItemType' => 'photo',
         'parentItemDate' => '2019-07-01 21:18:06.769',
-        'submitter' => 'c0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'announce',
       ],
     ]);
@@ -183,7 +183,6 @@ final class FeedTest extends TestCase
         'parentItemId' => 'e9c060b6-8d72-4187-8441-bf89c412e4d6',
         'parentItemType' => 'photo',
         'parentItemDate' => '2019-07-01 21:18:06.769',
-        'submitter' => 'c0bfb8a7-5754-4186-acd2-44b20ef32399',
         'notification' => 'announce',
       ],
     ], $level3);
@@ -202,5 +201,18 @@ final class FeedTest extends TestCase
 
   public function mergeProvider() {
     return FeedTestCases::MERGE;
+  }
+
+  /**
+   * @dataProvider sortProvider
+   */
+  public function testSort($items, $expectedSortedItems)
+  {
+    $sortedItems = $this->_getSortedItems($items);
+    $this->assertEquals($expectedSortedItems, $sortedItems);
+  }
+
+  public function sortProvider() {
+    return FeedTestCases::SORT;
   }
 }
