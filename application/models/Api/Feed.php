@@ -29,7 +29,7 @@ class Api_Feed
     $this->buildLevels($dbItems);
     $this->mergeLevels();
     $items = $this->getSortedItems();
-    return [$from, $until, $items];
+    return $items;
   }
 
   public function getDbItems($from, $until, $maxItems)
