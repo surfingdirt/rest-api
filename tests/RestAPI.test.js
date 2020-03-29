@@ -321,6 +321,7 @@ describe('User tests', () => {
     test('Successful user creation should return an id', async () => {
       await userClient.clearToken();
       userClient.setUUIDs([createdUser.id]);
+      userClient.setDebugBackend(true);
       const body = checkSuccess(
         await userClient.post({
           username: createdUser.username,

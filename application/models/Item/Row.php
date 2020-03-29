@@ -18,7 +18,9 @@ class Item_Row extends Cache_Object_Row
   public function clearCache()
   {
     $cache = $this->getCache();
-    $cacheIds = array();
+    $cacheIds = array(
+      Api_Feed::FEED_ITEMS_CACHE_ID,
+    );
 
     foreach ($cacheIds as $cacheId) {
       $cache->remove($cacheId);

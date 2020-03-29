@@ -11,6 +11,8 @@ class Api_Feed
     Constants_DataTypes::COMMENT,
   ];
 
+  const FEED_ITEMS_CACHE_ID = 'feedItemsList';
+
   public function __construct()
   {
     $this->_level1 = [];
@@ -21,82 +23,18 @@ class Api_Feed
     $this->_newSubItems = [];
   }
 
-  protected static function _stripItem($item)
+  public function listFeedItems($from, $until, $limit)
   {
-    return [
-      'date' => $item['date'],
-      'itemId' => $item['itemId'],
-      'itemType' => $item['itemType'],
-    ];
+    $dbItems = $this->getDbItems($from, $until, $limit);
+    $this->buildLevels($dbItems);
+    $this->mergeLevels();
+    $items = $this->getSortedItems();
+    return [$from, $until, $items];
   }
 
-  protected static function _stripRootItem($item)
-  {
-    $sortDate = sizeof($item['children']) > 0 ? self::_getSortDate($item['children']) : $item['date'];
-    $root = [
-      'sortDate' => $sortDate,
-      'itemId' => $item['itemId'],
-      'itemType' => $item['itemType'],
-      'children' => $item['children'],
-    ];
-
-    return $root;
-  }
-
-  protected static function _stripNewParent($item)
-  {
-    $children = [self::_stripItem($item)];
-    return [
-      'children' => $children,
-      'sortDate' => self::_getSortDate($children),
-      'itemId' => $item['parentItemId'],
-      'itemType' => $item['parentItemType'],
-    ];
-  }
-
-  protected static function _attachItemsToParents($childLevel, $parentLevel, $subItems)
-  {
-    foreach ($childLevel as $item) {
-      $parentId = $item['parentItemId'];
-      if (isset($parentLevel[$parentId])) {
-        $parentLevel[$parentId]['children'][] = self::_stripItem($item);
-      } else {
-        if (isset($newSubItems[$parentId])) {
-          $subItems[$parentId]['children'][] = self::_stripItem($item);
-        } else {
-          $subItems[$parentId] = self::_stripNewParent($item);
-        }
-      }
-    }
-
-    return [$subItems, $parentLevel];
-  }
-
-  protected static function _addSortDate($subItems)
-  {
-    foreach ($subItems as $subItem) {
-      $sortDate = self::_getSortDate($subItem['children']);
-      $subItem['sortDate'] = $sortDate;
-    }
-    return $subItems;
-  }
-
-  protected static function _getSortDate($children)
-  {
-    // The sort date will be that of the most recent of the subItem's children
-    $sortDate = '1970-01-01 00:00:00.000';
-    foreach ($children as $child) {
-      if (strtotime($child['date']) > strtotime($sortDate)) {
-        $sortDate = $child['date'];
-      }
-    }
-    return $sortDate;
-  }
-
-  public function getDbItems($from, $until, User_Row $user, Lib_Acl $acl, $maxItems)
+  public function getDbItems($from, $until, $maxItems)
   {
     $db = Globals::getMainDatabase();
-    $userId = $user->getId();
     $table = Constants_TableNames::ITEM;
     $announce = Item_Row::NOTIFICATION_ANNOUNCE;
     $valid = Data::VALID;
@@ -243,41 +181,75 @@ class Api_Feed
     $this->_level3 = $level3;
   }
 
-  protected function _checkItemLevel2($parentLevel, $item, &$log)
+  protected static function _stripItem($item)
   {
-    $allowedChildrenByParent = [
-      Constants_DataTypes::MEDIAALBUM => [Constants_DataTypes::PHOTO, Constants_DataTypes::VIDEO],
-      Constants_DataTypes::PHOTO => [Constants_DataTypes::COMMENT],
-      Constants_DataTypes::USER => [],
+    return [
+      'date' => $item['date'],
+      'itemId' => $item['itemId'],
+      'itemType' => $item['itemType'],
+    ];
+  }
+
+  protected static function _stripRootItem($item)
+  {
+    $sortDate = sizeof($item['children']) > 0 ? self::_getSortDate($item['children']) : $item['date'];
+    $root = [
+      'sortDate' => $sortDate,
+      'itemId' => $item['itemId'],
+      'itemType' => $item['itemType'],
+      'children' => $item['children'],
     ];
 
-    $parentItemId = $item['parentItemId'];
-    // Note: this returns true because in level2 we want to display the children of things that might not have been announced
-    if (!isset($parentLevel[$parentItemId])) {
-      return true;
-    }
-
-    $parentItem = $parentLevel[$parentItemId];
-    $allowedChildren = $allowedChildrenByParent[$parentItem['itemType']];
-    if (!in_array($item['itemType'], $allowedChildren)) {
-      $log[] = sprintf("Unexpected child of type '%s' and id '%s' for parent of type '%s' and id '%s",
-        $item['itemType'],
-        $item['itemId'],
-        $parentItem['itemType'],
-        $parentItem['itemId']
-      );
-      return false;
-    }
-
-    return true;
+    return $root;
   }
 
-  protected function _hydrateObject($item)
+  protected static function _stripNewParent($item)
   {
-    $obj = new stdClass();
-    $obj->type = $item['itemType'];
-    $obj->id = $item['itemId'];
-    return $obj;
+    $children = [self::_stripItem($item)];
+    return [
+      'children' => $children,
+      'sortDate' => self::_getSortDate($children),
+      'itemId' => $item['parentItemId'],
+      'itemType' => $item['parentItemType'],
+    ];
   }
 
+  protected static function _attachItemsToParents($childLevel, $parentLevel, $subItems)
+  {
+    foreach ($childLevel as $item) {
+      $parentId = $item['parentItemId'];
+      if (isset($parentLevel[$parentId])) {
+        $parentLevel[$parentId]['children'][] = self::_stripItem($item);
+      } else {
+        if (isset($newSubItems[$parentId])) {
+          $subItems[$parentId]['children'][] = self::_stripItem($item);
+        } else {
+          $subItems[$parentId] = self::_stripNewParent($item);
+        }
+      }
+    }
+
+    return [$subItems, $parentLevel];
+  }
+
+  protected static function _addSortDate($subItems)
+  {
+    foreach ($subItems as $subItem) {
+      $sortDate = self::_getSortDate($subItem['children']);
+      $subItem['sortDate'] = $sortDate;
+    }
+    return $subItems;
+  }
+
+  protected static function _getSortDate($children)
+  {
+    // The sort date will be that of the most recent of the subItem's children
+    $sortDate = '1970-01-01 00:00:00.000';
+    foreach ($children as $child) {
+      if (strtotime($child['date']) > strtotime($sortDate)) {
+        $sortDate = $child['date'];
+      }
+    }
+    return $sortDate;
+  }
 }

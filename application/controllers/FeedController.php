@@ -4,15 +4,23 @@ class FeedController extends Api_Controller_Action
 {
   public function listAction()
   {
-    $feed = $this->_table;
     $from = (new Zend_Date(Utils::date("timestamp")))->subWeek(1)->get('YYYY-MM-dd HH:mm:ss');
     $until = (new Zend_Date(Utils::date("timestamp")))->get('YYYY-MM-dd HH:mm:ss');
     $limit = MAX_NOTIFICATION_ITEMS_USERS;
 
-    $dbItems = $feed->getDbItems($from, $until, $this->_user, $this->_acl, $limit);
-    $feed->buildLevels($dbItems);
-    $feed->mergeLevels();
-    $items = $feed->getSortedItems();
+    $feed = $this->_table;
+    $cache = Globals::getGlobalCache();
+    $cacheId = Api_Feed::FEED_ITEMS_CACHE_ID;
+    if (!ALLOW_CACHE) {
+      $items = $feed->listFeedItems($from, $until, $limit);
+    } else {
+      $items = $cache->load($cacheId);
+      if (!$items) {
+        $items = $feed->listFeedItems($from, $until, $limit);
+        $cache->save($items, $cacheId);
+      }
+    }
+
     $this->view->output =
       array(
         'from' => $from,
