@@ -7,11 +7,12 @@ class FeedController extends Api_Controller_Action
     $from = (new Zend_Date(Utils::date("timestamp")))->subWeek(1)->get('YYYY-MM-dd HH:mm:ss');
     $until = (new Zend_Date(Utils::date("timestamp")))->get('YYYY-MM-dd HH:mm:ss');
     $limit = MAX_NOTIFICATION_ITEMS_USERS;
+    $skipCache = false;
 
     $feed = $this->_table;
     $cache = Globals::getGlobalCache();
     $cacheId = Api_Feed::FEED_ITEMS_CACHE_ID;
-    if (!ALLOW_CACHE) {
+    if (!ALLOW_CACHE || $skipCache) {
       $items = $feed->listFeedItems($from, $until, $limit);
     } else {
       $items = $cache->load($cacheId);

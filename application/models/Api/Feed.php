@@ -218,10 +218,8 @@ class Api_Feed
   {
     foreach ($childLevel as $item) {
       $parentId = $item['parentItemId'];
-      if (isset($parentLevel[$parentId])) {
-        $parentLevel[$parentId]['children'][] = self::_stripItem($item);
-      } else {
-        if (isset($newSubItems[$parentId])) {
+      if (!isset($parentLevel[$parentId])) {
+        if (isset($subItems[$parentId])) {
           $subItems[$parentId]['children'][] = self::_stripItem($item);
         } else {
           $subItems[$parentId] = self::_stripNewParent($item);
