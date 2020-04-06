@@ -7,25 +7,13 @@ class MediaController extends Api_Controller_Action
   {
     $db = $this->_table->getAdapter();
 
-    $ids = $this->_request->getParam('ids');
-    if (!$ids) {
-      throw new Api_Exception_BadRequest();
-    }
-    $ids = explode(',', $ids);
-    $quoted = [];
-    foreach ($ids as $id) {
-      $quoted[] = $db->quote($id);
-    }
-    $glued = implode(",", $quoted);
-
     if (in_array($user->status, array(User::STATUS_EDITOR, User::STATUS_ADMIN))) {
       $where = '1';
     } else {
       $userId = $user->getId();
       $where = $db->quoteInto("(status = ? OR submitter = '$userId')", Data::VALID);
     }
-
-    $where .= " AND id IN ($glued)";
+    $where .= $this->_getWhereClauseForBatchGet($user);
 
     return $where;
   }

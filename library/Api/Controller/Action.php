@@ -410,6 +410,24 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
     return $return;
   }
 
+  protected function _getWhereClauseForBatchGet($user)
+  {
+    $ids = $this->_request->getParam('ids');
+    if (!$ids) {
+      throw new Api_Exception_BadRequest();
+    }
+    $ids = explode(',', $ids);
+
+    $db = $this->_table->getAdapter();
+    $quoted = [];
+    foreach ($ids as $id) {
+      $quoted[] = $db->quote($id);
+    }
+    $glued = implode(",", $quoted);
+    $where = " AND id IN ($glued)";
+    return $where;
+  }
+
   protected function _getDir()
   {
     $dir = $this->getRequest()->getParam('dir', $this->listDir);

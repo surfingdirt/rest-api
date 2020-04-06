@@ -33,3 +33,7 @@ export const commentsForDelete = [
   { id: '7b142ba7-7e00-4e86-bf53-8ef22d10d56c' },
   { id: '0da69559-b156-4da1-b8c1-c85cb11f3cbb' },
 ];
+export const commentsForBatch = [
+  '3ca9b798-3ca8-4734-872d-13216df0d7f1',
+  '53cb7042-b6da-47d1-ba34-0b43fd4f6c79',
+];

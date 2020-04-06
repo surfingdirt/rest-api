@@ -28,6 +28,7 @@ import {
   invalidComment,
   commentsForUpdate,
   commentsForDelete,
+  commentsForBatch,
 } from './data/comments';
 import {
   adminUser,
@@ -321,7 +322,6 @@ describe('User tests', () => {
     test('Successful user creation should return an id', async () => {
       await userClient.clearToken();
       userClient.setUUIDs([createdUser.id]);
-      userClient.setDebugBackend(true);
       const body = checkSuccess(
         await userClient.post({
           username: createdUser.username,
@@ -2136,6 +2136,21 @@ describe('Comment tests', () => {
       expect(getSortedKeysAsString(body[1])).toEqual(commentInfo);
       expect(getSortedKeysAsString(body[2])).toEqual(commentInfo);
     });
+
+    describe('List by id, aka batch GET', () => {
+      test('Owner can get 2 valid photos', async() => {
+        await commentClient.setUser(plainUser);
+        const body = checkSuccess(await commentClient.batchGet(commentsForBatch));
+        expect(body.length).toEqual(1);
+      })
+
+      test('Invalid photos are not part of batch responses for guest ', async() => {
+        await commentClient.setUser(editorUser);
+        const body = checkSuccess(await commentClient.batchGet(commentsForBatch));
+        expect(body.length).toEqual(2);
+      })
+    });
+
   });
 
   describe('POST', () => {

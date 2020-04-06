@@ -4,20 +4,37 @@ class CommentsController extends Api_Controller_Action
 {
   public function listAction()
   {
-    if (!($itemType = $this->_request->getParam('itemType'))
-      || !($itemId = $this->_request->getParam('itemId'))) {
+    if (($itemType = $this->_request->getParam('itemType'))
+      && ($itemId = $this->_request->getParam('itemId'))) {
+      // List comments for a given parent object:
+      try {
+        $item = Data::factory($itemId, $itemType, true);
+      } catch (Lib_Exception_NotFound $e) {
+        throw new Api_Exception_NotFound();
+      }
+
+      $resources = array();
+      foreach ($item->getComments($this->_user, $this->_acl) as $object) {
+        $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName());
+      }
+    } else if ($this->_request->getParam('ids')) {
+      // List comments based on a number of ids
+      $count = $this->getRequest()->getParam('count', $this->listCount);
+      $start = $this->getRequest()->getParam('start', $this->listStart);
+
+      $dir = $this->_getDir();
+      $sort = $this->_getSort();
+      $where = $this->_getWhereClause($this->_user);
+      $where .= $this->_getWhereClauseForBatchGet($user);
+
+      $results = $this->_getAllObjects($where, $sort, $dir, $count, $start);
+
+      $resources = array();
+      foreach ($results as $object) {
+        $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName(), $this->_request->getParams());
+      }
+    } else {
       throw new Api_Exception_BadRequest();
-    }
-
-    try {
-      $item = Data::factory($itemId, $itemType, true);
-    } catch (Lib_Exception_NotFound $e) {
-      throw new Api_Exception_NotFound();
-    }
-
-    $resources = array();
-    foreach ($item->getComments($this->_user, $this->_acl) as $object) {
-      $resources[] = $this->_accessor->getObjectData($object, $this->_request->getActionName());
     }
 
     $this->view->output = $resources;
