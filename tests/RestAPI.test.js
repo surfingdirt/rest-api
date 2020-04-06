@@ -761,7 +761,7 @@ describe('Media tests', () => {
     return body;
   };
 
-  describe('GET ACLs', () => {
+  describe('GET', () => {
     const media0PublicInfo =
       '["actions","album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
       '"mediaSubType","mediaType","status","storageType","submitter","title","users","vendorKey","width"]';
@@ -835,6 +835,20 @@ describe('Media tests', () => {
         expect(body.actions.edit).toEqual(true);
         expect(body.actions.delete).toEqual(true);
       });
+    });
+
+    describe('Batch GET', () => {
+      test('Owner can get 2 valid photos', async() => {
+        await mediaClient.setUser(plainUser);
+        const body = checkSuccess(await mediaClient.batchGet([validPhoto.id, invalidPhoto.id]));
+        expect(body.length).toEqual(2);
+      })
+
+      test('Invalid photos are not part of batch responses for guest ', async() => {
+        await mediaClient.clearToken();
+        const body = checkSuccess(await mediaClient.batchGet([validPhoto.id, invalidPhoto.id]));
+        expect(body.length).toEqual(1);
+      })
     });
   });
 

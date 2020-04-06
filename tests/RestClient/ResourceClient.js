@@ -33,6 +33,16 @@ export default class ResourceClient {
     });
   }
 
+  async batchGet(ids) {
+    const path = getResourcePath(this.resource);
+    return await this.client.get({
+      path,
+      token: this.token,
+      urlParams: { ids: ids.join(',') },
+      debugBackend: this.debugBackend,
+    });
+  }
+
   async getComments(id, urlParams = null) {
     const path = getResourcePath(this.resource, id) + '/comments';
     return await this.client.get({
