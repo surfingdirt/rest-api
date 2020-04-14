@@ -39,8 +39,6 @@ class Api_Feed
     $announce = Item_Row::NOTIFICATION_ANNOUNCE;
     $valid = Data::VALID;
 
-    $limit = empty($maxItems) ? MAX_NOTIFICATION_ITEMS_USERS : $maxItems;
-
     $from = $db->quote($from);
     $from = ' AND date >= ' . $from;
 
@@ -56,11 +54,9 @@ class Api_Feed
         WHERE 1
         AND notification = '$announce'
         AND status = '$valid'
-        -- AND id = 1265
         $from
         $until
         ORDER BY date DESC
-        -- LIMIT $limit        
     ";
     $feedItems = $db->fetchAll($sql);
     return $feedItems;
@@ -218,12 +214,10 @@ class Api_Feed
   {
     foreach ($childLevel as $item) {
       $parentId = $item['parentItemId'];
-      if (!isset($parentLevel[$parentId])) {
-        if (isset($subItems[$parentId])) {
-          $subItems[$parentId]['children'][] = self::_stripItem($item);
-        } else {
-          $subItems[$parentId] = self::_stripNewParent($item);
-        }
+      if (isset($subItems[$parentId])) {
+        $subItems[$parentId]['children'][] = self::_stripItem($item);
+      } else {
+        $subItems[$parentId] = self::_stripNewParent($item);
       }
     }
 

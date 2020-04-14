@@ -66,7 +66,21 @@ class FeedTestCases
           'children' => [],
         ],
       ],
-      'newSubItems' => [],
+      'newSubItems' => [
+        'bb918b70-e541-42b0-a5fe-e32eb4748021' => [
+          'itemId' => 'bb918b70-e541-42b0-a5fe-e32eb4748021',
+          'itemType' => 'mediaalbum',
+          'sortDate' => '2019-07-05 19:18:06.769',
+          'children' => [
+            [
+              'itemId' => 'db918b70-e541-42b0-a5fe-e32eb4748021',
+              'itemType' => 'photo',
+              'date' => '2019-07-05 19:18:06.769',
+            ]
+          ],
+        ]
+
+      ],
     ],
     'New photo in old announced album' => [
       'items' => [
@@ -155,6 +169,30 @@ class FeedTestCases
         ],
       ],
       'newSubItems' => [
+        'new-photo-id' => [
+          'itemId' => 'new-photo-id',
+          'itemType' => 'photo',
+          'sortDate' => '2019-07-05 19:18:06.769',
+          'children' => [
+            [
+              'itemId' => 'new-comment-id',
+              'itemType' => 'comment',
+              'date' => '2019-07-05 19:18:06.769',
+            ]
+          ],
+        ],
+        'new-album-id' => [
+          'itemId' => 'new-album-id',
+          'itemType' => 'mediaalbum',
+          'sortDate' => '2019-07-05 18:18:06.769',
+          'children' => [
+            [
+              'itemId' => 'new-photo-id',
+              'itemType' => 'photo',
+              'date' => '2019-07-05 18:18:06.769',
+            ]
+          ],
+        ],
       ],
     ],
     'New comment on new photo on old album' => [
@@ -191,6 +229,18 @@ class FeedTestCases
               'itemId' => 'new-photo-id',
               'itemType' => 'photo',
               'date' => '2019-07-05 18:18:06.769',
+            ]
+          ],
+        ],
+        'new-photo-id' => [
+          'itemId' => 'new-photo-id',
+          'itemType' => 'photo',
+          'sortDate' => '2019-07-05 19:18:06.769',
+          'children' => [
+            [
+              'itemId' => 'new-comment-id',
+              'itemType' => 'comment',
+              'date' => '2019-07-05 19:18:06.769',
             ]
           ],
         ],
@@ -273,6 +323,18 @@ class FeedTestCases
       ],
       'result' => [
         [
+          'itemType' => 'photo',
+          'itemId' => 'new-photo-id',
+          'children' => [
+            [
+              'itemType' => 'comment',
+              'itemId' => 'new-comment-id',
+              'date' => '2019-07-05 19:18:06.769',
+            ]
+          ],
+          'sortDate' => '2019-07-05 19:18:06.769',
+        ],
+        [
           'itemType' => 'mediaalbum',
           'itemId' => 'new-album-id',
           'children' => [],
@@ -283,9 +345,9 @@ class FeedTestCases
           'itemId' => 'old-photo-id',
           'children' => [
             [
-              'itemType' => 'comment',
-              'itemId' => 'new-comment2-id',
               'date' => '2019-07-03 20:18:06.769',
+              'itemId' => 'new-comment2-id',
+              'itemType' => 'comment',
             ]
           ],
           'sortDate' => '2019-07-03 20:18:06.769',
