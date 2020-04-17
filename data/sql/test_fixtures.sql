@@ -80,14 +80,14 @@ insert  into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEdito
 ('210ae999-f7e3-4b39-915d-033dbc8d965c', '2002-02-18 14:00:00', '941b2ac5-2519-44de-84f9-ea9980e4631f',NULL,NULL,'valid','aggregate','public','automatic','visible'),
 ('a8a7b0fd-e0f2-49d9-8974-e6292d7e667b', '2002-02-18 14:00:00', 'cc834ce6-58df-4381-aed3-8fe4c2923434',NULL,NULL,'valid','aggregate','public','automatic','visible');
 
-insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`, `status`, `albumId`, `mediaType`, `imageId`, `vendorKey`, `width`, `height`, `mediaSubType`, `storageType`) VALUES
-('44aa386d-3171-432b-a648-f40929043758', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', '44130f1c-2931-451a-b6cd-0f49d0b3ad85', null, 720, 540, 'jpg', 0),
-('9b523108-9b34-43ea-916d-874ff6013021', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:01', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', '84846b0b-254e-472b-94a4-2ecd6bc4cd5e', null, 720, 540, 'jpg', 0),
-('e4e4cb62-4820-4cff-baff-74b2bdcb1993', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:03', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'a9c8081c-43ec-418a-acc2-1ad575672250', null, 720, 540, 'jpg', 0),
-('9119c477-1c48-4449-9b8e-9cdb745fc912', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:04', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', '66059f80-59d4-4237-8602-fbbf17f26616', null, 720, 540, 'jpg', 0),
-('051cae3a-95f7-4a29-996d-796d4c263a1e', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:05', null, null, 'invalid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'b5c1429b-f492-4d71-892d-38dd33deffda', null, 720, 540, 'jpg', 0),
-('6af68e15-276b-42d7-8683-909943b0ae27', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-20 10:00:06', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'c51a53ef-c5af-4087-b766-cd83223a06b0', 'myvideo', 720, 540, 'youtube', 0),
-('523de4aa-3c06-45c8-8c4f-339a37d2bf83', '85193083-ce22-43a5-993b-1c7aba53d13c', '2019-11-07 16:00:06', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'ff9faa11-7970-49e8-a742-d44b8035b083', 'xxyyzz', 720, 540, 'youtube', 0);
+insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`, `status`, `albumId`, `mediaType`, `imageId`, `vendorKey`, `width`, `height`, `thumbWidth`, `thumbHeight`, `mediaSubType`, `storageType`) VALUES
+('44aa386d-3171-432b-a648-f40929043758', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', '44130f1c-2931-451a-b6cd-0f49d0b3ad85', null, 720, 540, 720, 540, 'jpg', 0),
+('9b523108-9b34-43ea-916d-874ff6013021', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:01', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', '84846b0b-254e-472b-94a4-2ecd6bc4cd5e', null, 720, 540, 720, 540, 'jpg', 0),
+('e4e4cb62-4820-4cff-baff-74b2bdcb1993', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:03', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'a9c8081c-43ec-418a-acc2-1ad575672250', null, 720, 540, 720, 540, 'jpg', 0),
+('9119c477-1c48-4449-9b8e-9cdb745fc912', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:04', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', '66059f80-59d4-4237-8602-fbbf17f26616', null, 720, 540, 720, 540, 'jpg', 0),
+('051cae3a-95f7-4a29-996d-796d4c263a1e', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:05', null, null, 'invalid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'b5c1429b-f492-4d71-892d-38dd33deffda', null, 720, 540, 720, 540, 'jpg', 0),
+('6af68e15-276b-42d7-8683-909943b0ae27', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-20 10:00:06', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'c51a53ef-c5af-4087-b766-cd83223a06b0', 'myvideo', 720, 540, 720, 540, 'youtube', 0),
+('523de4aa-3c06-45c8-8c4f-339a37d2bf83', '85193083-ce22-43a5-993b-1c7aba53d13c', '2019-11-07 16:00:06', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'ff9faa11-7970-49e8-a742-d44b8035b083', 'xxyyzz', 720, 540, 720, 540, 'youtube', 0);
 
 insert  into `translated_texts`(`id`,`itemType`,`lang`,`type`,`text`) values
 ('a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','fr','title','photoAlbumTitleFr'),

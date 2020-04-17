@@ -23,7 +23,9 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'media',
     'users',
     'path',
-    'locationFlag'
+    'locationFlag',
+    'thumbHeight',
+    'thumbWidth',
   );
 
   public $publicReadAttributes = array(
@@ -49,6 +51,8 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'storageType',
     'width',
     'height',
+    'thumbHeight',
+    'thumbWidth',
 //    'author',
     'actions',
   );
@@ -243,6 +247,13 @@ class Api_Media_Accessor extends Api_Data_Accessor
         $dataRow->$key = $data[$key];
       }
     }
+
+    // Fetch Image info and save thumbHeight and thumbWidth
+    $table = new Api_Image();
+    $result = $table->find($dataRow->imageId);
+    $imageRow = $result->current();
+    $dataRow->thumbWidth = $imageRow->width;
+    $dataRow->thumbHeight = $imageRow->height;
 
     // Saving
     $skipAutomaticEditionFields = false;

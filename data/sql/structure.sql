@@ -154,6 +154,8 @@ CREATE TABLE `media_items` (
      `imageId` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
      `width` int(10) unsigned NOT NULL,
      `height` int(10) unsigned NOT NULL,
+     `thumbWidth` int(10) unsigned NOT NULL,
+     `thumbHeight` int(10) unsigned NOT NULL,
      `status` enum('valid','invalid') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'invalid',
      `submitter` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
      `date` datetime(3) NOT NULL,

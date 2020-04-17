@@ -764,7 +764,8 @@ describe('Media tests', () => {
   describe('GET', () => {
     const media0PublicInfo =
       '["actions","album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
-      '"mediaSubType","mediaType","status","storageType","submitter","title","users","vendorKey","width"]';
+      '"mediaSubType","mediaType","status","storageType","submitter","thumbHeight","thumbWidth","title","users",' +
+      '"vendorKey","width"]';
     // TODO: rajouter author
 
     describe('Valid photo', () => {
@@ -957,6 +958,7 @@ describe('Media tests', () => {
 
         test('Title and description are not mandatory', async () => {
           await mediaClient.setUser(plainUser);
+          mediaClient.setDebugBackend(true);
           const body = checkSuccess(
             await mediaClient.post({
               mediaType: PHOTO,
@@ -1173,7 +1175,8 @@ describe('Media tests', () => {
   describe('Video tests', () => {
     const createdVideoKeys =
       '["actions","album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
-      '"mediaSubType","mediaType","status","storageType","submitter","title","users","vendorKey","width"]';
+      '"mediaSubType","mediaType","status","storageType","submitter","thumbHeight","thumbWidth","title","users",' +
+      '"vendorKey","width"]';
     // TODO: rajouter author
 
     describe('POST', () => {
