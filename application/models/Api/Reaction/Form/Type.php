@@ -7,7 +7,7 @@ class Api_Reaction_Form_Type extends Zend_Form_Element_Select
   public function __construct($options = null)
   {
     parent::__construct($this->name, $options);
-
+    $this->setRequired(true);
     $this->setMultiOptions(Api_Reaction::$reactionTypes);
   }
 }

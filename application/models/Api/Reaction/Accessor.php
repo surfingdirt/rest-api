@@ -31,7 +31,13 @@ class Api_Reaction_Accessor extends Api_Data_Accessor
     $object->id = Utils::uuidV4();
     $object->submitter = $this->_user->getId();
 
-    return parent::createObjectWithData($object, $data);
+    try {
+      list($id, $object, $errors) = parent::createObjectWithData($object, $data);
+      return [$id, $object, $errors];
+    } catch (Zend_Db_Statement_Exception $e) {
+      // This is pretty hacky, it would be better served with a validator and a kind of DOES_NOT_EXIST constraint
+      return [null, $object, array( 'itemId' => ['duplicatedEntry'] )];
+    }
   }
 }
 // TODO: save on POST or PUT

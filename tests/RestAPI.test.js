@@ -2327,7 +2327,7 @@ describe ('Translation tests', () => {
 describe.only('Reaction tests', () => {
   const reactionClient = new ResourceClient(client, REACTION);
 
-  const defaultItemId = '123';
+  const defaultItemId = singleComment.id;
   const defaultItemType = 'comment';
   const defaultType = 'scared';
 
@@ -2341,21 +2341,40 @@ describe.only('Reaction tests', () => {
   };
 
   describe('Reaction POST', () => {
+    test('Logged-out users cannot create reactions', async () => {
+      reactionClient.clearToken();
+      checkUnauthorised(await reactionClient.post( getReactionPayload()));
+    });
+
     test('Happy path', async () => {
       await reactionClient.setUser(plainUser);
-      reactionClient.setDebugBackend(true);
-      checkSuccess(await reactionClient.post( getReactionPayload() ));
+      checkSuccess(await reactionClient.post( getReactionPayload()));
     });
-    test('Logged-out users cannot create reactions', async () => {});
-    test('Target object must exist', async () => {});
-    test('Incomplete data fails', async () => {});
-    test('Duplicated data fails', async () => {});
 
-    // checkUnauthorised(await reactionClient.post());
-    //
-    //
-    // await reactionClient.setUser(plainUser);
+    test('Target object must exist', async () => {
+      await reactionClient.setUser(plainUser);
+      const body = checkBadRequest(await reactionClient.post( getReactionPayload({ itemId: '123' })));
+      expect(body).toEqual({ code: 16001, errors: { itemId: ['itemIdDoesNotExist'] } });
+    });
 
+    test('Incomplete data fails', async () => {
+      await reactionClient.setUser(plainUser);
+      const body = checkBadRequest(await reactionClient.post({}));
+      expect(body).toEqual({ code: 16001, errors: {
+        itemId: ['notEmptyInvalid'],
+        itemType: ['notEmptyInvalid'],
+        type: ['notEmptyInvalid'],
+      }});
+    });
+
+    test('Duplicated data fails', async () => {
+      const payload = getReactionPayload({ itemId: translatedComment.id });
+      await reactionClient.setUser(plainUser);
+      checkSuccess(await reactionClient.post(payload));
+
+      const body = checkBadRequest(await reactionClient.post(payload));
+      expect(body).toEqual({ code: 16001, errors: { itemId: ['duplicatedEntry'] } });
+    });
   });
 
   describe('Reaction PUT', () => {

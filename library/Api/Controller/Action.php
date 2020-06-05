@@ -347,20 +347,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
   }
 
   protected function _getResources() {
-    return array(
-      'album' => 'Album',
-      'comments' => 'Comment',
-      'comment' => 'Comment',
-      'feed' => 'Feed',
-      'media' => 'Media',
-      'mediaalbum' => 'Album',
-      'notifications' => 'Notification',
-      'photo' => 'Media',
-      'reaction' => 'Reaction',
-      'user' => 'User',
-      'useralbum' => 'Album',
-      'video' => 'Media',
-    );
+    return Api::getResources();
   }
 
   protected function _getResourceTranslatedFields($itemType) {
