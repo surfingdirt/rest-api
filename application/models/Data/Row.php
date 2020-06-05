@@ -1022,7 +1022,10 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
    * Returns the whole path for the folder associated
    * to this object
    */
-  abstract public function getFolderPath();
+  public function getFolderPath()
+  {
+    return null;
+  }
 
   /**
    * Returns the folder associated to this object;

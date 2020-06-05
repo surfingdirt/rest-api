@@ -9,6 +9,7 @@ import {
   MEDIA,
   MEDIA_SUBTYPES_VIDEO,
   MEDIA_TYPES,
+  REACTION,
   TOKEN,
   USER,
 } from './RestClient/resources';
@@ -958,7 +959,6 @@ describe('Media tests', () => {
 
         test('Title and description are not mandatory', async () => {
           await mediaClient.setUser(plainUser);
-          mediaClient.setDebugBackend(true);
           const body = checkSuccess(
             await mediaClient.post({
               mediaType: PHOTO,
@@ -2322,4 +2322,63 @@ describe ('Translation tests', () => {
     ]);
   });
 
+});
+
+describe.only('Reaction tests', () => {
+  const reactionClient = new ResourceClient(client, REACTION);
+
+  const defaultItemId = '123';
+  const defaultItemType = 'comment';
+  const defaultType = 'scared';
+
+  const getReactionPayload = (params) => {
+    const defaultPayload = {
+      itemId: defaultItemId,
+      itemType: defaultItemType,
+      type: defaultType,
+    };
+    return Object.assign({}, defaultPayload, params);
+  };
+
+  describe('Reaction POST', () => {
+    test('Happy path', async () => {
+      await reactionClient.setUser(plainUser);
+      reactionClient.setDebugBackend(true);
+      checkSuccess(await reactionClient.post( getReactionPayload() ));
+    });
+    test('Logged-out users cannot create reactions', async () => {});
+    test('Target object must exist', async () => {});
+    test('Incomplete data fails', async () => {});
+    test('Duplicated data fails', async () => {});
+
+    // checkUnauthorised(await reactionClient.post());
+    //
+    //
+    // await reactionClient.setUser(plainUser);
+
+  });
+
+  describe('Reaction PUT', () => {
+    test('Happy path', async () => {});
+    test('Logged-out users cannot update reactions', async () => {});
+    test('Cannot update another user\'s reactions', async () => {});
+    test('Target object must still exist', async () => {});
+    test('Incomplete data fails', async () => {});
+    test('Duplicated data fails', async () => {});
+  });
+
+  describe('Reaction GET', () => {
+    test('Reactions must be deleted when their parent item is deleted', async () => {});
+  });
+
+  describe('Reaction list GET', () => {
+    test('Logged-out users cannot list reactions', async () => {});
+    test('Must list my own reactions', async () => {});
+    test('Must list my own reactions - page 2', async () => {});
+  });
+
+  describe('Reaction DELETE', () => {
+    test('Logged-out users cannot delete reactions', async () => {});
+    test('Reaction must exist', async () => {});
+  });
 });

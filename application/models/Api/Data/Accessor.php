@@ -248,7 +248,6 @@ abstract class Api_Data_Accessor
   {
     $attributes = $this->getCreateAttributes($object);
 
-
     $errors = array();
     $form = $object->getForm($this->_user, $this->_acl);
     if (!$form->isValid($data)) {

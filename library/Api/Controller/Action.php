@@ -356,6 +356,7 @@ abstract class Api_Controller_Action extends Zend_Controller_Action
       'mediaalbum' => 'Album',
       'notifications' => 'Notification',
       'photo' => 'Media',
+      'reaction' => 'Reaction',
       'user' => 'User',
       'useralbum' => 'Album',
       'video' => 'Media',
