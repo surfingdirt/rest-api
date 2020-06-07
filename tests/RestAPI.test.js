@@ -30,7 +30,14 @@ import {
   commentsForUpdate,
   commentsForDelete,
   commentsForBatch,
+  commentsForReactionDelete,
 } from './data/comments';
+import {
+  laughingReaction,
+  scaredReaction,
+  angryReaction,
+  angryReactionForDelete,
+} from './data/reactions';
 import {
   adminUser,
   bannedUser,
@@ -2378,26 +2385,78 @@ describe.only('Reaction tests', () => {
   });
 
   describe('Reaction PUT', () => {
-    test('Happy path', async () => {});
-    test('Logged-out users cannot update reactions', async () => {});
-    test('Cannot update another user\'s reactions', async () => {});
-    test('Target object must still exist', async () => {});
-    test('Incomplete data fails', async () => {});
-    test('Duplicated data fails', async () => {});
+    test('PUT results in a 400', async () => {
+      await reactionClient.setUser(plainUser);
+      const body = checkBadRequest(await reactionClient.put(laughingReaction.id, getReactionPayload()));
+      expect(body).toEqual({ code: 17002 });
+    });
   });
 
   describe('Reaction GET', () => {
-    test('Reactions must be deleted when their parent item is deleted', async () => {});
+    test('GET results in a 400', async () => {
+      await reactionClient.setUser(plainUser);
+      const body = checkBadRequest(await reactionClient.get(laughingReaction.id));
+      expect(body).toEqual({ code: 17002 });
+    });
   });
 
-  describe('Reaction list GET', () => {
-    test('Logged-out users cannot list reactions', async () => {});
-    test('Must list my own reactions', async () => {});
-    test('Must list my own reactions - page 2', async () => {});
+  describe.only('Reaction list GET', () => {
+    test('Logged-out users cannot list reactions', async () => {
+      reactionClient.clearToken();
+      checkUnauthorised(await reactionClient.list());
+    });
+
+    test('Must list my own reactions - default pagination', async () => {
+      await reactionClient.setUser(plainUser);
+      const reactionsList = checkSuccess(await reactionClient.list());
+      expect(reactionsList).toHaveLength(3);
+      expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
+      expect(reactionsList[0].id).toEqual(laughingReaction.id);
+      expect(reactionsList[1].id).toEqual(scaredReaction.id);
+      expect(reactionsList[2].id).toEqual(angryReaction.id);
+    });
+
+    test('Must list my own reactions - page 1', async () => {
+      await reactionClient.setUser(plainUser);
+      const reactionsList = checkSuccess(await reactionClient.list({ start: 0, count: 1 }));
+      expect(reactionsList).toHaveLength(1);
+      expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
+      expect(reactionsList[0].id).toEqual(laughingReaction.id);
+    });
+
+    test('Must list my own reactions - page 2', async () => {
+      await reactionClient.setUser(plainUser);
+      const reactionsList = checkSuccess(await reactionClient.list({ start: 1, count: 1 }));
+      expect(reactionsList).toHaveLength(1);
+      expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
+      expect(reactionsList[0].id).toEqual(scaredReaction.id);
+    });
+
+    test.only('Reactions must be deleted when their parent item is deleted', async () => {
+      await reactionClient.setUser(otherUser);
+      const initialReactionsList = checkSuccess(await reactionClient.list());
+      expect(initialReactionsList).toHaveLength(1);
+
+      const commentClient = new ResourceClient(client, COMMENT);
+      await commentClient.setUser(otherUser);
+      await commentClient.delete(commentsForReactionDelete[0].id);
+
+      // TODO: override the deleteObject methods in accessors for objects with reactions
+      // Or add a flag on the top accessor object to tell whether to do that
+      // Or if ($object->hasReactions()) { /* delete reactions for that object */ }
+      // Or do that in Data_Row directly: if ($this->hasReactions()) { /* delete reactions */ }
+
+      const afterDeleteReactionsList = checkSuccess(await reactionClient.list());
+      expect(afterDeleteReactionsList).toHaveLength(0);
+    });
   });
 
   describe('Reaction DELETE', () => {
-    test('Logged-out users cannot delete reactions', async () => {});
+    test('Logged-out users cannot delete reactions', async () => {
+      reactionClient.clearToken();
+      checkUnauthorised(await reactionClient.delete('123'));
+    });
+
     test('Reaction must exist', async () => {});
   });
 });

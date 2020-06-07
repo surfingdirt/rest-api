@@ -31,7 +31,8 @@ insert into `comments`(`id`,`parentId`,`parentType`, `date`, `submitter`, `tone`
 ('97b235b8-ab41-448c-a97b-e15867148c85','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 16:58:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
 ('7b142ba7-7e00-4e86-bf53-8ef22d10d56c','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 16:59:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
 ('0da69559-b156-4da1-b8c1-c85cb11f3cbb','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:00:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
-('eca65962-63a9-4928-aecc-3606645a8874','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]');
+('eca65962-63a9-4928-aecc-3606645a8874','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
+('ee55ff22-7cc0-49d0-bc2e-c07f22c71234','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]');
 
 insert into `images`(`id`,`imageType`,`storageType`, `status`, `submitter`, `date`, `lastEditionDate`, `lastEditor`, `width`, `height`) values
 ('44130f1c-2931-451a-b6cd-0f49d0b3ad85', 0, 0, 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 720, 540),
@@ -89,49 +90,11 @@ insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`
 ('6af68e15-276b-42d7-8683-909943b0ae27', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-20 10:00:06', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'c51a53ef-c5af-4087-b766-cd83223a06b0', 'myvideo', 720, 540, 720, 540, 'youtube', 0),
 ('523de4aa-3c06-45c8-8c4f-339a37d2bf83', '85193083-ce22-43a5-993b-1c7aba53d13c', '2019-11-07 16:00:06', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'ff9faa11-7970-49e8-a742-d44b8035b083', 'xxyyzz', 720, 540, 720, 540, 'youtube', 0);
 
-insert  into `translated_texts`(`id`,`itemType`,`lang`,`type`,`text`) values
-('a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','fr','title','photoAlbumTitleFr'),
-('a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','fr','description','photoAlbumDescFr'),
-('a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','en','title','photoAlbumTitleEn'),
-('a3833b1c-1db0-4a93-9efc-b6659400ce9f','mediaalbum','en','description','photoAlbumDescEn'),
-('40763a20-5aa0-49d2-85f7-292c95cb3643','mediaalbum','fr','title','videoAlbumTitleFr'),
-('40763a20-5aa0-49d2-85f7-292c95cb3643','mediaalbum','fr','description','videoAlbumDescFr'),
-('40763a20-5aa0-49d2-85f7-292c95cb3643','mediaalbum','en','title','videoAlbumTitleEn'),
-('40763a20-5aa0-49d2-85f7-292c95cb3643','mediaalbum','en','description','videoAlbumDescEn'),
-('40c38ab9-cb77-49a7-a296-0805237d2710','mediaalbum','fr','title','portfolioTitleFr'),
-('40c38ab9-cb77-49a7-a296-0805237d2710','mediaalbum','fr','description','portfolioDescFr'),
-('40c38ab9-cb77-49a7-a296-0805237d2710','mediaalbum','en','title','portfolioTitleEn'),
-('40c38ab9-cb77-49a7-a296-0805237d2710','mediaalbum','en','description','portfolioDescEn'),
-('ab2121cb-03d6-45de-a1ba-4581dd00d79f','mediaalbum','en','title','dummyAlbumTitle'),
-('ab2121cb-03d6-45de-a1ba-4581dd00d79f','mediaalbum','en','description','dummyAlbumDescription'),
-('f2aa61fc-bbc5-45b2-bada-10bff101d957','mediaalbum','en','title','album de plainUserAlbumTitle'),
-('f2aa61fc-bbc5-45b2-bada-10bff101d957','mediaalbum','en','description','plainUserAlbumDescription'),
-('9fb7e4d7-fc38-43b1-a890-4d0872874b5b','mediaalbum','en','title','album de bannedUserAlbumTitle'),
-('9fb7e4d7-fc38-43b1-a890-4d0872874b5b','mediaalbum','en','description','bannedUserAlbumDescription'),
-('a5682d96-fc1b-4b76-b306-485631a5f26d','mediaalbum','en','title','album de adminUserAlbumTitle'),
-('a5682d96-fc1b-4b76-b306-485631a5f26d','mediaalbum','en','description','adminUserAlbumDescription'),
-('6b34bbdd-780d-4c2a-adba-c4229a161136','mediaalbum','en','title','album de editorUserAlbumTitle'),
-('6b34bbdd-780d-4c2a-adba-c4229a161136','mediaalbum','en','description','editorUserAlbumDescription'),
-('0a8aca42-cd0e-4fe7-8c55-9495f2e95164','mediaalbum','en','title','album de writerUserAlbumTitle'),
-('0a8aca42-cd0e-4fe7-8c55-9495f2e95164','mediaalbum','en','description','writerUserAlbumDescription'),
-('ac1a8df7-e15b-470e-a2bb-b7fb8187270f','mediaalbum','en','title','album de otherUserAlbumTitle'),
-('ac1a8df7-e15b-470e-a2bb-b7fb8187270f','mediaalbum','en','description','otherUserAlbumDescription'),
-('76d513e3-3879-48d7-8f5f-2e8afc36a647','mediaalbum','en','title','pendinguserAlbumTitle'),
-('76d513e3-3879-48d7-8f5f-2e8afc36a647','mediaalbum','en','description','pendinguserAlbumDescription'),
-('feba0696-8954-4596-a849-0087cbe8ea76','mediaalbum','en','title','nonEmptyPlainUserAlbumTitle'),
-('feba0696-8954-4596-a849-0087cbe8ea76','mediaalbum','en','description','nonEmptyPlainUserAlbumDescription'),
-('44aa386d-3171-432b-a648-f40929043758','photo','en','title','firstPhotoTitle'),
-('44aa386d-3171-432b-a648-f40929043758','photo','en','description','firstPhotoDescription'),
-('9b523108-9b34-43ea-916d-874ff6013021','photo','en','title','secondPhotoTitle'),
-('9b523108-9b34-43ea-916d-874ff6013021','photo','en','description','secondPhotoDescription'),
-('6af68e15-276b-42d7-8683-909943b0ae27','video','en','title','firstVideoTitle'),
-('6af68e15-276b-42d7-8683-909943b0ae27','video','en','description','firstVideoDescription'),
-('e4e4cb62-4820-4cff-baff-74b2bdcb1993','photo','en','title','thirdPhotoTitle'),
-('e4e4cb62-4820-4cff-baff-74b2bdcb1993','photo','en','description','thirdPhotoDescription'),
-('9119c477-1c48-4449-9b8e-9cdb745fc912','photo','en','title','fourthPhotoTitle'),
-('9119c477-1c48-4449-9b8e-9cdb745fc912','photo','en','description','fourthPhotoDescription'),
-('051cae3a-95f7-4a29-996d-796d4c263a1e','photo','en','title','plainUserPhotoTitle'),
-('051cae3a-95f7-4a29-996d-796d4c263a1e','photo','en','description','plainUserPhotoDescription');
+insert into `reactions`(`id`,`itemType`,`itemId`,`type`,`status`,`submitter`,`date`,`lastEditionDate`,`lastEditor`) values
+('73ff48a7-5754-4186-acd2-44b20ef32344','comment','c74814e6-89c7-42f1-a9d1-a98567048c17','laughing','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 14:00:00',NULL,NULL),
+('bdff48a7-5754-4186-acd2-22b20ef32355','comment','f3ae1451-b341-4364-80db-2751da4f3537','scared','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 15:00:00',NULL,NULL),
+('e8ff48a7-5754-4186-acd2-11b20ef32399','comment','5f7f5e35-52e6-44ad-90c6-e5365eda3469','angry','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 16:00:00',NULL,NULL),
+('abff48a7-5754-4186-acd2-11b20ef32311','comment','ee55ff22-7cc0-49d0-bc2e-c07f22c71234','angry','valid','941b2ac5-2519-44de-84f9-ea9980e4631f','2019-05-28 16:00:00',NULL,NULL);
 
 insert  into `user_notifications`(`userId`,`itemType`,`medium`,`notify`) values
 (0,'mediaalbum','homePage',0),

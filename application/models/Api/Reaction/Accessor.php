@@ -6,24 +6,25 @@ class Api_Reaction_Accessor extends Api_Data_Accessor
   );
 
   public $publicReadAttributes = array(
+    'id',
     'itemId',
     'itemType',
     'type',
-    'userId',
+    'submitter',
   );
 
   public $memberCreateAttributes = array(
     'itemId' => 'itemId',
     'itemType' => 'itemType',
     'type' => 'type',
-    'userId' => 'userId',
+    'submitter' => 'submitter',
   );
 
   public $ownWriteAttributes = array(
     'itemId' => 'itemId',
     'itemType' => 'itemType',
     'type' => 'type',
-    'userId' => 'userId',
+    'submitter' => 'submitter',
   );
 
   public function createObjectWithData($object, $data)
@@ -40,4 +41,3 @@ class Api_Reaction_Accessor extends Api_Data_Accessor
     }
   }
 }
-// TODO: save on POST or PUT

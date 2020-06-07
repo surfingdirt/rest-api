@@ -37,3 +37,6 @@ export const commentsForBatch = [
   '3ca9b798-3ca8-4734-872d-13216df0d7f1',
   '53cb7042-b6da-47d1-ba34-0b43fd4f6c79',
 ];
+export const commentsForReactionDelete = [
+  { id: 'ee55ff22-7cc0-49d0-bc2e-c07f22c71234' },
+];
