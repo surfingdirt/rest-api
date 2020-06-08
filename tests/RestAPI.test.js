@@ -2469,42 +2469,49 @@ describe.only('Reaction tests', () => {
     const albumClient = new ResourceClient(client, ALBUM);
 
     test.only('Albums', async () => {
+      await reactionClient.setUser(plainUser);
+
       let body;
+      const reactions = [];
       const albumId = albumForReactions.id;
 
       // Album has no reactions
       body = checkSuccess(await albumClient.get(albumId));
-      expect(body.reactions).toHaveLength(0);
+      expect(Object.keys(body.reactions.counts)).toHaveLength(0);
+      expect(body.reactions.userReactions).toHaveLength(0);
 
       // Post album reaction
-      await reactionClient.setUser(plainUser);
-      checkSuccess(await reactionClient.post( getReactionPayload({ itemType: 'album', itemId: albumId, type: 'angry' })));
+      let created = checkSuccess(await reactionClient.post(getReactionPayload({ itemType: 'mediaalbum', itemId: albumId, type: 'angry' })));
+      reactions.push(created.id);
 
       // Album has one reaction
       body = checkSuccess(await albumClient.get(albumId));
-      expect(body.reactions).toHaveLength(1);
+      expect(Object.keys(body.reactions.counts)).toEqual(['angry']);
+      expect(body.reactions.userReactions).toHaveLength(0);
 
       // Post album reaction
-      await reactionClient.setUser(plainUser);
-      checkSuccess(await reactionClient.post( getReactionPayload({ itemType: 'album', itemId: albumId, type: 'laughing' })));
+      created = checkSuccess(await reactionClient.post( getReactionPayload({ itemType: 'mediaalbum', itemId: albumId, type: 'laughing' })));
+      reactions.push(created.id);
 
       // Album has two reactions
       body = checkSuccess(await albumClient.get(albumId));
-      expect(body.reactions).toHaveLength(2);
-      const reactions = body.reactions.map(r => r.id)
+      expect(Object.keys(body.reactions.counts)).toEqual(['angry', 'laughing']);
+      expect(body.reactions.userReactions).toHaveLength(0);
 
       // Delete one reaction
       await reactionClient.delete(reactions[0]);
 
       // Album has one reaction
       body = checkSuccess(await albumClient.get(albumId));
-      expect(body.reactions).toHaveLength(0);
+      expect(Object.keys(body.reactions.counts)).toEqual(['laughing']);
+      expect(body.reactions.userReactions).toHaveLength(0);
 
       // Delete another reaction
       await reactionClient.delete(reactions[1]);
 
       body = checkSuccess(await albumClient.get(albumId));
-      expect(body.reactions).toHaveLength(0);
+      expect(Object.keys(body.reactions.counts)).toHaveLength(0);
+      expect(body.reactions.userReactions).toHaveLength(0);
     });
 
     test('Comments', async () => {});

@@ -16,6 +16,7 @@ class Api_Album_Accessor extends Api_Data_Accessor
     'albumCreation',
     'albumVisibility',
     'actions',
+    'reactions',
   );
 
   public $memberCreateAttributes = array(

@@ -160,6 +160,8 @@ abstract class Api_Data_Accessor
 
     } elseif ($attr == 'actions') {
       $ret[$attr] = $this->getActions($object);
+    } elseif ($attr == 'reactions') {
+      $ret[$attr] = Api_Reaction::getReactions($object, $this->_user);
     } elseif ($attr == 'users') {
       $ret[$attr] = $object->getUserIdsInMedia();
     } elseif ($attr == 'bounds') {
