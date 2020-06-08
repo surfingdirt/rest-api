@@ -2466,59 +2466,77 @@ describe.only('Reaction tests', () => {
   });
 
   describe('Item reaction lifecycle', () => {
-    const albumClient = new ResourceClient(client, ALBUM);
-    const albumClientForPlainUser = new ResourceClient(client, ALBUM);
+    const reactionTypes = ['angry', 'laughing'];
+
+    const assertNoReactions = ({ reactions: { counts, userReactions} }) => {
+      expect(Object.keys(counts)).toHaveLength(0);
+      expect(userReactions).toHaveLength(0);
+    };
+
+    const assertFirstReaction = ({ reactions: { counts, userReactions} }) => {
+      expect(Object.keys(counts)).toEqual([reactionTypes[0]]);
+      expect(userReactions).toHaveLength(0);
+    };
+
+    const assertTwoReactions = ({ reactions: { counts, userReactions} }) => {
+      expect(Object.keys(counts)).toEqual(reactionTypes);
+      expect(userReactions).toHaveLength(0);
+    };
+
+    const assertSecondReaction = ({ reactions: { counts, userReactions} }) => {
+      expect(Object.keys(counts)).toEqual([reactionTypes[1]]);
+      expect(userReactions).toHaveLength(0);
+    };
+
+    const assertOwnerReactions = ({ reactions: { counts, userReactions} }) => {
+      expect(Object.keys(counts)).toEqual(reactionTypes);
+      expect(Object.keys(userReactions)).toHaveLength(2);
+    };
 
     test.only('Albums', async () => {
-      await albumClientForPlainUser.setUser(plainUser);
+      const itemClient = new ResourceClient(client, ALBUM);
+      const itemClientForPlainUser = new ResourceClient(client, ALBUM);
+      await itemClientForPlainUser.setUser(plainUser);
       await reactionClient.setUser(plainUser);
 
-      let body;
+      let created;
       const reactions = [];
-      const albumId = albumForReactions.id;
+      const itemId = albumForReactions.id;
+      const itemType = 'mediaalbum';
 
-      // Album has no reactions
-      body = checkSuccess(await albumClient.get(albumId));
-      expect(Object.keys(body.reactions.counts)).toHaveLength(0);
-      expect(body.reactions.userReactions).toHaveLength(0);
+      // Item has no reactions
+      assertNoReactions(checkSuccess(await itemClient.get(itemId)));
 
-      // Post album reaction
-      let created = checkSuccess(await reactionClient.post(getReactionPayload({ itemType: 'mediaalbum', itemId: albumId, type: 'angry' })));
+      // Post item reaction
+      created = checkSuccess(await reactionClient.post(
+        getReactionPayload({ itemType, itemId, type: reactionTypes[0] })));
       reactions.push(created.id);
 
-      // Album has one reaction
-      body = checkSuccess(await albumClient.get(albumId));
-      expect(Object.keys(body.reactions.counts)).toEqual(['angry']);
-      expect(body.reactions.userReactions).toHaveLength(0);
+      // Item has one reaction
+      assertFirstReaction(checkSuccess(await itemClient.get(itemId)));
 
-      // Post album reaction
-      created = checkSuccess(await reactionClient.post( getReactionPayload({ itemType: 'mediaalbum', itemId: albumId, type: 'laughing' })));
+      // Post item reaction
+      created = checkSuccess(await reactionClient.post(
+        getReactionPayload({ itemType, itemId, type: reactionTypes[1] })));
       reactions.push(created.id);
 
-      // Album has two reactions
-      body = checkSuccess(await albumClient.get(albumId));
-      expect(Object.keys(body.reactions.counts)).toEqual(['angry', 'laughing']);
-      expect(body.reactions.userReactions).toHaveLength(0);
+      // Item has two reactions
+      assertTwoReactions(checkSuccess(await itemClient.get(itemId)));
 
       // Owner can see they have two reactions
-      body = checkSuccess(await albumClientForPlainUser.get(albumId));
-      expect(Object.keys(body.reactions.counts)).toEqual(['angry', 'laughing']);
-      expect(Object.keys(body.reactions.userReactions)).toHaveLength(2);
+      assertOwnerReactions(checkSuccess(await itemClientForPlainUser.get(itemId)));
 
       // Delete one reaction
       await reactionClient.delete(reactions[0]);
 
-      // Album has one reaction
-      body = checkSuccess(await albumClient.get(albumId));
-      expect(Object.keys(body.reactions.counts)).toEqual(['laughing']);
-      expect(body.reactions.userReactions).toHaveLength(0);
+      // Item has one reaction
+      assertSecondReaction(checkSuccess(await itemClient.get(itemId)));
 
       // Delete another reaction
       await reactionClient.delete(reactions[1]);
 
-      body = checkSuccess(await albumClient.get(albumId));
-      expect(Object.keys(body.reactions.counts)).toHaveLength(0);
-      expect(body.reactions.userReactions).toHaveLength(0);
+      // Item has no reactions
+      assertNoReactions(checkSuccess(await itemClient.get(itemId)));
     });
 
     test('Comments', async () => {});
