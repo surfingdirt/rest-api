@@ -36,7 +36,8 @@ import {
   laughingReaction,
   scaredReaction,
   angryReaction,
-  angryReactionForDelete,
+  scaredReactionForDelete,
+  albumForReactions,
 } from './data/reactions';
 import {
   adminUser,
@@ -2347,6 +2348,39 @@ describe.only('Reaction tests', () => {
     return Object.assign({}, defaultPayload, params);
   };
 
+  describe('Reaction list GET', () => {
+    test('Logged-out users cannot list reactions', async () => {
+      reactionClient.clearToken();
+      checkUnauthorised(await reactionClient.list());
+    });
+
+    test('Must list my own reactions - default pagination', async () => {
+      await reactionClient.setUser(plainUser);
+      const reactionsList = checkSuccess(await reactionClient.list());
+      expect(reactionsList).toHaveLength(3);
+      expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
+      expect(reactionsList[0].id).toEqual(laughingReaction.id);
+      expect(reactionsList[1].id).toEqual(scaredReaction.id);
+      expect(reactionsList[2].id).toEqual(angryReaction.id);
+    });
+
+    test('Must list my own reactions - page 1', async () => {
+      await reactionClient.setUser(plainUser);
+      const reactionsList = checkSuccess(await reactionClient.list({ start: 0, count: 1 }));
+      expect(reactionsList).toHaveLength(1);
+      expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
+      expect(reactionsList[0].id).toEqual(laughingReaction.id);
+    });
+
+    test('Must list my own reactions - page 2', async () => {
+      await reactionClient.setUser(plainUser);
+      const reactionsList = checkSuccess(await reactionClient.list({ start: 1, count: 1 }));
+      expect(reactionsList).toHaveLength(1);
+      expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
+      expect(reactionsList[0].id).toEqual(scaredReaction.id);
+    });
+  });
+
   describe('Reaction POST', () => {
     test('Logged-out users cannot create reactions', async () => {
       reactionClient.clearToken();
@@ -2400,39 +2434,18 @@ describe.only('Reaction tests', () => {
     });
   });
 
-  describe.only('Reaction list GET', () => {
-    test('Logged-out users cannot list reactions', async () => {
+  describe('Reaction DELETE', () => {
+    test('Logged-out users cannot delete reactions', async () => {
       reactionClient.clearToken();
-      checkUnauthorised(await reactionClient.list());
+      checkUnauthorised(await reactionClient.delete(laughingReaction.id));
     });
 
-    test('Must list my own reactions - default pagination', async () => {
+    test('Reaction must exist', async () => {
       await reactionClient.setUser(plainUser);
-      const reactionsList = checkSuccess(await reactionClient.list());
-      expect(reactionsList).toHaveLength(3);
-      expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
-      expect(reactionsList[0].id).toEqual(laughingReaction.id);
-      expect(reactionsList[1].id).toEqual(scaredReaction.id);
-      expect(reactionsList[2].id).toEqual(angryReaction.id);
+      checkNotFound(await reactionClient.delete('123'));
     });
 
-    test('Must list my own reactions - page 1', async () => {
-      await reactionClient.setUser(plainUser);
-      const reactionsList = checkSuccess(await reactionClient.list({ start: 0, count: 1 }));
-      expect(reactionsList).toHaveLength(1);
-      expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
-      expect(reactionsList[0].id).toEqual(laughingReaction.id);
-    });
-
-    test('Must list my own reactions - page 2', async () => {
-      await reactionClient.setUser(plainUser);
-      const reactionsList = checkSuccess(await reactionClient.list({ start: 1, count: 1 }));
-      expect(reactionsList).toHaveLength(1);
-      expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
-      expect(reactionsList[0].id).toEqual(scaredReaction.id);
-    });
-
-    test.only('Reactions must be deleted when their parent item is deleted', async () => {
+    test('Reactions must be deleted when their parent item is deleted', async () => {
       await reactionClient.setUser(otherUser);
       const initialReactionsList = checkSuccess(await reactionClient.list());
       expect(initialReactionsList).toHaveLength(1);
@@ -2441,22 +2454,63 @@ describe.only('Reaction tests', () => {
       await commentClient.setUser(otherUser);
       await commentClient.delete(commentsForReactionDelete[0].id);
 
-      // TODO: override the deleteObject methods in accessors for objects with reactions
-      // Or add a flag on the top accessor object to tell whether to do that
-      // Or if ($object->hasReactions()) { /* delete reactions for that object */ }
-      // Or do that in Data_Row directly: if ($this->hasReactions()) { /* delete reactions */ }
-
       const afterDeleteReactionsList = checkSuccess(await reactionClient.list());
       expect(afterDeleteReactionsList).toHaveLength(0);
     });
+
+    test('Owner can delete a reaction', async () => {
+      await reactionClient.setUser(writerUser);
+      checkSuccess(await reactionClient.delete(scaredReactionForDelete.id));
+      checkNotFound(await reactionClient.delete(scaredReactionForDelete.id));
+    });
   });
 
-  describe('Reaction DELETE', () => {
-    test('Logged-out users cannot delete reactions', async () => {
-      reactionClient.clearToken();
-      checkUnauthorised(await reactionClient.delete('123'));
+  describe('Item reaction lifecycle', () => {
+    const albumClient = new ResourceClient(client, ALBUM);
+
+    test.only('Albums', async () => {
+      let body;
+      const albumId = albumForReactions.id;
+
+      // Album has no reactions
+      body = checkSuccess(await albumClient.get(albumId));
+      expect(body.reactions).toHaveLength(0);
+
+      // Post album reaction
+      await reactionClient.setUser(plainUser);
+      checkSuccess(await reactionClient.post( getReactionPayload({ itemType: 'album', itemId: albumId, type: 'angry' })));
+
+      // Album has one reaction
+      body = checkSuccess(await albumClient.get(albumId));
+      expect(body.reactions).toHaveLength(1);
+
+      // Post album reaction
+      await reactionClient.setUser(plainUser);
+      checkSuccess(await reactionClient.post( getReactionPayload({ itemType: 'album', itemId: albumId, type: 'laughing' })));
+
+      // Album has two reactions
+      body = checkSuccess(await albumClient.get(albumId));
+      expect(body.reactions).toHaveLength(2);
+      const reactions = body.reactions.map(r => r.id)
+
+      // Delete one reaction
+      await reactionClient.delete(reactions[0]);
+
+      // Album has one reaction
+      body = checkSuccess(await albumClient.get(albumId));
+      expect(body.reactions).toHaveLength(0);
+
+      // Delete another reaction
+      await reactionClient.delete(reactions[1]);
+
+      body = checkSuccess(await albumClient.get(albumId));
+      expect(body.reactions).toHaveLength(0);
     });
 
-    test('Reaction must exist', async () => {});
+    test('Comments', async () => {});
+
+    test('Photos', async () => {});
+
+    test('Videos', async () => {});
   });
 });

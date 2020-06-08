@@ -32,7 +32,7 @@ insert into `comments`(`id`,`parentId`,`parentType`, `date`, `submitter`, `tone`
 ('7b142ba7-7e00-4e86-bf53-8ef22d10d56c','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 16:59:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
 ('0da69559-b156-4da1-b8c1-c85cb11f3cbb','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:00:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
 ('eca65962-63a9-4928-aecc-3606645a8874','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
-('ee55ff22-7cc0-49d0-bc2e-c07f22c71234','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]');
+('ee55ff22-7cc0-49d0-bc2e-c07f22c71234','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '941b2ac5-2519-44de-84f9-ea9980e4631f', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]');
 
 insert into `images`(`id`,`imageType`,`storageType`, `status`, `submitter`, `date`, `lastEditionDate`, `lastEditor`, `width`, `height`) values
 ('44130f1c-2931-451a-b6cd-0f49d0b3ad85', 0, 0, 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 720, 540),
@@ -79,7 +79,8 @@ insert  into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEdito
 ('e7f47c36-b9b1-41a1-8e53-7b6a9d0914ee', '2002-02-18 14:00:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf',NULL,NULL,'valid','aggregate','public','automatic','visible'),
 ('87587188-3c92-4027-8b63-4997cf7f8ea2', '2002-02-18 14:00:00', '0230ec1d-dc7b-42e6-89d3-3707ee5ade71',NULL,NULL,'valid','aggregate','public','automatic','visible'),
 ('210ae999-f7e3-4b39-915d-033dbc8d965c', '2002-02-18 14:00:00', '941b2ac5-2519-44de-84f9-ea9980e4631f',NULL,NULL,'valid','aggregate','public','automatic','visible'),
-('a8a7b0fd-e0f2-49d9-8974-e6292d7e667b', '2002-02-18 14:00:00', 'cc834ce6-58df-4381-aed3-8fe4c2923434',NULL,NULL,'valid','aggregate','public','automatic','visible');
+('a8a7b0fd-e0f2-49d9-8974-e6292d7e667b', '2002-02-18 14:00:00', 'cc834ce6-58df-4381-aed3-8fe4c2923434',NULL,NULL,'valid','aggregate','public','automatic','visible'),
+('7b3a3651-08d1-4cee-9082-ed522d8e447b', '2002-02-18 14:00:00', 'cc834ce6-58df-4381-aed3-8fe4c2923434',NULL,NULL,'valid','aggregate','public','automatic','visible');
 
 insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`, `status`, `albumId`, `mediaType`, `imageId`, `vendorKey`, `width`, `height`, `thumbWidth`, `thumbHeight`, `mediaSubType`, `storageType`) VALUES
 ('44aa386d-3171-432b-a648-f40929043758', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', '44130f1c-2931-451a-b6cd-0f49d0b3ad85', null, 720, 540, 720, 540, 'jpg', 0),
@@ -94,7 +95,8 @@ insert into `reactions`(`id`,`itemType`,`itemId`,`type`,`status`,`submitter`,`da
 ('73ff48a7-5754-4186-acd2-44b20ef32344','comment','c74814e6-89c7-42f1-a9d1-a98567048c17','laughing','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 14:00:00',NULL,NULL),
 ('bdff48a7-5754-4186-acd2-22b20ef32355','comment','f3ae1451-b341-4364-80db-2751da4f3537','scared','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 15:00:00',NULL,NULL),
 ('e8ff48a7-5754-4186-acd2-11b20ef32399','comment','5f7f5e35-52e6-44ad-90c6-e5365eda3469','angry','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 16:00:00',NULL,NULL),
-('abff48a7-5754-4186-acd2-11b20ef32311','comment','ee55ff22-7cc0-49d0-bc2e-c07f22c71234','angry','valid','941b2ac5-2519-44de-84f9-ea9980e4631f','2019-05-28 16:00:00',NULL,NULL);
+('abff48a7-5754-4186-acd2-11b20ef32311','comment','ee55ff22-7cc0-49d0-bc2e-c07f22c71234','angry','valid','941b2ac5-2519-44de-84f9-ea9980e4631f','2019-05-28 16:00:00',NULL,NULL),
+('abcdef12-5754-4186-acd2-11b20ef32311','comment','0055ff22-7cc0-49d0-bc2e-c07f22c71234','scared','valid','6750ff62-7195-49f5-bf81-e3d395e6cdcf','2019-05-28 16:00:00',NULL,NULL);
 
 insert  into `user_notifications`(`userId`,`itemType`,`medium`,`notify`) values
 (0,'mediaalbum','homePage',0),

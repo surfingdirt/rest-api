@@ -188,6 +188,13 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     Data::ACTION_DISPLAY => 'one-column',
   );
 
+  /**
+   * Whether this object can have reactions
+   *
+   * @var bool
+   */
+  protected $_hasReactions = false;
+
   public function __construct(array $config = array())
   {
     $this->setNotification($this->_defaultNotification);
@@ -1406,6 +1413,12 @@ abstract class Data_Row extends Cache_Object_Row implements Data_Row_DataInterfa
     $table = new Data_TranslatedText();
     $where = $adapter->quoteInto("itemType = '$itemType' AND id = ? AND type IN ('".Data_Form_Element::TITLE."', '".Data_Form_Element::DESCRIPTION."')", $this->id);
     $table->delete($where);
+
+    if ($this->_hasReactions) {
+      $reactionTable = new Api_Reaction();
+      $where = $adapter->quoteInto("itemType = '$itemType' AND itemId = ?", $this->id);
+      $reactionTable->delete($where);
+    }
 
     // Album deletion
     if ($this->_createAlbumOnSave) {

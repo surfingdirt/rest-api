@@ -9,6 +9,7 @@ export const laughingReaction = {
   lastEditionDate: null,
   lastEditor: null,
 };
+
 export const scaredReaction = {
   id: 'bdff48a7-5754-4186-acd2-22b20ef32355',
   itemType: 'comment',
@@ -20,6 +21,7 @@ export const scaredReaction = {
   lastEditionDate: null,
   lastEditor: null,
 };
+
 export const angryReaction = {
   id: 'e8ff48a7-5754-4186-acd2-11b20ef32399',
   itemType: 'comment',
@@ -31,6 +33,7 @@ export const angryReaction = {
   lastEditionDate: null,
   lastEditor: null,
 };
+
 export const angryReactionForDelete = {
   id: 'abff48a7-5754-4186-acd2-11b20ef32311',
   itemType: 'comment',
@@ -41,4 +44,20 @@ export const angryReactionForDelete = {
   date: '2019-05-28 16:00:00',
   lastEditionDate: null,
   lastEditor: null,
+};
+
+export const scaredReactionForDelete = {
+  id: 'abcdef12-5754-4186-acd2-11b20ef32311',
+  itemType: 'comment',
+  itemId: '0055ff22-7cc0-49d0-bc2e-c07f22c71234',
+  type: 'scared',
+  status: 'valid',
+  submitter: '6750ff62-7195-49f5-bf81-e3d395e6cdcf',
+  date: '2019-05-28 16:00:00',
+  lastEditionDate: null,
+  lastEditor: null,
+};
+
+export const albumForReactions = {
+  id: '7b3a3651-08d1-4cee-9082-ed522d8e447b',
 };

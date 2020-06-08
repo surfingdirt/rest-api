@@ -37,6 +37,8 @@ class Comment_Row extends Data_Row implements Data_Row_MetaDataInterface
    */
   protected $_formClass = 'Comment_Form';
 
+  protected $_hasReactions = true;
+
   /**
    * Returns the parent item
    * @return Data_Row

@@ -70,6 +70,8 @@ abstract class Media_Album_Row extends Data_Row
   protected $_isTitleTranslated = false;
   protected $_isDescriptionTranslated = false;
 
+  protected $_hasReactions = true;
+
   /**
    * Defined by Zend_Acl_Resource_Interface
    * Build a string that ties the submitter to the 'user-submitted, public' resource

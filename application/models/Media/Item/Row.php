@@ -20,6 +20,7 @@ class Media_Item_Row extends Data_Row implements Data_Row_AlbumInterface,
 
   protected $_isDescriptionTranslated = false;
 
+  protected $_hasReactions = true;
 
   public function getTitle()
   {
