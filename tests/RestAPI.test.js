@@ -2467,8 +2467,10 @@ describe.only('Reaction tests', () => {
 
   describe('Item reaction lifecycle', () => {
     const albumClient = new ResourceClient(client, ALBUM);
+    const albumClientForPlainUser = new ResourceClient(client, ALBUM);
 
     test.only('Albums', async () => {
+      await albumClientForPlainUser.setUser(plainUser);
       await reactionClient.setUser(plainUser);
 
       let body;
@@ -2497,6 +2499,11 @@ describe.only('Reaction tests', () => {
       body = checkSuccess(await albumClient.get(albumId));
       expect(Object.keys(body.reactions.counts)).toEqual(['angry', 'laughing']);
       expect(body.reactions.userReactions).toHaveLength(0);
+
+      // Owner can see they have two reactions
+      body = checkSuccess(await albumClientForPlainUser.get(albumId));
+      expect(Object.keys(body.reactions.counts)).toEqual(['angry', 'laughing']);
+      expect(Object.keys(body.reactions.userReactions)).toHaveLength(2);
 
       // Delete one reaction
       await reactionClient.delete(reactions[0]);

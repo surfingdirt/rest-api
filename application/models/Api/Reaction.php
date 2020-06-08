@@ -100,15 +100,14 @@ class Api_Reaction extends Data
     }
     $countPerType = array_reduce($reactions, 'getReactionCountPerType', []);
 
-    function getUserReactions($acc, $reaction) {
-      if ($reaction['userId'] === $user->getId()) {
-        $type = $reaction['type'];
-        $acc[$type] = $reaction['id'];
-      }
-      return $acc;
-    }
     if ($user->isLoggedIn()) {
-      $userReactions = array_reduce($reactions, 'getUserReactions', []);
+      $userReactions = array_reduce($reactions, function($acc, $reaction) use ($user) {
+        if ($reaction['submitter'] === $user->getId()) {
+          $type = $reaction['type'];
+          $acc[$type] = $reaction['id'];
+        }
+        return $acc;
+      }, []);
     } else {
       $userReactions = [];
     }
