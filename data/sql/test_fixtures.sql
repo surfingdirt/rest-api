@@ -32,7 +32,8 @@ insert into `comments`(`id`,`parentId`,`parentType`, `date`, `submitter`, `tone`
 ('7b142ba7-7e00-4e86-bf53-8ef22d10d56c','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 16:59:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
 ('0da69559-b156-4da1-b8c1-c85cb11f3cbb','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:00:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
 ('eca65962-63a9-4928-aecc-3606645a8874','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
-('ee55ff22-7cc0-49d0-bc2e-c07f22c71234','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '941b2ac5-2519-44de-84f9-ea9980e4631f', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]');
+('ee55ff22-7cc0-49d0-bc2e-c07f22c71234','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '941b2ac5-2519-44de-84f9-ea9980e4631f', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for deletion"}]'),
+('d36ac198-cb92-46e3-9d5d-8d46e825aa30','44aa386d-3171-432b-a648-f40929043758', 'photo', '2019-11-07 17:01:00', '941b2ac5-2519-44de-84f9-ea9980e4631f', 'tone8', 'valid', '[{"locale": "en-US", "text": "This is comment for reaction"}]');
 
 insert into `images`(`id`,`imageType`,`storageType`, `status`, `submitter`, `date`, `lastEditionDate`, `lastEditor`, `width`, `height`) values
 ('44130f1c-2931-451a-b6cd-0f49d0b3ad85', 0, 0, 'valid', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 720, 540),

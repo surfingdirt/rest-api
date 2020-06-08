@@ -9,7 +9,6 @@ data/logs/*
 data/uploads/*
 public/files/*
 todo.txt
-package-lock.json
 _tmp
 node_modules
 .idea

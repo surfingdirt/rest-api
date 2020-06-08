@@ -27,6 +27,7 @@ class Api_Comment_Accessor extends Api_Data_Accessor
     'tone',
     'parentType',
     'parentId',
+    'reactions',
   );
 
   public $memberCreateAttributes = array(

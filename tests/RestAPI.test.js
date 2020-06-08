@@ -1,3 +1,5 @@
+import each from 'jest-each';
+
 import ResourceClient from './RestClient/ResourceClient';
 import { default as StatelessClient, getResourcePath } from './RestClient/StatelessClient';
 import { clearCacheFiles } from './RestClient/cache';
@@ -38,6 +40,7 @@ import {
   angryReaction,
   scaredReactionForDelete,
   albumForReactions,
+  commentForReactions,
 } from './data/reactions';
 import {
   adminUser,
@@ -2465,7 +2468,10 @@ describe.only('Reaction tests', () => {
     });
   });
 
-  describe('Item reaction lifecycle', () => {
+  each([
+    [ALBUM, 'mediaalbum', albumForReactions.id, ],
+    [COMMENT, 'comment', commentForReactions.id, ],
+  ]).describe('Item reaction: %s', (clientType, itemType, itemId) => {
     const reactionTypes = ['angry', 'laughing'];
 
     const assertNoReactions = ({ reactions: { counts, userReactions} }) => {
@@ -2479,7 +2485,7 @@ describe.only('Reaction tests', () => {
     };
 
     const assertTwoReactions = ({ reactions: { counts, userReactions} }) => {
-      expect(Object.keys(counts)).toEqual(reactionTypes);
+      expect(Object.keys(counts).sort()).toEqual(reactionTypes);
       expect(userReactions).toHaveLength(0);
     };
 
@@ -2489,20 +2495,18 @@ describe.only('Reaction tests', () => {
     };
 
     const assertOwnerReactions = ({ reactions: { counts, userReactions} }) => {
-      expect(Object.keys(counts)).toEqual(reactionTypes);
+      expect(Object.keys(counts).sort()).toEqual(reactionTypes);
       expect(Object.keys(userReactions)).toHaveLength(2);
     };
 
-    test.only('Albums', async () => {
-      const itemClient = new ResourceClient(client, ALBUM);
-      const itemClientForPlainUser = new ResourceClient(client, ALBUM);
+    test.only('Lifecyle', async () => {
+      const itemClient = new ResourceClient(client, clientType);
+      const itemClientForPlainUser = new ResourceClient(client, clientType);
       await itemClientForPlainUser.setUser(plainUser);
       await reactionClient.setUser(plainUser);
 
       let created;
       const reactions = [];
-      const itemId = albumForReactions.id;
-      const itemType = 'mediaalbum';
 
       // Item has no reactions
       assertNoReactions(checkSuccess(await itemClient.get(itemId)));
@@ -2538,11 +2542,5 @@ describe.only('Reaction tests', () => {
       // Item has no reactions
       assertNoReactions(checkSuccess(await itemClient.get(itemId)));
     });
-
-    test('Comments', async () => {});
-
-    test('Photos', async () => {});
-
-    test('Videos', async () => {});
   });
 });

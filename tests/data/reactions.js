@@ -61,3 +61,12 @@ export const scaredReactionForDelete = {
 export const albumForReactions = {
   id: '7b3a3651-08d1-4cee-9082-ed522d8e447b',
 };
+export const commentForReactions = {
+  id: 'd36ac198-cb92-46e3-9d5d-8d46e825aa30',
+};
+export const photoForReactions = {
+  id: '7b3a3651-08d1-4cee-9082-ed522d8e447b',
+};
+export const videoForReactions = {
+  id: '7b3a3651-08d1-4cee-9082-ed522d8e447b',
+};
