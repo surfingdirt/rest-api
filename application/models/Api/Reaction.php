@@ -89,7 +89,7 @@ class Api_Reaction extends Data
 
     $reactions = self::fetchReactions($itemType, $itemId)->toArray();
 
-    function getReactionCountPerType($acc, $reaction) {
+    $countPerType = array_reduce($reactions, function ($acc, $reaction) {
       $type = $reaction['type'];
       if (!isset($acc[$type])) {
         $acc[$type] = 1;
@@ -97,8 +97,7 @@ class Api_Reaction extends Data
         $acc[$type] += 1;
       }
       return $acc;
-    }
-    $countPerType = array_reduce($reactions, 'getReactionCountPerType', []);
+    }, []);
 
     if ($user->isLoggedIn()) {
       $userReactions = array_reduce($reactions, function($acc, $reaction) use ($user) {

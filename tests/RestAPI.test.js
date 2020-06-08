@@ -2102,7 +2102,7 @@ describe('Comment tests', () => {
 
   describe('GET', () => {
     const commentInfo =
-      '["actions","content","date","id","lastEditionDate","lastEditor","parentId","parentType","status","submitter","tone"]';
+      '["actions","content","date","id","lastEditionDate","lastEditor","parentId","parentType","reactions","status","submitter","tone"]';
 
     test('Retrieve a single comment', async () => {
       const body = checkSuccess(await commentClient.get(singleComment.id));
@@ -2335,7 +2335,7 @@ describe ('Translation tests', () => {
 
 });
 
-describe.only('Reaction tests', () => {
+describe('Reaction tests', () => {
   const reactionClient = new ResourceClient(client, REACTION);
 
   const defaultItemId = singleComment.id;
@@ -2499,7 +2499,7 @@ describe.only('Reaction tests', () => {
       expect(Object.keys(userReactions)).toHaveLength(2);
     };
 
-    test.only('Lifecyle', async () => {
+    test('Lifecyle', async () => {
       const itemClient = new ResourceClient(client, clientType);
       const itemClientForPlainUser = new ResourceClient(client, clientType);
       await itemClientForPlainUser.setUser(plainUser);
