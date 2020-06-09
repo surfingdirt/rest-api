@@ -55,6 +55,7 @@ class Api_Media_Accessor extends Api_Data_Accessor
     'thumbWidth',
 //    'author',
     'actions',
+    'reactions',
   );
 
   public $memberCreateAttributes = array(

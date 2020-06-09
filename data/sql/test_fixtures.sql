@@ -81,7 +81,8 @@ insert  into `media_albums`(`id`,`date`,`submitter`,`lastEditionDate`,`lastEdito
 ('87587188-3c92-4027-8b63-4997cf7f8ea2', '2002-02-18 14:00:00', '0230ec1d-dc7b-42e6-89d3-3707ee5ade71',NULL,NULL,'valid','aggregate','public','automatic','visible'),
 ('210ae999-f7e3-4b39-915d-033dbc8d965c', '2002-02-18 14:00:00', '941b2ac5-2519-44de-84f9-ea9980e4631f',NULL,NULL,'valid','aggregate','public','automatic','visible'),
 ('a8a7b0fd-e0f2-49d9-8974-e6292d7e667b', '2002-02-18 14:00:00', 'cc834ce6-58df-4381-aed3-8fe4c2923434',NULL,NULL,'valid','aggregate','public','automatic','visible'),
-('7b3a3651-08d1-4cee-9082-ed522d8e447b', '2002-02-18 14:00:00', 'cc834ce6-58df-4381-aed3-8fe4c2923434',NULL,NULL,'valid','aggregate','public','automatic','visible');
+('7b3a3651-08d1-4cee-9082-ed522d8e447b', '2002-02-18 14:00:00', 'cc834ce6-58df-4381-aed3-8fe4c2923434',NULL,NULL,'valid','aggregate','public','automatic','visible'),
+('c68acf0f-b740-4e62-ba0c-1bd60eb72efc', '2002-02-18 14:00:00', 'cc834ce6-58df-4381-aed3-8fe4c2923434',NULL,NULL,'valid','aggregate','public','automatic','visible');
 
 insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`, `status`, `albumId`, `mediaType`, `imageId`, `vendorKey`, `width`, `height`, `thumbWidth`, `thumbHeight`, `mediaSubType`, `storageType`) VALUES
 ('44aa386d-3171-432b-a648-f40929043758', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-18 10:00:00', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', '44130f1c-2931-451a-b6cd-0f49d0b3ad85', null, 720, 540, 720, 540, 'jpg', 0),
@@ -90,7 +91,9 @@ insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`
 ('9119c477-1c48-4449-9b8e-9cdb745fc912', '6750ff62-7195-49f5-bf81-e3d395e6cdcf', '2002-02-19 10:00:04', null, null, 'valid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', '66059f80-59d4-4237-8602-fbbf17f26616', null, 720, 540, 720, 540, 'jpg', 0),
 ('051cae3a-95f7-4a29-996d-796d4c263a1e', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-19 10:00:05', null, null, 'invalid', 'a3833b1c-1db0-4a93-9efc-b6659400ce9f',  'photo', 'b5c1429b-f492-4d71-892d-38dd33deffda', null, 720, 540, 720, 540, 'jpg', 0),
 ('6af68e15-276b-42d7-8683-909943b0ae27', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-20 10:00:06', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'c51a53ef-c5af-4087-b766-cd83223a06b0', 'myvideo', 720, 540, 720, 540, 'youtube', 0),
-('523de4aa-3c06-45c8-8c4f-339a37d2bf83', '85193083-ce22-43a5-993b-1c7aba53d13c', '2019-11-07 16:00:06', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'ff9faa11-7970-49e8-a742-d44b8035b083', 'xxyyzz', 720, 540, 720, 540, 'youtube', 0);
+('523de4aa-3c06-45c8-8c4f-339a37d2bf83', '85193083-ce22-43a5-993b-1c7aba53d13c', '2019-11-07 16:00:06', null, null, 'valid', 'feba0696-8954-4596-a849-0087cbe8ea76', 'video', 'ff9faa11-7970-49e8-a742-d44b8035b083', 'xxyyzz', 720, 540, 720, 540, 'youtube', 0),
+('78980394-8774-428f-8989-59f76db7721b', '85193083-ce22-43a5-993b-1c7aba53d13c', '2002-02-20 10:00:06', null, null, 'valid', 'c68acf0f-b740-4e62-ba0c-1bd60eb72efc', 'photo', 'dc740f48-1604-431b-9d71-af121d3f3768', 'bzzzzt', 720, 540, 720, 540, 'youtube', 0),
+('9e17540a-09da-4813-bbfc-7c93383bd1c4', '85193083-ce22-43a5-993b-1c7aba53d13c', '2019-11-07 16:00:06', null, null, 'valid', 'c68acf0f-b740-4e62-ba0c-1bd60eb72efc', 'video', '90aacaf7-1404-4922-b9fb-66892b3ed6d5', 'sxyyzz', 720, 540, 720, 540, 'youtube', 0);
 
 insert into `reactions`(`id`,`itemType`,`itemId`,`type`,`status`,`submitter`,`date`,`lastEditionDate`,`lastEditor`) values
 ('73ff48a7-5754-4186-acd2-44b20ef32344','comment','c74814e6-89c7-42f1-a9d1-a98567048c17','laughing','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 14:00:00',NULL,NULL),

@@ -65,8 +65,8 @@ export const commentForReactions = {
   id: 'd36ac198-cb92-46e3-9d5d-8d46e825aa30',
 };
 export const photoForReactions = {
-  id: '7b3a3651-08d1-4cee-9082-ed522d8e447b',
+  id: '78980394-8774-428f-8989-59f76db7721b',
 };
 export const videoForReactions = {
-  id: '7b3a3651-08d1-4cee-9082-ed522d8e447b',
+  id: '9e17540a-09da-4813-bbfc-7c93383bd1c4',
 };

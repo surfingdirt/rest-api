@@ -41,6 +41,8 @@ import {
   scaredReactionForDelete,
   albumForReactions,
   commentForReactions,
+  photoForReactions,
+  videoForReactions,
 } from './data/reactions';
 import {
   adminUser,
@@ -776,8 +778,8 @@ describe('Media tests', () => {
   describe('GET', () => {
     const media0PublicInfo =
       '["actions","album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
-      '"mediaSubType","mediaType","status","storageType","submitter","thumbHeight","thumbWidth","title","users",' +
-      '"vendorKey","width"]';
+      '"mediaSubType","mediaType","reactions","status","storageType","submitter","thumbHeight","thumbWidth","title",' +
+      '"users","vendorKey","width"]';
     // TODO: rajouter author
 
     describe('Valid photo', () => {
@@ -1186,8 +1188,8 @@ describe('Media tests', () => {
   describe('Video tests', () => {
     const createdVideoKeys =
       '["actions","album","date","description","height","id","imageId","lastEditionDate","lastEditor",' +
-      '"mediaSubType","mediaType","status","storageType","submitter","thumbHeight","thumbWidth","title","users",' +
-      '"vendorKey","width"]';
+      '"mediaSubType","mediaType","reactions","status","storageType","submitter","thumbHeight","thumbWidth","title",' +
+      '"users","vendorKey","width"]';
     // TODO: rajouter author
 
     describe('POST', () => {
@@ -2471,6 +2473,8 @@ describe('Reaction tests', () => {
   each([
     [ALBUM, 'mediaalbum', albumForReactions.id, ],
     [COMMENT, 'comment', commentForReactions.id, ],
+    [MEDIA, 'photo', photoForReactions.id, ],
+    [MEDIA, 'video', videoForReactions.id, ],
   ]).describe('Item reaction: %s', (clientType, itemType, itemId) => {
     const reactionTypes = ['angry', 'laughing'];
 
@@ -2499,7 +2503,7 @@ describe('Reaction tests', () => {
       expect(Object.keys(userReactions)).toHaveLength(2);
     };
 
-    test('Lifecyle', async () => {
+    test('Reactions work properly', async () => {
       const itemClient = new ResourceClient(client, clientType);
       const itemClientForPlainUser = new ResourceClient(client, clientType);
       await itemClientForPlainUser.setUser(plainUser);

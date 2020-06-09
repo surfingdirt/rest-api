@@ -25,7 +25,7 @@ class CommentsController extends Api_Controller_Action
       $dir = $this->_getDir();
       $sort = $this->_getSort();
       $where = $this->_getWhereClause($this->_user);
-      $where .= $this->_getWhereClauseForBatchGet($user);
+      $where .= $this->_getWhereClauseForBatchGet($this->_user);
 
       $results = $this->_getAllObjects($where, $sort, $dir, $count, $start);
 
