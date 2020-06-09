@@ -9,18 +9,18 @@ class Api_Reaction extends Data
   protected $_rowsetClass = 'Api_Reaction_Rowset';
 
   const TYPE_ANGRY = 'angry';
+  const TYPE_FIRE = 'fire';
   const TYPE_IMPRESSED = 'impressed';
   const TYPE_LAUGHING = 'laughing';
   const TYPE_SAD = 'sad';
-  const TYPE_SCARED = 'scared';
   const TYPE_STOKED = 'stoked';
 
   public static $reactionTypes = array(
     self::TYPE_ANGRY,
+    self::TYPE_FIRE,
     self::TYPE_IMPRESSED,
     self::TYPE_LAUGHING,
     self::TYPE_SAD,
-    self::TYPE_SCARED,
     self::TYPE_STOKED,
   );
 
@@ -84,36 +84,20 @@ class Api_Reaction extends Data
    */
   public static function getReactions($parent, $user)
   {
-    $itemType = $parent->getItemType();
-    $itemId = $parent->getId();
+    $reactions = self::fetchReactions($parent->getItemType(), $parent->getId())->toArray();
 
-    $reactions = self::fetchReactions($itemType, $itemId)->toArray();
-
-    $countPerType = array_reduce($reactions, function ($acc, $reaction) {
+    $reactionsList = array_reduce($reactions, function($acc, $reaction) use ($user) {
       $type = $reaction['type'];
       if (!isset($acc[$type])) {
-        $acc[$type] = 1;
+        $acc[$type] = ['count' => 1, 'userReactionId' => null];
       } else {
-        $acc[$type] += 1;
+        $acc[$type]['count'] += 1;
+      }
+      if ($user->isLoggedIn() && $reaction['submitter'] === $user->getId()) {
+        $acc[$type]['userReactionId'] = $reaction['id'];
       }
       return $acc;
     }, []);
-
-    if ($user->isLoggedIn()) {
-      $userReactions = array_reduce($reactions, function($acc, $reaction) use ($user) {
-        if ($reaction['submitter'] === $user->getId()) {
-          $type = $reaction['type'];
-          $acc[$type] = $reaction['id'];
-        }
-        return $acc;
-      }, []);
-    } else {
-      $userReactions = [];
-    }
-
-    return [
-      'counts' => $countPerType,
-      'userReactions' => $userReactions,
-    ];
+    return $reactionsList;
   }
 }

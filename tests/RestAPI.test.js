@@ -36,9 +36,9 @@ import {
 } from './data/comments';
 import {
   laughingReaction,
-  scaredReaction,
+  fireReaction,
   angryReaction,
-  scaredReactionForDelete,
+  fireReactionForDelete,
   albumForReactions,
   commentForReactions,
   photoForReactions,
@@ -2342,7 +2342,7 @@ describe('Reaction tests', () => {
 
   const defaultItemId = singleComment.id;
   const defaultItemType = 'comment';
-  const defaultType = 'scared';
+  const defaultType = 'fire';
 
   const getReactionPayload = (params) => {
     const defaultPayload = {
@@ -2365,7 +2365,7 @@ describe('Reaction tests', () => {
       expect(reactionsList).toHaveLength(3);
       expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
       expect(reactionsList[0].id).toEqual(laughingReaction.id);
-      expect(reactionsList[1].id).toEqual(scaredReaction.id);
+      expect(reactionsList[1].id).toEqual(fireReaction.id);
       expect(reactionsList[2].id).toEqual(angryReaction.id);
     });
 
@@ -2382,7 +2382,7 @@ describe('Reaction tests', () => {
       const reactionsList = checkSuccess(await reactionClient.list({ start: 1, count: 1 }));
       expect(reactionsList).toHaveLength(1);
       expect(reactionsList[0].submitter.id).toEqual(plainUser.id);
-      expect(reactionsList[0].id).toEqual(scaredReaction.id);
+      expect(reactionsList[0].id).toEqual(fireReaction.id);
     });
   });
 
@@ -2465,42 +2465,65 @@ describe('Reaction tests', () => {
 
     test('Owner can delete a reaction', async () => {
       await reactionClient.setUser(writerUser);
-      checkSuccess(await reactionClient.delete(scaredReactionForDelete.id));
-      checkNotFound(await reactionClient.delete(scaredReactionForDelete.id));
+      checkSuccess(await reactionClient.delete(fireReactionForDelete.id));
+      checkNotFound(await reactionClient.delete(fireReactionForDelete.id));
     });
   });
 
   each([
-    [ALBUM, 'mediaalbum', albumForReactions.id, ],
-    [COMMENT, 'comment', commentForReactions.id, ],
-    [MEDIA, 'photo', photoForReactions.id, ],
-    [MEDIA, 'video', videoForReactions.id, ],
-  ]).describe('Item reaction: %s', (clientType, itemType, itemId) => {
+    ['albums', ALBUM, 'mediaalbum', albumForReactions.id, ],
+    ['comments', COMMENT, 'comment', commentForReactions.id, ],
+    ['photos', MEDIA, 'photo', photoForReactions.id, ],
+    ['videos', MEDIA, 'video', videoForReactions.id, ],
+  ]).describe('Item reaction: %s', (_, clientType, itemType, itemId) => {
     const reactionTypes = ['angry', 'laughing'];
 
-    const assertNoReactions = ({ reactions: { counts, userReactions} }) => {
-      expect(Object.keys(counts)).toHaveLength(0);
-      expect(userReactions).toHaveLength(0);
+    const getSortedReactionEntries = (reactions) => {
+      return Object.entries(reactions).sort((a, b) => {
+        if (a > b) {
+          return 1;
+        } else if (a < b) {
+          return -1;
+        }
+        return 0;
+      })
+    }
+
+    const assertNoReactions = ({ reactions }) => {
+      expect(reactions).toHaveLength(0);
     };
 
-    const assertFirstReaction = ({ reactions: { counts, userReactions} }) => {
-      expect(Object.keys(counts)).toEqual([reactionTypes[0]]);
-      expect(userReactions).toHaveLength(0);
+    const assertFirstReaction = ({ reactions }) => {
+      const entries = getSortedReactionEntries(reactions);
+      expect(entries).toHaveLength(1);
+      expect(entries[0][0]).toEqual(reactionTypes[0]);
+      expect(entries[0][1].count).toEqual(1);
+      expect(entries[0][1].userReactionId).toBeNull();
     };
 
-    const assertTwoReactions = ({ reactions: { counts, userReactions} }) => {
-      expect(Object.keys(counts).sort()).toEqual(reactionTypes);
-      expect(userReactions).toHaveLength(0);
+    const assertTwoReactions = ({ reactions }) => {
+      const types = getSortedReactionEntries(reactions).map(e => e[0]);
+      expect(types).toEqual(reactionTypes);
     };
 
-    const assertSecondReaction = ({ reactions: { counts, userReactions} }) => {
-      expect(Object.keys(counts)).toEqual([reactionTypes[1]]);
-      expect(userReactions).toHaveLength(0);
+    const assertSecondReaction = ({ reactions }) => {
+      const entries = Object.entries(reactions);
+      expect(entries).toHaveLength(1);
+      expect(entries[0][0]).toEqual(reactionTypes[1]);
+      expect(entries[0][1].count).toEqual(1);
+      expect(entries[0][1].userReactionId).toBeNull();
     };
 
-    const assertOwnerReactions = ({ reactions: { counts, userReactions} }) => {
-      expect(Object.keys(counts).sort()).toEqual(reactionTypes);
-      expect(Object.keys(userReactions)).toHaveLength(2);
+    const assertOwnerReactions = ({ reactions }, reactionIds) => {
+      const entries = getSortedReactionEntries(reactions);
+      const types = entries.map(e => e[0]);
+      expect(types).toEqual(reactionTypes);
+
+      const storedCounts = entries.map(e => e[1].count);
+      expect(storedCounts).toEqual([1, 1]);
+
+      const storedReactionIds = entries.map(e => e[1].userReactionId);
+      expect(storedReactionIds).toEqual(reactionIds);
     };
 
     test('Reactions work properly', async () => {
@@ -2510,7 +2533,7 @@ describe('Reaction tests', () => {
       await reactionClient.setUser(plainUser);
 
       let created;
-      const reactions = [];
+      const reactionIds = [];
 
       // Item has no reactions
       assertNoReactions(checkSuccess(await itemClient.get(itemId)));
@@ -2518,7 +2541,7 @@ describe('Reaction tests', () => {
       // Post item reaction
       created = checkSuccess(await reactionClient.post(
         getReactionPayload({ itemType, itemId, type: reactionTypes[0] })));
-      reactions.push(created.id);
+      reactionIds.push(created.id);
 
       // Item has one reaction
       assertFirstReaction(checkSuccess(await itemClient.get(itemId)));
@@ -2526,22 +2549,22 @@ describe('Reaction tests', () => {
       // Post item reaction
       created = checkSuccess(await reactionClient.post(
         getReactionPayload({ itemType, itemId, type: reactionTypes[1] })));
-      reactions.push(created.id);
+      reactionIds.push(created.id);
 
       // Item has two reactions
       assertTwoReactions(checkSuccess(await itemClient.get(itemId)));
 
       // Owner can see they have two reactions
-      assertOwnerReactions(checkSuccess(await itemClientForPlainUser.get(itemId)));
+      assertOwnerReactions(checkSuccess(await itemClientForPlainUser.get(itemId)), reactionIds);
 
       // Delete one reaction
-      await reactionClient.delete(reactions[0]);
+      await reactionClient.delete(reactionIds[0]);
 
       // Item has one reaction
       assertSecondReaction(checkSuccess(await itemClient.get(itemId)));
 
       // Delete another reaction
-      await reactionClient.delete(reactions[1]);
+      await reactionClient.delete(reactionIds[1]);
 
       // Item has no reactions
       assertNoReactions(checkSuccess(await itemClient.get(itemId)));

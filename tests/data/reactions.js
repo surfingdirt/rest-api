@@ -10,11 +10,11 @@ export const laughingReaction = {
   lastEditor: null,
 };
 
-export const scaredReaction = {
+export const fireReaction = {
   id: 'bdff48a7-5754-4186-acd2-22b20ef32355',
   itemType: 'comment',
   itemId: 'f3ae1451-b341-4364-80db-2751da4f3537',
-  type: 'scared',
+  type: 'fire',
   status: 'valid',
   submitter: '85193083-ce22-43a5-993b-1c7aba53d13c',
   date: '2019-05-26 15:00:00',
@@ -46,7 +46,7 @@ export const angryReactionForDelete = {
   lastEditor: null,
 };
 
-export const scaredReactionForDelete = {
+export const fireReactionForDelete = {
   id: 'abcdef12-5754-4186-acd2-11b20ef32311',
   itemType: 'comment',
   itemId: '0055ff22-7cc0-49d0-bc2e-c07f22c71234',

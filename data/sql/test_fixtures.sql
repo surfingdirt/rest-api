@@ -97,10 +97,10 @@ insert into `media_items`(`id`,`submitter`,`date`,`lastEditionDate`,`lastEditor`
 
 insert into `reactions`(`id`,`itemType`,`itemId`,`type`,`status`,`submitter`,`date`,`lastEditionDate`,`lastEditor`) values
 ('73ff48a7-5754-4186-acd2-44b20ef32344','comment','c74814e6-89c7-42f1-a9d1-a98567048c17','laughing','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 14:00:00',NULL,NULL),
-('bdff48a7-5754-4186-acd2-22b20ef32355','comment','f3ae1451-b341-4364-80db-2751da4f3537','scared','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 15:00:00',NULL,NULL),
+('bdff48a7-5754-4186-acd2-22b20ef32355','comment','f3ae1451-b341-4364-80db-2751da4f3537','fire','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 15:00:00',NULL,NULL),
 ('e8ff48a7-5754-4186-acd2-11b20ef32399','comment','5f7f5e35-52e6-44ad-90c6-e5365eda3469','angry','valid','85193083-ce22-43a5-993b-1c7aba53d13c','2019-05-26 16:00:00',NULL,NULL),
 ('abff48a7-5754-4186-acd2-11b20ef32311','comment','ee55ff22-7cc0-49d0-bc2e-c07f22c71234','angry','valid','941b2ac5-2519-44de-84f9-ea9980e4631f','2019-05-28 16:00:00',NULL,NULL),
-('abcdef12-5754-4186-acd2-11b20ef32311','comment','0055ff22-7cc0-49d0-bc2e-c07f22c71234','scared','valid','6750ff62-7195-49f5-bf81-e3d395e6cdcf','2019-05-28 16:00:00',NULL,NULL);
+('abcdef12-5754-4186-acd2-11b20ef32311','comment','0055ff22-7cc0-49d0-bc2e-c07f22c71234','fire','valid','6750ff62-7195-49f5-bf81-e3d395e6cdcf','2019-05-28 16:00:00',NULL,NULL);
 
 insert  into `user_notifications`(`userId`,`itemType`,`medium`,`notify`) values
 (0,'mediaalbum','homePage',0),
