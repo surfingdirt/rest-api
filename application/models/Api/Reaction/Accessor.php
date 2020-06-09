@@ -11,6 +11,7 @@ class Api_Reaction_Accessor extends Api_Data_Accessor
     'itemType',
     'type',
     'submitter',
+    'date',
   );
 
   public $memberCreateAttributes = array(
