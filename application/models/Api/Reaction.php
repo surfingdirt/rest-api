@@ -8,20 +8,24 @@ class Api_Reaction extends Data
   protected $_rowClass = 'Api_Reaction_Row';
   protected $_rowsetClass = 'Api_Reaction_Rowset';
 
-  const TYPE_ANGRY = 'angry';
-  const TYPE_FIRE = 'fire';
-  const TYPE_IMPRESSED = 'impressed';
-  const TYPE_LAUGHING = 'laughing';
-  const TYPE_SAD = 'sad';
-  const TYPE_STOKED = 'stoked';
+  const TYPE_ANGRY = 'angry'; // 😡
+  const TYPE_COOL = 'cool'; // 😎
+  const TYPE_FIRE = 'fire'; // 🔥
+  const TYPE_IMPRESSED = 'impressed'; // 😮
+  const TYPE_INJURED = 'injured'; // 🤕
+  const TYPE_LAUGHING = 'laughing'; // 🤣
+  const TYPE_LIKE = 'like'; // 👍 or maybe 👊
+  const TYPE_SAD = 'sad'; // 😢
 
   public static $reactionTypes = array(
     self::TYPE_ANGRY,
+    self::TYPE_COOL,
     self::TYPE_FIRE,
     self::TYPE_IMPRESSED,
+    self::TYPE_INJURED,
     self::TYPE_LAUGHING,
+    self::TYPE_LIKE,
     self::TYPE_SAD,
-    self::TYPE_STOKED,
   );
 
   const ITEMTYPE_ALBUM = 'mediaalbum';
