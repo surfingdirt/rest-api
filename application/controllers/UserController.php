@@ -113,6 +113,7 @@ class UserController extends Api_Controller_Action
     $token = Lib_Firebase::getVerifiedToken(FIREBASE_PROJECT_ID, $data['token']);
     if (!$token) {
       // Token is invalid
+      $this->_badRequest();
       $this->view->output = array('errors' => 'Token is invalid', 'code' => Api_ErrorCodes::USER_BAD_OAUTH_TOKEN);
       return;
     }
