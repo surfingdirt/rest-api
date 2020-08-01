@@ -5,6 +5,7 @@ export const MEDIA = 'media';
 export const REACTION = 'reaction';
 export const TOKEN = 'token';
 export const USER = 'user';
+export const USER_OAUTH = 'user/oauth';
 
 export const MEDIA_TYPES = { PHOTO: 'photo', VIDEO: 'video' };
 export const MEDIA_SUBTYPES_VIDEO = {

@@ -48,3 +48,10 @@ export const createdUser = {
   email: 'createduser@gmail.com',
 };
 
+export const createdOAuthUser = {
+  username: 'createdOAuthuser',
+  email: 'createdoauthuser@gmail.com',
+  timezone: 'Europe/Paris',
+  locale: 'pt-BR',
+};
+

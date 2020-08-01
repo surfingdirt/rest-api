@@ -14,6 +14,7 @@ import {
   REACTION,
   TOKEN,
   USER,
+  USER_OAUTH,
 } from './RestClient/resources';
 import { images } from './data/images';
 import { invalidPhoto, validPhoto } from './data/media';
@@ -48,6 +49,7 @@ import {
   adminUser,
   bannedUser,
   createdUser,
+  createdOAuthUser,
   editorUser,
   otherUser,
   pendingUser,
@@ -162,6 +164,7 @@ describe('Token tests', () => {
 
 describe('User tests', () => {
   const userClient = new ResourceClient(client, USER);
+  const userOAuthClient = new ResourceClient(client, USER_OAUTH);
 
   const createNewMember = async (username, email, userId = null) => {
     await userClient.clearToken();
@@ -347,6 +350,21 @@ describe('User tests', () => {
       expect(getSortedKeysAsString(body)).toEqual(createdUserKeys);
       expect(looksLikeUUID(body.userId)).toBeTruthy();
       expect(body.userId).toEqual(createdUser.id);
+    });
+  });
+
+  describe('User OAuth POST', () => {
+    test.only('Successful user creation should return a user and a token', async () => {
+      userOAuthClient.setOAuthTokenEmail(createdOAuthUser.email);
+      const body = checkSuccess(
+        await userOAuthClient.post({
+          username: createdOAuthUser.username,
+          timezone: createdOAuthUser.timezone,
+          locale: createdOAuthUser.locale,
+        }),
+      );
+      expect(getSortedKeysAsString(body)).toEqual('["token","user"]');
+      expect(looksLikeUUID(body.user.userId)).toBeTruthy();
     });
   });
 

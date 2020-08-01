@@ -39,6 +39,8 @@ constants.CHAT_ENABLED = false;
 constants.JWT_SECRET = 'something'
 constants.JWT_TTL = 84600;
 
+constants.FIREBASE_PROJECT_ID = 'someproject'
+
 ; Email and contact
 constants.MAILER_API_KEY = ''
 constants.MAILER_API_DOMAIN = ''

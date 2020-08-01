@@ -106,6 +106,14 @@ export default class ResourceClient {
     this.client.clearUUIDs();
   }
 
+  setOAuthTokenEmail(email) {
+    this.client.setOAuthTokenEmail(email);
+  }
+
+  clearOAuthTokenEmail(email) {
+    this.client.clearOAuthTokenEmail();
+  }
+
   setLocalVideoThumb(url) {
     this.client.setLocalVideoThumb(url);
   }

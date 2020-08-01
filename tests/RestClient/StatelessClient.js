@@ -23,6 +23,7 @@ export default class StatelessClient {
   constructor(hostUrl) {
     this.hostUrl = hostUrl;
     this.uuids = [];
+    this.oAuthTokenEmail = null;
     this.locale = 'en-US';
   }
 
@@ -59,6 +60,9 @@ export default class StatelessClient {
     if (this.uuids.length > 0) {
       headers['X-uuids'] = JSON.stringify(this.uuids);
     }
+    if (this.oAuthTokenEmail) {
+      headers['X-oAuthTokenEmail'] = this.oAuthTokenEmail;
+    }
     if (this.localVideoThumb) {
       headers['X-localVideoThumb'] = this.localVideoThumb;
     }
@@ -75,6 +79,14 @@ export default class StatelessClient {
 
   clearUUIDs() {
     this.uuids = [];
+  }
+
+  setOAuthTokenEmail(email) {
+    this.oAuthTokenEmail = email;
+  }
+
+  clearOAuthTokenEmail() {
+    this.oAuthTokenEmail = null;
   }
 
   setLocalVideoThumb(url) {

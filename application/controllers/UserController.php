@@ -105,4 +105,35 @@ class UserController extends Api_Controller_Action
 
     $this->view->output = $output;
   }
+
+  public function oauthCreationAction()
+  {
+    $data = $this->_getBodyParams();
+
+    $token = Lib_Firebase::getVerifiedToken(FIREBASE_PROJECT_ID, $data['token']);
+    if (!$token) {
+      // Token is invalid
+      $this->view->output = array('errors' => 'Token is invalid', 'code' => Api_ErrorCodes::USER_BAD_OAUTH_TOKEN);
+      return;
+    }
+
+    $user = $this->_table->fetchNew();
+    list($userId, $user, $errors) = $this->_accessor->createOAuthUser(
+      $user, array_merge($data, Lib_Firebase::getUserDataFromToken($token)));
+
+    if (!empty($errors)) {
+      $this->_badRequest();
+      $this->view->output = array('errors' => $errors, 'code' => Api_ErrorCodes::FORM_BAD_INPUT);
+      return;
+    }
+
+    // Log the user automatically because we just checked their identity is valid
+    $token = Lib_JWT::create(JWT_SECRET, Utils::date("timestamp"), $user->getId());
+    Globals::setJWT($token);
+
+    $this->view->output = array(
+      'user' => $this->_accessor->getObjectData($user,'get'),
+      'token' => $token,
+    );
+  }
 }

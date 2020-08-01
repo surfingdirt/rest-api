@@ -59,6 +59,40 @@ class Api_User_Accessor extends Api_Data_Accessor
     'status' => 'status'
   );
 
+  public function createOAuthUser($user, $data)
+  {
+    $form = new User_Form_OAuth_Register();
+    $errors = array();
+    if(!$form->isValid($data)) {
+      $rawErrors = $form->getErrors();
+      foreach ($rawErrors as $name => $err) {
+        if (!empty($err)) {
+          $errors[$name] = $err;
+        }
+      }
+    } else {
+      $user->email = $data['email'];
+      $user->locale = $data['locale'];
+      $user->timezone = $data['timezone'];
+      $user->username = $data['username'];
+      $user->password = Utils::getRandomKey(16);
+      $user->salt = Utils::uuidV4();
+      $user->{User::COLUMN_USERID} = Utils::uuidV4();
+      $user->status = User::STATUS_MEMBER;
+      $user->date = Utils::date('Y-m-d H:i:s');
+      $user->lastLogin = Utils::date('Y-m-d H:i:s');
+      $user->activationKey = Utils::getRandomKey(32);
+
+      try {
+        $user->save();
+      } catch (Exception $e) {
+        $errors[] = $e->getMessage();
+      }
+    }
+
+    return array($user->getId(), $user, $errors);
+  }
+
   public function createObjectWithData($object, $data)
   {
     $userId = Utils::uuidV4();
