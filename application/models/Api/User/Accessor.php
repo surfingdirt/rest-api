@@ -42,6 +42,7 @@ class Api_User_Accessor extends Api_Data_Accessor
   public $memberWriteAttributes = array();
   public $ownWriteAttributes = array(
     'avatar' => 'avatar',
+    'avatarUrl' => 'avatar',
     'bio' => 'bio',
     'cover' => 'cover',
     'email' => 'email',
@@ -76,8 +77,8 @@ class Api_User_Accessor extends Api_Data_Accessor
       $user->timezone = $data['timezone'];
       $user->username = $data['username'];
       $user->password = Utils::getRandomKey(16);
-      $user->salt = Utils::uuidV4();
       $user->{User::COLUMN_USERID} = Utils::uuidV4();
+      $user->salt = Utils::uuidV4();
       $user->status = User::STATUS_MEMBER;
       $user->date = Utils::date('Y-m-d H:i:s');
       $user->lastLogin = Utils::date('Y-m-d H:i:s');
@@ -173,6 +174,11 @@ class Api_User_Accessor extends Api_Data_Accessor
       }
       $object->$attrDBName = Lib_Translate::encodeField($field);
       return;
+    }
+
+    if ($attrFormName == 'avatarUrl') {
+      $avatarImage = Lib_Storage::storeRemoteImage(Lib_Storage::TYPE_LOCAL, $target, Utils::uuidV4());
+      $target = $avatarImage->id;
     }
 
     $object->$attrDBName = $target;

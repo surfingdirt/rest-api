@@ -24,6 +24,8 @@ export default class StatelessClient {
     this.hostUrl = hostUrl;
     this.uuids = [];
     this.oAuthTokenEmail = null;
+    this.localAvatarUrl = null;
+    this.localVideoThumb = null;
     this.locale = 'en-US';
   }
 
@@ -66,6 +68,9 @@ export default class StatelessClient {
     if (this.localVideoThumb) {
       headers['X-localVideoThumb'] = this.localVideoThumb;
     }
+    if (this.localAvatarUrl) {
+      headers['X-localAvatarUrl'] = this.localAvatarUrl;
+    }
     return headers;
   }
 
@@ -95,6 +100,14 @@ export default class StatelessClient {
 
   clearLocalVideoThumb() {
     this.localVideoThumb = null;
+  }
+
+  setLocalAvatarUrl(url) {
+    this.localAvatarUrl = url;
+  }
+
+  clearLocalAvatarUrl() {
+    this.localAvatarUrl = null;
   }
 
   postRequestCleanup() {

@@ -122,6 +122,14 @@ export default class ResourceClient {
     this.client.clearLocalVideoThumb();
   }
 
+  setLocalAvatarUrl(url) {
+    this.client.setLocalAvatarUrl(url);
+  }
+
+  clearLocalAvatarUrl() {
+    this.client.clearLocalAvatarUrl();
+  }
+
   setDebugBackend(debugBackend = true) {
     this.debugBackend = !!debugBackend;
   }

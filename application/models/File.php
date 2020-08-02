@@ -172,10 +172,19 @@ class File
 
   public function moveUploadedFile($path)
   {
-    $status = move_uploaded_file($this->getFullPath(), $path);
-    if (!$status) {
-      return false;
+    $file = $this->getFullPath();
+    if (is_uploaded_file($file)) {
+      $status = move_uploaded_file($file, $path);
+      if (!$status) {
+        return false;
+      }
+    } else {
+      $status = rename($file, $path);
+      if (!$status) {
+        return false;
+      }
     }
+
     $this->setFullPath($path);
     return true;
   }

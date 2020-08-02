@@ -181,6 +181,39 @@ class Lib_Storage
     return $output;
   }
 
+  public static function storeRemoteImage($storageType, $remoteImage, $id)
+  {
+    if (APPLICATION_ENV == 'test') {
+      $headers = apache_request_headers();
+      if (isset($headers['X-localAvatarUrl'])) {
+        $remoteImage = $headers['X-localAvatarUrl'];
+      }
+    }
+
+    $tmpFile = GLOBAL_UPLOAD_TMPDIR . '/'. $id;
+    file_put_contents($tmpFile, fopen($remoteImage, 'r'));
+
+    list($w, $h) = Lib_Storage::storeFile($storageType, $tmpFile, $id);
+    $table = new Api_Image();
+    $imageRow = $table->createRow(array(
+      'id' => $id,
+      'imageType' => Api_Image::IMAGE_TYPE_PLAIN,
+      'storageType' => $storageType,
+      'width' => $w,
+      'height' => $h,
+    ));
+    try {
+      $imageRow->save();
+    } catch (Zend_Db_Exception $e) {
+      Lib_Storage::cleanUpFiles($storageType, $id);
+      throw new Api_Exception_BadRequest(
+        'Could not save image DB entry',
+        Api_ErrorCodes::IMAGE_DB_SAVE_FAILURE);
+    }
+
+    return $imageRow;
+  }
+
   public static function cleanUpFiles($storageType, $id)
   {
     $config = self::$config[$storageType];

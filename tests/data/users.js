@@ -49,6 +49,7 @@ export const createdUser = {
 };
 
 export const createdOAuthUser = {
+  id: '98bd65c0-306f-4902-b1da-cc1c34586754',
   username: 'createdOAuthuser',
   email: 'createdoauthuser@gmail.com',
   timezone: 'Europe/Paris',

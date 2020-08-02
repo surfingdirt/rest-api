@@ -353,18 +353,32 @@ describe('User tests', () => {
     });
   });
 
-  describe('User OAuth POST', () => {
-    test.only('Successful user creation should return a user and a token', async () => {
+  describe('User OAuth POST/PUT', () => {
+    test(
+      'User creation should return a user and a token, avatar update should take a url',
+      async () => {
+
+      // Create a user with OAuth data
+      userClient.setUUIDs([createdOAuthUser.id]);
       userOAuthClient.setOAuthTokenEmail(createdOAuthUser.email);
-      const body = checkSuccess(
+      const postBody = checkSuccess(
         await userOAuthClient.post({
           username: createdOAuthUser.username,
           timezone: createdOAuthUser.timezone,
           locale: createdOAuthUser.locale,
         }),
       );
-      expect(getSortedKeysAsString(body)).toEqual('["token","user"]');
-      expect(looksLikeUUID(body.user.userId)).toBeTruthy();
+      expect(getSortedKeysAsString(postBody)).toEqual('["token","user"]');
+      const { user: { userId }, token } = postBody;
+      expect(looksLikeUUID(userId)).toBeTruthy();
+      expect(userId).toEqual(createdOAuthUser.id);
+
+      // Update avatar with a url
+      await userClient.setLocalAvatarUrl(LOCAL_THUMB_PATH);
+      await userClient.setToken(token);
+      const putBody = checkSuccess(await userClient.put(createdOAuthUser.id,
+        { avatarUrl: 'fakeUrl'}));
+      expect(looksLikeUUID(putBody.avatar)).toBeTruthy();
     });
   });
 
