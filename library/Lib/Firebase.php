@@ -4,7 +4,7 @@ use Kreait\Firebase\JWT\IdTokenVerifier;
 
 class Lib_Firebase
 {
-  private static function _getOAuthTokenEmail() {
+  private static function _getTestOAuthTokenEmail() {
     if (APPLICATION_ENV !== 'test') {
       return false;
     }
@@ -18,7 +18,7 @@ class Lib_Firebase
 
   public static function getUserDataFromToken($tokenAsObject)
   {
-    if ($email = self::_getOAuthTokenEmail()) {
+    if ($email = self::_getTestOAuthTokenEmail()) {
       // Test mode
       return array('email' => $email);
     }
@@ -29,7 +29,7 @@ class Lib_Firebase
 
   public static function getVerifiedToken($projectId, $tokenAsString)
   {
-    if (self::_getOAuthTokenEmail()) {
+    if (self::_getTestOAuthTokenEmail()) {
       return new stdClass();
     }
 
