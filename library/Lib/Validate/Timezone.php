@@ -380,6 +380,12 @@ class Lib_Validate_Timezone extends Zend_Validate_Abstract
 
   public function isValid($value)
   {
-    return in_array($value, ALLOWED_TIMEZONES);
+    $valid = in_array($value, self::ALLOWED_TIMEZONES);
+
+    if (!$valid) {
+      $this->_error('invalidTimezone');
+    }
+
+    return $valid;
   }
 }
