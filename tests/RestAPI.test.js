@@ -132,6 +132,7 @@ describe('Token tests', () => {
       user1Token = loginResponseBody.token;
 
       // Tweak server time to be seconds after the expiration date
+      // ⚠️ Make sure it's synced with the test environment constants
       const afterExpirationDate = getDateForBackend(JWT_TTL + 2);
       await client.setDate(afterExpirationDate);
 

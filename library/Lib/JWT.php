@@ -56,7 +56,8 @@ class Lib_JWT
     }
     $timestamp = Utils::date('timestamp');
     if (APPLICATION_ENV === 'test') {
-      $datetime = Utils::date('Y-m-d H:i:s');
+      // Just logging some stuff for debug purposes.
+      $datetime = Utils::date('Y-m-d H:i:s.v');
       Globals::getLogger()->test("It's now $datetime $timestamp");
     }
     $now = new DateTime();

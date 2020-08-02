@@ -2,7 +2,7 @@ import {realpathSync} from 'fs';
 
 export const hostUrl = 'http://localhost:8008';
 export const JWT_SECRET = 'wouldntyouliketoknow5748right';
-export const JWT_TTL = 24 * 3600;
+export const JWT_TTL = 604800; // ⚠️ Make sure to keep in sync with API constants
 export const port = 80;
 export const baseUrl = '/';
 export const cacheDir = realpathSync(__dirname + '/../../data/cache/test/');
