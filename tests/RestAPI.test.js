@@ -93,13 +93,13 @@ beforeEach(() => {
 });
 
 describe('Token tests', () => {
-  test('logged-out request results in 200', async () => {
+  test('Logged-out request results in 200', async () => {
     const path = plainUserPath;
     const body = checkSuccess(await client.get({ path }));
     expect(Object.keys(body).length > 0).toBeTruthy();
   });
 
-  test('banned user login request results in 403', async () => {
+  test('Banned user login request results in 403', async () => {
     const { username, password } = bannedUser;
     checkUnauthorised(
       await client.post({
@@ -109,7 +109,7 @@ describe('Token tests', () => {
     );
   });
 
-  test('invalid token results in 403', async () => {
+  test('Invalid token results in 403', async () => {
     const path = plainUserPath;
     const token = 'no-way-this-is-gonna-work';
     checkUnauthorised(await client.get({ path, token }));
@@ -158,6 +158,21 @@ describe('Token tests', () => {
 
       // Request user 1 with blacklisted user1Token
       checkUnauthorised(await client.get({ path: plainUserPath, token: user1Token }), 403);
+    });
+  });
+
+  describe('OAuth login', () => {
+    const tokenOAuthClient = new ResourceClient(client, `${TOKEN}/oauth-login`);
+
+    test('Login with an invalid token fails', async() => {
+      checkUnauthorised(await tokenOAuthClient.post({ token: 'notarealoauthtoken'}));
+    });
+
+    test('Login with a valid token is successful', async() => {
+      const { email } = plainUser;
+      tokenOAuthClient.setOAuthTokenEmail(email);
+      const body = checkSuccess(await tokenOAuthClient.post({ token: 'doesnotmatter' }));
+      expect(body.token).toBeDefined();
     });
   });
 });

@@ -17,6 +17,7 @@ class Routes {
       'activateNewPassword' => new Zend_Controller_Router_Route('/user/:id/activate-new-password/', array('controller' => 'custom', 'action' => 'activate-new-password')),
 
       'me' => new Zend_Controller_Router_Route('/user/me/', array('controller' => 'user', 'action' => 'me')),
+      'loginOAuth' => new Zend_Controller_Router_Route('/token/oauth-login/', array('controller' => 'token', 'action' => 'oauth-login')),
 
       'emailExists' => new Zend_Controller_Router_Route('/user/email-exists/', array('controller' => 'user', 'action' => 'email-exists')),
       'usernameExists' => new Zend_Controller_Router_Route('/user/username-exists/', array('controller' => 'user', 'action' => 'username-exists')),

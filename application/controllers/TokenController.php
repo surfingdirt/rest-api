@@ -6,6 +6,7 @@ class TokenController extends Lib_Rest_Controller
   const FAILED_TO_LOGIN = 'failedToLogin';
   const LOGIN_SYSTEM_ERROR = 'loginSystemError';
   const EXISTING_TOKEN = 'existingToken';
+  const INVALID_OAUTH_TOKEN = 'invalidOAuthToken';
 
   /**
    * Processes a login request (token creation)
@@ -39,6 +40,16 @@ class TokenController extends Lib_Rest_Controller
     if (!$user) {
       return $this->_unauthorised(self::LOGIN_SYSTEM_ERROR, Api_ErrorCodes::TOKEN_LOGIN_SYSTEM_ERROR);
     }
+
+    $token = $this->_doLogin($user);
+
+    $this->view->output = array(
+      'token' => $token,
+    );
+  }
+
+  protected function _doLogin($user)
+  {
     $user->{User::COLUMN_LAST_LOGIN} = Utils::date("Y-m-d H:i:s");
     $user->save();
     Globals::setUser($user);
@@ -47,9 +58,55 @@ class TokenController extends Lib_Rest_Controller
     $token = Lib_JWT::create(JWT_SECRET, Utils::date("timestamp"), $user->getId());
     Globals::setJWT($token);
 
+    return $token;
+  }
+
+  public function oauthLoginAction()
+  {
+    $token = Globals::getJWT();
+    if ($token) {
+      return $this->_unauthorised(self::EXISTING_TOKEN, Api_ErrorCodes::TOKEN_EXISTING);
+    }
+
+    $data = $this->_getBodyParams();
+    $fbToken = Lib_Firebase::getVerifiedToken(FIREBASE_PROJECT_ID, $data['token']);
+    if (!$fbToken) {
+      // Token is invalid
+      return $this->_unauthorised(self::INVALID_OAUTH_TOKEN, Api_ErrorCodes::INVALID_OAUTH_TOKEN);
+    }
+
+    $userData = Lib_Firebase::getUserDataFromToken($fbToken);
+
+    $emailColumn = User::COLUMN_EMAIL;
+    $userTable = new Api_User();
+    $where = $userTable->getAdapter()->quoteInto("$emailColumn = ?", $userData['email']);
+    $user = $userTable->fetchRow($where);
+    if (!$user) {
+      return $this->_unauthorised(self::FAILED_TO_LOGIN, Api_ErrorCodes::TOKEN_FAILED_TO_LOGIN);
+    }
+
+    $token = $this->_doLogin($user);
+
     $this->view->output = array(
       'token' => $token,
     );
+  }
+
+  /**
+   * Returns all user-land parameters.
+   * @return array
+   * @throws Zend_Controller_Action_Exception
+   */
+  protected function _getBodyParams()
+  {
+    $params = $this->_request->getParams();
+
+    unset($params[$this->_request->getControllerKey()]);
+    unset($params[$this->_request->getActionKey()]);
+    unset($params[$this->_request->getModuleKey()]);
+    unset($params['id']);
+
+    return $params;
   }
 
   /**
