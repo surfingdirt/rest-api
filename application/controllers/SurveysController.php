@@ -33,9 +33,12 @@ class SurveysController extends Api_Controller_Action
 
     $db = Globals::getMainDatabase();
 
-    $surveyId = $db->quote($this->_request->getParam('surveyId'));
-    $userId = $db->quote($this->_user->getId());
+    $surveyId = $this->_request->getParam('surveyId');
+    $safeSurveyId = $db->quote($surveyId);
     $choice = $this->_request->getParam('choice');
+    $safeChoice = $db->quote($choice);
+    $userId = $this->_user->getId();
+    $safeUserId = $db->quote($userId);
 
     if (strlen($choice) == 0) {
       $quote  = $db->quoteInto("(userId = ?", $this->_user->getId());
@@ -44,8 +47,7 @@ class SurveysController extends Api_Controller_Action
       $choice = null;
 
     } else {
-      $choice = $db->quote($choice);
-      $sql = "REPLACE INTO survey_answers (surveyId, userId, choice) VALUES ($surveyId, $userId, $choice)";
+      $sql = "REPLACE INTO survey_answers (surveyId, userId, choice) VALUES ($safeSurveyId, $safeUserId, $safeChoice)";
     }
 
     $success = true;
