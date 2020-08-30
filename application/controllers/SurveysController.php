@@ -6,7 +6,8 @@ class SurveysController extends Api_Controller_Action
   public function getVoteAction()
   {
     if (!$this->_user->isLoggedIn()) {
-      return $this->_forbidden();
+      $this->view->output = ['choice' => null];
+      return;
     }
 
     $surveyId = $this->_request->getParam('surveyId');
