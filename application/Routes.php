@@ -28,6 +28,10 @@ class Routes {
 
       'translations' => new Zend_Controller_Router_Route('/translations/:itemType/:itemId/', array('controller' => 'translation', 'action' => 'index' )),
 
+      'surveyGetVote' => new Zend_Controller_Router_Route('/surveys/:surveyId/vote/', array('controller' => 'surveys', 'action' => 'get-vote')),
+      'surveyCastVote' => new Zend_Controller_Router_Route('/surveys/:surveyId/cast-vote/', array('controller' => 'surveys', 'action' => 'cast-vote')),
+
+
       'displaydata' => $dummyRoute,
       'createdata' => $dummyRoute,
       'editdata' => $dummyRoute,
