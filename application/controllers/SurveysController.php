@@ -41,7 +41,7 @@ class SurveysController extends Api_Controller_Action
     $userId = $this->_user->getId();
     $safeUserId = $db->quote($userId);
 
-    if (strlen($choice) == 0) {
+    if (!$choice) {
       $quote  = $db->quoteInto("(userId = ?", $this->_user->getId());
       $quote .= " AND surveyId = $surveyId)";
       $sql = "DELETE FROM survey_answers WHERE $quote";
