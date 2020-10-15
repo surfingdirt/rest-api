@@ -2,9 +2,11 @@
 
 class FeedController extends Api_Controller_Action
 {
+  const FEED_DURATION_IN_WEEKS = 4;
+
   public function listAction()
   {
-    $from = (new Zend_Date(Utils::date("timestamp")))->subWeek(1)->get('YYYY-MM-dd HH:mm:ss');
+    $from = (new Zend_Date(Utils::date("timestamp")))->subWeek(FEED_DURATION_IN_WEEKS)->get('YYYY-MM-dd HH:mm:ss');
     $until = (new Zend_Date(Utils::date("timestamp")))->get('YYYY-MM-dd HH:mm:ss');
     $limit = MAX_NOTIFICATION_ITEMS_USERS;
     $skipCache = false;
