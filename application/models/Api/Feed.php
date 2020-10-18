@@ -23,40 +23,31 @@ class Api_Feed
     $this->_newSubItems = [];
   }
 
-  public function listFeedItems($from, $until, $limit)
+  public function listFeedItems($count, $offset)
   {
-    $dbItems = $this->getDbItems($from, $until, $limit);
+    $dbItems = $this->getDbItems($count, $offset);
     $this->buildLevels($dbItems);
     $this->mergeLevels();
     $items = $this->getSortedItems();
     return $items;
   }
 
-  public function getDbItems($from, $until, $maxItems)
+  public function getDbItems($count, $offset)
   {
     $db = Globals::getMainDatabase();
     $table = Constants_TableNames::ITEM;
     $announce = Item_Row::NOTIFICATION_ANNOUNCE;
     $valid = Data::VALID;
 
-    $from = $db->quote($from);
-    $from = ' AND date >= ' . $from;
-
-    if (!empty($until)) {
-      $until = $db->quote($until);
-      $until = ' AND date < ' . $until;
-    }
+    $offset = (int) $offset;
+    $count = (int) $count;
 
     $sql = "
-        SELECT
-        *
-        FROM $table
-        WHERE 1
+        SELECT *  FROM $table WHERE 1
         AND notification = '$announce'
         AND status = '$valid'
-        $from
-        $until
         ORDER BY date DESC
+        LIMIT $offset, $count
     ";
     $feedItems = $db->fetchAll($sql);
     return $feedItems;
