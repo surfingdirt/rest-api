@@ -36,6 +36,9 @@ class Api_Media_Factory
   {
     $table = self::_getTableByMediaType($mediaType);
     $neutralItem = $table->find($id)->current();
+    if (!$neutralItem) {
+      return null;
+    }
     $item = $table->createRow($neutralItem->toArray());
     $item->refreshFromData();
     return $item;
